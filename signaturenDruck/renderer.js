@@ -4,6 +4,7 @@
 
 // loading config
 const config = require('../config.json');
+var fileContents = document.getElementById('filecontents');
 
 
 window.onload = function () {
@@ -20,19 +21,21 @@ window.onload = function () {
                 // fileContents.innerText = fileReader.result;
                 const file = event.target.result;
                 const allLines = file.split(/\r\n|\n/);
-                var fileContents = document.getElementById('filecontents');
                 // Reading line by line
                 allLines.map((line) => {
                     let first4 = line.substring(0, 4);
                     if (first4 == '0100') {
-                        console.log(line);
-                        fileContents.innerText += line + '\n';
+                        line = 'PPN: ' + line;
+                        lineOutput(line);
                     } else if (first4 >= 7001 && first4 <= 7099) {
-                        fileContents.innerText += line + '\n';
+                        line = 'ExemplarNr: ' + line;
+                        lineOutput(line);
                     } else if (first4 == 7100) {
-                        fileContents.innerText += line + '\n';
+                        line = 'SignaturText: ' + line;
+                        lineOutput(line);
                     } else if (first4 == 7901) {
-                        fileContents.innerText += line + '\n';
+                        line = 'BearbeitetAm: ' + line;
+                        lineOutput(line);
                     }
                 });
             }
@@ -44,3 +47,6 @@ window.onload = function () {
     }
 }
 
+function lineOutput(line) {
+    fileContents.innerText += line + '\n';
+}
