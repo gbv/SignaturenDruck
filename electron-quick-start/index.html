@@ -1,0 +1,25 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="UTF-8">
+    <title>Hello World!</title>
+    <style type="text/css"> 
+      #filecontents { 
+           border:double; 
+        overflow-y:scroll; 
+        height:400px; 
+      } 
+ </style>
+  </head>
+  <body>
+    Please Select text file of which contents are to be read: 
+    <input type="file" id="fileToRead" />
+  <div>The File Contents are as below:</div> 
+   <div id="filecontents">
+  </div>
+    <script>
+      // You can also require other files to run in this process
+      require('./renderer.js')
+    </script>
+  </body>
+</html>
