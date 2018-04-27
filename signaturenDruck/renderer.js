@@ -2,7 +2,8 @@
 // be executed in the renderer process for that window.
 // All of the Node.js APIs are available in this process.
 
-const filePath = 'd:/Abschlussprojekt/download.dnl';
+// loading config
+const config = require('../config.json');
 
 
 window.onload = function () {
@@ -11,7 +12,8 @@ window.onload = function () {
         var fileSelected = document.getElementById('fileToRead');
         fileSelected.addEventListener('change', function (e) {
             var fileTobeRead = fileSelected.files[0];
-            console.log(fileTobeRead);
+            alert(config[0].testKey);
+            // console.log(fileTobeRead);
             var fileReader = new FileReader();
             fileReader.onload = function (e) {
                 // var fileContents = document.getElementById('filecontents');
