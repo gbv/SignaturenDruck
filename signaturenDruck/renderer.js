@@ -20,11 +20,19 @@ window.onload = function () {
                 // fileContents.innerText = fileReader.result;
                 const file = event.target.result;
                 const allLines = file.split(/\r\n|\n/);
+                var fileContents = document.getElementById('filecontents');
                 // Reading line by line
                 allLines.map((line) => {
                     let first4 = line.substring(0, 4);
                     if (first4 == '0100') {
                         console.log(line);
+                        fileContents.innerText += line + '\n';
+                    } else if (first4 >= 7001 && first4 <= 7099) {
+                        fileContents.innerText += line + '\n';
+                    } else if (first4 == 7100) {
+                        fileContents.innerText += line + '\n';
+                    } else if (first4 == 7901) {
+                        fileContents.innerText += line + '\n';
                     }
                 });
             }
