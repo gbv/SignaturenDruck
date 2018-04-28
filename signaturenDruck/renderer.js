@@ -15,7 +15,7 @@ window.onload = function () {
         var fileSelected = document.getElementById('fileToRead');
         fileSelected.addEventListener('change', function (e) {
             var fileTobeRead = fileSelected.files[0];
-            alert(config[0].testKey);
+            alert(config.testKey);
             // console.log(fileTobeRead);
             var fileReader = new FileReader();
             fileReader.onload = function (e) {
