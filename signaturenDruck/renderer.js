@@ -2,18 +2,17 @@
 // be executed in the renderer process for that window.
 // All of the Node.js APIs are available in this process.
 
-require('./signatur.js');
+const Signatur = require("./signatur.js");
 
 // loading config
-const config = require('../config.json');
-var fileContents = document.getElementById('filecontents');
-
+const config = require("../config.json");
+var fileContents = document.getElementById("filecontents");
 
 window.onload = function () {
     //Check the support for the File API support
     if (window.File && window.FileReader && window.FileList && window.Blob) {
-        var fileSelected = document.getElementById('fileToRead');
-        fileSelected.addEventListener('change', function (e) {
+        var fileSelected = document.getElementById("fileToRead");
+        fileSelected.addEventListener("change", function (e) {
             var fileTobeRead = fileSelected.files[0];
             alert(config.testKey);
             // console.log(fileTobeRead);
@@ -23,41 +22,44 @@ window.onload = function () {
                 // fileContents.innerText = fileReader.result;
                 const file = event.target.result;
                 const allLines = file.split(/\r\n|\n/);
-                var sig = new Signatur;
+                var sig = new Signatur();
+                var ppnAktuell = "";
                 // Reading line by line
                 allLines.map((line) => {
                     let first4 = line.substring(0, 4);
-                    if (first4 == '0100') {
-                        sig.PPN(line);
-                        line = 'PPN: ' + line;
+                    if (first4 == "0100") {
+                        sig.ppn = line;
+                        ppnAktuell = line;
+                        line = "PPN: " + line;
                         lineOutput(line);
                     } else if (first4 >= 7001 && first4 <= 7099) {
-                        sig.exNr(line);
-                        line = 'ExemplarNr: ' + line;
+                        sig.exNr = line;
+                        line = "ExemplarNr: " + line;
                         lineOutput(line);
                     } else if (first4 == 7100) {
-                        sig.txt(line);
-                        line = 'SignaturText: ' + line;
+                        sig.txt = line;
+                        line = "SignaturText: " + line;
                         lineOutput(line);
                     } else if (first4 == 7901) {
-                        sig.date(line);
-                        line = 'BearbeitetAm: ' + line;
+                        sig.date = line;
+                        line = "BearbeitetAm: " + line;
                         lineOutput(line);
                     }
                     if (sig.allSet()) {
-                        console.log(sig.Signatur());
-                        sig = new Signatur;
+                        console.log(sig.Signatur);
+                        sig = new Signatur();
+                        sig.ppn = ppnAktuell;
                     }
                 });
-            }
+            };
             fileReader.readAsText(fileTobeRead);
         }, false);
     }
     else {
         alert("Files are not supported");
     }
-}
+};
 
 function lineOutput(line) {
-    fileContents.innerText += line + '\n';
+    fileContents.innerText += line + "\n";
 }

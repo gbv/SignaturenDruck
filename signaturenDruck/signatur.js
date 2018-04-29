@@ -1,36 +1,38 @@
 class Signatur {
     constructor() {
-        this.PPN = '';
-        this.exNr = '';
-        this.txt = '';
-        this.date = '';
+        this._ppn = "";
+        this._exNr = "";
+        this._txt = "";
+        this._date = "";
     }
 
     // Setter
-    set PPN(ppn) {
-        this.PPN = ppn;
+    set ppn(str) {
+        this._ppn = str;
     }
-    set exNr(exNr) {
-        this.exNr = exNr;
+    set exNr(str) {
+        this._exNr = str;
     }
-    set txt(txt) {
-        this.txt = txt;
+    set txt(str) {
+        this._txt = str;
     }
-    set date(date) {
-        this.date = date;
+    set date(str) {
+        this._date = str;
     }
 
     // Getter
     get Signatur() {
-        return {"PPN": this.PPN, "exNr": this.exNr, "txt": this.txt, "date": this.date};
+        return {"PPN": this._ppn, "exNr": this._exNr, "txt": this._txt, "date": this._date};
     }
 
     // Method
     allSet() {
-        if (this.PPN != '' && this.exNr != '' && this.txt != '' && this.date != ''){
+        if (this._ppn != "" && this._exNr != "" && this._txt != "" && this._date != ""){
             return true;
         } else {
             return false;
         }
     }
 }
+
+module.exports = Signatur;
