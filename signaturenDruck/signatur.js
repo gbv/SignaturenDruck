@@ -21,6 +21,18 @@ class Signatur {
     }
 
     // Getter
+    get ppn() {
+        return this._ppn;
+    }
+    get exNr() {
+        return this._exNr;
+    }
+    get txt() {
+        return this._txt;
+    }
+    get date() {
+        return this._date;
+    }
     get Signatur() {
         return {"PPN": this._ppn, "exNr": this._exNr, "txt": this._txt, "date": this._date};
     }

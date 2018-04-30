@@ -34,26 +34,21 @@ window.onload = function () {
                 allLines.map((line) => {
                     let first4 = firstFour(line);
                     if (first4 == "0100") {
-                        sig.ppn = line;
-                        ppnAktuell = line;
-                        line = "PPN: " + line;
-                        lineOutput(line);
+                        sig.ppn = ppnAktuell = extractPPN(line);
+                        lineOutput("PPN: " + sig.ppn);
                     } else if (first4 >= 7001 && first4 <= 7099) {
-                        sig.exNr = line;
-                        line = "ExemplarNr: " + line;
-                        lineOutput(line);
+                        sig.exNr = extractExNr(line);
+                        lineOutput("ExemplarNr: " + sig.exNr);
                     } else if (first4 == 7100) {
-                        sig.txt = line;
-                        line = "SignaturText: " + line;
-                        lineOutput(line);
+                        sig.txt = extractTxt(line);
+                        lineOutput("SignaturenText: " + sig.txt);
                     } else if (first4 == 7901) {
-                        sig.date = line;
-                        line = "BearbeitetAm: " + line;
-                        lineOutput(line);
+                        sig.date = extractDate(line);
+                        lineOutput("BearbeitetAm: " + sig.date);
                     }
                     if (sig.allSet()) {
-                        // console.log(JSON.stringify(sig.Signatur));
-                        obj.all.push(JSON.stringify(sig.Signatur));
+                        lineOutput("");
+                        obj.all.push(sig.Signatur);
                         sig = new Signatur();
                         sig.ppn = ppnAktuell;
                     }
@@ -66,18 +61,22 @@ window.onload = function () {
                         console.log("signaturen.json wurde erstellt");
                     }
                 });
+                fs.readFile("signaturen.json", "utf8", function readFileCallback(err, data){
+                    if (err){
+                        console.log(err);
+                    } else {
+                        console.log(data);
+                        console.log("-----");
+                        console.log(JSON.parse(data));
+                        var obj = JSON.parse(data);
+                        for (var item in obj.all) {
+                            console.log(obj.all[item].PPN);
+                        }
+                    }
+                });
             };
             fileReader.readAsText(fileTobeRead);
         }, false);
-        fs.readFile("signaturen.json", "utf8", function readFileCallback(err, data){
-            if (err){
-                console.log(err);
-            } else {
-                console.log(data);
-                console.log("-----");
-                console.log(JSON.parse(data));
-            }
-        });
     }
     else {
         alert("Files are not supported");
@@ -90,4 +89,36 @@ function lineOutput(line) {
 
 function firstFour(str) {
     return str.substring(0, 4);
+}
+
+function extractPPN(str) {
+    // regex definiert 2 gruppen
+    let regex = /^(\d{4}\s)(.*)$/;
+
+    // es wird mit hilfe des regex die PPN ausgelesen
+    return str.replace(regex, "$2");
+}
+
+function extractExNr(str) {
+    // regex definiert 2 gruppen
+    let regex = /^(\d{4})(.*)$/;
+
+    // es wird mit hilfe des regex die ExemplarNr ausgelesen
+    return str.replace(regex, "$1");
+}
+
+function extractTxt(str) {
+    // regex definiert 2 gruppen
+    let regex = /^(\d{4}\s)(.*)$/;
+
+    // es wird mit hilfe des regex die Signatur ausgelesen
+    return str.replace(regex, "$2");
+}
+
+function extractDate(str) {
+    // regex definiert 3 gruppen
+    let regex = /^(\d{4}\s)(\d{2}-\d{2}-\d{2})(.*)$/;
+
+    // es wird mit hilfe des regex das BearbeitetAm Datum ausgelesen
+    return str.replace(regex, "$2");
 }
