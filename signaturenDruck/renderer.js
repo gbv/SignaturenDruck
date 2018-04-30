@@ -5,6 +5,9 @@
 // requires the Signatur class
 const Signatur = require("./signatur.js");
 
+// requires lodash
+const _ = require("lodash");
+
 // requires the fs-module
 const fs = require("fs");
 
