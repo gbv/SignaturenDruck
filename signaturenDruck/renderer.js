@@ -53,6 +53,7 @@ window.onload = function () {
                         sig.ppn = ppnAktuell;
                     }
                 });
+                // write every Signatur to signaturen.json
                 var json = JSON.stringify(obj);
                 fs.writeFile("signaturen.json", json, "utf8", function (err){
                     if (err){
@@ -61,6 +62,7 @@ window.onload = function () {
                         console.log("signaturen.json wurde erstellt");
                     }
                 });
+                // read from signaturen.json
                 fs.readFile("signaturen.json", "utf8", function readFileCallback(err, data){
                     if (err){
                         console.log(err);
@@ -93,7 +95,7 @@ function firstFour(str) {
 
 function extractPPN(str) {
     // regex definiert 2 gruppen
-    let regex = /^(\d{4}\s)(.*)$/;
+    let regex = /^(\d{4}\s\s*)(.*)(\s*)$/;
 
     // es wird mit hilfe des regex die PPN ausgelesen
     return str.replace(regex, "$2");
@@ -108,16 +110,24 @@ function extractExNr(str) {
 }
 
 function extractTxt(str) {
-    // regex definiert 2 gruppen
-    let regex = /^(\d{4}\s)(.*)$/;
+    // removes the first 4 numbers and following spaces
+    let regex = /^(\d{4}\s\s*)(.*)(\s*)$/;
+    str = str.replace(regex, "$2");
+
+    // removes @ and everything that follows
+    regex = /^(.[^@]*)(.*)$/;
+    str = str.replace(regex, "$1");
+
+    regex = /^((!\w*\s*\w*!\s*)*)(.*)(\s*)$/;
+    str = str.replace(regex, "$3");
 
     // es wird mit hilfe des regex die Signatur ausgelesen
-    return str.replace(regex, "$2");
+    return str;
 }
 
 function extractDate(str) {
     // regex definiert 3 gruppen
-    let regex = /^(\d{4}\s)(\d{2}-\d{2}-\d{2})(.*)$/;
+    let regex = /^(\d{4}\s\s*)(\d{2}-\d{2}-\d{2})(.*)$/;
 
     // es wird mit hilfe des regex das BearbeitetAm Datum ausgelesen
     return str.replace(regex, "$2");
