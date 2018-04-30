@@ -51,6 +51,9 @@ window.onload = function () {
                     }
                     if (sig.allSet()) {
                         lineOutput("");
+                        // _.forEach(sig.Signatur, function(value, key){
+                        //     console.log(key + " -> " + value);
+                        // });
                         obj.all.push(sig.Signatur);
                         sig = new Signatur();
                         sig.ppn = ppnAktuell;
@@ -70,13 +73,23 @@ window.onload = function () {
                     if (err){
                         console.log(err);
                     } else {
-                        console.log(data);
-                        console.log("-----");
-                        console.log(JSON.parse(data));
                         var obj = JSON.parse(data);
-                        for (var item in obj.all) {
-                            console.log(obj.all[item].PPN);
-                        }
+                        // lodash sortBy
+                        // console.log(_.sortBy(obj.all, ["PPN"]));
+
+                        // lodash removes duplicates
+                        var uniqObjcts = _.map(
+                            _.uniq(
+                                _.map(obj.all, function(obj){
+                                    return JSON.stringify(obj);
+                                })
+                            ), function(obj) {
+                                return JSON.parse(obj);
+                            }
+                        );
+                        console.log(uniqObjcts);
+
+                        output(uniqObjcts);
                     }
                 });
             };
@@ -134,4 +147,25 @@ function extractDate(str) {
 
     // es wird mit hilfe des regex das BearbeitetAm Datum ausgelesen
     return str.replace(regex, "$2");
+}
+
+function output(obj) {
+    var table = document.getElementById("signaturTable");
+    var i = 1;
+    _.forEach(obj, function(objct){
+        // _.forEach(objct, function(value, key){
+        //     // console.log(key + " => " + value);
+        //     // table.insertRow(i).insertCell(0).innerHTML = value;
+        // });
+        var row = table.insertRow(i);
+        var ppnCell = row.insertCell(0);
+        var txtCell = row.insertCell(1);
+        var dateCell = row.insertCell(2);
+        var exnrCell = row.insertCell(3);
+        ppnCell.innerHTML = objct.PPN;
+        txtCell.innerHTML = objct.txt;
+        dateCell.innerHTML = objct.date;
+        exnrCell.innerHTML = objct.exNr;
+        i++;
+    });
 }
