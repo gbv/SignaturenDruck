@@ -23,4 +23,8 @@
     "extensions.autoUpdate": false,
     "extensions.ignoreRecommendations": false,
     "git.enableSmartCommit": true
+
+    "jshint.options": {
+        "esversion": 6
+    }
 }
