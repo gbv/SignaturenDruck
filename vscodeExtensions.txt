@@ -14,3 +14,7 @@ Vue Components 0.4.2
     Sean Washington
 ESLint 1.4.8
     Dirk Baeumer
+jshint 0.10.18
+    Dirk Baeumer
+Regex Previewer 0.2.0
+    Christof Marti
