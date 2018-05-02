@@ -46,6 +46,7 @@ window.onload = function () {
                     lineOutput("ExemplarNr: " + sig.exNr);
                 } else if (first4 == 7100) {
                     sig.txt = extractTxt(line);
+                    sig.txtLength = sig.txt.length;
                     lineOutput("SignaturenText: " + sig.txt);
                 } else if (first4 == 7901) {
                     sig.date = extractDate(line);
@@ -61,7 +62,6 @@ window.onload = function () {
             // write every Signatur to signaturen.json
             writeSignaturesToFile(JSON.stringify(getUnique(obj)));
         });
-        console.log("Es ist da!!!");
         readSignaturesFromFile();
 
         // readAll();
@@ -78,7 +78,6 @@ window.onload = function () {
                 var fileReader = new FileReader();
                 fileReader.onload = function () {
                     const file = event.target.result;
-                    console.log(file);
                     const allLines = file.split(/\r\n|\n/);
                     var sig = new Signatur();
                     var ppnAktuell = "";
@@ -93,6 +92,7 @@ window.onload = function () {
                             lineOutput("ExemplarNr: " + sig.exNr);
                         } else if (first4 == 7100) {
                             sig.txt = extractTxt(line);
+                            sig.txtLength = sig.txt.length;
                             lineOutput("SignaturenText: " + sig.txt);
                         } else if (first4 == 7901) {
                             sig.date = extractDate(line);
@@ -100,9 +100,6 @@ window.onload = function () {
                         }
                         if (sig.allSet()) {
                             lineOutput("");
-                            // _.forEach(sig.Signatur, function(value, key){
-                            //     console.log(key + " -> " + value);
-                            // });
                             obj.all.push(sig.Signatur);
                             sig = new Signatur();
                             sig.ppn = ppnAktuell;
@@ -164,6 +161,8 @@ function extractTxt(str) {
     regex = /^((!\w*\s*\w*!\s*)*)(.*)(\s*)$/;
     str = str.replace(regex, "$3");
 
+    str = str.split(":");
+
     // es wird mit hilfe des regex die Signatur ausgelesen
     return str;
 }
@@ -188,7 +187,9 @@ function output(obj) {
         var dateCell = row.insertCell(2);
         var exnrCell = row.insertCell(3);
         ppnCell.innerHTML = objct.PPN;
-        txtCell.innerHTML = objct.txt;
+        _.forEach(objct.txt, function(value){
+            txtCell.innerHTML += value + " ";
+        });
         dateCell.innerHTML = objct.date;
         exnrCell.innerHTML = objct.exNr;
         i++;
@@ -236,51 +237,4 @@ function readSignaturesFromFile() {
             console.log("signaturen.json wurde gelesen");
         }
     });
-}
-
-function readAll(fileTobeRead) {
-    console.log(fileTobeRead);
-    alert(config.testKey);
-    var obj = {
-        all: []
-    };
-    var fileReader = new FileReader();
-    fileReader.onload = function () {
-        const file = event.target.result;
-        const allLines = file.split(/\r\n|\n/);
-        var sig = new Signatur();
-        var ppnAktuell = "";
-        // Reading line by line
-        allLines.map((line) => {
-            let first4 = firstFour(line);
-            if (first4 == "0100") {
-                sig.ppn = ppnAktuell = extractPPN(line);
-                lineOutput("PPN: " + sig.ppn);
-            } else if (first4 >= 7001 && first4 <= 7099) {
-                sig.exNr = extractExNr(line);
-                lineOutput("ExemplarNr: " + sig.exNr);
-            } else if (first4 == 7100) {
-                sig.txt = extractTxt(line);
-                lineOutput("SignaturenText: " + sig.txt);
-            } else if (first4 == 7901) {
-                sig.date = extractDate(line);
-                lineOutput("BearbeitetAm: " + sig.date);
-            }
-            if (sig.allSet()) {
-                lineOutput("");
-                // _.forEach(sig.Signatur, function(value, key){
-                //     console.log(key + " -> " + value);
-                // });
-                obj.all.push(sig.Signatur);
-                sig = new Signatur();
-                sig.ppn = ppnAktuell;
-            }
-        });
-        // write every Signatur to signaturen.json
-        writeSignaturesToFile(JSON.stringify(getUnique(obj)));
-        
-        // read from signaturen.json
-        readSignaturesFromFile();
-    };
-    fileReader.readAsText(fileTobeRead);
 }

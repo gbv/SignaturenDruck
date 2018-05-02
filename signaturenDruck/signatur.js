@@ -3,6 +3,7 @@ class Signatur {
         this._ppn = "";
         this._exNr = "";
         this._txt = "";
+        this._txtLength = "";
         this._date = "";
     }
 
@@ -15,6 +16,9 @@ class Signatur {
     }
     set txt(str) {
         this._txt = str;
+    }
+    set txtLength(str) {
+        this._txtLength = str;
     }
     set date(str) {
         this._date = str;
@@ -34,12 +38,12 @@ class Signatur {
         return this._date;
     }
     get Signatur() {
-        return {"PPN": this._ppn, "exNr": this._exNr, "txt": this._txt, "date": this._date};
+        return {"PPN": this._ppn, "exNr": this._exNr, "txt": this._txt, "txtLength": this._txtLength, "date": this._date};
     }
 
     // Method
     allSet() {
-        if (this._ppn != "" && this._exNr != "" && this._txt != "" && this._date != ""){
+        if (this._ppn != "" && this._exNr != "" && this._txt != "" && this._date != "" && this._txtLength){
             return true;
         } else {
             return false;
