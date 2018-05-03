@@ -8,7 +8,13 @@
                 border:double; 
                 overflow-y:scroll; 
                 height:100px; 
-            } 
+            }
+            .toPrint {
+                /* width: 50px;
+                height: 50px; */
+                padding: 0px;
+                margin: 0px;
+            }
         </style>
     </head>
     <body>
@@ -34,14 +40,95 @@
         <div>Folgende verwertbare Informationen sind enthalten:</div> 
         <div id="filecontents">
         </div>
+        <div>
+                <button onclick="createPDF()">klick mich</button>
+                <button onclick="changeStyle()">mich auch</button>
+        </div>
+        <div id="toPDF">
+            <div>Test</div>
+            <div class="html2pdf__page-break"></div>
+            <div class="toPrint" id="capture" style="background: #f5da55">
+                <h4 style="color: #000; margin: 0px">Hello world!</h4>
+            </div>
+            <div class="html2pdf__page-break"></div>
+            <div class="toPrint" style="background: #f5da55">
+                <h4 style="color: #000; margin: 0px">Hello world!</h4>
+            </div>
+            <div class="html2pdf__page-break"></div>
+            <div class="toPrint" style="background: #f5da55">
+                <h4 style="color: #000; margin: 0px">Hello world!</h4>
+            </div>
+            <div class="html2pdf__page-break"></div>
+            <div class="toPrint" style="background: #f5da55">
+                <h4 style="color: #000; margin: 0px">Hello world!</h4>
+            </div>
+            <div class="html2pdf__page-break"></div>
+            <div class="toPrint" style=" background: #f5da55">
+                <h4 style="color: #000; margin: 0px">Hello world!</h4>
+            </div>
+            <div class="html2pdf__page-break"></div>
+            <div class="toPrint" style="background: #f5da55">
+                <h4 style="color: #000; margin: 0px">Hello world!</h4>
+            </div>
+        </div>
         <script>
         // You can also require other files to run in this process
             require('./renderer.js')
+            const html2canvas = require("html2canvas")
+            const jsPDF = require("jspdf");
             const config = require('../config.json')
+            const html2pdf = require("html2pdf.js")
+            const fs = require("fs");
         </script>
         <script src="./sortTable.js"></script>
         <script>
             document.getElementById("defaultPath").innerHTML = config.default;
+        </script>
+        <script>
+            function changeStyle() {
+                let newConfig = loadConfig();
+                newConfig = JSON.parse(newConfig);
+                console.log(newConfig);
+                var toPrint = document.getElementsByClassName("toPrint");
+                var width;
+                var height;
+                console.log(toPrint);
+                width = newConfig.gross.label.width;
+                height = newConfig.gross.label.height;
+                console.log(width, height);
+                for (let i = 0; i < toPrint.length; i++) {
+                    toPrint[i].style.width = '' + width + 'px';
+                    toPrint[i].style.height = '' + height + 'px';
+                    // toPrint[i].style.margin = '50px';'
+                }
+            console.log(toPrint);
+            }
+            function createPDF() {
+                // html2canvas(document.querySelector("#capture")).then(canvas => {
+                //     document.body.appendChild(canvas);
+                // });
+                changeStyle();
+                let newConfig = loadConfig();
+                var element = document.getElementById("toPDF");
+                html2pdf(element, {
+                    margin:       1,
+                    filename:     'myfile.pdf',
+                    image:        { type: 'png', quality: 0.99 },
+                    html2canvas:  { dpi: 192, letterRendering: true },
+                    jsPDF:        { unit: 'px', format: [newConfig.gross.label.width + 3, newConfig.gross.label.height + 3], orientation: 'portrait' }
+                });
+            }
+            function loadConfig() {
+                console.log(config);
+                return fs.readFile("../config.json", "utf-8", (err, data) => {
+                    if (err) {
+                        alert("An error ocurred reading the file :" + err.message);
+                        return;
+                    }
+                    console.log(data);
+                    return data;
+                });
+            }
         </script>
     </body>
 </html>

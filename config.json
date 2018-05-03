@@ -1,4 +1,18 @@
 {
-  "testKey": "Don't panic, this is just a test",
-  "default": "C://Export//download.dnl"
+    "testKey": "Don't panic, this is just a test",
+    "default": "C://Export//download.dnl",
+    "gross": {
+        "drucker": "\\\\ulbw2k812\\ulbps101",
+        "label": {
+            "height" : 50,
+            "width"  : 100
+        }
+    },
+    "klein": {
+        "drucker": "\\\\ulbw2k812\\ulbps124",
+        "label": {
+            "height" : 50,
+            "width"  : 50
+        }
+    }
 }
