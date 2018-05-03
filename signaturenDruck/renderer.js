@@ -16,7 +16,7 @@ const jsPDF = require("jspdf");
 
 // loading config
 const config = require("../config.json");
-var fileContents = document.getElementById("filecontents");
+const fileContents = document.getElementById("filecontents");
 
 window.onload = function () {
     let fileSelected = document.getElementById("fileToRead");
@@ -180,20 +180,40 @@ function extractDate(str) {
 function output(obj) {
     var table = document.getElementById("signaturTable");
     var i = 1;
-    _.forEach(obj, function(objct){
+    _.forEach(obj, function(key, value){
         var row = table.insertRow(i);
-        var ppnCell = row.insertCell(0);
-        var txtCell = row.insertCell(1);
-        var dateCell = row.insertCell(2);
-        var exnrCell = row.insertCell(3);
-        ppnCell.innerHTML = objct.PPN;
-        _.forEach(objct.txt, function(value){
-            txtCell.innerHTML += value + " ";
+        var ppnRow = row.insertCell(0);
+        ppnRow.innerHTML = value;
+        _.forEach(key, function(objct){
+            i++;
+            row = table.insertRow(i);
+            var txtCell = row.insertCell(0);
+            var dateCell = row.insertCell(1);
+            var exnrCell = row.insertCell(2);
+            _.forEach(objct.txt, function(value){
+                txtCell.innerHTML += value + " ";
+            });
+            dateCell.innerHTML = objct.date;
+            exnrCell.innerHTML = objct.exNr;
         });
-        dateCell.innerHTML = objct.date;
-        exnrCell.innerHTML = objct.exNr;
         i++;
     });
+    // _.forEach(obj, function(objct){
+    //     console.log(objct);
+    //     console.log(obj);
+    //     var row = table.insertRow(i);
+    //     var ppnCell = row.insertCell(0);
+    //     var txtCell = row.insertCell(1);
+    //     var dateCell = row.insertCell(2);
+    //     var exnrCell = row.insertCell(3);
+    //     ppnCell.innerHTML = objct.PPN;
+    //     _.forEach(objct.txt, function(value){
+    //         txtCell.innerHTML += value + " ";
+    //     });
+    //     dateCell.innerHTML = objct.date;
+    //     exnrCell.innerHTML = objct.exNr;
+    //     i++;
+    // });
 }
 
 // removes duplicates
@@ -209,6 +229,10 @@ function getUnique(obj) {
     );
 }
 
+function groupByPPN(obj) {
+    return _.groupBy(obj, "PPN");
+}
+
 // function to test the PDF generation
 function testPDF() {
     var doc = new jsPDF("l", "mm", [200, 200]);
@@ -219,6 +243,9 @@ function testPDF() {
 }
 
 function writeSignaturesToFile(json) {
+    console.log(json);
+    json = JSON.stringify(groupByPPN(JSON.parse(json)));
+    console.log(json);
     fs.writeFile("signaturen.json", json, "utf8", function (err){
         if (err){
             throw err;
