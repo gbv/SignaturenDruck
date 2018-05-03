@@ -14,16 +14,18 @@ const fs = require("fs");
 //requires jsPDF
 const jsPDF = require("jspdf");
 
-// loading config
-const config = require("../config.json");
 const fileContents = document.getElementById("filecontents");
+
+const Store = require("electron-store");
+const store = new Store();
 
 window.onload = function () {
     let fileSelected = document.getElementById("fileToRead");
     let fileTobeRead;
-    if (fs.existsSync(config.default)) {
+    console.log(store.store);
+    if (fs.existsSync(store.get("default"))) {
         // fileTobeRead = fileSelected.files[0];
-        fs.readFile(config.default, "utf-8", (err, data) => {
+        fs.readFile(store.get("default"), "utf-8", (err, data) => {
             if (err) {
                 alert("An error ocurred reading the file :" + err.message);
                 return;

@@ -8,6 +8,9 @@ const path = require("path");
 const url = require("url");
 const fs = require("fs");
 
+const Store = require("electron-store");
+const store = new Store();
+
 // Keep a global reference of the window object, if you don't, the window will
 // be closed automatically when the JavaScript object is garbage collected.
 let mainWindow;
@@ -22,7 +25,6 @@ function createWindow () {
         protocol: "file:",
         slashes: true
     }));
-
     // Open the DevTools.
     // mainWindow.webContents.openDevTools()
 
