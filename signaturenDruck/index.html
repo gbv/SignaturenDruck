@@ -4,16 +4,18 @@
         <meta charset="UTF-8">
         <title>Signaturendruck</title>
         <style type="text/css"> 
-            #filecontents { 
+            #filecontents, #tableBox { 
                 border:double; 
                 overflow-y:scroll; 
-                height:200px; 
+                height:100px; 
             } 
         </style>
     </head>
     <body>
-        Datei auswählen: 
-        <input type="file" id="fileToRead" />
+        <p>Die Signaturen stammen aus: <span id="defaultPath"></span></p>
+        <p>Eine andere Datei auswählen: 
+            <input type="file" id="fileToRead" />
+        </p>
         <div id="tableBox">
             <table id="signaturTable">
                 <tr>
@@ -35,8 +37,11 @@
         <script>
         // You can also require other files to run in this process
             require('./renderer.js')
-            require('../config.json')
+            const config = require('../config.json')
         </script>
         <script src="./sortTable.js"></script>
+        <script>
+            document.getElementById("defaultPath").innerHTML = config.default;
+        </script>
     </body>
 </html>

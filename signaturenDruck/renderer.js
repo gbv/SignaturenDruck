@@ -22,7 +22,6 @@ window.onload = function () {
     let fileSelected = document.getElementById("fileToRead");
     let fileTobeRead;
     if (fs.existsSync(config.default)) {
-        console.log("It exists");
         // fileTobeRead = fileSelected.files[0];
         fs.readFile(config.default, "utf-8", (err, data) => {
             if (err) {
@@ -63,60 +62,56 @@ window.onload = function () {
             writeSignaturesToFile(JSON.stringify(getUnique(obj)));
         });
         readSignaturesFromFile();
+    }
 
-        // readAll();
-
-        //Check the support for the File API support
-        if (window.File && window.FileReader && window.FileList && window.Blob) {
-            fileSelected.addEventListener("change", function () {
-                fileTobeRead = fileSelected.files[0];
-                console.log(fileTobeRead);
-                alert(config.testKey);
-                var obj = {
-                    all: []
-                };
-                var fileReader = new FileReader();
-                fileReader.onload = function () {
-                    const file = event.target.result;
-                    const allLines = file.split(/\r\n|\n/);
-                    var sig = new Signatur();
-                    var ppnAktuell = "";
-                    // Reading line by line
-                    allLines.map((line) => {
-                        let first4 = firstFour(line);
-                        if (first4 == "0100") {
-                            sig.ppn = ppnAktuell = extractPPN(line);
-                            lineOutput("PPN: " + sig.ppn);
-                        } else if (first4 >= 7001 && first4 <= 7099) {
-                            sig.exNr = extractExNr(line);
-                            lineOutput("ExemplarNr: " + sig.exNr);
-                        } else if (first4 == 7100) {
-                            sig.txt = extractTxt(line);
-                            sig.txtLength = sig.txt.length;
-                            lineOutput("SignaturenText: " + sig.txt);
-                        } else if (first4 == 7901) {
-                            sig.date = extractDate(line);
-                            lineOutput("BearbeitetAm: " + sig.date);
-                        }
-                        if (sig.allSet()) {
-                            lineOutput("");
-                            obj.all.push(sig.Signatur);
-                            sig = new Signatur();
-                            sig.ppn = ppnAktuell;
-                        }
-                    });
-                    // write every Signatur to signaturen.json
-                    writeSignaturesToFile(JSON.stringify(getUnique(obj)));
-                    
-                    // read from signaturen.json
-                    readSignaturesFromFile();
-                };
-                fileReader.readAsText(fileTobeRead);
-            }, false);
-        }
-        else {
-            alert("Files are not supported");
-        }
+    //Check the support for the File API support
+    if (window.File && window.FileReader && window.FileList && window.Blob) {
+        fileSelected.addEventListener("change", function () {
+            fileTobeRead = fileSelected.files[0];
+            var obj = {
+                all: []
+            };
+            var fileReader = new FileReader();
+            fileReader.onload = function () {
+                const file = event.target.result;
+                const allLines = file.split(/\r\n|\n/);
+                var sig = new Signatur();
+                var ppnAktuell = "";
+                // Reading line by line
+                allLines.map((line) => {
+                    let first4 = firstFour(line);
+                    if (first4 == "0100") {
+                        sig.ppn = ppnAktuell = extractPPN(line);
+                        lineOutput("PPN: " + sig.ppn);
+                    } else if (first4 >= 7001 && first4 <= 7099) {
+                        sig.exNr = extractExNr(line);
+                        lineOutput("ExemplarNr: " + sig.exNr);
+                    } else if (first4 == 7100) {
+                        sig.txt = extractTxt(line);
+                        sig.txtLength = sig.txt.length;
+                        lineOutput("SignaturenText: " + sig.txt);
+                    } else if (first4 == 7901) {
+                        sig.date = extractDate(line);
+                        lineOutput("BearbeitetAm: " + sig.date);
+                    }
+                    if (sig.allSet()) {
+                        lineOutput("");
+                        obj.all.push(sig.Signatur);
+                        sig = new Signatur();
+                        sig.ppn = ppnAktuell;
+                    }
+                });
+                // write every Signatur to signaturen.json
+                writeSignaturesToFile(JSON.stringify(getUnique(obj)));
+                
+                // read from signaturen.json
+                readSignaturesFromFile();
+            };
+            fileReader.readAsText(fileTobeRead);
+        }, false);
+    }
+    else {
+        alert("Files are not supported");
     }
 };
 
@@ -198,22 +193,6 @@ function output(obj) {
         });
         i++;
     });
-    // _.forEach(obj, function(objct){
-    //     console.log(objct);
-    //     console.log(obj);
-    //     var row = table.insertRow(i);
-    //     var ppnCell = row.insertCell(0);
-    //     var txtCell = row.insertCell(1);
-    //     var dateCell = row.insertCell(2);
-    //     var exnrCell = row.insertCell(3);
-    //     ppnCell.innerHTML = objct.PPN;
-    //     _.forEach(objct.txt, function(value){
-    //         txtCell.innerHTML += value + " ";
-    //     });
-    //     dateCell.innerHTML = objct.date;
-    //     exnrCell.innerHTML = objct.exNr;
-    //     i++;
-    // });
 }
 
 // removes duplicates
@@ -243,9 +222,7 @@ function testPDF() {
 }
 
 function writeSignaturesToFile(json) {
-    console.log(json);
     json = JSON.stringify(groupByPPN(JSON.parse(json)));
-    console.log(json);
     fs.writeFile("signaturen.json", json, "utf8", function (err){
         if (err){
             throw err;
