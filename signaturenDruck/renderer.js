@@ -11,8 +11,8 @@ const _ = require("lodash");
 // requires the fs-module
 const fs = require("fs");
 
-//requires jsPDF
-const jsPDF = require("jspdf");
+// //requires jsPDF
+// const jsPDF = require("jspdf");
 
 const fileContents = document.getElementById("filecontents");
 
@@ -20,6 +20,7 @@ const Store = require("electron-store");
 const store = new Store();
 
 window.onload = function () {
+    document.getElementById("defaultPath").innerHTML = store.get("default");
     let fileSelected = document.getElementById("fileToRead");
     let fileTobeRead;
     console.log(store.store);
@@ -214,14 +215,14 @@ function groupByPPN(obj) {
     return _.groupBy(obj, "PPN");
 }
 
-// function to test the PDF generation
-function testPDF() {
-    var doc = new jsPDF("l", "mm", [200, 200]);
-    doc.text("This is just a test", 5, 5);
-    doc.addPage(200, 100);
-    doc.text("This is a second page", 5, 5);
-    doc.save("test.pdf");
-}
+// // function to test the PDF generation
+// function testPDF() {
+//     var doc = new jsPDF("l", "mm", [200, 200]);
+//     doc.text("This is just a test", 5, 5);
+//     doc.addPage(200, 100);
+//     doc.text("This is a second page", 5, 5);
+//     doc.save("test.pdf");
+// }
 
 function writeSignaturesToFile(json) {
     json = JSON.stringify(groupByPPN(JSON.parse(json)));

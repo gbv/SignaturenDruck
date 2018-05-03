@@ -34,6 +34,9 @@ class Signatur {
     get txt() {
         return this._txt;
     }
+    get txtLength() {
+        return this._txtLength;
+    }
     get date() {
         return this._date;
     }

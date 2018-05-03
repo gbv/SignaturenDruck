@@ -76,18 +76,15 @@
             require('./renderer.js')
             const html2canvas = require("html2canvas")
             const jsPDF = require("jspdf");
-            const config = require('../config.json')
             const html2pdf = require("html2pdf.js")
             const fs = require("fs");
+            const Store = require("electron-store");
+            const store = new Store();
         </script>
         <script src="./sortTable.js"></script>
         <script>
-            document.getElementById("defaultPath").innerHTML = config.default;
-        </script>
-        <script>
             function changeStyle() {
                 let newConfig = loadConfig();
-                newConfig = JSON.parse(newConfig);
                 console.log(newConfig);
                 var toPrint = document.getElementsByClassName("toPrint");
                 var width;
@@ -119,15 +116,7 @@
                 });
             }
             function loadConfig() {
-                console.log(config);
-                return fs.readFile("../config.json", "utf-8", (err, data) => {
-                    if (err) {
-                        alert("An error ocurred reading the file :" + err.message);
-                        return;
-                    }
-                    console.log(data);
-                    return data;
-                });
+                return store.store;
             }
         </script>
     </body>
