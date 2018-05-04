@@ -50,7 +50,7 @@
             <div id="previewBox" style="background: #00f8d7">
 
             </div>
-            <div id="toPDF">
+            <div id="toPDF" hidden>
                 <div>Test</div>
                 <div class="html2pdf__page-break"></div>
                 <div class="toPrint" id="capture" style="background: #f5da55">
@@ -148,16 +148,28 @@
                     _.forEach(key, function(objct){
                         i++;
                         row = table.insertRow(i);
-                        row.onclick = function() { vorschau(objct.id); };
+                        // row.onclick = function() { vorschau(objct.id); };
                         var txtCell = row.insertCell(0);
+                        txtCell.onclick = function() { vorschau(objct.id); };
                         var dateCell = row.insertCell(1);
+                        dateCell.onclick = function() { vorschau(objct.id); };
                         var exnrCell = row.insertCell(2);
-                        var previewCell = row.insertCell(3);
+                        exnrCell.onclick = function() { vorschau(objct.id); };
+                        var shortSigCell = row.insertCell(3);
+                        var printSigCell = row.insertCell(4);
                         _.forEach(objct.txt, function(value){
                             txtCell.innerHTML += value + " ";
                         });
                         dateCell.innerHTML = objct.date;
                         exnrCell.innerHTML = objct.exNr;
+                        let chkBx = document.createElement("input");
+                        chkBx.id = "short_" + objct.id;
+                        chkBx.type = "checkbox";
+                        shortSigCell.appendChild(chkBx);
+                        chkBx = document.createElement("input");
+                        chkBx.id = "print_" + objct.id;
+                        chkBx.type = "checkbox";
+                        printSigCell.appendChild(chkBx);
                     });
                     i++;
                 });

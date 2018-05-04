@@ -75,14 +75,14 @@ function createConfig() {
             "drucker": "\\\\ulbw2k812\\ulbps101",
             "label": {
                 "height": 100,
-                "width": 100
+                "width": 300
             }
         },
         "klein": {
             "drucker": "\\\\ulbw2k812\\ulbps124",
             "label": {
-                "height": 50,
-                "width": 50
+                "height": 80,
+                "width": 220
             }
         }
     };
