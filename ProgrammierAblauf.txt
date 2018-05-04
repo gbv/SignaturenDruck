@@ -1,0 +1,37 @@
+Vorgehen beim Programieren
+
+-ablauf grob aufgeschrieben
+-signatur klasse entworfen
+
+mit electron:
+-simple index.html
+-dateiarbeit:
+    lesen aller daten
+    anzeige aller daten
+    filtern der daten
+    ausgabe der gefilterten ergebnisse
+    implementierung der klasse
+    daten mit der klasse verarbeitet
+    daten in datei geschrieben
+    lesen der daten aus der datei
+    sortieren der daten aus der datei
+    sortieren der daten bevor sie in die datei geschrieben werden
+    anzeigen der daten in tabelle
+
+-erstellen der signaturen:
+    installation von node modulen
+    erste test
+        erstellen eines pdfs (jsPDF)
+        erstellen einer html aufnahme (html2canvas)
+        versuch beides zu kombinieren (resultat nicht zufrieden stellend)
+        installation von html2pdf.js
+            test (erfolgreich)
+
+-lesen der config.json
+    mit npm start ok
+    wenn mit electron-builder erzeugten exe ohne funktion
+    loesungssuche
+        electron-store
+
+
+    
