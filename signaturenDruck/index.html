@@ -10,8 +10,8 @@
                 height:100px; 
             }
             .toPrint {
-                /* width: 50px;
-                height: 50px; */
+                width: 50px;
+                height: 50px;
                 padding: 0px;
                 margin: 0px;
             }
@@ -43,6 +43,7 @@
         <div>
                 <button onclick="createPDF()">klick mich</button>
                 <button onclick="changeStyle()">mich auch</button>
+                <button onclick="loadData()">lade Daten</button>
         </div>
         <div id="toPDF">
             <div>Test</div>
@@ -78,6 +79,7 @@
             const jsPDF = require("jspdf");
             const html2pdf = require("html2pdf.js")
             const fs = require("fs");
+            const _ = require("lodash");
             const Store = require("electron-store");
             const store = new Store();
         </script>
@@ -117,6 +119,40 @@
             }
             function loadConfig() {
                 return store.store;
+            }
+        </script>
+        <script>
+            function loadData() {
+                fs.readFile("signaturen.json", "utf8", function readFileCallback(err, data){
+                    if (err){
+                        console.log(err);
+                    } else {
+                        output(JSON.parse(data));
+                        console.log("signaturen.json wurde gelesen");
+                    }
+                });
+            }
+            function output(obj) {
+                var table = document.getElementById("signaturTable");
+                var i = 1;
+                _.forEach(obj, function(key, value){
+                    var row = table.insertRow(i);
+                    var ppnRow = row.insertCell(0);
+                    ppnRow.innerHTML = value;
+                    _.forEach(key, function(objct){
+                        i++;
+                        row = table.insertRow(i);
+                        var txtCell = row.insertCell(0);
+                        var dateCell = row.insertCell(1);
+                        var exnrCell = row.insertCell(2);
+                        _.forEach(objct.txt, function(value){
+                            txtCell.innerHTML += value + " ";
+                        });
+                        dateCell.innerHTML = objct.date;
+                        exnrCell.innerHTML = objct.exNr;
+                    });
+                    i++;
+                });
             }
         </script>
     </body>
