@@ -55,7 +55,7 @@ function deleteJSON() {
     }
 }
 
-// checks if config file exists, if not creates one
+// checks if config file exists, else creates one
 function checkConfig() {
     if (fs.existsSync(app.getPath("userData") + "\\config.json")) {
         if (!store.has("default")) {
