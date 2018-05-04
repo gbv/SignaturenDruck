@@ -17,7 +17,7 @@ const fs = require("fs");
 const fileContents = document.getElementById("filecontents");
 
 const Store = require("electron-store");
-const store = new Store();
+const store = new Store({cwd: "C:\\Export\\"});
 
 window.onload = function () {
     document.getElementById("defaultPath").innerHTML = store.get("default");

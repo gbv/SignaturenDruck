@@ -4,10 +4,10 @@
         <meta charset="UTF-8">
         <title>Signaturendruck</title>
         <style type="text/css"> 
-            #filecontents, #tableBox { 
+            #filecontents, #tableBox, #testBox { 
                 border:double; 
                 overflow-y:scroll; 
-                height:100px; 
+                height:200px; 
             }
             .toPrint {
                 width: 50px;
@@ -37,8 +37,8 @@
                 </tr>
             </table>
         </div>
-        <div>Folgende verwertbare Informationen sind enthalten:</div> 
-        <div id="filecontents">
+        <div hidden>Folgende verwertbare Informationen sind enthalten:</div> 
+        <div id="filecontents" hidden>
         </div>
         <div>
             <button onclick="createPDF()">klick mich</button>
@@ -47,6 +47,9 @@
             <button onclick="vorschau(2)">Vorschau</button>
         </div>
         <div id="testBox">
+            <div id="previewBox" style="background: #00f8d7">
+
+            </div>
             <div id="toPDF">
                 <div>Test</div>
                 <div class="html2pdf__page-break"></div>
@@ -145,9 +148,11 @@
                     _.forEach(key, function(objct){
                         i++;
                         row = table.insertRow(i);
+                        row.onclick = function() { vorschau(objct.id); };
                         var txtCell = row.insertCell(0);
                         var dateCell = row.insertCell(1);
                         var exnrCell = row.insertCell(2);
+                        var previewCell = row.insertCell(3);
                         _.forEach(objct.txt, function(value){
                             txtCell.innerHTML += value + " ";
                         });
@@ -173,6 +178,27 @@
                         });
                         if (sig != "") {
                             console.log(sig);
+                            let length = sig.txtLength;
+                            let i = 1;
+                            let line = document.createElement('p');
+                            console.log(length);
+                            if (length > 3) {
+                                console.log("added stuff");
+                            } else {
+
+                            }
+                            let myNode = document.getElementById("previewBox");
+                            while (myNode.firstChild) {
+                                myNode.removeChild(myNode.firstChild);
+                            }
+                            sig.txt.forEach(element => {
+                                line.className = "previewLine";
+                                line.id = "line" + i;
+                                line.innerHTML = element;
+                                document.getElementById("previewBox").appendChild(line);
+                                line = document.createElement('p');
+                                i++;
+                            });
                         }
                     }
                 });
