@@ -8,11 +8,18 @@ const path = require("path");
 const url = require("url");
 const fs = require("fs");
 
+const Store = require("electron-store");
+const store = new Store();
+
+// name of signature storage json
+const sigJSON = "signaturen.json";
+
 // Keep a global reference of the window object, if you don't, the window will
 // be closed automatically when the JavaScript object is garbage collected.
 let mainWindow;
 
 function createWindow () {
+    checkConfig();
     // Create the browser window.
     mainWindow = new BrowserWindow({width: 800, height: 600});
 
@@ -31,14 +38,55 @@ function createWindow () {
     // in an array if your app supports multi windows, this is the time
     // when you should delete the corresponding element.
         mainWindow = null;
-        fs.unlink("signaturen.json", function (err){
+        deleteJSON();
+    });
+}
+
+// deletes the signature storage json
+function deleteJSON() {
+    if (fs.existsSync(sigJSON)) {
+        fs.unlink(sigJSON, function (err){
             if (err) {
                 throw err;
             } else {
-                console.log("signaturen.json wurde gelöscht");
+                console.log(sigJSON + " wurde geloescht");
             }
         });
-    });
+    }
+}
+
+// checks if config file exists, if not creates one
+function checkConfig() {
+    if (fs.existsSync(app.getPath("userData") + "\\config.json")) {
+        if (!store.has("default")) {
+            createConfig();
+        }
+    } else {
+        createConfig();
+    }
+}
+
+// creates new config.json
+function createConfig() {
+    let config = {
+        "testKey": "Don't panic, this is just a test",
+        "default": "C://Export//download.dnl",
+        "gross": {
+            "drucker": "\\\\ulbw2k812\\ulbps101",
+            "label": {
+                "height": 100,
+                "width": 100
+            }
+        },
+        "klein": {
+            "drucker": "\\\\ulbw2k812\\ulbps124",
+            "label": {
+                "height": 50,
+                "width": 50
+            }
+        }
+    };
+    store.set(config);
 }
 
 // This method will be called when Electron has finished
