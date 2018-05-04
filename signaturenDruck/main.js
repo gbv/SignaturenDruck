@@ -9,7 +9,7 @@ const url = require("url");
 const fs = require("fs");
 
 const Store = require("electron-store");
-const store = new Store();
+const store = new Store({cwd: "C:\\Export\\"});
 
 // name of signature storage json
 const sigJSON = "signaturen.json";
@@ -57,7 +57,7 @@ function deleteJSON() {
 
 // checks if config file exists, else creates one
 function checkConfig() {
-    if (fs.existsSync(app.getPath("userData") + "\\config.json")) {
+    if (fs.existsSync("C:\\Export\\config.json")) {
         if (!store.has("default")) {
             createConfig();
         }
