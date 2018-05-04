@@ -41,35 +41,38 @@
         <div id="filecontents">
         </div>
         <div>
-                <button onclick="createPDF()">klick mich</button>
-                <button onclick="changeStyle()">mich auch</button>
-                <button onclick="loadData()">lade Daten</button>
+            <button onclick="createPDF()">klick mich</button>
+            <button onclick="changeStyle()">mich auch</button>
+            <button onclick="loadData()">lade Daten</button>
+            <button onclick="vorschau(2)">Vorschau</button>
         </div>
-        <div id="toPDF">
-            <div>Test</div>
-            <div class="html2pdf__page-break"></div>
-            <div class="toPrint" id="capture" style="background: #f5da55">
-                <h4 style="color: #000; margin: 0px">Hello world!</h4>
-            </div>
-            <div class="html2pdf__page-break"></div>
-            <div class="toPrint" style="background: #f5da55">
-                <h4 style="color: #000; margin: 0px">Hello world!</h4>
-            </div>
-            <div class="html2pdf__page-break"></div>
-            <div class="toPrint" style="background: #f5da55">
-                <h4 style="color: #000; margin: 0px">Hello world!</h4>
-            </div>
-            <div class="html2pdf__page-break"></div>
-            <div class="toPrint" style="background: #f5da55">
-                <h4 style="color: #000; margin: 0px">Hello world!</h4>
-            </div>
-            <div class="html2pdf__page-break"></div>
-            <div class="toPrint" style=" background: #f5da55">
-                <h4 style="color: #000; margin: 0px">Hello world!</h4>
-            </div>
-            <div class="html2pdf__page-break"></div>
-            <div class="toPrint" style="background: #f5da55">
-                <h4 style="color: #000; margin: 0px">Hello world!</h4>
+        <div id="testBox">
+            <div id="toPDF">
+                <div>Test</div>
+                <div class="html2pdf__page-break"></div>
+                <div class="toPrint" id="capture" style="background: #f5da55">
+                    <h4 style="color: #000; margin: 0px">Hello world!</h4>
+                </div>
+                <div class="html2pdf__page-break"></div>
+                <div class="toPrint" style="background: #f5da55">
+                    <h4 style="color: #000; margin: 0px">Hello world!</h4>
+                </div>
+                <div class="html2pdf__page-break"></div>
+                <div class="toPrint" style="background: #f5da55">
+                    <h4 style="color: #000; margin: 0px">Hello world!</h4>
+                </div>
+                <div class="html2pdf__page-break"></div>
+                <div class="toPrint" style="background: #f5da55">
+                    <h4 style="color: #000; margin: 0px">Hello world!</h4>
+                </div>
+                <div class="html2pdf__page-break"></div>
+                <div class="toPrint" style=" background: #f5da55">
+                    <h4 style="color: #000; margin: 0px">Hello world!</h4>
+                </div>
+                <div class="html2pdf__page-break"></div>
+                <div class="toPrint" style="background: #f5da55">
+                    <h4 style="color: #000; margin: 0px">Hello world!</h4>
+                </div>
             </div>
         </div>
         <script>
@@ -152,6 +155,26 @@
                         exnrCell.innerHTML = objct.exNr;
                     });
                     i++;
+                });
+            }
+        </script>
+        <script>
+            function vorschau(id) {
+                fs.readFile("signaturen.json", "utf8", function readFileCallback(err, data){
+                    if (err){
+                        console.log(err);
+                    } else {
+                        let sig = "";
+                        _.forEach(JSON.parse(data), function(key, value){
+                            let found = _.find(key, {"id": id});
+                            if (found !== undefined) {
+                                sig = found;
+                            }
+                        });
+                        if (sig != "") {
+                            console.log(sig);
+                        }
+                    }
                 });
             }
         </script>
