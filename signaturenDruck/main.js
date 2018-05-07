@@ -128,7 +128,7 @@ ipc.on("print", function(){
     //     win.hide();
     // });
     win.once("ready-to-show", () => {
-        win.hide();
+        win.show();
     });
 
     win.webContents.session.on("will-download", (event, item, webContents) => {

@@ -21,20 +21,14 @@ window.onload = function () {
 
 function changeStyle() {
     let newConfig = loadConfig();
-    console.log(newConfig);
     let shelfmark = document.getElementsByClassName("shelfmark");
-    var width;
-    var height;
-    console.log(shelfmark);
-    width = newConfig.gross.label.width;
-    height = newConfig.gross.label.height;
-    console.log(width, height);
+    let width = newConfig.gross.label.width;
+    let height = newConfig.gross.label.height;
+    let unit = newConfig.einheit;
     for (let i = 0; i < shelfmark.length; i++) {
-        shelfmark[i].style.width = "" + width + "px";
-        shelfmark[i].style.height = "" + height + "px";
-        // toPrint[i].style.margin = '50px';'
+        shelfmark[i].style.width = "" + width + unit;
+        shelfmark[i].style.height = "" + height + unit;
     }
-    console.log(shelfmark);
 }
 
 function loadConfig() {
@@ -42,9 +36,7 @@ function loadConfig() {
 }
 
 function preview(id) {
-    console.log("created preview --- START");
     fs.readFile("signaturen.json", "utf8", function readFileCallback(err, data){
-        console.log("created preview AS --- START");
         if (err){
             console.log(err);
         } else {
@@ -59,16 +51,14 @@ function preview(id) {
                     }
                 });
                 if (sig != "") {
-                    console.log(sig);
                     let length = sig.txtLength;
                     let id = sig.id;
                     let i = 1;
                     let div = document.createElement("div");
                     let line = document.createElement("p");
-                    console.log(length);
-                    if (length > 3) {
-                        console.log("added stuff");
-                    }
+                    // if (length > 3) {
+                    //     console.log("added stuff");
+                    // }
                     // let myNode = document.getElementById("previewBox");
                     // while (myNode.firstChild) {
                     //     myNode.removeChild(myNode.firstChild);
@@ -97,14 +87,11 @@ function preview(id) {
                 idNr++;
             });
         }
-        console.log("created preview AS --- END");
         createPDF();
     });
-    console.log("created preview --- END");
 }
 
 function createPDF() {
-    console.log("created pdf --- START");
     let newConfig = config.store;
     var element = document.getElementById("toPrint");
     html2pdf(element, {
@@ -114,5 +101,4 @@ function createPDF() {
         html2canvas:  { dpi: 300, letterRendering: true },
         jsPDF:        { unit: newConfig.einheit, format: [newConfig.gross.label.width + 0.5, newConfig.gross.label.height + 0.5], orientation: "landscape" }
     });
-    console.log("created pdf --- END");
 }
