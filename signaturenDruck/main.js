@@ -75,17 +75,18 @@ function createConfig() {
         "gross": {
             "drucker": "\\\\ulbw2k812\\ulbps101",
             "label": {
-                "height": 100,
-                "width": 300
+                "width": 80,
+                "height": 43
             }
         },
         "klein": {
             "drucker": "\\\\ulbw2k812\\ulbps124",
             "label": {
-                "height": 80,
-                "width": 220
+                "width": 74,
+                "height": 23
             }
-        }
+        },
+        "einheit": "mm"
     };
     store.set(config);
 }
@@ -112,7 +113,7 @@ app.on("activate", function () {
     }
 });
 
-ipc.on("open-window", function(){
+ipc.on("print", function(){
     let win = null;
 
     win = new BrowserWindow({width: 800, height: 600, show: false });
@@ -131,9 +132,6 @@ ipc.on("open-window", function(){
     });
 
     win.webContents.session.on("will-download", (event, item, webContents) => {
-        console.log("event: ", event);
-        console.log("item: ", item);
-        // item.setSavePath("./myfile.pdf");
         item.setSavePath("C:\\Export\\myfile.pdf");
     });
 

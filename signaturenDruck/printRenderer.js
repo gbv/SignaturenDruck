@@ -37,22 +37,6 @@ function changeStyle() {
     console.log(shelfmark);
 }
 
-// function createPDF() {
-//     // html2canvas(document.querySelector("#capture")).then(canvas => {
-//     //     document.body.appendChild(canvas);
-//     // });
-//     changeStyle();
-//     let newConfig = loadConfig();
-//     var element = document.getElementById("toPrint");
-//     html2pdf(element, {
-//         margin:       1,
-//         filename:     "myfile.pdf",
-//         image:        { type: "png", quality: 0.99 },
-//         html2canvas:  { dpi: 192, letterRendering: true },
-//         jsPDF:        { unit: "px", format: [newConfig.gross.label.width + 3, newConfig.gross.label.height + 3], orientation: "portrait" }
-//     });
-// }
-
 function loadConfig() {
     return config.store;
 }
@@ -127,8 +111,8 @@ function createPDF() {
         margin:       1,
         filename:     "C://Export/myfile.pdf",
         image:        { type: "png", quality: 0.99 },
-        html2canvas:  { dpi: 192, letterRendering: true },
-        jsPDF:        { unit: "px", format: [newConfig.gross.label.width + 3, newConfig.gross.label.height + 3], orientation: "landscape" }
+        html2canvas:  { dpi: 300, letterRendering: true },
+        jsPDF:        { unit: newConfig.einheit, format: [newConfig.gross.label.width + 0.5, newConfig.gross.label.height + 0.5], orientation: "landscape" }
     });
     console.log("created pdf --- END");
 }

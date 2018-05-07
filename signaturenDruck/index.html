@@ -40,12 +40,11 @@
         <div hidden>Folgende verwertbare Informationen sind enthalten:</div> 
         <div id="filecontents" hidden>
         </div>
-        <div>
-            <button onclick="createPDF()">klick mich</button>
-            <button onclick="changeStyle()">mich auch</button>
-            <button onclick="loadData()">lade Daten</button>
-            <button onclick="vorschau(2)">Vorschau</button>
-            <button onclick="buttonClicked()">New Window</button>
+        <div id="buttonBox">
+            <button onclick="changeStyle()">changeStyle</button>
+            <button onclick="loadData()">loadData</button>
+            <button onclick="preview(2)">preview</button>
+            <button onclick="printButton()">Drucken</button>
         </div>
         <div id="testBox">
             <div id="previewBox" style="background: #00f8d7">
@@ -101,16 +100,17 @@
             function changeStyle() {
                 let newConfig = loadConfig();
                 console.log(newConfig);
-                var toPrint = document.getElementsByClassName("toPrint");
-                var width;
-                var height;
+                let toPrint = document.getElementsByClassName("toPrint");
+                let width = newConfig.gross.label.width;;
+                let height = newConfig.gross.label.height;;
+                let unit = newConfig.einheit;;
                 console.log(toPrint);
                 width = newConfig.gross.label.width;
                 height = newConfig.gross.label.height;
                 console.log(width, height);
                 for (let i = 0; i < toPrint.length; i++) {
-                    toPrint[i].style.width = '' + width + 'px';
-                    toPrint[i].style.height = '' + height + 'px';
+                    toPrint[i].style.width = '' + width + unit;
+                    toPrint[i].style.height = '' + height + unit;
                     // toPrint[i].style.margin = '50px';'
                 }
             console.log(toPrint);
@@ -156,13 +156,13 @@
                     _.forEach(key, function(objct){
                         i++;
                         row = table.insertRow(i);
-                        // row.onclick = function() { vorschau(objct.id); };
+                        // row.onclick = function() { preview(objct.id); };
                         var txtCell = row.insertCell(0);
-                        txtCell.onclick = function() { vorschau(objct.id); };
+                        txtCell.onclick = function() { preview(objct.id); };
                         var dateCell = row.insertCell(1);
-                        dateCell.onclick = function() { vorschau(objct.id); };
+                        dateCell.onclick = function() { preview(objct.id); };
                         var exnrCell = row.insertCell(2);
-                        exnrCell.onclick = function() { vorschau(objct.id); };
+                        exnrCell.onclick = function() { preview(objct.id); };
                         var shortSigCell = row.insertCell(3);
                         var printSigCell = row.insertCell(4);
                         var printCount = row.insertCell(5);
@@ -192,7 +192,7 @@
             }
         </script>
         <script>
-            function vorschau(id) {
+            function preview(id) {
                 fs.readFile("signaturen.json", "utf8", function readFileCallback(err, data){
                     if (err){
                         console.log(err);
@@ -238,8 +238,8 @@
             }
         </script>
         <script>
-            function buttonClicked() {
-                ipc.send("open-window");
+            function printButton() {
+                ipc.send("print");
             }
         </script>
     </body>
