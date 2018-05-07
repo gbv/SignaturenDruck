@@ -15,6 +15,8 @@ const store = new Store({cwd: "C:\\Export\\"});
 // name of signature storage json
 const sigJSON = "signaturen.json";
 
+const username = require("username");
+
 // Keep a global reference of the window object, if you don't, the window will
 // be closed automatically when the JavaScript object is garbage collected.
 let mainWindow;
@@ -113,9 +115,9 @@ app.on("activate", function () {
     }
 });
 
-ipc.on("print", function(){
+ipc.on("print", function(event, data){
     let win = null;
-
+    console.log(data);
     win = new BrowserWindow({width: 800, height: 600, show: false });
     win.loadURL(url.format({
         pathname: path.join(__dirname, "print.html"),
@@ -127,7 +129,12 @@ ipc.on("print", function(){
     //     // createPDF();
     //     win.hide();
     // });
+    username().then(username => {
+        console.log(username);
+        //=> 'sindresorhus'
+    });
     win.once("ready-to-show", () => {
+        win.webContents.send("toPrint", data);
         win.show();
     });
 

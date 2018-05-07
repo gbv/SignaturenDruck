@@ -174,16 +174,21 @@
                         let input = document.createElement("input");
                         input.id = "short_" + objct.id;
                         input.type = "checkbox";
+                        input.name = "shortShelfmark";
+                        input.value = objct.id;
                         shortSigCell.appendChild(input);
                         input = document.createElement("input");
                         input.id = "print_" + objct.id;
                         input.type = "checkbox";
+                        input.name = "toPrint";
+                        input.value = objct.id;
                         printSigCell.appendChild(input);
                         input = document.createElement("input");
                         input.id = "count_" + objct.id;
                         input.type = "number";
                         input.max = 99;
                         input.min = 1;
+                        input.name = "printCount";
                         input.value = 1;
                         printCount.appendChild(input);
                     });
@@ -239,7 +244,17 @@
         </script>
         <script>
             function printButton() {
-                ipc.send("print");
+                var elems= document.querySelectorAll('[name=toPrint]')
+                let toPrint = [];
+                for (var i=0;i<elems.length;i++)
+                {
+                    let isChecked = elems[i].checked;
+                    if (elems[i].checked) {
+                        toPrint.push(elems[i].value);
+                    }
+                }
+                console.log("checked ",toPrint);
+                ipc.send("print", toPrint);
             }
         </script>
     </body>

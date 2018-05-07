@@ -15,8 +15,14 @@ const _ = require("lodash");
 const store = require("electron-store");
 const config = new store({cwd: "C:\\Export\\"});
 
+// required for ipc calls to the main process
+const ipc = require("electron").ipcRenderer;
+
 window.onload = function () {
-    preview([2,3,6]);
+    ipc.on("toPrint", function(event, data){
+        console.log("on printRenderer", event, data);
+        preview(data);
+    });
 };
 
 function changeStyle() {
@@ -42,10 +48,12 @@ function preview(id) {
         } else {
             let idCount = id.length;
             let idNr = 1;
+            console.log(id);
             id.forEach(element => {
                 let sig = "";
+                console.log(id);
                 _.forEach(JSON.parse(data), function(key, value){
-                    let found = _.find(key, {"id": element});
+                    let found = _.find(key, {"id": Number(element)});
                     if (found !== undefined) {
                         sig = found;
                     }
