@@ -222,7 +222,12 @@
                             sig.txt.forEach(element => {
                                 line.className = "previewLine";
                                 line.id = "line" + i;
-                                line.innerHTML = element;
+                                if (element == "") {
+                                    let emptyLine = document.createElement("br");
+                                line.appendChild(emptyLine);
+                                } else {
+                                    line.innerHTML = element;
+                                }
                                 document.getElementById("previewBox").appendChild(line);
                                 line = document.createElement('p');
                                 i++;

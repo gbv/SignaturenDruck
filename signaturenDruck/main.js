@@ -116,13 +116,40 @@ ipc.on("open-window", function(){
     let win = null;
 
     win = new BrowserWindow({width: 800, height: 600, show: false });
-    mainWindow.loadURL(url.format({
-        pathname: path.join(__dirname, "second.html"),
+    win.loadURL(url.format({
+        pathname: path.join(__dirname, "print.html"),
         protocol: "file:",
         slashes: true
     }));
     // Could be redundant, try if you need this.
-    win.once("ready-to-show", () => win.show());
+    // win.once("ready-to-show", () => {
+    //     // createPDF();
+    //     win.hide();
+    // });
+    win.once("ready-to-show", () => {
+        win.hide();
+    });
+
+    win.webContents.session.on("will-download", (event, item, webContents) => {
+        console.log("event: ", event);
+        console.log("item: ", item);
+        // item.setSavePath("./myfile.pdf");
+        item.setSavePath("C:\\Export\\myfile.pdf");
+    });
+
+    /* print it
+    // win.once("ready-to-show", () => win.hide());
+    // // load PDF.
+    // win.loadURL("file://D:/myfile.pdf");
+    // // if pdf is loaded start printing.
+    // win.webContents.on("did-finish-load", () => {
+    //     let printer = win.webContents.getPrinters();
+    //     console.log(printer);
+    //     win.webContents.print({silent: false, deviceName: "ulbps155"});
+    //     // close window after print order.
+    //     win = null;
+    // });
+    */
 
 });
 
