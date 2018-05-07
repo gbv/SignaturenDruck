@@ -45,6 +45,7 @@
             <button onclick="changeStyle()">mich auch</button>
             <button onclick="loadData()">lade Daten</button>
             <button onclick="vorschau(2)">Vorschau</button>
+            <button onclick="buttonClicked()">New Window</button>
         </div>
         <div id="testBox">
             <div id="previewBox" style="background: #00f8d7">
@@ -81,13 +82,19 @@
         <script>
         // You can also require other files to run in this process
             require('./renderer.js')
+            // required for pdf creation
             const html2canvas = require("html2canvas")
             const jsPDF = require("jspdf");
             const html2pdf = require("html2pdf.js")
+            // required for file stuff
             const fs = require("fs");
+            // requires lodash
             const _ = require("lodash");
+            // required for persistent config
             const Store = require("electron-store");
             const store = new Store();
+            // required for ipc calls to the main process
+            const ipc = require("electron").ipcRenderer;
         </script>
         <script src="./sortTable.js"></script>
         <script>
@@ -223,6 +230,11 @@
                         }
                     }
                 });
+            }
+        </script>
+        <script>
+            function buttonClicked() {
+                ipc.send("open-window");
             }
         </script>
     </body>

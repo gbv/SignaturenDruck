@@ -4,6 +4,7 @@ const app = electron.app;
 // Module to create native browser window.
 const BrowserWindow = electron.BrowserWindow;
 
+const ipc = require("electron").ipcMain;
 const path = require("path");
 const url = require("url");
 const fs = require("fs");
@@ -109,6 +110,20 @@ app.on("activate", function () {
     if (mainWindow === null) {
         createWindow();
     }
+});
+
+ipc.on("open-window", function(){
+    let win = null;
+
+    win = new BrowserWindow({width: 800, height: 600, show: false });
+    mainWindow.loadURL(url.format({
+        pathname: path.join(__dirname, "second.html"),
+        protocol: "file:",
+        slashes: true
+    }));
+    // Could be redundant, try if you need this.
+    win.once("ready-to-show", () => win.show());
+
 });
 
 // In this file you can include the rest of your app's specific main process
