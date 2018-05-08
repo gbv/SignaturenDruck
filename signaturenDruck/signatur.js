@@ -6,6 +6,7 @@ class Signatur {
         this._txtLength = "";
         this._date = "";
         this._id = "";
+        this._bigLabel = true;
     }
 
     // Setter
@@ -27,6 +28,9 @@ class Signatur {
     set id(int) {
         this._id = int;
     }
+    set bigLabel(bool) {
+        this._bigLabel = bool;
+    }
 
     // Getter
     get ppn() {
@@ -47,8 +51,11 @@ class Signatur {
     get id() {
         return this._id;
     }
+    get bigLabel() {
+        return this._bigLabel;
+    }
     get Signatur() {
-        return {"PPN": this._ppn, "exNr": this._exNr, "txt": this._txt, "txtLength": this._txtLength, "date": this._date, "id": this._id};
+        return {"PPN": this._ppn, "id": this._id, "bigLabel": this._bigLabel, "txt": this._txt, "txtLength": this._txtLength, "date": this._date, "exNr": this._exNr};
     }
 
     // Method
@@ -59,6 +66,7 @@ class Signatur {
             return false;
         }
     }
+
 }
 
 module.exports = Signatur;

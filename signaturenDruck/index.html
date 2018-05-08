@@ -115,24 +115,6 @@
                 }
             console.log(toPrint);
             }
-            function createPDF() {
-                // html2canvas(document.querySelector("#capture")).then(canvas => {
-                //     document.body.appendChild(canvas);
-                // });
-                changeStyle();
-                let newConfig = loadConfig();
-                var element = document.getElementById("toPDF");
-                html2pdf(element, {
-                    margin:       1,
-                    filename:     'myfile.pdf',
-                    image:        { type: 'png', quality: 0.99 },
-                    html2canvas:  { dpi: 192, letterRendering: true },
-                    jsPDF:        { unit: 'px', format: [newConfig.gross.label.width + 3, newConfig.gross.label.height + 3], orientation: 'portrait' }
-                });
-            }
-            function loadConfig() {
-                return store.store;
-            }
         </script>
         <script>
             function loadData() {
@@ -171,12 +153,15 @@
                         });
                         dateCell.innerHTML = objct.date;
                         exnrCell.innerHTML = objct.exNr;
-                        let input = document.createElement("input");
-                        input.id = "short_" + objct.id;
-                        input.type = "checkbox";
-                        input.name = "shortShelfmark";
-                        input.value = objct.id;
-                        shortSigCell.appendChild(input);
+                        let input;
+                        if (!objct.bigLabel) {
+                            input = document.createElement("input");
+                            input.id = "short_" + objct.id;
+                            input.type = "checkbox";
+                            input.name = "shortShelfmark";
+                            input.value = objct.id;
+                            shortSigCell.appendChild(input);
+                        }
                         input = document.createElement("input");
                         input.id = "print_" + objct.id;
                         input.type = "checkbox";

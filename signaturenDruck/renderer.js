@@ -14,10 +14,10 @@ const fs = require("fs");
 // //requires jsPDF
 // const jsPDF = require("jspdf");
 
-const fileContents = document.getElementById("filecontents");
-
 const Store = require("electron-store");
 const store = new Store({cwd: "C:\\Export\\"});
+
+const dataExtract = require("./dataExtract.js");
 
 window.onload = function () {
     document.getElementById("defaultPath").innerHTML = store.get("default");
@@ -39,7 +39,7 @@ window.onload = function () {
     if (window.File && window.FileReader && window.FileList && window.Blob) {
         fileSelected.addEventListener("change", function () {
             fileTobeRead = fileSelected.files[0];
-            var fileReader = new FileReader();
+            let fileReader = new FileReader();
             fileReader.onload = function () {
                 const file = event.target.result;
                 const allLines = file.split(/\r\n|\n/);
@@ -54,33 +54,36 @@ window.onload = function () {
 };
 
 function writeToFile(allLines) {
-    var obj = {
+    let obj = {
         all: []
     };
-    var sig = new Signatur();
-    var ppnAktuell = "";
-    var id = 1;
+    let sig = new Signatur();
+    let extract = new dataExtract;
+    let ppnAktuell = "";
+    let id = 1;
     sig.id = id;
     // Reading line by line
     allLines.map((line) => {
-        let first4 = firstFour(line);
+        let first4 = extract.firstFour(line);
         if (first4 == "0100") {
-            sig.ppn = ppnAktuell = extractPPN(line);
-            lineOutput("PPN: " + sig.ppn);
+            sig.ppn = ppnAktuell = extract.ppn(line);
         } else if (first4 >= 7001 && first4 <= 7099) {
-            sig.exNr = extractExNr(line);
-            lineOutput("ExemplarNr: " + sig.exNr);
+            sig.exNr = extract.exNr(line);
         } else if (first4 == 7100) {
-            sig.txt = extractTxt(line);
+            let txt = extract.txt(line);
+            let big = labelSize(txt);
+            if (big === false) {
+                sig.bigLabel = false;
+            }
+            txt = txt.split(":");
+            sig.txt = txt;
             sig.txtLength = sig.txt.length;
-            lineOutput("SignaturenText: " + sig.txt);
         } else if (first4 == 7901) {
-            sig.date = extractDate(line);
-            lineOutput("BearbeitetAm: " + sig.date);
+            sig.date = extract.date(line);
         }
         if (sig.allSet()) {
-            lineOutput("");
             obj.all.push(sig.Signatur);
+            console.log(sig.Signatur);
             sig = new Signatur();
             id++;
             sig.id = id;
@@ -91,90 +94,18 @@ function writeToFile(allLines) {
     writeSignaturesToFile(JSON.stringify(getUnique(obj)));
 }
 
-// adds the line to the Outputwindow
-function lineOutput(line) {
-    fileContents.innerText += line + "\n";
-}
-
-// returns the first 4 chars
-function firstFour(str) {
-    return str.substring(0, 4);
-}
-
-//extracts the PPN
-function extractPPN(str) {
-    // regex definiert 2 gruppen
-    let regex = /^(\d{4}\s\s*)(.*)(\s*)$/;
-
-    // es wird mit hilfe des regex die PPN ausgelesen
-    return str.replace(regex, "$2");
-}
-
-// extracts the exNr
-function extractExNr(str) {
-    // regex definiert 2 gruppen
-    let regex = /^(\d{4})(.*)$/;
-
-    // es wird mit hilfe des regex die ExemplarNr ausgelesen
-    return str.replace(regex, "$1");
-}
-
-// extracts the signature text
-function extractTxt(str) {
-    // removes the first 4 numbers and following spaces
-    let regex = /^(\d{4}\s\s*)(.*)(\s*)$/;
-    str = str.replace(regex, "$2");
-
-    // removes @ and everything that follows
-    regex = /^(.[^@]*)(.*)$/;
-    str = str.replace(regex, "$1");
-
-    // removes leading and following whitespaces
-    str = str.trim();
-
-
-    let foundAt = str.indexOf("/");
-    if (foundAt != -1) {
-        let controlIndex = str.indexOf("!");
-        if ((controlIndex != -1) && (controlIndex > foundAt)) {
-            str = str.substr(foundAt+1);
-        }
+function labelSize(txt) {
+    let numberOfSeperators = getCountOfSeparators(txt, ":");
+    let numberOfWhitespaces = getCountOfSeparators(txt, " ");
+    if ((numberOfSeperators >= 2) && (numberOfSeperators > numberOfWhitespaces)) {
+        return true;
+    } else {
+        return false;
     }
-
-    foundAt = str.indexOf("#");
-    if (foundAt != -1) {
-        str = str.substr(foundAt+1);
-    }
-
-    if (str.startsWith("$")) {
-        foundAt = str.indexOf("$", 1);
-        if (foundAt != -1) {
-            str = str.substr(foundAt+1);
-        }
-    }
-
-    // regex = /^((!\w*\s*\w*!\s*)*)(.*)(\s*)$/;
-    // str = str.replace(regex, "$3");
-
-    if (str.startsWith("!")) {
-        foundAt = str.indexOf("!", 1);
-        if (foundAt != -1) {
-            str = str.substr(foundAt+1);
-        }
-    }
-
-    str = str.split(":");
-
-    return str;
 }
 
-// extracts the date
-function extractDate(str) {
-    // regex definiert 3 gruppen
-    let regex = /^(\d{4}\s\s*)(\d{2}-\d{2}-\d{2})(.*)$/;
-
-    // es wird mit hilfe des regex das BearbeitetAm Datum ausgelesen
-    return str.replace(regex, "$2");
+function getCountOfSeparators(txt, separator) {
+    return txt.split(separator).length;
 }
 
 // removes duplicates
