@@ -48,12 +48,13 @@ function preview(id) {
         if (err){
             console.log(err);
         } else {
+            console.log("ids: ", id);
             addUsername();
             addDate();
-            let idCount = id.length;
+            let idCount = id.toPrint.length;
             let idNr = 1;
-            console.log(id);
-            id.forEach(element => {
+            console.log(id.toPrint);
+            id.toPrint.forEach(element => {
                 let sig = "";
                 console.log(id);
                 _.forEach(JSON.parse(data), function(key, value){

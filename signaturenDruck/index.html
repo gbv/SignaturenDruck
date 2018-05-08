@@ -137,17 +137,30 @@
         </script>
         <script>
             function printButton() {
-                var elems= document.querySelectorAll('[name=toPrint]')
-                let toPrint = [];
+                let data = {
+                    "toPrint": [],
+                    "count": [],
+                    "short": [] 
+                };
+                
+                let elems= document.querySelectorAll('[name=toPrint]')
                 for (var i=0;i<elems.length;i++)
                 {
-                    let isChecked = elems[i].checked;
                     if (elems[i].checked) {
-                        toPrint.push(elems[i].value);
+                        data.toPrint.push(elems[i].value);
                     }
                 }
-                console.log("checked ",toPrint);
-                ipc.send("print", toPrint);
+                data.toPrint.forEach(element => {
+                    console.log(document.getElementById("count_"+element).value);
+                    data.count.push(document.getElementById("count_"+element).value);
+                    if (document.getElementById("short_"+element)) {
+                        if (document.getElementById("short_"+element).checked) {
+                            data.short.push(element);
+                        }
+                    }
+                });
+                console.log("checked ", data);
+                ipc.send("print", data);
             }
         </script>
     </body>

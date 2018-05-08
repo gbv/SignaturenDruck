@@ -129,9 +129,6 @@ ipc.on("print", function(event, data){
     //     // createPDF();
     //     win.hide();
     // });
-    username().then(username => {
-        console.log(username);
-    });
     win.once("ready-to-show", () => {
         win.webContents.send("toPrint", data);
         win.show();
