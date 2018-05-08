@@ -129,12 +129,42 @@ function extractTxt(str) {
     regex = /^(.[^@]*)(.*)$/;
     str = str.replace(regex, "$1");
 
-    regex = /^((!\w*\s*\w*!\s*)*)(.*)(\s*)$/;
-    str = str.replace(regex, "$3");
+    // removes leading and following whitespaces
+    str = str.trim();
+
+
+    let foundAt = str.indexOf("/");
+    if (foundAt != -1) {
+        let controlIndex = str.indexOf("!");
+        if ((controlIndex != -1) && (controlIndex > foundAt)) {
+            str = str.substr(foundAt+1);
+        }
+    }
+
+    foundAt = str.indexOf("#");
+    if (foundAt != -1) {
+        str = str.substr(foundAt+1);
+    }
+
+    if (str.startsWith("$")) {
+        foundAt = str.indexOf("$", 1);
+        if (foundAt != -1) {
+            str = str.substr(foundAt+1);
+        }
+    }
+
+    // regex = /^((!\w*\s*\w*!\s*)*)(.*)(\s*)$/;
+    // str = str.replace(regex, "$3");
+
+    if (str.startsWith("!")) {
+        foundAt = str.indexOf("!", 1);
+        if (foundAt != -1) {
+            str = str.substr(foundAt+1);
+        }
+    }
 
     str = str.split(":");
 
-    // es wird mit hilfe des regex die Signatur ausgelesen
     return str;
 }
 
