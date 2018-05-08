@@ -137,30 +137,44 @@
         </script>
         <script>
             function printButton() {
-                let data = {
-                    "toPrint": [],
-                    "count": [],
-                    "short": [] 
-                };
+                let dataAll = {};
+                let j = 0;
                 
-                let elems= document.querySelectorAll('[name=toPrint]')
-                for (var i=0;i<elems.length;i++)
+                let elems= document.querySelectorAll("[name=toPrint]");
+                for (let i=0;i<elems.length;i++)
                 {
                     if (elems[i].checked) {
-                        data.toPrint.push(elems[i].value);
+                        let data = {
+                            "id": "",
+                            "count": "1",
+                            "short": false
+                        };
+                        data.id = elems[i].value;
+                        let count = document.getElementById("count_"+data.id).value;
+                        if ((count <= 99) && (count >= 1)) {
+                            data.count = count;
+                        }
+                        if (document.getElementById("short_"+data.id)){
+                            if (document.getElementById("short_"+data.id).checked) {
+                                data.short = true;
+                            }
+                        }
+                        dataAll[j] = data;
+                        console.log(data);
+                        j++;
                     }
                 }
-                data.toPrint.forEach(element => {
-                    console.log(document.getElementById("count_"+element).value);
-                    data.count.push(document.getElementById("count_"+element).value);
-                    if (document.getElementById("short_"+element)) {
-                        if (document.getElementById("short_"+element).checked) {
-                            data.short.push(element);
-                        }
-                    }
-                });
-                console.log("checked ", data);
-                ipc.send("print", data);
+                // data.toPrint.forEach(element => {
+                //     console.log(document.getElementById("count_"+element).value);
+                //     data.count.push(document.getElementById("count_"+element).value);
+                //     if (document.getElementById("short_"+element)) {
+                //         if (document.getElementById("short_"+element).checked) {
+                //             data.short.push(element);
+                //         }
+                //     }
+                // });
+                console.log("checked ", dataAll);
+                ipc.send("print", dataAll);
             }
         </script>
     </body>
