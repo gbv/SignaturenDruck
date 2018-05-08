@@ -6,7 +6,7 @@
         <style type="text/css">
             #toPrint {
                 font-family: "Arial Narrow";
-                font-size: 15pt; 
+                font-size: 16pt; 
             }
             .shelfmark > p {
                 margin: 0px;
@@ -15,16 +15,20 @@
                 padding-left: 45%;
             }
             p.shelfmarkLine_1 {
-                padding-top: 7px;
+                padding-top: 5px;
             }
-            .shelfmarkLine_1, .shelfmarkLine_2, .shelfmarkLine_3, .shelfmarkLine_6 {
+            #userCard, .shelfmarkLine_1, .shelfmarkLine_2, .shelfmarkLine_3, .shelfmarkLine_6 {
                 font-weight: bold; 
             }
         </style>
     </head>
     <body>
         <div id="toPrint">
-
+            <div id="userCard" class="shelfmark">
+                <p id="currentUsername" class="shelfmarkline_1"></p>
+                <p id="currentDate" class="shelfmarkline_2"></p>
+            </div>
+            <div class="html2pdf__page-break"></div>
         </div>
         <script>
             require('./printRenderer.js')

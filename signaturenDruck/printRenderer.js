@@ -15,6 +15,8 @@ const _ = require("lodash");
 const store = require("electron-store");
 const config = new store({cwd: "C:\\Export\\"});
 
+const username = require("username");
+
 // required for ipc calls to the main process
 const ipc = require("electron").ipcRenderer;
 
@@ -46,6 +48,8 @@ function preview(id) {
         if (err){
             console.log(err);
         } else {
+            addUsername();
+            addDate();
             let idCount = id.length;
             let idNr = 1;
             console.log(id);
@@ -97,6 +101,28 @@ function preview(id) {
         }
         createPDF();
     });
+}
+
+function addUsername() {
+    document.getElementById("currentUsername").innerHTML = username.sync();
+}
+
+function addDate() {
+    let today = new Date();
+    let dd = today.getDate();
+    let mm = today.getMonth()+1;
+    let yyyy = today.getFullYear();
+
+    if(dd<10) {
+        dd = "0"+dd;
+    } 
+
+    if(mm<10) {
+        mm = "0"+mm;
+    } 
+
+    today = dd + "." + mm + "." + yyyy;
+    document.getElementById("currentDate").innerHTML = today;
 }
 
 function createPDF() {

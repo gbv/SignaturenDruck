@@ -131,7 +131,6 @@ ipc.on("print", function(event, data){
     // });
     username().then(username => {
         console.log(username);
-        //=> 'sindresorhus'
     });
     win.once("ready-to-show", () => {
         win.webContents.send("toPrint", data);
