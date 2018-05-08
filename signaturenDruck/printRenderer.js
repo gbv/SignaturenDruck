@@ -51,9 +51,20 @@ function preview(ids) {
             console.log("ids: ", ids);
             addUsername();
             addDate();
+            // needs to sum up all the counts per id
             let idCount = _.size(ids);
+            let countAll = 0;
             let idNr = 1;
             console.log(idCount);
+            _.forEach((ids), function(value){
+                if (value.count >= 1 && value.count <= 99) {
+                    countAll += Number(value.count);
+                } else {
+                    countAll += 1;
+                }
+                
+            });
+            console.log(countAll);
             _.forEach(ids, function(value){
                 console.log("value: ", value);
                 let objct = value;
