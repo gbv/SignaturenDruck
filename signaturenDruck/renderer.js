@@ -145,3 +145,68 @@ function writeSignaturesToFile(json) {
     });
 }
 
+function displayData() {
+    fs.readFile("signaturen.json", "utf8", function readFileCallback(err, data){
+        if (err){
+            console.log(err);
+        } else {
+            createOutput(JSON.parse(data));
+            console.log("signaturen.json wurde gelesen");
+        }
+    });
+}
+function createOutput(obj) {
+    var table = document.getElementById("signaturTable");
+    var i = 1;
+    _.forEach(obj, function(key, value){
+        var row = table.insertRow(i);
+        var ppnRow = row.insertCell(0);
+        ppnRow.innerHTML = value;
+        ppnRow.className = "ppnLine";
+        _.forEach(key, function(objct){
+            i++;
+            row = table.insertRow(i);
+            // row.onclick = function() { preview(objct.id); };
+            var txtCell = row.insertCell(0);
+            txtCell.onclick = function() { preview(objct.id); };
+            var dateCell = row.insertCell(1);
+            dateCell.onclick = function() { preview(objct.id); };
+            var exnrCell = row.insertCell(2);
+            exnrCell.onclick = function() { preview(objct.id); };
+            var shortSigCell = row.insertCell(3);
+            var printSigCell = row.insertCell(4);
+            var printCount = row.insertCell(5);
+            _.forEach(objct.txt, function(value){
+                txtCell.innerHTML += value + " ";
+            });
+            dateCell.innerHTML = objct.date;
+            exnrCell.innerHTML = objct.exNr;
+            let input;
+            if (!objct.bigLabel) {
+                input = document.createElement("input");
+                input.id = "short_" + objct.id;
+                input.type = "checkbox";
+                input.name = "shortShelfmark";
+                input.value = objct.id;
+                shortSigCell.appendChild(input);
+            }
+            input = document.createElement("input");
+            input.id = "print_" + objct.id;
+            input.type = "checkbox";
+            input.name = "toPrint";
+            input.value = objct.id;
+            printSigCell.appendChild(input);
+            input = document.createElement("input");
+            input.id = "count_" + objct.id;
+            input.type = "number";
+            input.max = 99;
+            input.min = 1;
+            input.name = "printCount";
+            input.value = 1;
+            printCount.appendChild(input);
+        });
+        i++;
+    });
+}
+
+document.getElementById("btn_loadData").addEventListener("click", displayData);
