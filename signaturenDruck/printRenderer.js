@@ -68,13 +68,6 @@ function preview(id) {
                     let i = 1;
                     let div = document.createElement("div");
                     let line = document.createElement("p");
-                    // if (length > 3) {
-                    //     console.log("added stuff");
-                    // }
-                    // let myNode = document.getElementById("previewBox");
-                    // while (myNode.firstChild) {
-                    //     myNode.removeChild(myNode.firstChild);
-                    // }
                     div.className = "shelfmark";
                     div.id = id;
                     sig.txt.forEach(element => {
@@ -131,8 +124,8 @@ function createPDF() {
     html2pdf(element, {
         margin:       1,
         filename:     "C://Export/myfile.pdf",
-        image:        { type: "png", quality: 0.99 },
-        html2canvas:  { dpi: 300, letterRendering: true },
+        image:        { type: "png", quality: 1 },
+        html2canvas:  { dpi: 600, letterRendering: true },
         jsPDF:        { unit: newConfig.einheit, format: [newConfig.gross.label.width + 0.5, newConfig.gross.label.height + 0.5], orientation: "landscape" }
     });
 }
