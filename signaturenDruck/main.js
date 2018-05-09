@@ -15,8 +15,6 @@ const store = new Store({cwd: "C:\\Export\\"});
 // name of signature storage json
 const sigJSON = "signaturen.json";
 
-const username = require("username");
-
 // Keep a global reference of the window object, if you don't, the window will
 // be closed automatically when the JavaScript object is garbage collected.
 let mainWindow;
@@ -132,6 +130,12 @@ ipc.on("print", function(event, data){
     win.once("ready-to-show", () => {
         win.webContents.send("toPrint", data);
         win.show();
+        /* navtive windows printer
+        // lists all available printers
+        console.log("available printers", win.webContents.getPrinters());
+        // prints the whole window (silently)
+        win.webContents.print({"silent": true, "name": "\\\\printsrv.ulb.uni-jena.de\\ulbps155"});
+        */
     });
 
     win.webContents.session.on("will-download", (event, item, webContents) => {

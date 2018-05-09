@@ -25,14 +25,19 @@ window.onload = function () {
     let fileTobeRead;
     if (fs.existsSync(store.get("default"))) {
         // fileTobeRead = fileSelected.files[0];
-        fs.readFile(store.get("default"), "utf-8", (err, data) => {
-            if (err) {
-                alert("An error ocurred reading the file :" + err.message);
-                return;
-            }
-            const allLines = data.split(/\r\n|\n/);
-            writeToFile(allLines);
-        });
+        // fs.readFile(store.get("default"), "utf-8", (err, data) => {
+        //     if (err) {
+        //         alert("An error ocurred reading the file :" + err.message);
+        //         return;
+        //     }
+        //     const allLines = data.split(/\r\n|\n/);
+        //     writeToFile(allLines);
+        // });
+        let file = fs.readFileSync(store.get("default"), "utf-8");
+        const allLines = file.split(/\r\n|\n/);
+        writeToFile(allLines);
+        displayData();
+
     }
 
     //Check the support for the File API support
@@ -136,24 +141,27 @@ function groupByPPN(obj) {
 
 function writeSignaturesToFile(json) {
     json = JSON.stringify(groupByPPN(JSON.parse(json)));
-    fs.writeFile("signaturen.json", json, "utf8", function (err){
-        if (err){
-            throw err;
-        } else {
-            console.log("signaturen.json wurde erstellt");
-        }
-    });
+    // fs.writeFile("signaturen.json", json, "utf8", function (err){
+    //     if (err){
+    //         throw err;
+    //     } else {
+    //         console.log("signaturen.json wurde erstellt");
+    //     }
+    // });
+    fs.writeFileSync("signaturen.json", json, "utf8");
 }
 
 function displayData() {
-    fs.readFile("signaturen.json", "utf8", function readFileCallback(err, data){
-        if (err){
-            console.log(err);
-        } else {
-            createOutput(JSON.parse(data));
-            console.log("signaturen.json wurde gelesen");
-        }
-    });
+    // fs.readFile("signaturen.json", "utf8", function readFileCallback(err, data){
+    //     if (err){
+    //         console.log(err);
+    //     } else {
+    //         createOutput(JSON.parse(data));
+    //         console.log("signaturen.json wurde gelesen");
+    //     }
+    // });
+    let file = fs.readFileSync("signaturen.json", "utf8");
+    createOutput(JSON.parse(file));
 }
 function createOutput(obj) {
     var table = document.getElementById("signaturTable");

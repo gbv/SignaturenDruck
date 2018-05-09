@@ -91,48 +91,43 @@
         </script>
         <script>
             function preview(id) {
-                fs.readFile("signaturen.json", "utf8", function readFileCallback(err, data){
-                    if (err){
-                        console.log(err);
-                    } else {
-                        let sig = "";
-                        _.forEach(JSON.parse(data), function(key, value){
-                            let found = _.find(key, {"id": id});
-                            if (found !== undefined) {
-                                sig = found;
-                            }
-                        });
-                        if (sig != "") {
-                            console.log(sig);
-                            let length = sig.txtLength;
-                            let i = 1;
-                            let line = document.createElement('p');
-                            console.log(length);
-                            if (length > 3) {
-                                console.log("added stuff");
-                            } else {
-
-                            }
-                            let myNode = document.getElementById("previewBox");
-                            while (myNode.firstChild) {
-                                myNode.removeChild(myNode.firstChild);
-                            }
-                            sig.txt.forEach(element => {
-                                line.className = "previewLine";
-                                line.id = "line" + i;
-                                if (element == "") {
-                                    let emptyLine = document.createElement("br");
-                                line.appendChild(emptyLine);
-                                } else {
-                                    line.innerHTML = element;
-                                }
-                                document.getElementById("previewBox").appendChild(line);
-                                line = document.createElement('p');
-                                i++;
-                            });
-                        }
+                let file = fs.readFileSync("signaturen.json", "utf8");
+                let sig = "";
+                _.forEach(JSON.parse(file), function(key, value){
+                    let found = _.find(key, {"id": id});
+                    if (found !== undefined) {
+                        sig = found;
                     }
                 });
+                if (sig != "") {
+                    console.log(sig);
+                    let length = sig.txtLength;
+                    let i = 1;
+                    let line = document.createElement('p');
+                    console.log(length);
+                    if (length > 3) {
+                        console.log("added stuff");
+                    } else {
+
+                    }
+                    let myNode = document.getElementById("previewBox");
+                    while (myNode.firstChild) {
+                        myNode.removeChild(myNode.firstChild);
+                    }
+                    sig.txt.forEach(element => {
+                        line.className = "previewLine";
+                        line.id = "line" + i;
+                        if (element == "") {
+                            let emptyLine = document.createElement("br");
+                        line.appendChild(emptyLine);
+                        } else {
+                            line.innerHTML = element;
+                        }
+                        document.getElementById("previewBox").appendChild(line);
+                        line = document.createElement('p');
+                        i++;
+                    });
+                }
             }
         </script>
         <script>
