@@ -24,15 +24,16 @@ window.onload = function () {
     ipc.on("toPrint", function(event, data){
         console.log("on printRenderer", event, data);
         createPage(data);
-        createPDF();
+        createBigPDF();
+        createSmallPDF();
     });
 };
 
 function changeStyle() {
     let newConfig = loadConfig();
     let shelfmark = document.getElementsByClassName("shelfmark");
-    let width = newConfig.gross.label.width;
-    let height = newConfig.gross.label.height;
+    let width = newConfig.big.label.width;
+    let height = newConfig.big.label.height;
     let unit = newConfig.einheit;
     for (let i = 0; i < shelfmark.length; i++) {
         shelfmark[i].style.width = "" + width + unit;
@@ -127,7 +128,7 @@ function addDate() {
     document.getElementById("currentDate").innerHTML = today;
 }
 
-function createPDF() {
+function createBigPDF() {
     let newConfig = config.store;
     var element = document.getElementById("toPrint");
     html2pdf(element, {
@@ -135,6 +136,18 @@ function createPDF() {
         filename:     "C://Export/myfile.pdf",
         image:        { type: "png", quality: 1 },
         html2canvas:  { dpi: 300, letterRendering: true },
-        jsPDF:        { unit: newConfig.einheit, format: [newConfig.gross.label.width + 0.5, newConfig.gross.label.height + 0.5], orientation: "landscape" }
+        jsPDF:        { unit: newConfig.einheit, format: [newConfig.big.label.width + 0.5, newConfig.big.label.height + 0.5], orientation: "landscape" }
+    });
+}
+
+function createSmallPDF() {
+    let newConfig = config.store;
+    var element = document.getElementById("toPrint");
+    html2pdf(element, {
+        margin:       1,
+        filename:     "C://Export/myfile.pdf",
+        image:        { type: "png", quality: 1 },
+        html2canvas:  { dpi: 300, letterRendering: true },
+        jsPDF:        { unit: newConfig.einheit, format: [newConfig.small.label.width + 0.5, newConfig.small.label.height + 0.5], orientation: "landscape" }
     });
 }

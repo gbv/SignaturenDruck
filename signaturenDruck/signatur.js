@@ -60,7 +60,7 @@ class Signatur {
 
     // Method
     allSet() {
-        if ((this._ppn != "") && (this._exNr != "") && (this._txt != "") && (this._date != "") && (this._txtLength != "") && (this._id != "")){
+        if ((this._ppn != "") && (this._exNr != "") && (this._txt != "") && (this._date != "") && (this._txtLength != "")){
             return true;
         } else {
             return false;

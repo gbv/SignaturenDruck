@@ -14,22 +14,22 @@ const config = new store({cwd: "C:\\Export\\"});
 
 const configNew = {
     "testKey": "Don't panic, this is just a test",
-    "default": "C://Export//download.dnl",
-    "gross": {
-        "drucker": "\\\\ulbw2k812\\ulbps101",
+    "defaultPath": "C://Export//download.dnl",
+    "big": {
+        "printer": "\\\\ulbw2k812\\ulbps101",
         "label": {
             "width": 99.47,
             "height": 48.42
         }
     },
-    "klein": {
-        "drucker": "\\\\ulbw2k812\\ulbps124",
+    "small": {
+        "printer": "\\\\ulbw2k812\\ulbps124",
         "label": {
             "width": 74,
             "height": 23
         }
     },
-    "einheit": "mm"
+    "unit": "mm"
 };
 
 // name of signature storage json
@@ -79,7 +79,7 @@ function deleteJSON() {
 // checks if config file exists, else creates one
 function checkConfig() {
     if (fs.existsSync("C:\\Export\\config.json")) {
-        if (!config.has("default")) {
+        if (!config.has("defaultPath")) {
             createConfig();
         }
     } else {

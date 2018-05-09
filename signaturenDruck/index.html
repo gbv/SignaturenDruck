@@ -4,7 +4,7 @@
         <meta charset="UTF-8">
         <title>Signaturendruck</title>
         <style type="text/css"> 
-            #filecontents, #tableBox, #testBox { 
+            #filecontents, #tableBox { 
                 border:double; 
                 overflow-y:scroll; 
                 height:200px; 
@@ -14,6 +14,29 @@
                 height: 50px;
                 padding: 0px;
                 margin: 0px;
+            }
+            #buttonBox > button {
+                width: 180px;
+                height: 20px;
+                margin: 5px 10px 5px 10px;
+                text-align: center;
+            }
+            #container {
+                border: double;
+                overflow: hidden;
+            }
+            #buttonBox {
+                float:left; /* add this */
+                border: 1px solid red;
+            }
+            #previewBox {
+                width: 80mm;
+                height: 43mm;
+                border: 1px solid green;
+                float: right; /* add this */
+            }
+            th {
+                text-align: center;
             }
         </style>
     </head>
@@ -28,28 +51,26 @@
                     <!-- <th onclick="sortTable(0)">Signatur</th>
                     <th onclick="sortTable(1)">Bearbeitet am</th>
                     <th onclick="sortTable(2)">Exemplar</th> -->
-                    <th>Signatur</th>
-                    <th>Bearbeitet am</th>
-                    <th>Exemplar</th>
-                    <th>Kurze Signatur</th>
-                    <th>Drucken</th>
-                    <th>Anzahl</th>
+                    <th style="width: 35%">Signatur</th>
+                    <th style="width: 20%">Bearbeitet am</th>
+                    <th style="width: 15%">Exemplar</th>
+                    <th style="width: 5%">Kurze Signatur</th>
+                    <th style="width: 5%">Drucken</th>
+                    <th style="width: 15%">Anzahl</th>
+                    <th style="width: 5%">Größe</th>
                 </tr>
             </table>
         </div>
-        <div hidden>Folgende verwertbare Informationen sind enthalten:</div> 
-        <div id="filecontents" hidden>
-        </div>
-        <div id="buttonBox">
-            <button onclick="changeStyle()">changeStyle</button>
-            <button id="btn_loadData">loadData</button>
-            <button onclick="preview(2)">preview</button>
-            <button onclick="printButton()">Drucken</button>
-        </div>
-        <div id="testBox">
-            <div id="previewBox" style="background: #00f8d7">
-
+        <div id="container">
+            <div id="buttonBox">
+                <button id="btn_">Manuelles Anlegen</button><br>
+                <button id="btn_deleteFile">Lösche Download Datei</button><br>
+                <button id="btn_deleteList">Liste löschen</button><br>
+                <button id="btn_loadData">loadData</button><br>
+                <button id="btn_print" onclick="printButton()">Drucken</button><br>
+                <button id="btn_close">Beenden</button>
             </div>
+            <div id="previewBox" style="background: #00f8d7"></div>
         </div>
         <script>
         // You can also require other files to run in this process
@@ -74,12 +95,12 @@
                 let newConfig = loadConfig();
                 console.log(newConfig);
                 let toPrint = document.getElementsByClassName("toPrint");
-                let width = newConfig.gross.label.width;;
-                let height = newConfig.gross.label.height;;
+                let width = newConfig.big.label.width;;
+                let height = newConfig.big.label.height;;
                 let unit = newConfig.einheit;;
                 console.log(toPrint);
-                width = newConfig.gross.label.width;
-                height = newConfig.gross.label.height;
+                width = newConfig.big.label.width;
+                height = newConfig.big.label.height;
                 console.log(width, height);
                 for (let i = 0; i < toPrint.length; i++) {
                     toPrint[i].style.width = '' + width + unit;

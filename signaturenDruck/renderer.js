@@ -20,11 +20,11 @@ const config = new store({cwd: "C:\\Export\\"});
 const dataExtract = require("./dataExtract.js");
 
 window.onload = function () {
-    document.getElementById("defaultPath").innerHTML = config.get("default");
+    document.getElementById("defaultPath").innerHTML = config.get("defaultPath");
     let fileSelected = document.getElementById("fileToRead");
     let fileTobeRead;
-    if (fs.existsSync(config.get("default"))) {
-        let file = fs.readFileSync(config.get("default"), "utf-8");
+    if (fs.existsSync(config.get("defaultPath"))) {
+        let file = fs.readFileSync(config.get("defaultPath"), "utf-8");
         const allLines = file.split(/\r\n|\n/);
         writeToFile(allLines);
         displayData();
@@ -55,8 +55,8 @@ function writeToFile(allLines) {
     let sig = new Signatur();
     let extract = new dataExtract;
     let ppnAktuell = "";
-    let id = 1;
-    sig.id = id;
+    // let id = 1;
+    // sig.id = id;
     // Reading line by line
     allLines.map((line) => {
         let first4 = extract.firstFour(line);
@@ -78,15 +78,14 @@ function writeToFile(allLines) {
         }
         if (sig.allSet()) {
             obj.all.push(sig.Signatur);
-            console.log(sig.Signatur);
             sig = new Signatur();
-            id++;
-            sig.id = id;
+            // id++;
+            // sig.id = id;
             sig.ppn = ppnAktuell;
         }
     });
     // write every Signatur to signaturen.json
-    writeSignaturesToFile(JSON.stringify(getUnique(obj)));
+    writeSignaturesToFile(JSON.stringify(setIds(getUnique(obj))));
 }
 
 function labelSize(txt) {
@@ -105,6 +104,15 @@ function getCountOfSeparators(txt, separator) {
 
 // removes duplicates
 function getUnique(obj) {
+    console.log("unique: ", _.map(
+        _.uniq(
+            _.map(obj.all, function(obj){
+                return JSON.stringify(obj);
+            })
+        ), function(obj) {
+            return JSON.parse(obj);
+        }
+    ));
     return _.map(
         _.uniq(
             _.map(obj.all, function(obj){
@@ -120,6 +128,13 @@ function groupByPPN(obj) {
     return _.groupBy(obj, "PPN");
 }
 
+function setIds(obj) {
+    let i = 1;
+    return _.forEach(obj, function(value) {
+        value.id = i;
+        i++;
+    });
+}
 // // function to test the PDF generation
 // function testPDF() {
 //     var doc = new jsPDF("l", "mm", [200, 200]);
@@ -136,59 +151,98 @@ function writeSignaturesToFile(json) {
 
 function displayData() {
     let file = fs.readFileSync("signaturen.json", "utf8");
-    createOutput(JSON.parse(file));
+    createTable(JSON.parse(file));
 }
-function createOutput(obj) {
-    var table = document.getElementById("signaturTable");
-    var i = 1;
+function createTable(obj) {
+    let table = document.getElementById("signaturTable");
+    let i = 1;
     _.forEach(obj, function(key, value){
-        var row = table.insertRow(i);
-        var ppnRow = row.insertCell(0);
+        let row = table.insertRow(i);
+        let ppnRow = row.insertCell(0);
         ppnRow.innerHTML = value;
         ppnRow.className = "ppnLine";
         _.forEach(key, function(objct){
             i++;
             row = table.insertRow(i);
-            var txtCell = row.insertCell(0);
-            txtCell.onclick = function() { preview(objct.id); };
-            var dateCell = row.insertCell(1);
-            dateCell.onclick = function() { preview(objct.id); };
-            var exnrCell = row.insertCell(2);
-            exnrCell.onclick = function() { preview(objct.id); };
-            var shortSigCell = row.insertCell(3);
-            var printSigCell = row.insertCell(4);
-            var printCount = row.insertCell(5);
-            _.forEach(objct.txt, function(value){
-                txtCell.innerHTML += value + " ";
-            });
-            dateCell.innerHTML = objct.date;
-            exnrCell.innerHTML = objct.exNr;
-            let input;
-            if (!objct.bigLabel) {
-                input = document.createElement("input");
-                input.id = "short_" + objct.id;
-                input.type = "checkbox";
-                input.name = "shortShelfmark";
-                input.value = objct.id;
-                shortSigCell.appendChild(input);
-            }
-            input = document.createElement("input");
-            input.id = "print_" + objct.id;
-            input.type = "checkbox";
-            input.name = "toPrint";
-            input.value = objct.id;
-            printSigCell.appendChild(input);
-            input = document.createElement("input");
-            input.id = "count_" + objct.id;
-            input.type = "number";
-            input.max = 99;
-            input.min = 1;
-            input.name = "printCount";
-            input.value = 1;
-            printCount.appendChild(input);
+            createTxtCell(row, 0, objct);
+            createDateCell(row, 1, objct);
+            createExnrCell(row, 2, objct);
+            createShortShelfmarkCell(row, 3, objct);
+            createPrintCell(row, 4, objct);
+            createPrintCountCell(row, 5, objct);
+            createLabelSizeCell(row, 6, objct);
         });
         i++;
     });
+}
+
+function createTxtCell(row, cellNr, objct) {
+    let txtCell = row.insertCell(cellNr);
+    txtCell.onclick = function() { preview(objct.id); };
+    _.forEach(objct.txt, function(value){
+        txtCell.innerHTML += value + " ";
+    });
+}
+
+function createDateCell(row, cellNr, objct) {
+    let dateCell = row.insertCell(cellNr);
+    dateCell.onclick = function() { preview(objct.id); };
+    dateCell.className = "dateCell";
+    dateCell.innerHTML = objct.date;
+}
+
+function createExnrCell(row, cellNr, objct) {
+    let isNrCell = row.insertCell(cellNr);
+    isNrCell.onclick = function() { preview(objct.id); };
+    isNrCell.className = "isNrCell";
+    isNrCell.innerHTML = objct.exNr;
+}
+
+function createShortShelfmarkCell(row, cellNr, objct) {
+    let shortShelfmarkCell = row.insertCell(cellNr);
+    shortShelfmarkCell.className = "shortShelfmarkCell";
+    if (!objct.bigLabel) {
+        let input = document.createElement("input");
+        input.id = "short_" + objct.id;
+        input.type = "checkbox";
+        input.name = "shortShelfmark";
+        input.value = objct.id;
+        shortShelfmarkCell.appendChild(input);
+    }
+}
+
+function createPrintCell(row, cellNr, objct) {
+    let printCell = row.insertCell(cellNr);
+    let input = document.createElement("input");
+    printCell.className = "printCell";
+    input.id = "print_" + objct.id;
+    input.type = "checkbox";
+    input.name = "toPrint";
+    input.value = objct.id;
+    printCell.appendChild(input);
+}
+
+function createPrintCountCell(row, cellNr, objct) {
+    let printCountCell = row.insertCell(cellNr);
+    let input = document.createElement("input");
+    printCountCell.className = "printCountCell";
+    input.id = "count_" + objct.id;
+    input.type = "number";
+    input.max = 99;
+    input.min = 1;
+    input.name = "printCount";
+    input.value = 1;
+    printCountCell.appendChild(input);
+}
+
+function createLabelSizeCell(row, cellNr, objct) {
+    let labelSizeCell = row.insertCell(cellNr);
+    labelSizeCell.className = "labelSizeCell";
+    if (objct.bigLabel) {
+        labelSizeCell.innerHTML = "groß";
+    } else {
+        labelSizeCell.innerHTML = "klein";
+    }
 }
 
 document.getElementById("btn_loadData").addEventListener("click", displayData);
