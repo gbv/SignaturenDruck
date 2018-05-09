@@ -63,8 +63,8 @@
             // requires lodash
             const _ = require("lodash");
             // required for persistent config
-            const Store = require("electron-store");
-            const store = new Store();
+            const store = require("electron-store");
+            const config = new store();
             // required for ipc calls to the main process
             const ipc = require("electron").ipcRenderer;
         </script>

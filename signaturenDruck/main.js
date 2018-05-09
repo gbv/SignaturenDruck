@@ -9,8 +9,28 @@ const path = require("path");
 const url = require("url");
 const fs = require("fs");
 
-const Store = require("electron-store");
-const store = new Store({cwd: "C:\\Export\\"});
+const store = require("electron-store");
+const config = new store({cwd: "C:\\Export\\"});
+
+const configNew = {
+    "testKey": "Don't panic, this is just a test",
+    "default": "C://Export//download.dnl",
+    "gross": {
+        "drucker": "\\\\ulbw2k812\\ulbps101",
+        "label": {
+            "width": 99.47,
+            "height": 48.42
+        }
+    },
+    "klein": {
+        "drucker": "\\\\ulbw2k812\\ulbps124",
+        "label": {
+            "width": 74,
+            "height": 23
+        }
+    },
+    "einheit": "mm"
+};
 
 // name of signature storage json
 const sigJSON = "signaturen.json";
@@ -59,7 +79,7 @@ function deleteJSON() {
 // checks if config file exists, else creates one
 function checkConfig() {
     if (fs.existsSync("C:\\Export\\config.json")) {
-        if (!store.has("default")) {
+        if (!config.has("default")) {
             createConfig();
         }
     } else {
@@ -69,26 +89,7 @@ function checkConfig() {
 
 // creates new config.json
 function createConfig() {
-    let config = {
-        "testKey": "Don't panic, this is just a test",
-        "default": "C://Export//download.dnl",
-        "gross": {
-            "drucker": "\\\\ulbw2k812\\ulbps101",
-            "label": {
-                "width": 99.47,
-                "height": 48.42
-            }
-        },
-        "klein": {
-            "drucker": "\\\\ulbw2k812\\ulbps124",
-            "label": {
-                "width": 74,
-                "height": 23
-            }
-        },
-        "einheit": "mm"
-    };
-    store.set(config);
+    config.set(configNew);
 }
 
 // This method will be called when Electron has finished
@@ -122,11 +123,7 @@ ipc.on("print", function(event, data){
         protocol: "file:",
         slashes: true
     }));
-    // Could be redundant, try if you need this.
-    // win.once("ready-to-show", () => {
-    //     // createPDF();
-    //     win.hide();
-    // });
+    // win.loadURL("file:\\\\C:\\Export\\myfile.pdf");
     win.once("ready-to-show", () => {
         win.webContents.send("toPrint", data);
         win.show();

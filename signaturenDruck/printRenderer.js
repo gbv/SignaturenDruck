@@ -128,7 +128,6 @@ function preview(ids) {
         _.forEach(JSON.parse(file), function(key, value){
             let sig = "";
             let found = _.find(key, {"id": Number(objct.id)});
-            console.log(objct.id);
             if (found !== undefined) {
                 sig = found;
             }
@@ -153,13 +152,14 @@ function preview(ids) {
                     i++;
                 });
                 document.getElementById("toPrint").appendChild(div);
+                console.log("idNr: ", idNr, "countAll: ", countAll);
+                if (idNr < countAll) {
+                    let pdfPageBreak = document.createElement("div");
+                    pdfPageBreak.className = "html2pdf__page-break";
+                    document.getElementById("toPrint").appendChild(pdfPageBreak);
+                    idNr++;
+                }
             }
-            if (idNr < countAll) {
-                let pdfPageBreak = document.createElement("div");
-                pdfPageBreak.className = "html2pdf__page-break";
-                document.getElementById("toPrint").appendChild(pdfPageBreak);
-            }
-            idNr++;
         });
     });
 

@@ -14,30 +14,20 @@ const fs = require("fs");
 // //requires jsPDF
 // const jsPDF = require("jspdf");
 
-const Store = require("electron-store");
-const store = new Store({cwd: "C:\\Export\\"});
+const store = require("electron-store");
+const config = new store({cwd: "C:\\Export\\"});
 
 const dataExtract = require("./dataExtract.js");
 
 window.onload = function () {
-    document.getElementById("defaultPath").innerHTML = store.get("default");
+    document.getElementById("defaultPath").innerHTML = config.get("default");
     let fileSelected = document.getElementById("fileToRead");
     let fileTobeRead;
-    if (fs.existsSync(store.get("default"))) {
-        // fileTobeRead = fileSelected.files[0];
-        // fs.readFile(store.get("default"), "utf-8", (err, data) => {
-        //     if (err) {
-        //         alert("An error ocurred reading the file :" + err.message);
-        //         return;
-        //     }
-        //     const allLines = data.split(/\r\n|\n/);
-        //     writeToFile(allLines);
-        // });
-        let file = fs.readFileSync(store.get("default"), "utf-8");
+    if (fs.existsSync(config.get("default"))) {
+        let file = fs.readFileSync(config.get("default"), "utf-8");
         const allLines = file.split(/\r\n|\n/);
         writeToFile(allLines);
         displayData();
-
     }
 
     //Check the support for the File API support
@@ -141,25 +131,10 @@ function groupByPPN(obj) {
 
 function writeSignaturesToFile(json) {
     json = JSON.stringify(groupByPPN(JSON.parse(json)));
-    // fs.writeFile("signaturen.json", json, "utf8", function (err){
-    //     if (err){
-    //         throw err;
-    //     } else {
-    //         console.log("signaturen.json wurde erstellt");
-    //     }
-    // });
     fs.writeFileSync("signaturen.json", json, "utf8");
 }
 
 function displayData() {
-    // fs.readFile("signaturen.json", "utf8", function readFileCallback(err, data){
-    //     if (err){
-    //         console.log(err);
-    //     } else {
-    //         createOutput(JSON.parse(data));
-    //         console.log("signaturen.json wurde gelesen");
-    //     }
-    // });
     let file = fs.readFileSync("signaturen.json", "utf8");
     createOutput(JSON.parse(file));
 }
@@ -174,7 +149,6 @@ function createOutput(obj) {
         _.forEach(key, function(objct){
             i++;
             row = table.insertRow(i);
-            // row.onclick = function() { preview(objct.id); };
             var txtCell = row.insertCell(0);
             txtCell.onclick = function() { preview(objct.id); };
             var dateCell = row.insertCell(1);
