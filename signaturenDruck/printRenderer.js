@@ -52,10 +52,8 @@ function preview(ids) {
             addUsername();
             addDate();
             // needs to sum up all the counts per id
-            let idCount = _.size(ids);
             let countAll = 0;
             let idNr = 1;
-            console.log(idCount);
             _.forEach((ids), function(value){
                 if (value.count >= 1 && value.count <= 99) {
                     countAll += Number(value.count);
@@ -97,7 +95,7 @@ function preview(ids) {
                         });
                         document.getElementById("toPrint").appendChild(div);
                     }
-                    if (idNr < idCount) {
+                    if (idNr < countAll) {
                         let pdfPageBreak = document.createElement("div");
                         pdfPageBreak.className = "html2pdf__page-break";
                         document.getElementById("toPrint").appendChild(pdfPageBreak);
