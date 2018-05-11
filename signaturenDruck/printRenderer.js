@@ -55,7 +55,13 @@ function main(ids) {
         if (value.count >= 1 && value.count <= 99) {
             countAll += Number(value.count);
         } else {
-            countAll += 1;
+            if (value.count > 99){
+                countAll += 99;
+                value.count = 99;
+            } else {
+                countAll += 1;
+                value.count = 1;
+            }
         }
         
     });
@@ -79,8 +85,33 @@ function main(ids) {
                         let i = 1;
                         let div = document.createElement("div");
                         let line = document.createElement("p");
-                        div.className = "shelfmark";
+                        if (objct.short || length != 1) {
+                            div.className = "shelfmark indent";
+                            console.log("short object", objct);
+                        } else {
+                            div.className = "shelfmark center";
+                        }
                         div.id = id;
+                        if (objct.short && length == 1) {
+                            console.log(sig.txt);
+                            let text = sig.txt[0];
+                            let textSplit = text.split(" ");
+                            let countSpaces = textSplit.length;
+                            let i = 0;
+                            let j = 0;
+                            while (countSpaces >= 2) {
+                                sig.txt = [];
+                                sig.txt[j] = textSplit[i] + " " + textSplit[i+1];
+                                countSpaces -= 2;
+                                i += 2;
+                                j++;
+                                console.log(countSpaces);
+                            }
+                            if (countSpaces == 1) {
+                                sig.txt[j] = textSplit[i];
+                            }
+
+                        }
                         sig.txt.forEach(element => {
                             line.className = "shelfmarkLine_" + i;
                             if (element == "") {
@@ -125,7 +156,7 @@ function main(ids) {
                         let i = 1;
                         let div = document.createElement("div");
                         let line = document.createElement("p");
-                        div.className = "shelfmark";
+                        div.className = "shelfmark indent";
                         div.id = id;
                         sig.txt.forEach(element => {
                             line.className = "shelfmarkLine_" + i;

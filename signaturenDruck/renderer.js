@@ -39,6 +39,7 @@ window.onload = function () {
                 const file = event.target.result;
                 const allLines = file.split(/\r\n|\n/);
                 writeToFile(allLines);
+                displayData();
             };
             fileReader.readAsText(fileTobeRead);
         }, false);
@@ -142,11 +143,17 @@ function writeSignaturesToFile(json) {
 
 function displayData() {
     let file = fs.readFileSync("signaturen.json", "utf8");
+    if (document.getElementById("signaturTable")) {
+        let myNode = document.getElementById("signaturTableBody");
+        while (myNode.firstChild) {
+            myNode.removeChild(myNode.firstChild);
+        }
+    }
     createTable(JSON.parse(file));
 }
 function createTable(obj) {
-    let table = document.getElementById("signaturTable");
-    let i = 1;
+    let table = document.getElementById("signaturTable").getElementsByTagName("tbody")[0];
+    let i = 0;
     _.forEach(obj, function(key, value){
         let row = table.insertRow(i);
         let ppnRow = row.insertCell(0);
@@ -173,6 +180,7 @@ function createTxtCell(row, cellNr, objct) {
     _.forEach(objct.txt, function(value){
         txtCell.innerHTML += value + " ";
     });
+    txtCell.className = "txtCell";
 }
 
 function createDateCell(row, cellNr, objct) {

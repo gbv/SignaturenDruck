@@ -35,8 +35,21 @@
                 border: 1px solid green;
                 float: right; /* add this */
             }
-            th {
+            th, td {
                 text-align: center;
+            }
+            .txtCell {
+                width: 35%;
+                text-align: left;
+            }
+            .dateCell {
+                width: 20%;
+            }
+            .isNrCell, .printCountCell {
+                width: 15%;
+            }
+            .shortShelfmarkCell, .printCell, .labelSizeCell {
+                width: 5%;
             }
         </style>
     </head>
@@ -47,18 +60,23 @@
         </p>
         <div id="tableBox">
             <table id="signaturTable">
-                <tr>
-                    <!-- <th onclick="sortTable(0)">Signatur</th>
-                    <th onclick="sortTable(1)">Bearbeitet am</th>
-                    <th onclick="sortTable(2)">Exemplar</th> -->
-                    <th style="width: 35%">Signatur</th>
-                    <th style="width: 20%">Bearbeitet am</th>
-                    <th style="width: 15%">Exemplar</th>
-                    <th style="width: 5%">Kurze Signatur</th>
-                    <th style="width: 5%">Drucken</th>
-                    <th style="width: 15%">Anzahl</th>
-                    <th style="width: 5%">Größe</th>
-                </tr>
+                <thead>
+                    <tr>
+                        <!-- <th onclick="sortTable(0)">Signatur</th>
+                        <th onclick="sortTable(1)">Bearbeitet am</th>
+                        <th onclick="sortTable(2)">Exemplar</th> -->
+                        <th style="width: 35%">Signatur</th>
+                        <th style="width: 20%">Bearbeitet am</th>
+                        <th style="width: 15%">Exemplar</th>
+                        <th style="width: 5%">Kurze Signatur</th>
+                        <th style="width: 5%">Drucken</th>
+                        <th style="width: 15%">Anzahl</th>
+                        <th style="width: 5%">Größe</th>
+                    </tr>
+                </thead>
+                <tbody id="signaturTableBody">
+
+                </tbody>
             </table>
         </div>
         <div id="container">
