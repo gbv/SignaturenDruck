@@ -38,6 +38,7 @@ const sigJSON = "signaturen.json";
 // Keep a global reference of the window object, if you don't, the window will
 // be closed automatically when the JavaScript object is garbage collected.
 let mainWindow;
+let win = null;
 
 function createWindow () {
     checkConfig();
@@ -115,7 +116,6 @@ app.on("activate", function () {
 });
 
 ipc.on("print", function(event, data){
-    let win = null;
     console.log(data);
     win = new BrowserWindow({width: 800, height: 600, show: false });
     win.loadURL(url.format({
@@ -135,9 +135,10 @@ ipc.on("print", function(event, data){
         */
     });
 
-    win.webContents.session.on("will-download", (event, item, webContents) => {
-        item.setSavePath("C:\\Export\\myfile.pdf");
-    });
+    // win.webContents.session.on("will-download", (event, item, webContents) => {
+    //     item.setSavePath("C:\\Export\\test.pdf");
+    // });
+
 
     /* print it
     // win.once("ready-to-show", () => win.hide());
@@ -153,6 +154,19 @@ ipc.on("print", function(event, data){
     // });
     */
 
+});
+
+ipc.on("printSize", function(event, data){
+    if (data == "big"){
+        win.webContents.session.on("will-download", (event, item, webContents) => {
+            item.setSavePath("C:\\Export\\big.pdf");
+        });
+    }
+    if (data == "small"){
+        win.webContents.session.on("will-download", (event, item, webContents) => {
+            item.setSavePath("C:\\Export\\small.pdf");
+        });
+    }
 });
 
 // In this file you can include the rest of your app's specific main process

@@ -163,6 +163,7 @@
                         let data = {
                             "id": "",
                             "count": "1",
+                            "size": "big",
                             "short": false
                         };
                         data.id = elems[i].value;
@@ -174,6 +175,7 @@
                             if (document.getElementById("short_"+data.id).checked) {
                                 data.short = true;
                             }
+                            data.size = "small";
                         }
                         dataAll[j] = data;
                         console.log(data);

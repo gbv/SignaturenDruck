@@ -61,48 +61,104 @@ function createPage(ids) {
         }
         
     });
-    console.log(countAll);
-    _.forEach(ids, function(value){
-        console.log("value: ", value);
-        let objct = value;
-        _.forEach(JSON.parse(file), function(key, value){
-            let sig = "";
-            let found = _.find(key, {"id": Number(objct.id)});
-            if (found !== undefined) {
-                sig = found;
-            }
-            if (sig != "") {
-                for (let count = 0; count < objct.count; count++) {
-                    let length = sig.txtLength;
-                    let id = sig.id;
-                    let i = 1;
-                    let div = document.createElement("div");
-                    let line = document.createElement("p");
-                    div.className = "shelfmark";
-                    div.id = id;
-                    sig.txt.forEach(element => {
-                        line.className = "shelfmarkLine_" + i;
-                        if (element == "") {
-                            let emptyLine = document.createElement("br");
-                            line.appendChild(emptyLine);
-                        } else {
-                            line.innerHTML = element;
+    let size = _.groupBy(_.forEach(ids, function(value){return value;}), "size");
+    console.log(size);
+    if (size.small) {
+        _.forEach(size.small, function(value){
+            console.log(value);
+            let objct = value;
+            _.forEach(JSON.parse(file), function(key, value){
+                let sig = "";
+                let found = _.find(key, {"id": Number(objct.id)});
+                if (found !== undefined) {
+                    sig = found;
+                }
+                if (sig != "") {
+                    for (let count = 0; count < objct.count; count++) {
+                        let length = sig.txtLength;
+                        let id = sig.id;
+                        let i = 1;
+                        let div = document.createElement("div");
+                        let line = document.createElement("p");
+                        div.className = "shelfmark";
+                        div.id = id;
+                        sig.txt.forEach(element => {
+                            line.className = "shelfmarkLine_" + i;
+                            if (element == "") {
+                                let emptyLine = document.createElement("br");
+                                line.appendChild(emptyLine);
+                            } else {
+                                line.innerHTML = element;
+                            }
+                            div.appendChild(line);
+                            line = document.createElement("p");
+                            i++;
+                        });
+                        document.getElementById("toPrint").appendChild(div);
+                        console.log("idNr: ", idNr, "countAll: ", countAll);
+                        if (idNr < countAll) {
+                            let pdfPageBreak = document.createElement("div");
+                            pdfPageBreak.className = "html2pdf__page-break";
+                            document.getElementById("toPrint").appendChild(pdfPageBreak);
+                            idNr++;
                         }
-                        div.appendChild(line);
-                        line = document.createElement("p");
-                        i++;
-                    });
-                    document.getElementById("toPrint").appendChild(div);
-                    console.log("idNr: ", idNr, "countAll: ", countAll);
-                    if (idNr < countAll) {
-                        let pdfPageBreak = document.createElement("div");
-                        pdfPageBreak.className = "html2pdf__page-break";
-                        document.getElementById("toPrint").appendChild(pdfPageBreak);
-                        idNr++;
                     }
                 }
-            }
+            });
         });
+        ipc.send("printSize", "small");
+        createSmallPDF();
+    }
+    if (size.big) {
+        _.forEach(size.big, function(value){
+            console.log(value);
+            let objct = value;
+            _.forEach(JSON.parse(file), function(key, value){
+                let sig = "";
+                let found = _.find(key, {"id": Number(objct.id)});
+                if (found !== undefined) {
+                    sig = found;
+                }
+                if (sig != "") {
+                    for (let count = 0; count < objct.count; count++) {
+                        let length = sig.txtLength;
+                        let id = sig.id;
+                        let i = 1;
+                        let div = document.createElement("div");
+                        let line = document.createElement("p");
+                        div.className = "shelfmark";
+                        div.id = id;
+                        sig.txt.forEach(element => {
+                            line.className = "shelfmarkLine_" + i;
+                            if (element == "") {
+                                let emptyLine = document.createElement("br");
+                                line.appendChild(emptyLine);
+                            } else {
+                                line.innerHTML = element;
+                            }
+                            div.appendChild(line);
+                            line = document.createElement("p");
+                            i++;
+                        });
+                        document.getElementById("toPrint").appendChild(div);
+                        console.log("idNr: ", idNr, "countAll: ", countAll);
+                        if (idNr < countAll) {
+                            let pdfPageBreak = document.createElement("div");
+                            pdfPageBreak.className = "html2pdf__page-break";
+                            document.getElementById("toPrint").appendChild(pdfPageBreak);
+                            idNr++;
+                        }
+                    }
+                }
+            });
+        });
+        ipc.send("printSize", "big");
+        createBigPDF();
+    }
+    
+    _.forEach(ids, function(value){
+        console.log("value: ", value);
+        
     });
 }
 
@@ -133,7 +189,7 @@ function createBigPDF() {
     var element = document.getElementById("toPrint");
     html2pdf(element, {
         margin:       1,
-        filename:     "C://Export/myfile.pdf",
+        filename:     "big.pdf",
         image:        { type: "png", quality: 1 },
         html2canvas:  { dpi: 300, letterRendering: true },
         jsPDF:        { unit: newConfig.einheit, format: [newConfig.big.label.width + 0.5, newConfig.big.label.height + 0.5], orientation: "landscape" }
@@ -145,7 +201,7 @@ function createSmallPDF() {
     var element = document.getElementById("toPrint");
     html2pdf(element, {
         margin:       1,
-        filename:     "C://Export/myfile.pdf",
+        filename:     "small.pdf",
         image:        { type: "png", quality: 1 },
         html2canvas:  { dpi: 300, letterRendering: true },
         jsPDF:        { unit: newConfig.einheit, format: [newConfig.small.label.width + 0.5, newConfig.small.label.height + 0.5], orientation: "landscape" }

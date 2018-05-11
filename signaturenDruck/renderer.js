@@ -104,15 +104,6 @@ function getCountOfSeparators(txt, separator) {
 
 // removes duplicates
 function getUnique(obj) {
-    console.log("unique: ", _.map(
-        _.uniq(
-            _.map(obj.all, function(obj){
-                return JSON.stringify(obj);
-            })
-        ), function(obj) {
-            return JSON.parse(obj);
-        }
-    ));
     return _.map(
         _.uniq(
             _.map(obj.all, function(obj){
