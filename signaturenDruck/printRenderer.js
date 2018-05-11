@@ -23,9 +23,7 @@ const ipc = require("electron").ipcRenderer;
 window.onload = function () {
     ipc.on("toPrint", function(event, data){
         console.log("on printRenderer", event, data);
-        createPage(data);
-        createBigPDF();
-        createSmallPDF();
+        main(data);
     });
 };
 
@@ -45,7 +43,7 @@ function loadConfig() {
     return config.store;
 }
 
-function createPage(ids) {
+function main(ids) {
     let file = fs.readFileSync("signaturen.json", "utf8");
     console.log("ids: ", ids);
     addUsername();
@@ -64,6 +62,7 @@ function createPage(ids) {
     let size = _.groupBy(_.forEach(ids, function(value){return value;}), "size");
     console.log(size);
     if (size.small) {
+        // ipc.send("printSize", "small");
         _.forEach(size.small, function(value){
             console.log(value);
             let objct = value;
@@ -106,10 +105,10 @@ function createPage(ids) {
                 }
             });
         });
-        ipc.send("printSize", "small");
         createSmallPDF();
     }
     if (size.big) {
+        // ipc.send("printSize", "big");
         _.forEach(size.big, function(value){
             console.log(value);
             let objct = value;
@@ -152,14 +151,13 @@ function createPage(ids) {
                 }
             });
         });
-        ipc.send("printSize", "big");
         createBigPDF();
     }
     
-    _.forEach(ids, function(value){
-        console.log("value: ", value);
+    // _.forEach(ids, function(value){
+    //     console.log("value: ", value);
         
-    });
+    // });
 }
 
 function addUsername() {

@@ -4,6 +4,9 @@
         <meta charset="UTF-8">
         <title>Signaturendruck</title>
         <style type="text/css">
+            @media print {
+                .shelfmark {page-break-before: always;}
+            }
             #toPrint {
                 font-family: "Arial Narrow";
                 font-size: 16pt; 
@@ -12,7 +15,7 @@
                 margin: 0px;
                 padding-top: 0px;
                 padding-bottom: 0px;
-                padding-left: 45%;
+                padding-left: 50%;
             }
             p.shelfmarkLine_1 {
                 padding-top: 6px;

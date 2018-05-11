@@ -154,6 +154,10 @@
         <script>
             function printButton() {
                 let dataAll = {};
+                let big = {};
+                let b = 0;
+                let small = {};
+                let s = 0;
                 let j = 0;
                 
                 let elems= document.querySelectorAll("[name=toPrint]");
@@ -176,11 +180,22 @@
                                 data.short = true;
                             }
                             data.size = "small";
+                            small[s] = data;
+                            s++;
+                        } else {
+                            big[b] = data;
+                            b++;
                         }
                         dataAll[j] = data;
-                        console.log(data);
                         j++;
                     }
+                }
+                console.log(big, small);
+                if (b > 0) {
+                    ipc.send("printBig", big);
+                }
+                if (s > 0) {
+                    ipc.send("printSmall", small);
                 }
                 // data.toPrint.forEach(element => {
                 //     console.log(document.getElementById("count_"+element).value);
@@ -191,8 +206,7 @@
                 //         }
                 //     }
                 // });
-                console.log("checked ", dataAll);
-                ipc.send("print", dataAll);
+                // ipc.send("print", dataAll);
             }
         </script>
     </body>
