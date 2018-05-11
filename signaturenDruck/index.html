@@ -26,14 +26,14 @@
                 overflow: hidden;
             }
             #buttonBox {
-                float:left; /* add this */
+                float:left;
                 border: 1px solid red;
             }
             #previewBox {
                 width: 80mm;
                 height: 43mm;
                 border: 1px solid green;
-                float: right; /* add this */
+                float: right;
             }
             th, td {
                 text-align: center;
@@ -54,9 +54,9 @@
         </style>
     </head>
     <body>
-        <p>Die Signaturen stammen aus: <span id="defaultPath"></span></p>
-        <p>Eine andere Datei auswählen: 
-            <input type="file" id="fileToRead" />
+        <p id="firstLine">Die Signaturen stammen aus: <span id="defaultPath"></span></p>
+        <p id="secondLine"><span>Eine andere Datei auswählen: </span>
+            <input type="file" accept=".dnl" id="fileToRead" />
         </p>
         <div id="tableBox">
             <table id="signaturTable">
@@ -81,10 +81,10 @@
         </div>
         <div id="container">
             <div id="buttonBox">
+                <button id="btn_testIt">Test</button><br>
                 <button id="btn_">Manuelles Anlegen</button><br>
                 <button id="btn_deleteFile">Lösche Download Datei</button><br>
                 <button id="btn_deleteList">Liste löschen</button><br>
-                <button id="btn_loadData">loadData</button><br>
                 <button id="btn_print" onclick="printButton()">Drucken</button><br>
                 <button id="btn_close">Beenden</button>
             </div>
@@ -131,42 +131,61 @@
         <script>
             function preview(id) {
                 let file = fs.readFileSync("signaturen.json", "utf8");
-                let sig = "";
                 _.forEach(JSON.parse(file), function(key, value){
-                    let found = _.find(key, {"id": id});
+                    let sig = "";
+                    let found = _.find(key, {"id": Number(id)});
                     if (found !== undefined) {
                         sig = found;
                     }
-                });
-                if (sig != "") {
-                    console.log(sig);
-                    let length = sig.txtLength;
-                    let i = 1;
-                    let line = document.createElement('p');
-                    console.log(length);
-                    if (length > 3) {
-                        console.log("added stuff");
-                    } else {
-
-                    }
-                    let myNode = document.getElementById("previewBox");
-                    while (myNode.firstChild) {
-                        myNode.removeChild(myNode.firstChild);
-                    }
-                    sig.txt.forEach(element => {
-                        line.className = "previewLine";
-                        line.id = "line" + i;
-                        if (element == "") {
-                            let emptyLine = document.createElement("br");
-                        line.appendChild(emptyLine);
+                    if (sig != "") {
+                        
+                        let length = sig.txtLength;
+                        let id = sig.id;
+                        let i = 1;
+                        let div = document.createElement("div");
+                        let line = document.createElement("p");
+                        if (objct.short || length != 1) {
+                            div.className = "shelfmark indent";
                         } else {
-                            line.innerHTML = element;
+                            div.className = "shelfmark center";
                         }
-                        document.getElementById("previewBox").appendChild(line);
-                        line = document.createElement('p');
-                        i++;
-                    });
-                }
+                        div.id = id;
+                        if (objct.short && length == 1) {
+                            console.log(sig.txt);
+                            let text = sig.txt[0];
+                            let textSplit = text.split(" ");
+                            let countSpaces = textSplit.length;
+                            let i = 0;
+                            let j = 0;
+                            while (countSpaces >= 2) {
+                                sig.txt = [];
+                                sig.txt[j] = textSplit[i] + " " + textSplit[i+1];
+                                countSpaces -= 2;
+                                i += 2;
+                                j++;
+                                console.log(countSpaces);
+                            }
+                            if (countSpaces == 1) {
+                                sig.txt[j] = textSplit[i];
+                            }
+
+                        }
+                        sig.txt.forEach(element => {
+                            line.className = "previewLine";
+                            line.id = "line" + i;
+                            if (element == "") {
+                                let emptyLine = document.createElement("br");
+                            line.appendChild(emptyLine);
+                            } else {
+                                line.innerHTML = element;
+                            }
+                            document.getElementById("previewBox").appendChild(line);
+                            line = document.createElement('p');
+                            i++;
+                        });
+                        
+                    }
+                });
             }
         </script>
         <script>

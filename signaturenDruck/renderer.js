@@ -18,6 +18,8 @@ const store = require("electron-store");
 const config = new store({cwd: "C:\\Export\\"});
 
 const dataExtract = require("./dataExtract.js");
+const strSecondLine = "Bitte wählen sie eine Datei aus:";
+const strSecondLine2 = "Eine andere Datei auswählen:";
 
 window.onload = function () {
     document.getElementById("defaultPath").innerHTML = config.get("defaultPath");
@@ -28,6 +30,10 @@ window.onload = function () {
         const allLines = file.split(/\r\n|\n/);
         writeToFile(allLines);
         displayData();
+    } else {
+        displayFirstLine(false);
+        alert("Es ist keine Datei im Standardordner vorhanden");
+        changeSecondLine(strSecondLine);
     }
 
     //Check the support for the File API support
@@ -40,6 +46,7 @@ window.onload = function () {
                 const allLines = file.split(/\r\n|\n/);
                 writeToFile(allLines);
                 displayData();
+                changeSecondLine(strSecondLine2);
             };
             fileReader.readAsText(fileTobeRead);
         }, false);
@@ -244,4 +251,49 @@ function createLabelSizeCell(row, cellNr, objct) {
     }
 }
 
-document.getElementById("btn_loadData").addEventListener("click", displayData);
+function deleteList() {
+    if (fs.existsSync("signaturen.json")) {
+        fs.unlink("signaturen.json", function (err){
+            if (err) {
+                throw err;
+            } else {
+                let myNode = document.getElementById("signaturTableBody");
+                while (myNode.firstChild) {
+                    myNode.removeChild(myNode.firstChild);
+                }
+                displayFirstLine(false);
+                changeSecondLine(strSecondLine);
+                alert("Die Liste wurde gelöscht.");
+            }
+        });
+    }
+}
+
+function displayFirstLine(bool) {
+    let firstLine = document.getElementById("firstLine");
+    if (bool) {
+        firstLine.style.display = "block";
+    } else {
+        firstLine.style.display = "none";
+    }
+}
+function changeSecondLine(str) {
+    let secondLine = document.getElementById("secondLine").getElementsByTagName("span")[0];
+    secondLine.innerHTML = str;
+}
+// returns the full path of the selected file
+function getFullPath() {
+    if (document.getElementById("fileToRead").value) {
+        return document.getElementById("fileToRead").files[0].path;
+    } else {
+        return false;
+    }
+}
+// test function
+function test() {
+    console.log("Test");
+}
+// adds event listener to test button
+document.getElementById("btn_testIt").addEventListener("click", test);
+// adds event listener to deleteList button
+document.getElementById("btn_deleteList").addEventListener("click", deleteList);

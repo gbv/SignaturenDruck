@@ -1,6 +1,6 @@
 {
   "name": "SignaturenDruck",
-  "version": "0.0.2",
+  "version": "0.0.3",
   "description": "Started with electron-quick-start",
   "main": "main.js",
   "scripts": {
