@@ -3,11 +3,17 @@
     <head>
         <meta charset="UTF-8">
         <title>Signaturendruck</title>
-        <style type="text/css"> 
-            #filecontents, #tableBox { 
-                border:double; 
+        <style type="text/css">
+            body {
+                background-color: RGB(240,240,240);
+                font-family: "Arial";
+            }
+            #tableBox { 
+                border: 1px solid grey; 
                 overflow-y:scroll; 
-                height:200px; 
+                height:260px;
+                padding: 5px;
+                background-color: RGB(255,254,225);
             }
             .toPrint {
                 width: 50px;
@@ -22,18 +28,48 @@
                 text-align: center;
             }
             #container {
-                border: double;
+                /* border: double; */
                 overflow: hidden;
             }
             #buttonBox {
                 float:left;
-                border: 1px solid red;
+                /* border: 1px solid red; */
             }
-            #previewBox {
+            .big {
                 width: 80mm;
                 height: 43mm;
+            }
+            .small {
+                width: 74mm;
+                height: 23mm;
+            }
+            .indent > p {
+                font-size: 16pt;
+                margin: 0px;
+                padding-top: 0px;
+                padding-bottom: 0px;
+                margin-left: 45%;
+            }
+            .center > p {
+                font-size: 15pt;
+                margin: 0pt;
+                text-align: center;
+            }
+            .center > p#line1 {
+                margin-top: 30px;
+            }
+            #previewBox {
                 border: 1px solid green;
                 float: right;
+                margin: 5px;
+                border-radius: 2px;
+                font-family: "Arial Narrow";
+            }
+            p#line1 {
+                margin-top: 6px;
+            }
+            #line1, #line2, #line3, #line6 {
+                font-weight: bold;
             }
             th, td {
                 text-align: center;
@@ -51,13 +87,21 @@
             .shortShelfmarkCell, .printCell, .labelSizeCell {
                 width: 5%;
             }
+            hr {
+                width: 103%;
+            }
+            .ppnRow {
+                color: RGB(0,51,153);
+            }
         </style>
     </head>
     <body>
-        <p id="firstLine">Die Signaturen stammen aus: <span id="defaultPath"></span></p>
-        <p id="secondLine"><span>Eine andere Datei auswählen: </span>
-            <input type="file" accept=".dnl" id="fileToRead" />
-        </p>
+        <div>
+            <p id="firstLine">Die Signaturen stammen aus: <span id="defaultPath"></span></p>
+            <p id="secondLine"><span>Eine andere Datei auswählen: </span>
+                <input type="file" accept=".dnl" id="fileToRead" />
+            </p>
+        </div>
         <div id="tableBox">
             <table id="signaturTable">
                 <thead>
@@ -81,14 +125,14 @@
         </div>
         <div id="container">
             <div id="buttonBox">
-                <button id="btn_testIt">Test</button><br>
+                <!-- <button id="btn_testIt">Test</button><br> -->
                 <button id="btn_">Manuelles Anlegen</button><br>
                 <button id="btn_deleteFile">Lösche Download Datei</button><br>
                 <button id="btn_deleteList">Liste löschen</button><br>
                 <button id="btn_print" onclick="printButton()">Drucken</button><br>
                 <button id="btn_close">Beenden</button>
             </div>
-            <div id="previewBox" style="background: #00f8d7"></div>
+            <div id="previewBox" class="big" style="background: #00f8d7"></div>
         </div>
         <script>
         // You can also require other files to run in this process
@@ -130,6 +174,31 @@
         </script>
         <script>
             function preview(id) {
+                let isSmall = false;
+                let isShort = false;
+                if (document.getElementById("short_" + id)) {
+                    isSmall = true;
+                    if (document.getElementById("short_" + id).checked) {
+                        isShort = true;
+                    }
+                }
+                if (isSmall) {
+                    let previewBox = document.getElementById("previewBox");
+                    previewBox.classList.remove("big");
+                    previewBox.classList.remove("indent");
+                    previewBox.classList.add("small");
+                    previewBox.classList.add("center");
+                    if (isShort) {
+                        previewBox.classList.remove("center");
+                        previewBox.classList.add("indent");
+                    }
+                } else {
+                    let previewBox = document.getElementById("previewBox");
+                    previewBox.classList.remove("small");
+                    previewBox.classList.remove("center")
+                    previewBox.classList.add("big");
+                    previewBox.classList.add("indent");
+                }
                 let myNode = document.getElementById("previewBox");
                 while (myNode.firstChild) {
                     myNode.removeChild(myNode.firstChild);
@@ -149,8 +218,8 @@
                         let div = document.createElement("div");
                         let line = document.createElement("p");
                         div.className = "shelfmark center";
-                        if (document.getElementById("short_" + id)) {
-                            if (document.getElementById("short_" + id).checked || length != 1) {
+                        if (isSmall) {
+                            if (isShort || length != 1) {
                                 div.className = "shelfmark indent";
                             }
                         }

@@ -163,9 +163,8 @@ function createTable(obj) {
     let i = 0;
     _.forEach(obj, function(key, value){
         let row = table.insertRow(i);
-        let ppnRow = row.insertCell(0);
-        ppnRow.innerHTML = value;
-        ppnRow.className = "ppnLine";
+        row.className = "ppnRow";
+        createPpnRow(row, value);
         _.forEach(key, function(objct){
             i++;
             row = table.insertRow(i);
@@ -179,6 +178,38 @@ function createTable(obj) {
         });
         i++;
     });
+}
+
+function createPpnRow(row, value) {
+    let i = 0;
+    let cell = row.insertCell(i);
+    i++;
+    cell.innerHTML = "PPN: " + value;
+    cell.className = "ppnCell";
+    cell = row.insertCell(i);
+    i++;
+    cell.innerHTML = "<hr>";
+    cell.className = "dateCell";
+    cell = row.insertCell(i);
+    i++;
+    cell.innerHTML = "<hr>";
+    cell.className = "isNrCell";
+    cell = row.insertCell(i);
+    i++;
+    cell.innerHTML = "<hr>";
+    cell.className = "shortShelfmarkCell";
+    cell = row.insertCell(i);
+    i++;
+    cell.innerHTML = "<hr>";
+    cell.className = "printCell";
+    cell = row.insertCell(i);
+    i++;
+    cell.innerHTML = "<hr>";
+    cell.className = "printCountCell";
+    cell = row.insertCell(i);
+    i++;
+    cell.innerHTML = "<hr>";
+    cell.className = "labelSizeCell";
 }
 
 function createTxtCell(row, cellNr, objct) {
@@ -213,6 +244,7 @@ function createShortShelfmarkCell(row, cellNr, objct) {
         input.type = "checkbox";
         input.name = "shortShelfmark";
         input.value = objct.id;
+        input.onclick = function() { preview(objct.id); };
         shortShelfmarkCell.appendChild(input);
     }
 }
@@ -225,6 +257,7 @@ function createPrintCell(row, cellNr, objct) {
     input.type = "checkbox";
     input.name = "toPrint";
     input.value = objct.id;
+    input.onclick = function() { preview(objct.id); };
     printCell.appendChild(input);
 }
 
@@ -294,6 +327,6 @@ function test() {
     console.log("Test");
 }
 // adds event listener to test button
-document.getElementById("btn_testIt").addEventListener("click", test);
+// document.getElementById("btn_testIt").addEventListener("click", test);
 // adds event listener to deleteList button
 document.getElementById("btn_deleteList").addEventListener("click", deleteList);
