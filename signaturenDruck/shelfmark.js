@@ -1,4 +1,4 @@
-class Signatur {
+class shelfmark {
     constructor() {
         this._ppn = "";
         this._exNr = "";
@@ -54,7 +54,7 @@ class Signatur {
     get bigLabel() {
         return this._bigLabel;
     }
-    get Signatur() {
+    get shelfmark() {
         return {"PPN": this._ppn, "id": this._id, "bigLabel": this._bigLabel, "txt": this._txt, "txtLength": this._txtLength, "date": this._date, "exNr": this._exNr};
     }
 
@@ -69,4 +69,4 @@ class Signatur {
 
 }
 
-module.exports = Signatur;
+module.exports = shelfmark;

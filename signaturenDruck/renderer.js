@@ -2,8 +2,8 @@
 // be executed in the renderer process for that window.
 // All of the Node.js APIs are available in this process.
 
-// requires the Signatur class
-const Signatur = require("./signatur.js");
+// requires the shelfmark class
+const shelfmark = require("./shelfmark.js");
 
 // requires lodash
 const _ = require("lodash");
@@ -60,7 +60,7 @@ function writeToFile(allLines) {
     let obj = {
         all: []
     };
-    let sig = new Signatur();
+    let sig = new shelfmark();
     let extract = new dataExtract;
     let ppnAktuell = "";
     // let id = 1;
@@ -85,14 +85,14 @@ function writeToFile(allLines) {
             sig.date = extract.date(line);
         }
         if (sig.allSet()) {
-            obj.all.push(sig.Signatur);
-            sig = new Signatur();
+            obj.all.push(sig.shelfmark);
+            sig = new shelfmark();
             // id++;
             // sig.id = id;
             sig.ppn = ppnAktuell;
         }
     });
-    // write every Signatur to signaturen.json
+    // write every shelfmark to signaturen.json
     writeSignaturesToFile(JSON.stringify(setIds(getUnique(obj))));
 }
 
