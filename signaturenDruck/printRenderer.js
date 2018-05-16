@@ -73,15 +73,15 @@ function main(ids) {
             console.log(value);
             let objct = value;
             _.forEach(JSON.parse(file), function(key, value){
-                let sig = "";
+                let shelfmark = "";
                 let found = _.find(key, {"id": Number(objct.id)});
                 if (found !== undefined) {
-                    sig = found;
+                    shelfmark = found;
                 }
-                if (sig != "") {
+                if (shelfmark != "") {
                     for (let count = 0; count < objct.count; count++) {
-                        let length = sig.txtLength;
-                        let id = sig.id;
+                        let length = shelfmark.txtLength;
+                        let id = shelfmark.id;
                         let i = 1;
                         let div = document.createElement("div");
                         let line = document.createElement("p");
@@ -93,26 +93,26 @@ function main(ids) {
                         }
                         div.id = id;
                         if (objct.short && length == 1) {
-                            console.log(sig.txt);
-                            let text = sig.txt[0];
+                            console.log(shelfmark.txt);
+                            let text = shelfmark.txt[0];
                             let textSplit = text.split(" ");
                             let countSpaces = textSplit.length;
                             let i = 0;
                             let j = 0;
                             while (countSpaces >= 2) {
-                                sig.txt = [];
-                                sig.txt[j] = textSplit[i] + " " + textSplit[i+1];
+                                shelfmark.txt = [];
+                                shelfmark.txt[j] = textSplit[i] + " " + textSplit[i+1];
                                 countSpaces -= 2;
                                 i += 2;
                                 j++;
                                 console.log(countSpaces);
                             }
                             if (countSpaces == 1) {
-                                sig.txt[j] = textSplit[i];
+                                shelfmark.txt[j] = textSplit[i];
                             }
 
                         }
-                        sig.txt.forEach(element => {
+                        shelfmark.txt.forEach(element => {
                             line.className = "shelfmarkLine_" + i;
                             if (element == "") {
                                 let emptyLine = document.createElement("br");
@@ -144,21 +144,21 @@ function main(ids) {
             console.log(value);
             let objct = value;
             _.forEach(JSON.parse(file), function(key, value){
-                let sig = "";
+                let shelfmark = "";
                 let found = _.find(key, {"id": Number(objct.id)});
                 if (found !== undefined) {
-                    sig = found;
+                    shelfmark = found;
                 }
-                if (sig != "") {
+                if (shelfmark != "") {
                     for (let count = 0; count < objct.count; count++) {
-                        let length = sig.txtLength;
-                        let id = sig.id;
+                        let length = shelfmark.txtLength;
+                        let id = shelfmark.id;
                         let i = 1;
                         let div = document.createElement("div");
                         let line = document.createElement("p");
                         div.className = "shelfmark indent";
                         div.id = id;
-                        sig.txt.forEach(element => {
+                        shelfmark.txt.forEach(element => {
                             line.className = "shelfmarkLine_" + i;
                             if (element == "") {
                                 let emptyLine = document.createElement("br");
