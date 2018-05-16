@@ -3,136 +3,135 @@
 // All of the Node.js APIs are available in this process.
 
 // requires the shelfmark class
-const shelfmark = require("./shelfmark.js");
+const shelfmark = require('./shelfmark.js')
 
 // requires lodash
-const _ = require("lodash");
+const _ = require('lodash')
 
 // requires the fs-module
-const fs = require("fs");
+const fs = require('fs')
 
 // //requires jsPDF
 // const jsPDF = require("jspdf");
 
-const store = require("electron-store");
-const config = new store({cwd: "C:\\Export\\"});
+const store = require('electron-store')
+const config = new store({cwd: 'C:\\Export\\'})
 
-const dataExtract = require("./dataExtract.js");
-const strSecondLine = "Bitte wählen sie eine Datei aus:";
-const strSecondLine2 = "Eine andere Datei auswählen:";
+const dataExtract = require('./dataExtract.js')
+const strSecondLine = 'Bitte wählen sie eine Datei aus:'
+const strSecondLine2 = 'Eine andere Datei auswählen:'
 
 window.onload = function () {
-    document.getElementById("defaultPath").innerHTML = config.get("defaultPath");
-    let fileSelected = document.getElementById("fileToRead");
-    let fileTobeRead;
-    if (fs.existsSync(config.get("defaultPath"))) {
-        let file = fs.readFileSync(config.get("defaultPath"), "utf-8");
-        const allLines = file.split(/\r\n|\n/);
-        writeToFile(allLines);
-        displayData();
-    } else {
-        displayFirstLine(false);
-        alert("Es ist keine Datei im Standardordner vorhanden");
-        changeSecondLine(strSecondLine);
-    }
+  document.getElementById('defaultPath').innerHTML = config.get('defaultPath')
+  let fileSelected = document.getElementById('fileToRead')
+  let fileTobeRead
+  if (fs.existsSync(config.get('defaultPath'))) {
+    let file = fs.readFileSync(config.get('defaultPath'), 'utf-8')
+    const allLines = file.split(/\r\n|\n/)
+    writeToFile(allLines)
+    displayData()
+  } else {
+    displayFirstLine(false)
+    alert('Es ist keine Datei im Standardordner vorhanden')
+    changeSecondLine(strSecondLine)
+  }
 
-    //Check the support for the File API support
-    if (window.File && window.FileReader && window.FileList && window.Blob) {
-        fileSelected.addEventListener("change", function () {
-            fileTobeRead = fileSelected.files[0];
-            let fileReader = new FileReader();
-            fileReader.onload = function () {
-                const file = event.target.result;
-                const allLines = file.split(/\r\n|\n/);
-                writeToFile(allLines);
-                displayData();
-                changeSecondLine(strSecondLine2);
-            };
-            fileReader.readAsText(fileTobeRead);
-        }, false);
-    }
-    else {
-        alert("Files are not supported");
-    }
-};
-
-function writeToFile(allLines) {
-    let obj = {
-        all: []
-    };
-    let sig = new shelfmark();
-    let extract = new dataExtract;
-    let ppnAktuell = "";
-    // let id = 1;
-    // sig.id = id;
-    // Reading line by line
-    allLines.map((line) => {
-        let first4 = extract.firstFour(line);
-        if (first4 == "0100") {
-            sig.ppn = ppnAktuell = extract.ppn(line);
-        } else if (first4 >= 7001 && first4 <= 7099) {
-            sig.exNr = extract.exNr(line);
-        } else if (first4 == 7100) {
-            let txt = extract.txt(line);
-            let big = labelSize(txt);
-            if (big === false) {
-                sig.bigLabel = false;
-            }
-            txt = txt.split(":");
-            sig.txt = txt;
-            sig.txtLength = sig.txt.length;
-        } else if (first4 == 7901) {
-            sig.date = extract.date(line);
-        }
-        if (sig.allSet()) {
-            obj.all.push(sig.shelfmark);
-            sig = new shelfmark();
-            // id++;
-            // sig.id = id;
-            sig.ppn = ppnAktuell;
-        }
-    });
-    // write every shelfmark to signaturen.json
-    writeSignaturesToFile(JSON.stringify(setIds(getUnique(obj))));
+  // Check the support for the File API support
+  if (window.File && window.FileReader && window.FileList && window.Blob) {
+    fileSelected.addEventListener('change', function () {
+      fileTobeRead = fileSelected.files[0]
+      let fileReader = new FileReader()
+      fileReader.onload = function () {
+        const file = event.target.result
+        const allLines = file.split(/\r\n|\n/)
+        writeToFile(allLines)
+        displayData()
+        changeSecondLine(strSecondLine2)
+      }
+      fileReader.readAsText(fileTobeRead)
+    }, false)
+  } else {
+    alert('Files are not supported')
+  }
 }
 
-function labelSize(txt) {
-    let numberOfSeperators = getCountOfSeparators(txt, ":");
-    let numberOfWhitespaces = getCountOfSeparators(txt, " ");
-    if ((numberOfSeperators >= 2) && (numberOfSeperators > numberOfWhitespaces)) {
-        return true;
-    } else {
-        return false;
+function writeToFile (allLines) {
+  let obj = {
+    all: []
+  }
+  let sig = new shelfmark()
+  let extract = new dataExtract()
+  let ppnAktuell = ''
+  // let id = 1;
+  // sig.id = id;
+  // Reading line by line
+  allLines.map((line) => {
+    let first4 = extract.firstFour(line)
+    if (first4 == '0100') {
+      sig.ppn = ppnAktuell = extract.ppn(line)
+    } else if (first4 >= 7001 && first4 <= 7099) {
+      sig.exNr = extract.exNr(line)
+    } else if (first4 == 7100) {
+      let txt = extract.txt(line)
+      let big = labelSize(txt)
+      if (big === false) {
+        sig.bigLabel = false
+      }
+      txt = txt.split(':')
+      sig.txt = txt
+      sig.txtLength = sig.txt.length
+    } else if (first4 == 7901) {
+      sig.date = extract.date(line)
     }
+    if (sig.allSet()) {
+      obj.all.push(sig.shelfmark)
+      sig = new shelfmark()
+      // id++;
+      // sig.id = id;
+      sig.ppn = ppnAktuell
+    }
+  })
+  // write every shelfmark to signaturen.json
+  writeSignaturesToFile(JSON.stringify(setIds(getUnique(obj))))
 }
 
-function getCountOfSeparators(txt, separator) {
-    return txt.split(separator).length;
+function labelSize (txt) {
+  let numberOfSeperators = getCountOfSeparators(txt, ':')
+  let numberOfWhitespaces = getCountOfSeparators(txt, ' ')
+  if ((numberOfSeperators >= 2) && (numberOfSeperators > numberOfWhitespaces)) {
+    return true
+  } else {
+    return false
+  }
+}
+
+function getCountOfSeparators (txt, separator) {
+  return txt.split(separator).length
 }
 
 // removes duplicates
-function getUnique(obj) {
-    return _.map(
-        _.uniq(
-            _.map(obj.all, function(obj){
-                return JSON.stringify(obj);
-            })
-        ), function(obj) {
-            return JSON.parse(obj);
-        }
-    );
+function getUnique (obj) {
+  return _.map(
+    _.uniq(
+      _.map(obj.all, function (obj) {
+        return JSON.stringify(obj)
+      })
+    ), function (obj) {
+      return JSON.parse(obj)
+    }
+  )
 }
 
-function groupByPPN(obj) {
-    return _.groupBy(obj, "PPN");
+function groupByPPN (obj) {
+  return _.groupBy(obj, 'PPN')
 }
 
-function setIds(obj) {
-    let i = 1;
-    return _.forEach(obj, function(value) {
-        value.id = i;
-        i++;
-    });
+function setIds (obj) {
+  let i = 1
+  return _.forEach(obj, function (value) {
+    value.id = i
+    i++
+  })
 }
 // // function to test the PDF generation
 // function testPDF() {
@@ -143,190 +142,190 @@ function setIds(obj) {
 //     doc.save("test.pdf");
 // }
 
-function writeSignaturesToFile(json) {
-    json = JSON.stringify(groupByPPN(JSON.parse(json)));
-    fs.writeFileSync("signaturen.json", json, "utf8");
+function writeSignaturesToFile (json) {
+  json = JSON.stringify(groupByPPN(JSON.parse(json)))
+  fs.writeFileSync('signaturen.json', json, 'utf8')
 }
 
-function displayData() {
-    let file = fs.readFileSync("signaturen.json", "utf8");
-    if (document.getElementById("shelfmarkTable")) {
-        let myNode = document.getElementById("shelfmarkTableBody");
+function displayData () {
+  let file = fs.readFileSync('signaturen.json', 'utf8')
+  if (document.getElementById('shelfmarkTable')) {
+    let myNode = document.getElementById('shelfmarkTableBody')
+    while (myNode.firstChild) {
+      myNode.removeChild(myNode.firstChild)
+    }
+  }
+  createTable(JSON.parse(file))
+}
+function createTable (obj) {
+  let table = document.getElementById('shelfmarkTable').getElementsByTagName('tbody')[0]
+  let i = 0
+  _.forEach(obj, function (key, value) {
+    let row = table.insertRow(i)
+    row.className = 'ppnRow'
+    createPpnRow(row, value)
+    _.forEach(key, function (objct) {
+      i++
+      row = table.insertRow(i)
+      createTxtCell(row, 0, objct)
+      createDateCell(row, 1, objct)
+      createExnrCell(row, 2, objct)
+      createShortShelfmarkCell(row, 3, objct)
+      createPrintCell(row, 4, objct)
+      createPrintCountCell(row, 5, objct)
+      createLabelSizeCell(row, 6, objct)
+    })
+    i++
+  })
+}
+
+function createPpnRow (row, value) {
+  let i = 0
+  let cell = row.insertCell(i)
+  i++
+  cell.innerHTML = 'PPN: ' + value
+  cell.className = 'ppnCell'
+  cell = row.insertCell(i)
+  i++
+  cell.innerHTML = '<hr>'
+  cell.className = 'dateCell'
+  cell = row.insertCell(i)
+  i++
+  cell.innerHTML = '<hr>'
+  cell.className = 'isNrCell'
+  cell = row.insertCell(i)
+  i++
+  cell.innerHTML = '<hr>'
+  cell.className = 'shortShelfmarkCell'
+  cell = row.insertCell(i)
+  i++
+  cell.innerHTML = '<hr>'
+  cell.className = 'printCell'
+  cell = row.insertCell(i)
+  i++
+  cell.innerHTML = '<hr>'
+  cell.className = 'printCountCell'
+  cell = row.insertCell(i)
+  i++
+  cell.innerHTML = '<hr>'
+  cell.className = 'labelSizeCell'
+}
+
+function createTxtCell (row, cellNr, objct) {
+  let txtCell = row.insertCell(cellNr)
+  txtCell.onclick = function () { preview(objct.id) }
+  _.forEach(objct.txt, function (value) {
+    txtCell.innerHTML += value + ' '
+  })
+  txtCell.className = 'txtCell'
+}
+
+function createDateCell (row, cellNr, objct) {
+  let dateCell = row.insertCell(cellNr)
+  dateCell.onclick = function () { preview(objct.id) }
+  dateCell.className = 'dateCell'
+  dateCell.innerHTML = objct.date
+}
+
+function createExnrCell (row, cellNr, objct) {
+  let isNrCell = row.insertCell(cellNr)
+  isNrCell.onclick = function () { preview(objct.id) }
+  isNrCell.className = 'isNrCell'
+  isNrCell.innerHTML = objct.exNr
+}
+
+function createShortShelfmarkCell (row, cellNr, objct) {
+  let shortShelfmarkCell = row.insertCell(cellNr)
+  shortShelfmarkCell.className = 'shortShelfmarkCell'
+  if (!objct.bigLabel) {
+    let input = document.createElement('input')
+    input.id = 'short_' + objct.id
+    input.type = 'checkbox'
+    input.name = 'shortShelfmark'
+    input.value = objct.id
+    input.onclick = function () { preview(objct.id) }
+    shortShelfmarkCell.appendChild(input)
+  }
+}
+
+function createPrintCell (row, cellNr, objct) {
+  let printCell = row.insertCell(cellNr)
+  let input = document.createElement('input')
+  printCell.className = 'printCell'
+  input.id = 'print_' + objct.id
+  input.type = 'checkbox'
+  input.name = 'toPrint'
+  input.value = objct.id
+  input.onclick = function () { preview(objct.id) }
+  printCell.appendChild(input)
+}
+
+function createPrintCountCell (row, cellNr, objct) {
+  let printCountCell = row.insertCell(cellNr)
+  let input = document.createElement('input')
+  printCountCell.className = 'printCountCell'
+  input.id = 'count_' + objct.id
+  input.type = 'number'
+  input.max = 99
+  input.min = 1
+  input.name = 'printCount'
+  input.value = 1
+  printCountCell.appendChild(input)
+}
+
+function createLabelSizeCell (row, cellNr, objct) {
+  let labelSizeCell = row.insertCell(cellNr)
+  labelSizeCell.className = 'labelSizeCell'
+  if (objct.bigLabel) {
+    labelSizeCell.innerHTML = 'groß'
+  } else {
+    labelSizeCell.innerHTML = 'klein'
+  }
+}
+
+function deleteList () {
+  if (fs.existsSync('signaturen.json')) {
+    fs.unlink('signaturen.json', function (err) {
+      if (err) {
+        throw err
+      } else {
+        let myNode = document.getElementById('shelfmarkTableBody')
         while (myNode.firstChild) {
-            myNode.removeChild(myNode.firstChild);
+          myNode.removeChild(myNode.firstChild)
         }
-    }
-    createTable(JSON.parse(file));
-}
-function createTable(obj) {
-    let table = document.getElementById("shelfmarkTable").getElementsByTagName("tbody")[0];
-    let i = 0;
-    _.forEach(obj, function(key, value){
-        let row = table.insertRow(i);
-        row.className = "ppnRow";
-        createPpnRow(row, value);
-        _.forEach(key, function(objct){
-            i++;
-            row = table.insertRow(i);
-            createTxtCell(row, 0, objct);
-            createDateCell(row, 1, objct);
-            createExnrCell(row, 2, objct);
-            createShortShelfmarkCell(row, 3, objct);
-            createPrintCell(row, 4, objct);
-            createPrintCountCell(row, 5, objct);
-            createLabelSizeCell(row, 6, objct);
-        });
-        i++;
-    });
+        displayFirstLine(false)
+        changeSecondLine(strSecondLine)
+        alert('Die Liste wurde gelöscht.')
+      }
+    })
+  }
 }
 
-function createPpnRow(row, value) {
-    let i = 0;
-    let cell = row.insertCell(i);
-    i++;
-    cell.innerHTML = "PPN: " + value;
-    cell.className = "ppnCell";
-    cell = row.insertCell(i);
-    i++;
-    cell.innerHTML = "<hr>";
-    cell.className = "dateCell";
-    cell = row.insertCell(i);
-    i++;
-    cell.innerHTML = "<hr>";
-    cell.className = "isNrCell";
-    cell = row.insertCell(i);
-    i++;
-    cell.innerHTML = "<hr>";
-    cell.className = "shortShelfmarkCell";
-    cell = row.insertCell(i);
-    i++;
-    cell.innerHTML = "<hr>";
-    cell.className = "printCell";
-    cell = row.insertCell(i);
-    i++;
-    cell.innerHTML = "<hr>";
-    cell.className = "printCountCell";
-    cell = row.insertCell(i);
-    i++;
-    cell.innerHTML = "<hr>";
-    cell.className = "labelSizeCell";
+function displayFirstLine (bool) {
+  let firstLine = document.getElementById('firstLine')
+  if (bool) {
+    firstLine.style.display = 'block'
+  } else {
+    firstLine.style.display = 'none'
+  }
 }
-
-function createTxtCell(row, cellNr, objct) {
-    let txtCell = row.insertCell(cellNr);
-    txtCell.onclick = function() { preview(objct.id); };
-    _.forEach(objct.txt, function(value){
-        txtCell.innerHTML += value + " ";
-    });
-    txtCell.className = "txtCell";
-}
-
-function createDateCell(row, cellNr, objct) {
-    let dateCell = row.insertCell(cellNr);
-    dateCell.onclick = function() { preview(objct.id); };
-    dateCell.className = "dateCell";
-    dateCell.innerHTML = objct.date;
-}
-
-function createExnrCell(row, cellNr, objct) {
-    let isNrCell = row.insertCell(cellNr);
-    isNrCell.onclick = function() { preview(objct.id); };
-    isNrCell.className = "isNrCell";
-    isNrCell.innerHTML = objct.exNr;
-}
-
-function createShortShelfmarkCell(row, cellNr, objct) {
-    let shortShelfmarkCell = row.insertCell(cellNr);
-    shortShelfmarkCell.className = "shortShelfmarkCell";
-    if (!objct.bigLabel) {
-        let input = document.createElement("input");
-        input.id = "short_" + objct.id;
-        input.type = "checkbox";
-        input.name = "shortShelfmark";
-        input.value = objct.id;
-        input.onclick = function() { preview(objct.id); };
-        shortShelfmarkCell.appendChild(input);
-    }
-}
-
-function createPrintCell(row, cellNr, objct) {
-    let printCell = row.insertCell(cellNr);
-    let input = document.createElement("input");
-    printCell.className = "printCell";
-    input.id = "print_" + objct.id;
-    input.type = "checkbox";
-    input.name = "toPrint";
-    input.value = objct.id;
-    input.onclick = function() { preview(objct.id); };
-    printCell.appendChild(input);
-}
-
-function createPrintCountCell(row, cellNr, objct) {
-    let printCountCell = row.insertCell(cellNr);
-    let input = document.createElement("input");
-    printCountCell.className = "printCountCell";
-    input.id = "count_" + objct.id;
-    input.type = "number";
-    input.max = 99;
-    input.min = 1;
-    input.name = "printCount";
-    input.value = 1;
-    printCountCell.appendChild(input);
-}
-
-function createLabelSizeCell(row, cellNr, objct) {
-    let labelSizeCell = row.insertCell(cellNr);
-    labelSizeCell.className = "labelSizeCell";
-    if (objct.bigLabel) {
-        labelSizeCell.innerHTML = "groß";
-    } else {
-        labelSizeCell.innerHTML = "klein";
-    }
-}
-
-function deleteList() {
-    if (fs.existsSync("signaturen.json")) {
-        fs.unlink("signaturen.json", function (err){
-            if (err) {
-                throw err;
-            } else {
-                let myNode = document.getElementById("shelfmarkTableBody");
-                while (myNode.firstChild) {
-                    myNode.removeChild(myNode.firstChild);
-                }
-                displayFirstLine(false);
-                changeSecondLine(strSecondLine);
-                alert("Die Liste wurde gelöscht.");
-            }
-        });
-    }
-}
-
-function displayFirstLine(bool) {
-    let firstLine = document.getElementById("firstLine");
-    if (bool) {
-        firstLine.style.display = "block";
-    } else {
-        firstLine.style.display = "none";
-    }
-}
-function changeSecondLine(str) {
-    let secondLine = document.getElementById("secondLine").getElementsByTagName("span")[0];
-    secondLine.innerHTML = str;
+function changeSecondLine (str) {
+  let secondLine = document.getElementById('secondLine').getElementsByTagName('span')[0]
+  secondLine.innerHTML = str
 }
 // returns the full path of the selected file
-function getFullPath() {
-    if (document.getElementById("fileToRead").value) {
-        return document.getElementById("fileToRead").files[0].path;
-    } else {
-        return false;
-    }
+function getFullPath () {
+  if (document.getElementById('fileToRead').value) {
+    return document.getElementById('fileToRead').files[0].path
+  } else {
+    return false
+  }
 }
 // test function
-function test() {
-    console.log("Test");
+function test () {
+  console.log('Test')
 }
 // adds event listener to test button
 // document.getElementById("btn_testIt").addEventListener("click", test);
 // adds event listener to deleteList button
-document.getElementById("btn_deleteList").addEventListener("click", deleteList);
+document.getElementById('btn_deleteList').addEventListener('click', deleteList)
