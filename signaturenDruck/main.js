@@ -8,6 +8,7 @@ const ipc = require("electron").ipcMain;
 const path = require("path");
 const url = require("url");
 const fs = require("fs");
+const _ = require("lodash");
 
 const store = require("electron-store");
 const config = new store({cwd: "C:\\Export\\"});
@@ -38,9 +39,9 @@ const sigJSON = "signaturen.json";
 // Keep a global reference of the window object, if you don't, the window will
 // be closed automatically when the JavaScript object is garbage collected.
 let mainWindow;
-let win;
-let winBig;
-let winSmall;
+// let winBig;
+// let winSmall;
+let savedData;
 
 function createWindow () {
     checkConfig();
@@ -118,64 +119,44 @@ app.on("activate", function () {
 });
 
 ipc.on("print", function(event, data){
-    win = null;
     console.log(data);
-    win = new BrowserWindow({width: 800, height: 600, show: false });
-    win.loadURL(url.format({
-        pathname: path.join(__dirname, "print.html"),
-        protocol: "file:",
-        slashes: true
-    }));
-    // win.loadURL("file:\\\\C:\\Export\\myfile.pdf");
-    win.once("ready-to-show", () => {
-        win.webContents.send("toPrint", data);
-        win.show();
-        /* navtive windows printer
-        // lists all available printers
-        console.log("available printers", win.webContents.getPrinters());
-        // prints the whole window (silently)
-        win.webContents.print({"silent": true, "deviceName": "\\\\printsrv.ulb.uni-jena.de\\ulbps155"});
-        */
-    });
-
-    // win.webContents.session.on("will-download", (event, item, webContents) => {
-    //     item.setSavePath("C:\\Export\\test.pdf");
-    // });
-
-
-    /* print it
-    // win.once("ready-to-show", () => win.hide());
-    // // load PDF.
-    // win.loadURL("file://D:/myfile.pdf");
-    // // if pdf is loaded start printing.
-    // win.webContents.on("did-finish-load", () => {
-    //     let printer = win.webContents.getPrinters();
-    //     console.log(printer);
-    //     win.webContents.print({silent: false, deviceName: "ulbps155"});
-    //     // close window after print order.
-    //     win = null;
-    // });
-    */
-
+    savedData = data;
+    if (savedData.big) {
+        console.log(savedData.big);
+        printBig(savedData.big);
+    } else {
+        printSmall(savedData.small);
+    }
 });
 
-// ipc.on("printSize", function(event, data){
-//     if (data == "big"){
-//         win.webContents.session.on("will-download", (event, item, webContents) => {
-//             item.setSavePath("C:\\Export\\big.pdf");
-//         });
-//     }
-//     if (data == "small"){
-//         win.webContents.session.on("will-download", (event, item, webContents) => {
-//             item.setSavePath("C:\\Export\\small.pdf");
-//         });
+// ipc.on("next", function(event, data){
+//     if (savedData.small) {
+//         printSmall(savedData.small);
 //     }
 // });
 
-ipc.on("printBig", function(event, data){
-    console.log(data);
-    winBig = null;
+function printBig(data) {
+    let winBig = null;
+    let i = 0;
     winBig = new BrowserWindow({width: 800, height: 600, show: false });
+    winBig.webContents.session.on("will-download", (event, item, webContents) => {
+        console.log("setSavePath big");
+        // console.log(webContents);
+        // download(winBig);
+        item.setSavePath("C:\\Export\\big.pdf");
+        if (i == 0){
+            item.on("done", (event, state) => {
+                if (state == "completed") {
+                    if (savedData.small) {
+                        printSmall(savedData.small);
+                        winBig = null;
+                    }
+                }
+            });
+            i++;
+        }
+        
+    });
     winBig.loadURL(url.format({
         pathname: path.join(__dirname, "print.html"),
         protocol: "file:",
@@ -185,6 +166,7 @@ ipc.on("printBig", function(event, data){
     winBig.once("ready-to-show", () => {
         winBig.webContents.send("toPrint", data);
         winBig.show();
+        console.log("showWindows big");
         // // native printer dialog
         // // lists all available printers
         // console.log("available printers", winBig.webContents.getPrinters());
@@ -192,15 +174,10 @@ ipc.on("printBig", function(event, data){
         // winBig.webContents.print({"silent": true, "deviceName": "Adobe PDF"});
         
     });
-    winBig.webContents.session.on("will-download", (event, item, webContents) => {
-        item.setSavePath("C:\\Export\\big.pdf");
-    });
-});
-
-ipc.on("printSmall", function(event, data){
-    console.log(data);
-    winSmall = null;
-    winSmall = new BrowserWindow({width: 800, height: 600, show: false });
+}
+function printSmall(data) {
+    let winSmall = null;
+    winSmall = new BrowserWindow({width: 800, height: 600, show: false});
     winSmall.loadURL(url.format({
         pathname: path.join(__dirname, "print.html"),
         protocol: "file:",
@@ -210,17 +187,25 @@ ipc.on("printSmall", function(event, data){
     winSmall.once("ready-to-show", () => {
         winSmall.webContents.send("toPrint", data);
         winSmall.show();
+        winSmall.webContents.session.on("will-download", (event, item, webContents) => {
+            console.log("setSavePath small");
+            console.log(item.getSavePath);
+            item.setSavePath("C:\\Export\\small.pdf");
+            item.on("done", (event, state) => {
+                if (state == "completed") {
+                    console.log("done");
+                    winSmall = null;
+                }
+            });
+        });
+        console.log("showWindows small");
         // native printer dialog
         // lists all available printers
         // console.log("available printers", winSmall.webContents.getPrinters());
         // prints the whole window (silently)
         // winSmall.webContents.print({"silent": true, "deviceName": "\\\\printsrv.ulb.uni-jena.de\\ulbps155"});
     });
-    winSmall.webContents.session.on("will-download", (event, item, webContents) => {
-        item.setSavePath("C:\\Export\\small.pdf");
-    });
-});
-
+}
 
 // In this file you can include the rest of your app's specific main process
 // code. You can also put them in separate files and require them here.

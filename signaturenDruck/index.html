@@ -323,22 +323,16 @@
                     }
                 }
                 console.log(big, small);
+                let data = {};
                 if (b > 0) {
-                    ipc.send("printBig", big);
+                    // ipc.send("printBig", big);
+                    data.big = big;
                 }
                 if (s > 0) {
-                    ipc.send("printSmall", small);
+                    // ipc.send("printSmall", small);
+                    data.small = small;
                 }
-                // data.toPrint.forEach(element => {
-                //     console.log(document.getElementById("count_"+element).value);
-                //     data.count.push(document.getElementById("count_"+element).value);
-                //     if (document.getElementById("short_"+element)) {
-                //         if (document.getElementById("short_"+element).checked) {
-                //             data.short.push(element);
-                //         }
-                //     }
-                // });
-                // ipc.send("print", dataAll);
+                ipc.send("print", data);
             }
         </script>
     </body>
