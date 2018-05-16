@@ -150,8 +150,8 @@ function writeSignaturesToFile(json) {
 
 function displayData() {
     let file = fs.readFileSync("signaturen.json", "utf8");
-    if (document.getElementById("signaturTable")) {
-        let myNode = document.getElementById("signaturTableBody");
+    if (document.getElementById("shelfmarkTable")) {
+        let myNode = document.getElementById("shelfmarkTableBody");
         while (myNode.firstChild) {
             myNode.removeChild(myNode.firstChild);
         }
@@ -159,7 +159,7 @@ function displayData() {
     createTable(JSON.parse(file));
 }
 function createTable(obj) {
-    let table = document.getElementById("signaturTable").getElementsByTagName("tbody")[0];
+    let table = document.getElementById("shelfmarkTable").getElementsByTagName("tbody")[0];
     let i = 0;
     _.forEach(obj, function(key, value){
         let row = table.insertRow(i);
@@ -290,7 +290,7 @@ function deleteList() {
             if (err) {
                 throw err;
             } else {
-                let myNode = document.getElementById("signaturTableBody");
+                let myNode = document.getElementById("shelfmarkTableBody");
                 while (myNode.firstChild) {
                     myNode.removeChild(myNode.firstChild);
                 }
