@@ -3,7 +3,7 @@
 // All of the Node.js APIs are available in this process.
 
 // requires the shelfmark class
-const shelfmark = require('./shelfmark.js')
+const Shelfmark = require('./shelfmark.js')
 
 // requires lodash
 const _ = require('lodash')
@@ -14,10 +14,10 @@ const fs = require('fs')
 // //requires jsPDF
 // const jsPDF = require("jspdf");
 
-const store = require('electron-store')
-const config = new store({cwd: 'C:\\Export\\'})
+const Store = require('electron-store')
+const config = new Store({cwd: 'C:\\Export\\'})
 
-const dataExtract = require('./dataExtract.js')
+const DataExtract = require('./dataExtract.js')
 const strSecondLine = 'Bitte wählen sie eine Datei aus:'
 const strSecondLine2 = 'Eine andere Datei auswählen:'
 
@@ -59,8 +59,8 @@ function writeToFile (allLines) {
   let obj = {
     all: []
   }
-  let sig = new shelfmark()
-  let extract = new dataExtract()
+  let sig = new Shelfmark()
+  let extract = new DataExtract()
   let ppnAktuell = ''
   // let id = 1;
   // sig.id = id;
@@ -85,7 +85,7 @@ function writeToFile (allLines) {
     }
     if (sig.allSet()) {
       obj.all.push(sig.shelfmark)
-      sig = new shelfmark()
+      sig = new Shelfmark()
       // id++;
       // sig.id = id;
       sig.ppn = ppnAktuell

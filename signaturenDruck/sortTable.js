@@ -1,5 +1,13 @@
 function sortTable (n) {
-  var table, rows, switching, i, x, y, shouldSwitch, dir, switchcount = 0
+  let table = 0
+  let rows = 0
+  let switching = 0
+  let i = 0
+  let x = 0
+  let y = 0
+  let shouldSwitch = 0
+  let dir = 0
+  let switchcount = 0
   table = document.getElementById('signaturTable')
   switching = true
   // Set the sorting direction to ascending:

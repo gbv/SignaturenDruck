@@ -12,8 +12,8 @@ const fs = require('fs')
 const _ = require('lodash')
 
 // to access the local config file
-const store = require('electron-store')
-const config = new store({cwd: 'C:\\Export\\'})
+const Store = require('electron-store')
+const config = new Store({cwd: 'C:\\Export\\'})
 
 const username = require('username')
 
@@ -149,7 +149,6 @@ function main (ids) {
         }
         if (shelfmark != '') {
           for (let count = 0; count < objct.count; count++) {
-            let length = shelfmark.txtLength
             let id = shelfmark.id
             let i = 1
             let div = document.createElement('div')

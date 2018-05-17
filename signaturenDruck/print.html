@@ -1,45 +1,60 @@
 <!DOCTYPE html>
 <html>
-    <head>
-        <meta charset="UTF-8">
-        <title>Signaturendruck</title>
-        <style type="text/css">
-            @media print {
-                .shelfmark {page-break-before: always;}
-            }
-            #toPrint {
-                font-family: "Arial Narrow";
-                font-size: 16pt; 
-            }
-            .shelfmark > p {
-                margin: 0px;
-                padding-top: 0px;
-                padding-bottom: 0px;
-            }
-            p.shelfmarkLine_1 {
-                padding-top: 6px;
-            }
-            #userCard, .shelfmarkLine_1, .shelfmarkLine_2, .shelfmarkLine_3, .shelfmarkLine_6 {
-                font-weight: bold; 
-            }
-            .indent {
-                padding-left: 45%;
-            }
-            .center {
-                text-align: center;
-            }
-        </style>
-    </head>
-    <body>
-        <div id="toPrint">
-            <div id="userCard" class="shelfmark indent">
-                <p id="currentUsername" class="shelfmarkline_1"></p>
-                <p id="currentDate" class="shelfmarkline_2"></p>
-            </div>
-            <div class="html2pdf__page-break"></div>
-        </div>
-        <script>
-            require('./printRenderer.js')
-        </script>
-    </body>
+
+  <head>
+    <meta charset="UTF-8">
+    <title>Signaturendruck</title>
+    <style type="text/css">
+      @media print {
+        .shelfmark {
+          page-break-before: always;
+        }
+      }
+
+      #toPrint {
+        font-family: "Arial Narrow";
+        font-size: 16pt;
+      }
+
+      .shelfmark>p {
+        margin: 0px;
+        padding-top: 0px;
+        padding-bottom: 0px;
+      }
+
+      p.shelfmarkLine_1 {
+        padding-top: 6px;
+      }
+
+      #userCard,
+      .shelfmarkLine_1,
+      .shelfmarkLine_2,
+      .shelfmarkLine_3,
+      .shelfmarkLine_6 {
+        font-weight: bold;
+      }
+
+      .indent {
+        padding-left: 45%;
+      }
+
+      .center {
+        text-align: center;
+      }
+    </style>
+  </head>
+
+  <body>
+    <div id="toPrint">
+      <div id="userCard" class="shelfmark indent">
+        <p id="currentUsername" class="shelfmarkline_1"></p>
+        <p id="currentDate" class="shelfmarkline_2"></p>
+      </div>
+      <div class="html2pdf__page-break"></div>
+    </div>
+    <script>
+      require('./printRenderer.js')
+    </script>
+  </body>
+
 </html>

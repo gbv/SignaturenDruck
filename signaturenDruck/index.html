@@ -1,339 +1,379 @@
 <!DOCTYPE html>
 <html>
-    <head>
-        <meta charset="UTF-8">
-        <title>Signaturendruck</title>
-        <style type="text/css">
-            body {
-                background-color: RGB(240,240,240);
-                font-family: "Arial";
-                font-size: 10pt;
-            }
-            #tableBox { 
-                border: 1px solid grey; 
-                overflow-y:scroll; 
-                height:260px;
-                background-color: RGB(255,254,225);
-            }
-            .toPrint {
-                width: 50px;
-                height: 50px;
-                padding: 0px;
-                margin: 0px;
-            }
-            #buttonBox > button {
-                width: 220px;
-                /* height: 20px; */
-                padding: 5px;
-                margin: 2px 10px 2px 10px;
-                text-align: center;
-                font-weight: bold;
-            }
-            #container {
-                /* border: double; */
-                overflow: hidden;
-            }
-            #buttonBox {
-                float:left;
-                margin-left: -10px;
-                margin-top: 3px;
-                /* border: 1px solid red; */
-            }
-            .big {
-                width: 80mm;
-                height: 43mm;
-            }
-            .small {
-                width: 74mm;
-                height: 23mm;
-            }
-            .indent > p {
-                font-size: 16pt;
-                margin: 0px;
-                padding-top: 0px;
-                padding-bottom: 0px;
-                margin-left: 45%;
-            }
-            .center > p {
-                font-size: 15pt;
-                margin: 0pt;
-                text-align: center;
-            }
-            .center > p#line1 {
-                margin-top: 30px;
-            }
-            #previewBox {
-                border: 1px solid black;
-                background-color: white;
-                float: right;
-                margin: 5px 0px 5px 5px;
-                border-radius: 2px;
-                font-family: "Arial Narrow";
-            }
-            p#line1 {
-                margin-top: 6px;
-            }
-            #line1, #line2, #line3, #line6 {
-                font-weight: bold;
-            }
-            th, td {
-                text-align: center;
-            }
-            .txtCell {
-                width: 35%;
-                text-align: left;
-            }
-            .dateCell {
-                width: 20%;
-            }
-            .isNrCell, .printCountCell {
-                width: 15%;
-            }
-            .shortShelfmarkCell, .printCell, .labelSizeCell {
-                width: 5%;
-            }
-            hr {
-                width: 101%;
-            }
-            .ppnRow {
-                color: RGB(0,51,153);
-            }
-            .printCountCell > input {
-                text-align: center;
-            }
-            table {
-                border-collapse: collapse;
-                margin: 0px 5px 5px 5px;
-            }
-            thead {
-                background-color: RGB(240,240,240);
-                border-spacing: 0px;
-                
-            }
-            tbody > tr:hover {
-                background-color: #f5f5f5;
-            }
-        </style>
-    </head>
-    <body>
-        <div>
-            <p id="firstLine">Die Signaturen stammen aus: <span id="defaultPath"></span></p>
-            <p id="secondLine"><span>Eine andere Datei auswählen: </span>
-                <input type="file" accept=".dnl" id="fileToRead" />
-            </p>
-        </div>
-        <div id="tableBox">
-            <table id="shelfmarkTable">
-                <thead>
-                    <tr>
-                        <!-- <th onclick="sortTable(0)">Signatur</th>
-                        <th onclick="sortTable(1)">Bearbeitet am</th>
-                        <th onclick="sortTable(2)">Exemplar</th> -->
-                        <th style="width: 35%">Signatur</th>
-                        <th style="width: 20%">Bearbeitet am</th>
-                        <th style="width: 15%">Exemplar</th>
-                        <th style="width: 5%">Kurze Signatur</th>
-                        <th style="width: 5%">Drucken</th>
-                        <th style="width: 15%">Anzahl</th>
-                        <th style="width: 5%">Größe</th>
-                    </tr>
-                </thead>
-                <tbody id="shelfmarkTableBody">
 
-                </tbody>
-            </table>
-        </div>
-        <div id="container">
-            <div id="buttonBox">
-                <!-- <button id="btn_testIt">Test</button><br> -->
-                <button id="btn_">Manuelles Anlegen</button><br>
-                <button id="btn_deleteFile">Lösche Download Datei</button><br>
-                <button id="btn_deleteList">Liste löschen</button><br>
-                <button id="btn_print" onclick="printButton()">Drucken</button><br>
-                <button id="btn_close">Beenden</button>
-            </div>
-            <div id="previewBox" class="big"></div>
-        </div>
-        <script>
-        // You can also require other files to run in this process
-            require('./renderer.js')
-            // required for pdf creation
-            const html2canvas = require("html2canvas")
-            const jsPDF = require("jspdf");
-            const html2pdf = require("html2pdf.js")
-            // required for file stuff
-            const fs = require("fs");
-            // requires lodash
-            const _ = require("lodash");
-            // required for persistent config
-            const store = require("electron-store");
-            const config = new store();
-            // required for ipc calls to the main process
-            const ipc = require("electron").ipcRenderer;
-        </script>
-        <script src="./sortTable.js"></script>
-        <script>
-            function changeStyle() {
-                let newConfig = loadConfig();
-                console.log(newConfig);
-                let toPrint = document.getElementsByClassName("toPrint");
-                let width = newConfig.big.label.width;;
-                let height = newConfig.big.label.height;;
-                let unit = newConfig.einheit;;
-                console.log(toPrint);
-                width = newConfig.big.label.width;
-                height = newConfig.big.label.height;
-                console.log(width, height);
-                for (let i = 0; i < toPrint.length; i++) {
-                    toPrint[i].style.width = '' + width + unit;
-                    toPrint[i].style.height = '' + height + unit;
-                    // toPrint[i].style.margin = '50px';'
-                }
-            console.log(toPrint);
-            }
-        </script>
-        <script>
-            function preview(id) {
-                let isSmall = false;
-                let isShort = false;
-                if (document.getElementById("short_" + id)) {
-                    isSmall = true;
-                    if (document.getElementById("short_" + id).checked) {
-                        isShort = true;
-                    }
-                }
-                if (isSmall) {
-                    let previewBox = document.getElementById("previewBox");
-                    previewBox.classList.remove("big");
-                    previewBox.classList.remove("indent");
-                    previewBox.classList.add("small");
-                    previewBox.classList.add("center");
-                    if (isShort) {
-                        previewBox.classList.remove("center");
-                        previewBox.classList.add("indent");
-                    }
-                } else {
-                    let previewBox = document.getElementById("previewBox");
-                    previewBox.classList.remove("small");
-                    previewBox.classList.remove("center")
-                    previewBox.classList.add("big");
-                    previewBox.classList.add("indent");
-                }
-                let myNode = document.getElementById("previewBox");
-                while (myNode.firstChild) {
-                    myNode.removeChild(myNode.firstChild);
-                }
-                let file = fs.readFileSync("signaturen.json", "utf8");
-                _.forEach(JSON.parse(file), function(key, value){
-                    let sig = "";
-                    let found = _.find(key, {"id": Number(id)});
-                    if (found !== undefined) {
-                        sig = found;
-                    }
-                    if (sig != "") {
-                        
-                        let length = sig.txtLength;
-                        let id = sig.id;
-                        let i = 1;
-                        let div = document.createElement("div");
-                        let line = document.createElement("p");
-                        div.className = "shelfmark center";
-                        if (isSmall) {
-                            if (isShort || length != 1) {
-                                div.className = "shelfmark indent";
-                            }
-                        }
-                        div.id = id;
-                        if (document.getElementById("short_" + id)) {
-                            if (document.getElementById("short_" + id).checked && length == 1) {
-                                console.log(sig.txt);
-                                let text = sig.txt[0];
-                                let textSplit = text.split(" ");
-                                let countSpaces = textSplit.length;
-                                let i = 0;
-                                let j = 0;
-                                while (countSpaces >= 2) {
-                                    sig.txt = [];
-                                    sig.txt[j] = textSplit[i] + " " + textSplit[i+1];
-                                    countSpaces -= 2;
-                                    i += 2;
-                                    j++;
-                                    console.log(countSpaces);
-                                }
-                                if (countSpaces == 1) {
-                                    sig.txt[j] = textSplit[i];
-                                }
-                            }
-                        }
-                        sig.txt.forEach(element => {
-                            line.className = "previewLine";
-                            line.id = "line" + i;
-                            if (element == "") {
-                                let emptyLine = document.createElement("br");
-                            line.appendChild(emptyLine);
-                            } else {
-                                line.innerHTML = element;
-                            }
-                            document.getElementById("previewBox").appendChild(line);
-                            line = document.createElement('p');
-                            i++;
-                        });
-                        
-                    }
-                });
-            }
-        </script>
-        <script>
-            function printButton() {
-                let dataAll = {};
-                let big = {};
-                let b = 0;
-                let small = {};
-                let s = 0;
-                let j = 0;
-                
-                let elems= document.querySelectorAll("[name=toPrint]");
-                for (let i=0;i<elems.length;i++)
-                {
-                    if (elems[i].checked) {
-                        let data = {
-                            "id": "",
-                            "count": "1",
-                            "size": "big",
-                            "short": false
-                        };
-                        data.id = elems[i].value;
-                        let count = document.getElementById("count_"+data.id).value;
-                        if ((count <= 99) && (count >= 1)) {
-                            data.count = count;
-                        }
-                        if (document.getElementById("short_"+data.id)){
-                            if (document.getElementById("short_"+data.id).checked) {
-                                data.short = true;
-                            }
-                            data.size = "small";
-                            small[s] = data;
-                            s++;
-                        } else {
-                            big[b] = data;
-                            b++;
-                        }
-                        dataAll[j] = data;
-                        j++;
-                    }
-                }
-                console.log(big, small);
-                let data = {};
-                if (b > 0) {
-                    // ipc.send("printBig", big);
-                    data.big = big;
-                }
-                if (s > 0) {
-                    // ipc.send("printSmall", small);
-                    data.small = small;
-                }
-                ipc.send("print", data);
-            }
-        </script>
-    </body>
+	<head>
+		<meta charset="UTF-8">
+		<title>Signaturendruck</title>
+		<style type="text/css">
+			body {
+				background-color: RGB(240, 240, 240);
+				font-family: "Arial";
+				font-size: 10pt;
+			}
+
+			#tableBox {
+				border: 1px solid grey;
+				overflow-y: scroll;
+				height: 260px;
+				background-color: RGB(255, 254, 225);
+			}
+
+			.toPrint {
+				width: 50px;
+				height: 50px;
+				padding: 0px;
+				margin: 0px;
+			}
+
+			#buttonBox>button {
+				width: 220px;
+				/* height: 20px; */
+				padding: 5px;
+				margin: 2px 10px 2px 10px;
+				text-align: center;
+				font-weight: bold;
+			}
+
+			#container {
+				/* border: double; */
+				overflow: hidden;
+			}
+
+			#buttonBox {
+				float: left;
+				margin-left: -10px;
+				margin-top: 3px;
+				/* border: 1px solid red; */
+			}
+
+			.big {
+				width: 80mm;
+				height: 43mm;
+			}
+
+			.small {
+				width: 74mm;
+				height: 23mm;
+			}
+
+			.indent>p {
+				font-size: 16pt;
+				margin: 0px;
+				padding-top: 0px;
+				padding-bottom: 0px;
+				margin-left: 45%;
+			}
+
+			.center>p {
+				font-size: 15pt;
+				margin: 0pt;
+				text-align: center;
+			}
+
+			.center>p#line1 {
+				margin-top: 30px;
+			}
+
+			#previewBox {
+				border: 1px solid black;
+				background-color: white;
+				float: right;
+				margin: 5px 0px 5px 5px;
+				border-radius: 2px;
+				font-family: "Arial Narrow";
+			}
+
+			p#line1 {
+				margin-top: 6px;
+			}
+
+			#line1,
+			#line2,
+			#line3,
+			#line6 {
+				font-weight: bold;
+			}
+
+			th,
+			td {
+				text-align: center;
+			}
+
+			.txtCell {
+				width: 35%;
+				text-align: left;
+			}
+
+			.dateCell {
+				width: 20%;
+			}
+
+			.isNrCell,
+			.printCountCell {
+				width: 15%;
+			}
+
+			.shortShelfmarkCell,
+			.printCell,
+			.labelSizeCell {
+				width: 5%;
+			}
+
+			hr {
+				width: 101%;
+			}
+
+			.ppnRow {
+				color: RGB(0, 51, 153);
+			}
+
+			.printCountCell>input {
+				text-align: center;
+			}
+
+			table {
+				border-collapse: collapse;
+				margin: 0px 5px 5px 5px;
+			}
+
+			thead {
+				background-color: RGB(240, 240, 240);
+				border-spacing: 0px;
+
+			}
+
+			tbody>tr:hover {
+				background-color: #f5f5f5;
+			}
+		</style>
+	</head>
+
+	<body>
+		<div>
+			<p id="firstLine">Die Signaturen stammen aus:
+				<span id="defaultPath"></span>
+			</p>
+			<p id="secondLine">
+				<span>Eine andere Datei auswählen: </span>
+				<input type="file" accept=".dnl" id="fileToRead" />
+			</p>
+		</div>
+		<div id="tableBox">
+			<table id="shelfmarkTable">
+				<thead>
+					<tr>
+						<!-- <th onclick="sortTable(0)">Signatur</th>
+						<th onclick="sortTable(1)">Bearbeitet am</th>
+						<th onclick="sortTable(2)">Exemplar</th> -->
+						<th style="width: 35%">Signatur</th>
+						<th style="width: 20%">Bearbeitet am</th>
+						<th style="width: 15%">Exemplar</th>
+						<th style="width: 5%">Kurze Signatur</th>
+						<th style="width: 5%">Drucken</th>
+						<th style="width: 15%">Anzahl</th>
+						<th style="width: 5%">Größe</th>
+					</tr>
+				</thead>
+				<tbody id="shelfmarkTableBody">
+
+				</tbody>
+			</table>
+		</div>
+		<div id="container">
+			<div id="buttonBox">
+				<!-- <button id="btn_testIt">Test</button><br> -->
+				<button id="btn_">Manuelles Anlegen</button>
+				<br>
+				<button id="btn_deleteFile">Lösche Download Datei</button>
+				<br>
+				<button id="btn_deleteList">Liste löschen</button>
+				<br>
+				<button id="btn_print" onclick="printButton()">Drucken</button>
+				<br>
+				<button id="btn_close">Beenden</button>
+			</div>
+			<div id="previewBox" class="big"></div>
+		</div>
+		<script>
+			// You can also require other files to run in this process
+			require('./renderer.js')
+			// required for pdf creation
+			const html2canvas = require("html2canvas")
+			const jsPDF = require("jspdf");
+			const html2pdf = require("html2pdf.js")
+			// required for file stuff
+			const fs = require("fs");
+			// requires lodash
+			const _ = require("lodash");
+			// required for persistent config
+			const store = require("electron-store");
+			const config = new store();
+			// required for ipc calls to the main process
+			const ipc = require("electron").ipcRenderer;
+		</script>
+		<script src="./sortTable.js"></script>
+		<script>
+			function changeStyle() {
+				let newConfig = loadConfig();
+				console.log(newConfig);
+				let toPrint = document.getElementsByClassName("toPrint");
+				let width = newConfig.big.label.width;;
+				let height = newConfig.big.label.height;;
+				let unit = newConfig.einheit;;
+				console.log(toPrint);
+				width = newConfig.big.label.width;
+				height = newConfig.big.label.height;
+				console.log(width, height);
+				for (let i = 0; i < toPrint.length; i++) {
+					toPrint[i].style.width = '' + width + unit;
+					toPrint[i].style.height = '' + height + unit;
+					// toPrint[i].style.margin = '50px';'
+				}
+				console.log(toPrint);
+			}
+		</script>
+		<script>
+			function preview(id) {
+				let isSmall = false;
+				let isShort = false;
+				if (document.getElementById("short_" + id)) {
+					isSmall = true;
+					if (document.getElementById("short_" + id).checked) {
+						isShort = true;
+					}
+				}
+				if (isSmall) {
+					let previewBox = document.getElementById("previewBox");
+					previewBox.classList.remove("big");
+					previewBox.classList.remove("indent");
+					previewBox.classList.add("small");
+					previewBox.classList.add("center");
+					if (isShort) {
+						previewBox.classList.remove("center");
+						previewBox.classList.add("indent");
+					}
+				} else {
+					let previewBox = document.getElementById("previewBox");
+					previewBox.classList.remove("small");
+					previewBox.classList.remove("center")
+					previewBox.classList.add("big");
+					previewBox.classList.add("indent");
+				}
+				let myNode = document.getElementById("previewBox");
+				while (myNode.firstChild) {
+					myNode.removeChild(myNode.firstChild);
+				}
+				let file = fs.readFileSync("signaturen.json", "utf8");
+				_.forEach(JSON.parse(file), function (key, value) {
+					let sig = "";
+					let found = _.find(key, { "id": Number(id) });
+					if (found !== undefined) {
+						sig = found;
+					}
+					if (sig != "") {
+
+						let length = sig.txtLength;
+						let id = sig.id;
+						let i = 1;
+						let div = document.createElement("div");
+						let line = document.createElement("p");
+						div.className = "shelfmark center";
+						if (isSmall) {
+							if (isShort || length != 1) {
+								div.className = "shelfmark indent";
+							}
+						}
+						div.id = id;
+						if (document.getElementById("short_" + id)) {
+							if (document.getElementById("short_" + id).checked && length == 1) {
+								console.log(sig.txt);
+								let text = sig.txt[0];
+								let textSplit = text.split(" ");
+								let countSpaces = textSplit.length;
+								let i = 0;
+								let j = 0;
+								while (countSpaces >= 2) {
+									sig.txt = [];
+									sig.txt[j] = textSplit[i] + " " + textSplit[i + 1];
+									countSpaces -= 2;
+									i += 2;
+									j++;
+									console.log(countSpaces);
+								}
+								if (countSpaces == 1) {
+									sig.txt[j] = textSplit[i];
+								}
+							}
+						}
+						sig.txt.forEach(element => {
+							line.className = "previewLine";
+							line.id = "line" + i;
+							if (element == "") {
+								let emptyLine = document.createElement("br");
+								line.appendChild(emptyLine);
+							} else {
+								line.innerHTML = element;
+							}
+							document.getElementById("previewBox").appendChild(line);
+							line = document.createElement('p');
+							i++;
+						});
+
+					}
+				});
+			}
+		</script>
+		<script>
+			function printButton() {
+				let dataAll = {};
+				let big = {};
+				let b = 0;
+				let small = {};
+				let s = 0;
+				let j = 0;
+
+				let elems = document.querySelectorAll("[name=toPrint]");
+				for (let i = 0; i < elems.length; i++) {
+					if (elems[i].checked) {
+						let data = {
+							"id": "",
+							"count": "1",
+							"size": "big",
+							"short": false
+						};
+						data.id = elems[i].value;
+						let count = document.getElementById("count_" + data.id).value;
+						if ((count <= 99) && (count >= 1)) {
+							data.count = count;
+						}
+						if (document.getElementById("short_" + data.id)) {
+							if (document.getElementById("short_" + data.id).checked) {
+								data.short = true;
+							}
+							data.size = "small";
+							small[s] = data;
+							s++;
+						} else {
+							big[b] = data;
+							b++;
+						}
+						dataAll[j] = data;
+						j++;
+					}
+				}
+				console.log(big, small);
+				let data = {};
+				if (b > 0) {
+					// ipc.send("printBig", big);
+					data.big = big;
+				}
+				if (s > 0) {
+					// ipc.send("printSmall", small);
+					data.small = small;
+				}
+				ipc.send("print", data);
+			}
+		</script>
+	</body>
+
 </html>

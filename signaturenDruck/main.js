@@ -8,10 +8,8 @@ const ipc = require('electron').ipcMain
 const path = require('path')
 const url = require('url')
 const fs = require('fs')
-const _ = require('lodash')
-
-const store = require('electron-store')
-const config = new store({cwd: 'C:\\Export\\'})
+const Store = require('electron-store')
+const config = new Store({cwd: 'C:\\Export\\'})
 
 const configNew = {
   'testKey': "Don't panic, this is just a test",
@@ -138,7 +136,7 @@ ipc.on('print', function (event, data) {
 function printBig (data) {
   let winBig = null
   let i = 0
-  winBig = new BrowserWindow({width: 800, height: 600, show: false })
+  winBig = new BrowserWindow({ width: 800, height: 600, show: false })
   winBig.webContents.session.on('will-download', (event, item, webContents) => {
     console.log('setSavePath big')
     // console.log(webContents);
