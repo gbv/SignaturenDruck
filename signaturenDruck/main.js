@@ -13,7 +13,7 @@ const config = new Store({cwd: 'C:\\Export\\'})
 
 const configNew = {
   'testKey': "Don't panic, this is just a test",
-  'defaultPath': 'C://Export//download.dnl',
+  'defaultPath': 'C://Export/download.dnl',
   'big': {
     'printer': '\\\\ulbw2k812\\ulbps101',
     'label': {
@@ -44,7 +44,7 @@ let savedData
 function createWindow () {
   checkConfig()
   // Create the browser window.
-  mainWindow = new BrowserWindow({width: 800, height: 600})
+  mainWindow = new BrowserWindow({width: 800, height: 580})
 
   // and load the index.html of the app.
   mainWindow.loadURL(url.format({

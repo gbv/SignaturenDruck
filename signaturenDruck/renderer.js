@@ -32,7 +32,7 @@ window.onload = function () {
     displayData()
   } else {
     displayFirstLine(false)
-    alert('Es ist keine Datei im Standardordner vorhanden')
+    alert('Die Datei ' + config.get('defaultPath') + ' ist nicht vorhanden.')
     changeSecondLine(strSecondLine)
   }
 
