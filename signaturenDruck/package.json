@@ -1,21 +1,18 @@
 {
   "name": "SignaturenDruck",
-  "version": "0.0.4",
+  "version": "1.0.0",
   "description": "Started with electron-quick-start",
   "main": "main.js",
   "scripts": {
     "start": "electron ."
   },
-  "repository": "https://github.com/electron/electron-quick-start",
   "keywords": [
     "Electron",
-    "quick",
-    "start",
-    "tutorial",
-    "demo"
+    "shelfmark",
+    "library"
   ],
-  "author": "GitHub",
-  "license": "CC0-1.0",
+  "author": "Elias Dehler",
+  "license": "CC BY",
   "devDependencies": {
     "electron": "^1.8.4",
     "electron-builder": "^20.11.1"

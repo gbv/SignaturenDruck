@@ -28,7 +28,8 @@ const configNew = {
       'height': 23
     }
   },
-  'unit': 'mm'
+  'unit': 'mm',
+  'printToPdf': true
 }
 
 // name of signature storage json
@@ -116,39 +117,36 @@ app.on('activate', function () {
   }
 })
 
+// starts the printing process
 ipc.on('print', function (event, data) {
-  console.log(data)
+  // console.log(data)
   savedData = data
   if (savedData.big) {
-    console.log(savedData.big)
+    // console.log(savedData.big)
     printBig(savedData.big)
   } else {
     printSmall(savedData.small)
   }
 })
 
-// ipc.on("next", function(event, data){
-//     if (savedData.small) {
-//         printSmall(savedData.small);
-//     }
-// });
+// closes the application
+ipc.on('close', function (event) {
+  mainWindow.close()
+})
 
 function printBig (data) {
   let winBig = null
   let i = 0
   winBig = new BrowserWindow({ width: 800, height: 600, show: false })
   winBig.webContents.session.on('will-download', (event, item, webContents) => {
-    console.log('setSavePath big')
-    // console.log(webContents);
-    // download(winBig);
     item.setSavePath('C:\\Export\\big.pdf')
     if (i == 0) {
       item.on('done', (event, state) => {
         if (state == 'completed') {
           if (savedData.small) {
             printSmall(savedData.small)
-            winBig = null
           }
+          winBig = null
         }
       })
       i++
@@ -163,12 +161,18 @@ function printBig (data) {
   winBig.once('ready-to-show', () => {
     winBig.webContents.send('toPrint', data)
     winBig.show()
-    console.log('showWindows big')
-    // // native printer dialog
-    // // lists all available printers
-    // console.log("available printers", winBig.webContents.getPrinters());
-    // // prints the whole window (silently)
-    // winBig.webContents.print({"silent": true, "deviceName": "Adobe PDF"});
+    if (config.store.printToPdf !== true) {
+      console.log('native print big')
+      // // native printer dialog
+      // // lists all available printers
+      // console.log("available printers", winBig.webContents.getPrinters());
+      // // prints the whole window (silently)
+      // winBig.webContents.print({"silent": true, "deviceName": "Adobe PDF"});
+      if (savedData.small) {
+        printSmall(savedData.small)
+      }
+      winBig = null
+    }
   })
 }
 function printSmall (data) {
@@ -179,27 +183,25 @@ function printSmall (data) {
     protocol: 'file:',
     slashes: true
   }))
-  // win.loadURL("file:\\\\C:\\Export\\myfile.pdf");
   winSmall.once('ready-to-show', () => {
     winSmall.webContents.send('toPrint', data)
     winSmall.show()
-    winSmall.webContents.session.on('will-download', (event, item, webContents) => {
-      console.log('setSavePath small')
-      console.log(item.getSavePath)
-      item.setSavePath('C:\\Export\\small.pdf')
-      item.on('done', (event, state) => {
-        if (state == 'completed') {
-          console.log('done')
-          winSmall = null
-        }
-      })
+    if (config.store.printToPdf !== true) {
+      console.log('native print small')
+      // native printer dialog
+      // lists all available printers
+      // console.log("available printers", winSmall.webContents.getPrinters());
+      // prints the whole window (silently)
+      // winSmall.webContents.print({"silent": true, "deviceName": "\\\\printsrv.ulb.uni-jena.de\\ulbps155"});
+    }
+  })
+  winSmall.webContents.session.on('will-download', (event, item, webContents) => {
+    item.setSavePath('C:\\Export\\small.pdf')
+    item.on('done', (event, state) => {
+      if (state == 'completed') {
+        winSmall = null
+      }
     })
-    console.log('showWindows small')
-    // native printer dialog
-    // lists all available printers
-    // console.log("available printers", winSmall.webContents.getPrinters());
-    // prints the whole window (silently)
-    // winSmall.webContents.print({"silent": true, "deviceName": "\\\\printsrv.ulb.uni-jena.de\\ulbps155"});
   })
 }
 

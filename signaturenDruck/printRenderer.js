@@ -134,7 +134,9 @@ function main (ids) {
         }
       })
     })
-    createSmallPDF()
+    if (config.store.printToPdf === true) {
+      createSmallPDF()
+    }
   }
   if (size.big) {
     // ipc.send("printSize", "big");
@@ -179,7 +181,9 @@ function main (ids) {
         }
       })
     })
-    createBigPDF()
+    if (config.store.printToPdf === true) {
+      createBigPDF()
+    }
   }
 
   // _.forEach(ids, function(value){

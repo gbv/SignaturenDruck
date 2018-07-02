@@ -6,19 +6,19 @@ class dataExtract {
 
   // extracts the PPN
   ppn (str) {
-    // regex definiert 2 gruppen
+    // regex defines 2 groups
     let regex = /^(\d{4}\s\s*)(.*)(\s*)$/
 
-    // es wird mit hilfe des regex die PPN ausgelesen
+    // returns the second regex group
     return str.replace(regex, '$2')
   }
 
   // extracts the exNr
   exNr (str) {
-    // regex definiert 2 gruppen
+    // regex defines 2 groups
     let regex = /^(\d{4})(.*)$/
 
-    // es wird mit hilfe des regex die ExemplarNr ausgelesen
+    // returns the  first regex group
     return str.replace(regex, '$1')
   }
 
@@ -55,9 +55,6 @@ class dataExtract {
       }
     }
 
-    // regex = /^((!\w*\s*\w*!\s*)*)(.*)(\s*)$/;
-    // str = str.replace(regex, "$3");
-
     if (str.startsWith('!')) {
       foundAt = str.indexOf('!', 1)
       if (foundAt != -1) {
@@ -70,10 +67,10 @@ class dataExtract {
 
   // extracts the date
   date (str) {
-    // regex definiert 3 gruppen
+    // regex defines 3 groups
     let regex = /^(\d{4}\s\s*)(\d{2}-\d{2}-\d{2})(.*)$/
 
-    // es wird mit hilfe des regex das BearbeitetAm Datum ausgelesen
+    // returns the second regex group
     return str.replace(regex, '$2')
   }
 }

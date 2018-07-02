@@ -190,7 +190,7 @@
 				<br>
 				<button id="btn_print" onclick="printButton()">Drucken</button>
 				<br>
-				<button id="btn_close">Beenden</button>
+				<button id="btn_close" onclick="closeButton()">Beenden</button>
 			</div>
 			<div id="previewBox" class="big"></div>
 		</div>
@@ -374,6 +374,11 @@
 				ipc.send("print", data);
 			}
 		</script>
+    <script>
+      function closeButton() {
+        ipc.send("close");
+      }
+    </script>
 	</body>
 
 </html>

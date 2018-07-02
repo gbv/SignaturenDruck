@@ -313,14 +313,28 @@ function changeSecondLine (str) {
   let secondLine = document.getElementById('secondLine').getElementsByTagName('span')[0]
   secondLine.innerHTML = str
 }
-// returns the full path of the selected file
-function getFullPath () {
-  if (document.getElementById('fileToRead').value) {
-    return document.getElementById('fileToRead').files[0].path
+
+//deletes the shelfmark source file
+function deleteFile () {
+  if (document.getElementById("fileToRead").files[0]) {
+    deleteFromPath(document.getElementById("fileToRead").files[0].path)
   } else {
-    return false
+    deleteFromPath(config.store.defaultPath)
   }
 }
+
+function deleteFromPath(path) {
+  if (fs.existsSync(path)) {
+    fs.unlink(path, function (err) {
+      if (err) {
+        throw err
+      } else {
+        alert('Die Datei wurde gelöscht.')
+      }
+    })
+  }
+}
+
 // test function
 function test () {
   console.log('Test')
@@ -329,3 +343,5 @@ function test () {
 // document.getElementById("btn_testIt").addEventListener("click", test);
 // adds event listener to deleteList button
 document.getElementById('btn_deleteList').addEventListener('click', deleteList)
+
+document.getElementById('btn_deleteFile').addEventListener('click', deleteFile)
