@@ -38,10 +38,9 @@ const sigJSON = 'signaturen.json'
 // Keep a global reference of the window object, if you don't, the window will
 // be closed automatically when the JavaScript object is garbage collected.
 let mainWindow
-// let winBig;
-// let winSmall;
 let savedData
 
+// creates the mainWindow
 function createWindow () {
   checkConfig()
   // Create the browser window.
@@ -157,7 +156,6 @@ function printBig (data) {
     protocol: 'file:',
     slashes: true
   }))
-  // win.loadURL("file:\\\\C:\\Export\\myfile.pdf");
   winBig.once('ready-to-show', () => {
     winBig.webContents.send('toPrint', data)
     winBig.show()

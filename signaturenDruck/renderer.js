@@ -27,7 +27,7 @@ window.onload = function () {
   let fileTobeRead
   if (fs.existsSync(config.get('defaultPath'))) {
     let file = fs.readFileSync(config.get('defaultPath'), 'utf-8')
-    const allLines = file.split(/\r\n|\n/)
+    let allLines = file.split(/\r\n|\n/)
     writeToFile(allLines)
     displayData()
   } else {
@@ -42,8 +42,8 @@ window.onload = function () {
       fileTobeRead = fileSelected.files[0]
       let fileReader = new FileReader()
       fileReader.onload = function () {
-        const file = event.target.result
-        const allLines = file.split(/\r\n|\n/)
+        let file = event.target.result
+        let allLines = file.split(/\r\n|\n/)
         writeToFile(allLines)
         displayData()
         changeSecondLine(strSecondLine2)
@@ -314,7 +314,7 @@ function changeSecondLine (str) {
   secondLine.innerHTML = str
 }
 
-//deletes the shelfmark source file
+// deletes the shelfmark source file
 function deleteFile () {
   if (document.getElementById("fileToRead").files[0]) {
     deleteFromPath(document.getElementById("fileToRead").files[0].path)
