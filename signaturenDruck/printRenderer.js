@@ -167,7 +167,7 @@ function main (ids) {
             console.log('idNr: ', idNr, 'countAll: ', countAll)
             if (idNr < countAll) {
               let pdfPageBreak = document.createElement('div')
-              pdfPageBreak.className = 'html2pdf__page-break'
+              // pdfPageBreak.className = 'html2pdf__page-break'
               document.getElementById('toPrint').appendChild(pdfPageBreak)
               idNr++
             }

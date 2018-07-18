@@ -9,15 +9,23 @@
   font-size: 16pt;
 }
 
+/* .shelfmark,
+#usercard {
+  height: 43.92mm;
+  width: 98.97mm
+} */
+
 .shelfmark>p {
   margin: 0px;
   padding-top: 0px;
   padding-bottom: 0px;
 }
 
+
 p.shelfmarkLine_1 {
   padding-top: 6px;
 }
+
 
 #userCard,
 .shelfmarkLine_1,

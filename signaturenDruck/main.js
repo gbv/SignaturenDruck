@@ -132,12 +132,13 @@ ipc.on('print', function (event, data) {
 // closes the application
 ipc.on('close', function (event) {
   mainWindow.close()
+  app.quit()
 })
 
 function printBig (data) {
   let winBig = null
   let i = 0
-  winBig = new BrowserWindow({ width: 800, height: 600, show: false })
+  winBig = new BrowserWindow({ heihgt: 450, width: 1000, show: false })
   winBig.loadURL(url.format({
     pathname: path.join(__dirname, 'print.html'),
     protocol: 'file:',
@@ -145,26 +146,34 @@ function printBig (data) {
   }))
   winBig.once('ready-to-show', () => {
     winBig.webContents.send('toPrint', data)
-    winBig.webContents.printToPDF({}, (error, data) => {
+    winBig.webContents.printToPDF({marginsType: 2, landscape: true, pageSize: { width: 48920, height: 99970 }}, (error, data) => {
       if (error) throw error
       fs.writeFile('./tmp/printBig.pdf', data, (error) => {
         if (error) throw error
         console.log('Write PDF successfully')
+        // doesn't work atm, only prints a black box
+        let winPreview = new BrowserWindow({ webPreferences: {plugins: true} })
+        winPreview.once('ready-to-show', () => winPreview.hide(), console.log('ready-to-show'))
+        winPreview.loadURL(path.join(__dirname, '/tmp/printBig.pdf'))
+        console.log('load url')
+        winPreview.webContents.on('did-finish-load', () => {
+          console.log('print content')
+          winPreview.webContents.print({'silent': false, 'deviceName': '\\\\ulbw2k812\\ulbps101'})
+        })
       })
     })
-    winBig = null
-    if (config.store.printToPdf !== true) {
+    winBig.show()
+    // if (config.store.printToPdf !== true) {
       console.log('native print big')
       // // native printer dialog
       // // lists all available printers
       // console.log("available printers", winBig.webContents.getPrinters());
       // // prints the whole window (silently)
-      // winBig.webContents.print({"silent": true, "deviceName": "Adobe PDF"});
-      // if (savedData.small) {
-      //   printSmall(savedData.small)
-      // }
-      winBig = null
-    }
+      // winBig.webContents.print({'silent': false, 'deviceName': '\\\\printsrv.ulb.uni-jena.de\\ulbps155'})
+      winBig.webContents.print({'silent': false, 'deviceName': '\\\\ulbw2k812\\ulbps101'})
+    // }
+    winBig = null
+    // }
   })
 }
 function printSmall (data) {
