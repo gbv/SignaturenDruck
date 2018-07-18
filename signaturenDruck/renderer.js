@@ -11,6 +11,8 @@ const _ = require('lodash')
 // requires the fs-module
 const fs = require('fs')
 
+const pre = require('./preview.js')
+
 // //requires jsPDF
 // const jsPDF = require("jspdf");
 
@@ -213,7 +215,7 @@ function createPpnRow (row, value) {
 
 function createTxtCell (row, cellNr, objct) {
   let txtCell = row.insertCell(cellNr)
-  txtCell.onclick = function () { preview(objct.id) }
+  txtCell.onclick = function () { pre(objct.id) }
   _.forEach(objct.txt, function (value) {
     txtCell.innerHTML += value + ' '
   })
@@ -222,14 +224,14 @@ function createTxtCell (row, cellNr, objct) {
 
 function createDateCell (row, cellNr, objct) {
   let dateCell = row.insertCell(cellNr)
-  dateCell.onclick = function () { preview(objct.id) }
+  dateCell.onclick = function () { pre(objct.id) }
   dateCell.className = 'dateCell'
   dateCell.innerHTML = objct.date
 }
 
 function createExnrCell (row, cellNr, objct) {
   let isNrCell = row.insertCell(cellNr)
-  isNrCell.onclick = function () { preview(objct.id) }
+  isNrCell.onclick = function () { pre(objct.id) }
   isNrCell.className = 'isNrCell'
   isNrCell.innerHTML = objct.exNr
 }
@@ -243,7 +245,7 @@ function createShortShelfmarkCell (row, cellNr, objct) {
     input.type = 'checkbox'
     input.name = 'shortShelfmark'
     input.value = objct.id
-    input.onclick = function () { preview(objct.id) }
+    input.onclick = function () { pre(objct.id) }
     shortShelfmarkCell.appendChild(input)
   }
 }
@@ -256,7 +258,7 @@ function createPrintCell (row, cellNr, objct) {
   input.type = 'checkbox'
   input.name = 'toPrint'
   input.value = objct.id
-  input.onclick = function () { preview(objct.id) }
+  input.onclick = function () { pre(objct.id) }
   printCell.appendChild(input)
 }
 

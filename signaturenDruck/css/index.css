@@ -1,0 +1,162 @@
+body {
+  background-color: RGB(240, 240, 240);
+  font-family: "Arial";
+  font-size: 10pt;
+}
+
+#tableBox {
+  border: 1px solid grey;
+  overflow-y: scroll;
+  height: 260px;
+  background-color: RGB(255, 254, 225);
+}
+
+.toPrint {
+  width: 50px;
+  height: 50px;
+  padding: 0px;
+  margin: 0px;
+}
+
+#buttonBox>button {
+  width: 220px;
+  /* height: 20px; */
+  padding: 5px;
+  margin: 2px 10px 2px 10px;
+  text-align: center;
+  font-weight: bold;
+}
+
+#container {
+  /* border: double; */
+  overflow: hidden;
+}
+
+#buttonBox {
+  float: left;
+  margin-left: -10px;
+  margin-top: 3px;
+  /* border: 1px solid red; */
+}
+
+.big {
+  width: 80mm;
+  height: 43mm;
+}
+
+.small {
+  width: 74mm;
+  height: 23mm;
+}
+
+.indent>p {
+  font-size: 16pt;
+  margin: 0px;
+  padding-top: 0px;
+  padding-bottom: 0px;
+  margin-left: 45%;
+}
+
+.center>p {
+  font-size: 15pt;
+  margin: 0pt;
+  text-align: center;
+}
+
+.center>p#line1 {
+  margin-top: 30px;
+}
+
+#previewBox {
+  border: 1px solid black;
+  background-color: white;
+  float: right;
+  margin: 5px 0px 5px 5px;
+  border-radius: 2px;
+  font-family: "Arial Narrow";
+}
+
+p#line1 {
+  margin-top: 6px;
+}
+
+#line1,
+#line2,
+#line3,
+#line6 {
+  font-weight: bold;
+}
+
+th,
+td {
+  text-align: center;
+}
+
+.txtCell {
+  width: 35%;
+  text-align: left;
+}
+
+.dateCell {
+  width: 20%;
+}
+
+.isNrCell,
+.printCountCell {
+  width: 15%;
+}
+
+.shortShelfmarkCell,
+.printCell,
+.labelSizeCell {
+  width: 5%;
+}
+
+hr {
+  width: 101%;
+}
+
+.ppnRow {
+  color: RGB(0, 51, 153);
+}
+
+.printCountCell>input {
+  text-align: center;
+}
+
+table {
+  border-collapse: collapse;
+  margin: 0px 5px 5px 5px;
+}
+
+thead {
+  background-color: RGB(240, 240, 240);
+  border-spacing: 0px;
+}
+
+tbody>tr:hover {
+  background-color: #f5f5f5;
+}
+
+.inputFile {
+  width: 0.1px;
+  height: 0.1px;
+  opacity: 0;
+  overflow: hidden;
+  position: absolute;
+  z-index: -1;
+}
+.button {
+  background-color: white;
+  color: black;
+  border: 2px solid grey;
+  width: 220px;
+  padding: 5px;
+  margin: 2px 10px 2px 10px;
+  text-align: center;
+  font-weight: bold;
+}
+.button:hover {
+  background-color: grey;
+  cursor: pointer;
+}
