@@ -123,7 +123,8 @@ ipc.on('print', function (event, data) {
   if (savedData.big) {
     // console.log(savedData.big)
     printBig(savedData.big)
-  } else {
+  }
+  if (savedData.small) {
     printSmall(savedData.small)
   }
 })
@@ -137,20 +138,6 @@ function printBig (data) {
   let winBig = null
   let i = 0
   winBig = new BrowserWindow({ width: 800, height: 600, show: false })
-  winBig.webContents.session.on('will-download', (event, item, webContents) => {
-    item.setSavePath('C:\\Export\\big.pdf')
-    if (i == 0) {
-      item.on('done', (event, state) => {
-        if (state == 'completed') {
-          if (savedData.small) {
-            printSmall(savedData.small)
-          }
-          winBig = null
-        }
-      })
-      i++
-    }
-  })
   winBig.loadURL(url.format({
     pathname: path.join(__dirname, 'print.html'),
     protocol: 'file:',
@@ -158,7 +145,14 @@ function printBig (data) {
   }))
   winBig.once('ready-to-show', () => {
     winBig.webContents.send('toPrint', data)
-    winBig.show()
+    winBig.webContents.printToPDF({}, (error, data) => {
+      if (error) throw error
+      fs.writeFile('./tmp/printBig.pdf', data, (error) => {
+        if (error) throw error
+        console.log('Write PDF successfully')
+      })
+    })
+    winBig = null
     if (config.store.printToPdf !== true) {
       console.log('native print big')
       // // native printer dialog
@@ -166,9 +160,9 @@ function printBig (data) {
       // console.log("available printers", winBig.webContents.getPrinters());
       // // prints the whole window (silently)
       // winBig.webContents.print({"silent": true, "deviceName": "Adobe PDF"});
-      if (savedData.small) {
-        printSmall(savedData.small)
-      }
+      // if (savedData.small) {
+      //   printSmall(savedData.small)
+      // }
       winBig = null
     }
   })
@@ -183,7 +177,14 @@ function printSmall (data) {
   }))
   winSmall.once('ready-to-show', () => {
     winSmall.webContents.send('toPrint', data)
-    winSmall.show()
+    winSmall.webContents.printToPDF({}, (error, data) => {
+      if (error) throw error
+      fs.writeFile('./tmp/printSmall.pdf', data, (error) => {
+        if (error) throw error
+        console.log('Write PDF successfully')
+      })
+    })
+    winSmall = null
     if (config.store.printToPdf !== true) {
       console.log('native print small')
       // native printer dialog
@@ -192,14 +193,6 @@ function printSmall (data) {
       // prints the whole window (silently)
       // winSmall.webContents.print({"silent": true, "deviceName": "\\\\printsrv.ulb.uni-jena.de\\ulbps155"});
     }
-  })
-  winSmall.webContents.session.on('will-download', (event, item, webContents) => {
-    item.setSavePath('C:\\Export\\small.pdf')
-    item.on('done', (event, state) => {
-      if (state == 'completed') {
-        winSmall = null
-      }
-    })
   })
 }
 

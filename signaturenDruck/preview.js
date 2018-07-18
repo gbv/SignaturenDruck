@@ -1,3 +1,8 @@
+// required for file stuff
+const fs = require('fs')
+// requires lodash
+const _ = require('lodash')
+
 module.exports = function (id) {
   let isSmall = false
   let isShort = false

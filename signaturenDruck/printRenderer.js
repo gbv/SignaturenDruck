@@ -2,9 +2,6 @@
 // be executed in the renderer process for that window.
 // All of the Node.js APIs are available in this process.
 
-// to create the pdf
-const html2pdf = require('html2pdf.js')
-
 // to work with files
 const fs = require('fs')
 
@@ -134,9 +131,6 @@ function main (ids) {
         }
       })
     })
-    if (config.store.printToPdf === true) {
-      createSmallPDF()
-    }
   }
   if (size.big) {
     // ipc.send("printSize", "big");
@@ -181,15 +175,7 @@ function main (ids) {
         }
       })
     })
-    if (config.store.printToPdf === true) {
-      createBigPDF()
-    }
   }
-
-  // _.forEach(ids, function(value){
-  //     console.log("value: ", value);
-
-  // });
 }
 
 function addUsername () {
@@ -212,28 +198,4 @@ function addDate () {
 
   today = dd + '.' + mm + '.' + yyyy
   document.getElementById('currentDate').innerHTML = today
-}
-
-function createBigPDF () {
-  let newConfig = config.store
-  var element = document.getElementById('toPrint')
-  html2pdf(element, {
-    margin: 1,
-    filename: 'big.pdf',
-    image: { type: 'png', quality: 1 },
-    html2canvas: { dpi: 300, letterRendering: true },
-    jsPDF: { unit: newConfig.einheit, format: [newConfig.big.label.width + 0.5, newConfig.big.label.height + 0.5], orientation: 'landscape' }
-  })
-}
-
-function createSmallPDF () {
-  let newConfig = config.store
-  var element = document.getElementById('toPrint')
-  html2pdf(element, {
-    margin: 1,
-    filename: 'small.pdf',
-    image: { type: 'png', quality: 1 },
-    html2canvas: { dpi: 300, letterRendering: true },
-    jsPDF: { unit: newConfig.einheit, format: [newConfig.small.label.width + 0.5, newConfig.small.label.height + 0.5], orientation: 'landscape' }
-  })
 }

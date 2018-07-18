@@ -13,8 +13,11 @@ const fs = require('fs')
 
 const pre = require('./preview.js')
 
+// required for ipc calls to the main process
+const ipc = require('electron').ipcRenderer
+
 // //requires jsPDF
-// const jsPDF = require("jspdf");
+// const jsPDF = require('jspdf');
 
 const Store = require('electron-store')
 const config = new Store({cwd: 'C:\\Export\\'})
@@ -137,11 +140,11 @@ function setIds (obj) {
 }
 // // function to test the PDF generation
 // function testPDF() {
-//     var doc = new jsPDF("l", "mm", [200, 200]);
-//     doc.text("This is just a test", 5, 5);
+//     var doc = new jsPDF('l', 'mm', [200, 200]);
+//     doc.text('This is just a test', 5, 5);
 //     doc.addPage(200, 100);
-//     doc.text("This is a second page", 5, 5);
-//     doc.save("test.pdf");
+//     doc.text('This is a second page', 5, 5);
+//     doc.save('test.pdf');
 // }
 
 function writeSignaturesToFile (json) {
@@ -318,8 +321,8 @@ function changeSecondLine (str) {
 
 // deletes the shelfmark source file
 function deleteFile () {
-  if (document.getElementById("fileToRead").files[0]) {
-    deleteFromPath(document.getElementById("fileToRead").files[0].path)
+  if (document.getElementById('fileToRead').files[0]) {
+    deleteFromPath(document.getElementById('fileToRead').files[0].path)
   } else {
     deleteFromPath(config.store.defaultPath)
   }
@@ -341,9 +344,68 @@ function deleteFromPath(path) {
 function test () {
   console.log('Test')
 }
+
+function closeButton () {
+  ipc.send('close')
+}
+
+function printButton () {
+  let dataAll = {}
+  let big = {}
+  let b = 0
+  let small = {}
+  let s = 0
+  let j = 0
+
+  let elems = document.querySelectorAll('[name=toPrint]')
+  for (let i = 0; i < elems.length; i++) {
+    if (elems[i].checked) {
+      let data = {
+        'id': '',
+        'count': '1',
+        'size': 'big',
+        'short': false
+      }
+      data.id = elems[i].value
+      let count = document.getElementById('count_' + data.id).value
+      if ((count <= 99) && (count >= 1)) {
+        data.count = count
+      }
+      if (document.getElementById('short_' + data.id)) {
+        if (document.getElementById('short_' + data.id).checked) {
+          data.short = true
+        }
+        data.size = 'small'
+        small[s] = data
+        s++
+      } else {
+        big[b] = data
+        b++
+      }
+      dataAll[j] = data
+      j++
+    }
+  }
+  // console.log(big, small)
+  let data = {}
+  if (b > 0) {
+    // ipc.send('printBig', big);
+    data.big = big
+  }
+  if (s > 0) {
+    // ipc.send('printSmall', small);
+    data.small = small
+  }
+  ipc.send('print', data)
+}
+
 // adds event listener to test button
-// document.getElementById("btn_testIt").addEventListener("click", test);
+// document.getElementById('btn_testIt').addEventListener('click', test);
 // adds event listener to deleteList button
 document.getElementById('btn_deleteList').addEventListener('click', deleteList)
 
 document.getElementById('btn_deleteFile').addEventListener('click', deleteFile)
+
+document.getElementById('btn_print').addEventListener('click', printButton)
+
+document.getElementById('btn_close').addEventListener('click', closeButton)
