@@ -10,6 +10,7 @@ const url = require('url')
 const fs = require('fs')
 const Store = require('electron-store')
 const config = new Store({cwd: 'C:\\Export\\'})
+const cmd = require('node-cmd')
 
 const configNew = {
   'testKey': "Don't panic, this is just a test",
@@ -138,7 +139,7 @@ ipc.on('close', function (event) {
 function printBig (data) {
   let winBig = null
   let i = 0
-  winBig = new BrowserWindow({ heihgt: 450, width: 1000, show: false })
+  winBig = new BrowserWindow({ heihgt: 225, width: 500, show: false })
   winBig.loadURL(url.format({
     pathname: path.join(__dirname, 'print.html'),
     protocol: 'file:',
@@ -146,31 +147,46 @@ function printBig (data) {
   }))
   winBig.once('ready-to-show', () => {
     winBig.webContents.send('toPrint', data)
+    // generated pdf prints fine if printed manually using Adobe Reader
+    // Tested with Adobe Acrobat X Pro
     winBig.webContents.printToPDF({marginsType: 2, landscape: true, pageSize: { width: 48920, height: 99970 }}, (error, data) => {
       if (error) throw error
       fs.writeFile('./tmp/printBig.pdf', data, (error) => {
         if (error) throw error
         console.log('Write PDF successfully')
         // doesn't work atm, only prints a black box
-        let winPreview = new BrowserWindow({ webPreferences: {plugins: true} })
-        winPreview.once('ready-to-show', () => winPreview.hide(), console.log('ready-to-show'))
-        winPreview.loadURL(path.join(__dirname, '/tmp/printBig.pdf'))
-        console.log('load url')
-        winPreview.webContents.on('did-finish-load', () => {
-          console.log('print content')
-          winPreview.webContents.print({'silent': false, 'deviceName': '\\\\ulbw2k812\\ulbps101'})
-        })
+        // let winPreview = new BrowserWindow({ webPreferences: {plugins: true} })
+        // winPreview.once('ready-to-show', () => winPreview.hide(), console.log('ready-to-show'))
+        // winPreview.loadURL(path.join(__dirname, '/tmp/printBig.pdf'))
+        // console.log('load url')
+        // winPreview.webContents.on('did-finish-load', () => {
+        //   console.log('print content')
+        //   winPreview.webContents.print({'silent': false, 'deviceName': '\\\\ulbw2k812\\ulbps101'})
+        // })
       })
     })
     winBig.show()
+    // // printing with SumatraPDF via node-cmd
+    // // currently not working as SumatraPDF turns the page (y < x)
+    // // landscape printing option is planned and comming soon (not in version SumatraPDF-prerelease-10766.exe)
+    // cmd.get(
+    //   '"C:\\Program Files (x86)\\SumatraPDF\\SumatraPDF.exe" -print-to "\\\\ulbw2k812\\ulbps101" -print-settings "1,noscale" "C:\\printBig_ref.pdf"',
+    //   function (err, data, stderr) {
+    //     if (!err) {
+    //       console.log('all good ', data)
+    //     } else {
+    //       console.log('error ', err)
+    //     }
+    //   })
+    // // native printer dialog
+    // // currently not working as the printer doesn't like the format
     // if (config.store.printToPdf !== true) {
-      console.log('native print big')
-      // // native printer dialog
-      // // lists all available printers
-      // console.log("available printers", winBig.webContents.getPrinters());
-      // // prints the whole window (silently)
-      // winBig.webContents.print({'silent': false, 'deviceName': '\\\\printsrv.ulb.uni-jena.de\\ulbps155'})
-      winBig.webContents.print({'silent': false, 'deviceName': '\\\\ulbw2k812\\ulbps101'})
+    // console.log('native print big')
+    // // lists all available printers
+    // console.log('available printers', winBig.webContents.getPrinters());
+    // // prints the whole window (silently)
+    // winBig.webContents.print({'silent': false, 'deviceName': '\\\\printsrv.ulb.uni-jena.de\\ulbps155'})
+    // winBig.webContents.print({'silent': false, 'deviceName': '\\\\ulbw2k812\\ulbps101'})
     // }
     winBig = null
     // }
@@ -186,22 +202,18 @@ function printSmall (data) {
   }))
   winSmall.once('ready-to-show', () => {
     winSmall.webContents.send('toPrint', data)
-    winSmall.webContents.printToPDF({}, (error, data) => {
+    winSmall.webContents.printToPDF({marginsType: 2, landscape: true, pageSize: { width: 48920, height: 99970 }}, (error, data) => {
       if (error) throw error
       fs.writeFile('./tmp/printSmall.pdf', data, (error) => {
         if (error) throw error
         console.log('Write PDF successfully')
       })
     })
-    winSmall = null
     if (config.store.printToPdf !== true) {
       console.log('native print small')
-      // native printer dialog
-      // lists all available printers
-      // console.log("available printers", winSmall.webContents.getPrinters());
-      // prints the whole window (silently)
       // winSmall.webContents.print({"silent": true, "deviceName": "\\\\printsrv.ulb.uni-jena.de\\ulbps155"});
     }
+    winSmall = null
   })
 }
 
