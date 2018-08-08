@@ -5,6 +5,7 @@
 		<meta charset="UTF-8">
 		<title>Signaturendruck</title>
 		<link rel="stylesheet" type="text/css" href="./css/index.css">
+    <link rel="stylesheet" type="text/css" href="C:/Export/user.css">
 	</head>
 
 	<body>
@@ -22,9 +23,6 @@
 			<table id="shelfmarkTable">
 				<thead>
 					<tr>
-						<!-- <th onclick="sortTable(0)">Signatur</th>
-						<th onclick="sortTable(1)">Bearbeitet am</th>
-						<th onclick="sortTable(2)">Exemplar</th> -->
 						<th style="width: 35%">Signatur</th>
 						<th style="width: 20%">Bearbeitet am</th>
 						<th style="width: 15%">Exemplar</th>
@@ -41,9 +39,6 @@
 		</div>
 		<div id="container">
 			<div id="buttonBox">
-				<!-- <button id="btn_testIt">Test</button><br> -->
-				<!-- <button id="btn_">Manuelles Anlegen</button> -->
-				<!-- <br> -->
 				<button id="btn_deleteFile" class="button">Lösche Download Datei</button>
 				<br>
 				<button id="btn_deleteList" class="button">Liste löschen</button>
@@ -57,27 +52,6 @@
 		<script>
 			// You can also require other files to run in this process
       require('./renderer.js')
-		</script>
-		<script src="./sortTable.js"></script>
-		<script>
-			function changeStyle() {
-				let newConfig = loadConfig();
-				console.log(newConfig);
-				let toPrint = document.getElementsByClassName("toPrint");
-				let width = newConfig.big.label.width;
-				let height = newConfig.big.label.height;
-				let unit = newConfig.unit;
-				console.log(toPrint);
-				width = newConfig.big.label.width;
-				height = newConfig.big.label.height;
-				console.log(width, height);
-				for (let i = 0; i < toPrint.length; i++) {
-					toPrint[i].style.width = '' + width + unit;
-					toPrint[i].style.height = '' + height + unit;
-					// toPrint[i].style.margin = '50px';'
-				}
-				console.log(toPrint);
-			}
 		</script>
 	</body>
 
