@@ -21,9 +21,12 @@
   padding-bottom: 0px;
 }
 
-
 p.shelfmarkLine_1 {
   padding-top: 6px;
+}
+
+p.oneLine {
+  padding-top: 28px;
 }
 
 

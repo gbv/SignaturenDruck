@@ -8,9 +8,9 @@ const fs = require('fs')
 // requires lodash
 const _ = require('lodash')
 
-// to access the local config file
-const Store = require('electron-store')
-const config = new Store({cwd: 'C:\\Export\\'})
+// // to access the local config file
+// const Store = require('electron-store')
+// const config = new Store({cwd: 'C:\\Export\\'})
 
 const username = require('username')
 
@@ -24,21 +24,21 @@ window.onload = function () {
   })
 }
 
-function changeStyle () {
-  let newConfig = loadConfig()
-  let shelfmark = document.getElementsByClassName('shelfmark')
-  let width = newConfig.big.label.width
-  let height = newConfig.big.label.height
-  let unit = newConfig.einheit
-  for (let i = 0; i < shelfmark.length; i++) {
-    shelfmark[i].style.width = '' + width + unit
-    shelfmark[i].style.height = '' + height + unit
-  }
-}
+// function changeStyle () {
+//   let newConfig = loadConfig()
+//   let shelfmark = document.getElementsByClassName('shelfmark')
+//   let width = newConfig.big.label.width
+//   let height = newConfig.big.label.height
+//   let unit = newConfig.einheit
+//   for (let i = 0; i < shelfmark.length; i++) {
+//     shelfmark[i].style.width = '' + width + unit
+//     shelfmark[i].style.height = '' + height + unit
+//   }
+// }
 
-function loadConfig () {
-  return config.store
-}
+// function loadConfig () {
+//   return config.store
+// }
 
 function main (ids) {
   let file = fs.readFileSync('signaturen.json', 'utf8')
@@ -107,8 +107,14 @@ function main (ids) {
                 shelfmark.txt[j] = textSplit[i]
               }
             }
+            console.log('nr. of lines: ', shelfmark.txt.length)
+            let lineCount = shelfmark.txt.length
             shelfmark.txt.forEach(element => {
-              line.className = 'shelfmarkLine_' + i
+              if (lineCount === 1) {
+                line.className = 'shelfmarkLine_' + i + ' oneLine'
+              } else {
+                line.className = 'shelfmarkLine_' + i
+              }
               if (element == '') {
                 let emptyLine = document.createElement('br')
                 line.appendChild(emptyLine)
@@ -123,7 +129,7 @@ function main (ids) {
             console.log('idNr: ', idNr, 'countAll: ', countAll)
             if (idNr < countAll) {
               let pdfPageBreak = document.createElement('div')
-              pdfPageBreak.className = 'html2pdf__page-break'
+              // pdfPageBreak.className = 'html2pdf__page-break'
               document.getElementById('toPrint').appendChild(pdfPageBreak)
               idNr++
             }

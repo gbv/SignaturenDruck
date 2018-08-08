@@ -44,6 +44,7 @@ let savedData
 // creates the mainWindow
 function createWindow () {
   checkConfig()
+  checkTmpDir()
   // Create the browser window.
   mainWindow = new BrowserWindow({width: 800, height: 580})
 
@@ -87,6 +88,14 @@ function checkConfig () {
     }
   } else {
     createConfig()
+  }
+}
+
+function checkTmpDir () {
+  try {
+    fs.mkdirSync('./tmp')
+  } catch (err) {
+    if (err.code !== 'EEXIST') throw err
   }
 }
 
@@ -136,9 +145,9 @@ ipc.on('close', function (event) {
   app.quit()
 })
 
+// invokes the generating and printing of printBig.pdf
 function printBig (data) {
   let winBig = null
-  let i = 0
   winBig = new BrowserWindow({ heihgt: 225, width: 500, show: false })
   winBig.loadURL(url.format({
     pathname: path.join(__dirname, 'print.html'),
@@ -149,52 +158,42 @@ function printBig (data) {
     winBig.webContents.send('toPrint', data)
     // generated pdf prints fine if printed manually using Adobe Reader
     // Tested with Adobe Acrobat X Pro
+    // winBig.webContents.printToPDF({marginsType: 2, landscape: false, pageSize: { width: 48920, height: 99970 }}, (error, data) => {
+
+    // generates a pdf file which is then printed silently via Foxit Reader v6.2.3.0815
+    // // since SumatraPDF v3.1.2 can't handle pdf pages where width > height we have to modify the settings accordingly
+    // // there is already a fix in sight which should roll out with the next official SumatraPDF release
+    // winBig.webContents.printToPDF({marginsType: 2, landscape: false, pageSize: { width: 99970, height: 110000 }}, (error, data) => {
     winBig.webContents.printToPDF({marginsType: 2, landscape: true, pageSize: { width: 48920, height: 99970 }}, (error, data) => {
       if (error) throw error
       fs.writeFile('./tmp/printBig.pdf', data, (error) => {
         if (error) throw error
-        console.log('Write PDF successfully')
-        // doesn't work atm, only prints a black box
-        // let winPreview = new BrowserWindow({ webPreferences: {plugins: true} })
-        // winPreview.once('ready-to-show', () => winPreview.hide(), console.log('ready-to-show'))
-        // winPreview.loadURL(path.join(__dirname, '/tmp/printBig.pdf'))
-        // console.log('load url')
-        // winPreview.webContents.on('did-finish-load', () => {
-        //   console.log('print content')
-        //   winPreview.webContents.print({'silent': false, 'deviceName': '\\\\ulbw2k812\\ulbps101'})
-        // })
+        console.log('Wrote printBig.pdf successfully')
+
+        // printing with Foxit Reader 6.2.3.0815 via node-cmd
+        cmd.get(
+          // '"C:\\Program Files (x86)\\SumatraPDF\\SumatraPDF.exe" -print-to "\\\\http://jenlbs6-sun23.thulb.uni-jena.de:631\\SigGross" -print-settings "noscale" ".\\tmp\\printBig.pdf"',
+          '"C:\\Program Files (x86)\\Foxit Software\\Foxit Reader\\Foxit Reader.exe" /t ".\\tmp\\printBig.pdf" "\\\\ulbw2k812\\ulbps101"',
+          function (err, data, stderr) {
+            if (!err) {
+              console.log('all good ', data)
+            } else {
+              console.log('error ', err)
+            }
+          }
+        )
       })
     })
+    // TODO -> set to .hide, .show is just for development
     winBig.show()
-    // // printing with SumatraPDF via node-cmd
-    // // currently not working as SumatraPDF turns the page (y < x)
-    // // landscape printing option is planned and comming soon (not in version SumatraPDF-prerelease-10766.exe)
-    // cmd.get(
-    //   '"C:\\Program Files (x86)\\SumatraPDF\\SumatraPDF.exe" -print-to "\\\\ulbw2k812\\ulbps101" -print-settings "1,noscale" "C:\\printBig_ref.pdf"',
-    //   function (err, data, stderr) {
-    //     if (!err) {
-    //       console.log('all good ', data)
-    //     } else {
-    //       console.log('error ', err)
-    //     }
-    //   })
-    // // native printer dialog
-    // // currently not working as the printer doesn't like the format
-    // if (config.store.printToPdf !== true) {
-    // console.log('native print big')
-    // // lists all available printers
-    // console.log('available printers', winBig.webContents.getPrinters());
-    // // prints the whole window (silently)
-    // winBig.webContents.print({'silent': false, 'deviceName': '\\\\printsrv.ulb.uni-jena.de\\ulbps155'})
-    // winBig.webContents.print({'silent': false, 'deviceName': '\\\\ulbw2k812\\ulbps101'})
-    // }
     winBig = null
-    // }
   })
 }
+
+// invokes the generating and printing of printSmall.pdf
 function printSmall (data) {
   let winSmall = null
-  winSmall = new BrowserWindow({width: 800, height: 600, show: false})
+  winSmall = new BrowserWindow({width: 225, height: 500, show: false})
   winSmall.loadURL(url.format({
     pathname: path.join(__dirname, 'print.html'),
     protocol: 'file:',
@@ -202,17 +201,29 @@ function printSmall (data) {
   }))
   winSmall.once('ready-to-show', () => {
     winSmall.webContents.send('toPrint', data)
-    winSmall.webContents.printToPDF({marginsType: 2, landscape: true, pageSize: { width: 48920, height: 99970 }}, (error, data) => {
+    winSmall.webContents.printToPDF({marginsType: 2, landscape: true, pageSize: { width: 23500, height: 74500 }}, (error, data) => {
+    // winSmall.webContents.printToPDF({marginsType: 2, landscape: false, pageSize: { width: 74500, height: 80000 }}, (error, data) => {
       if (error) throw error
       fs.writeFile('./tmp/printSmall.pdf', data, (error) => {
         if (error) throw error
-        console.log('Write PDF successfully')
+        console.log('Wrote printSmall.pdf successfully')
+
+        // printing with Foxit Reader 6.2.3.0815 via node-cmd
+        cmd.get(
+          // '"C:\\Program Files (x86)\\SumatraPDF\\SumatraPDF.exe" -print-to "\\\\http://jenlbs6-sun23.thulb.uni-jena.de:631\\SigGross" -print-settings "noscale" ".\\tmp\\printBig.pdf"',
+          '"C:\\Program Files (x86)\\Foxit Software\\Foxit Reader\\Foxit Reader.exe" /t ".\\tmp\\printSmall.pdf" "\\\\ulbw2k812\\ulbps124"',
+          function (err, data, stderr) {
+            if (!err) {
+              console.log('all good ', data)
+            } else {
+              console.log('error ', err)
+            }
+          }
+        )
       })
     })
-    if (config.store.printToPdf !== true) {
-      console.log('native print small')
-      // winSmall.webContents.print({"silent": true, "deviceName": "\\\\printsrv.ulb.uni-jena.de\\ulbps155"});
-    }
+    // TODO -> set to .hide, .show is just for development
+    winSmall.show()
     winSmall = null
   })
 }
