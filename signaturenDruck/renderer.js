@@ -11,21 +11,24 @@ const _ = require('lodash')
 // requires the fs-module
 const fs = require('fs')
 
+// requires the preview-module
 const pre = require('./preview.js')
 
 // required for ipc calls to the main process
 const ipc = require('electron').ipcRenderer
 
-// //requires jsPDF
-// const jsPDF = require('jspdf');
-
+// requires the electron-store module and initializes it
 const Store = require('electron-store')
 const config = new Store({cwd: 'C:\\Export\\'})
 
+// requires the dataExtract-module
 const DataExtract = require('./dataExtract.js')
+
+// initializes the 2 different strings for file-selection
 const strSecondLine = 'Bitte wählen sie eine Datei aus:'
 const strSecondLine2 = 'Eine andere Datei auswählen:'
 
+// function on window load
 window.onload = function () {
   document.getElementById('defaultPath').innerHTML = config.get('defaultPath')
   let fileSelected = document.getElementById('fileToRead')
@@ -60,6 +63,7 @@ window.onload = function () {
   }
 }
 
+// extracts all the shelfmark data found in the lines and passes them to writeSignaturesToFile
 function writeToFile (allLines) {
   let obj = {
     all: []
@@ -100,6 +104,7 @@ function writeToFile (allLines) {
   writeSignaturesToFile(JSON.stringify(setIds(getUnique(obj))))
 }
 
+// retuns if label is big
 function labelSize (txt) {
   let numberOfSeperators = getCountOfSeparators(txt, ':')
   let numberOfWhitespaces = getCountOfSeparators(txt, ' ')
@@ -110,6 +115,7 @@ function labelSize (txt) {
   }
 }
 
+// returns number of separators
 function getCountOfSeparators (txt, separator) {
   return txt.split(separator).length
 }
@@ -127,10 +133,12 @@ function getUnique (obj) {
   )
 }
 
+// groups shelfmarks by PPN
 function groupByPPN (obj) {
   return _.groupBy(obj, 'PPN')
 }
 
+// sets shelfmark ids
 function setIds (obj) {
   let i = 1
   return _.forEach(obj, function (value) {
@@ -138,20 +146,14 @@ function setIds (obj) {
     i++
   })
 }
-// // function to test the PDF generation
-// function testPDF() {
-//     var doc = new jsPDF('l', 'mm', [200, 200]);
-//     doc.text('This is just a test', 5, 5);
-//     doc.addPage(200, 100);
-//     doc.text('This is a second page', 5, 5);
-//     doc.save('test.pdf');
-// }
 
+// creates the signaturen.json file
 function writeSignaturesToFile (json) {
   json = JSON.stringify(groupByPPN(JSON.parse(json)))
   fs.writeFileSync('signaturen.json', json, 'utf8')
 }
 
+// reads data from the signaturen.json file and displays it via createTable
 function displayData () {
   let file = fs.readFileSync('signaturen.json', 'utf8')
   if (document.getElementById('shelfmarkTable')) {
@@ -162,6 +164,8 @@ function displayData () {
   }
   createTable(JSON.parse(file))
 }
+
+// creates the displayed table with the provided data
 function createTable (obj) {
   let table = document.getElementById('shelfmarkTable').getElementsByTagName('tbody')[0]
   let i = 0
@@ -184,6 +188,7 @@ function createTable (obj) {
   })
 }
 
+// creates the PPN row
 function createPpnRow (row, value) {
   let i = 0
   let cell = row.insertCell(i)
@@ -216,6 +221,7 @@ function createPpnRow (row, value) {
   cell.className = 'labelSizeCell'
 }
 
+// creates the shelfmark text cell
 function createTxtCell (row, cellNr, objct) {
   let txtCell = row.insertCell(cellNr)
   txtCell.onclick = function () { pre(objct.id) }
@@ -225,6 +231,7 @@ function createTxtCell (row, cellNr, objct) {
   txtCell.className = 'txtCell'
 }
 
+// creates the date cell
 function createDateCell (row, cellNr, objct) {
   let dateCell = row.insertCell(cellNr)
   dateCell.onclick = function () { pre(objct.id) }
@@ -232,6 +239,7 @@ function createDateCell (row, cellNr, objct) {
   dateCell.innerHTML = objct.date
 }
 
+// create the ex. nr. cell
 function createExnrCell (row, cellNr, objct) {
   let isNrCell = row.insertCell(cellNr)
   isNrCell.onclick = function () { pre(objct.id) }
@@ -239,6 +247,7 @@ function createExnrCell (row, cellNr, objct) {
   isNrCell.innerHTML = objct.exNr
 }
 
+// creates the short shelfmark cell
 function createShortShelfmarkCell (row, cellNr, objct) {
   let shortShelfmarkCell = row.insertCell(cellNr)
   shortShelfmarkCell.className = 'shortShelfmarkCell'
@@ -253,6 +262,7 @@ function createShortShelfmarkCell (row, cellNr, objct) {
   }
 }
 
+// creates the print cell
 function createPrintCell (row, cellNr, objct) {
   let printCell = row.insertCell(cellNr)
   let input = document.createElement('input')
@@ -265,6 +275,7 @@ function createPrintCell (row, cellNr, objct) {
   printCell.appendChild(input)
 }
 
+// creates the print count cell
 function createPrintCountCell (row, cellNr, objct) {
   let printCountCell = row.insertCell(cellNr)
   let input = document.createElement('input')
@@ -278,6 +289,7 @@ function createPrintCountCell (row, cellNr, objct) {
   printCountCell.appendChild(input)
 }
 
+// creates the label size cell
 function createLabelSizeCell (row, cellNr, objct) {
   let labelSizeCell = row.insertCell(cellNr)
   labelSizeCell.className = 'labelSizeCell'
@@ -288,6 +300,7 @@ function createLabelSizeCell (row, cellNr, objct) {
   }
 }
 
+// clears the display table
 function deleteList () {
   if (fs.existsSync('signaturen.json')) {
     fs.unlink('signaturen.json', function (err) {
@@ -306,6 +319,7 @@ function deleteList () {
   }
 }
 
+// toggles first line
 function displayFirstLine (bool) {
   let firstLine = document.getElementById('firstLine')
   if (bool) {
@@ -314,6 +328,8 @@ function displayFirstLine (bool) {
     firstLine.style.display = 'none'
   }
 }
+
+// changes secondLine
 function changeSecondLine (str) {
   let secondLine = document.getElementById('secondLine').getElementsByTagName('span')[0]
   secondLine.innerHTML = str
@@ -328,6 +344,7 @@ function deleteFile () {
   }
 }
 
+// deletes provided file
 function deleteFromPath(path) {
   if (fs.existsSync(path)) {
     fs.unlink(path, function (err) {
@@ -340,15 +357,12 @@ function deleteFromPath(path) {
   }
 }
 
-// test function
-function test () {
-  console.log('Test')
-}
-
+// invokes to close the app via ipc
 function closeButton () {
   ipc.send('close')
 }
 
+// gathers the data to print and invokes printing via ipc
 function printButton () {
   let dataAll = {}
   let big = {}
@@ -399,13 +413,11 @@ function printButton () {
   ipc.send('print', data)
 }
 
-// adds event listener to test button
-// document.getElementById('btn_testIt').addEventListener('click', test);
-// adds event listener to deleteList button
+// adds event listener to the deleteList button
 document.getElementById('btn_deleteList').addEventListener('click', deleteList)
-
+// adds event listener to the deleteFile button
 document.getElementById('btn_deleteFile').addEventListener('click', deleteFile)
-
+// adds event listener to the print button
 document.getElementById('btn_print').addEventListener('click', printButton)
-
+// adds event listener to the close button
 document.getElementById('btn_close').addEventListener('click', closeButton)
