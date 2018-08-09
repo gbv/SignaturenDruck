@@ -1,4 +1,4 @@
 signaturenDruck/node_modules
 signaturenDruck/signaturen.json
 signaturenDruck/dist*
-signaturenDruck/tmp
+signaturenDruck/tmp*
