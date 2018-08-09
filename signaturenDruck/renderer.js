@@ -31,6 +31,9 @@ const strSecondLine2 = 'Eine andere Datei auswählen:'
 // function on window load
 window.onload = function () {
   document.getElementById('defaultPath').innerHTML = config.get('defaultPath')
+  if (config.get('devMode')) {
+    document.getElementById('devMode').style.display = 'block'
+  }
   let fileSelected = document.getElementById('fileToRead')
   let fileTobeRead
   if (fs.existsSync(config.get('defaultPath'))) {
@@ -345,7 +348,7 @@ function deleteFile () {
 }
 
 // deletes provided file
-function deleteFromPath(path) {
+function deleteFromPath (path) {
   if (fs.existsSync(path)) {
     fs.unlink(path, function (err) {
       if (err) {
@@ -412,6 +415,10 @@ function printButton () {
   }
   ipc.send('print', data)
 }
+
+ipc.on('printMsg', function (event) {
+  document.getElementById('myModal').style.display = 'block'
+})
 
 // adds event listener to the deleteList button
 document.getElementById('btn_deleteList').addEventListener('click', deleteList)

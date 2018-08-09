@@ -16,6 +16,7 @@ const ipc = require('electron').ipcRenderer
 
 ipc.on('toPrint', function (event, data) {
   main(data)
+  ipc.send('printed', true)
 })
 
 function main (ids) {
@@ -34,6 +35,9 @@ function main (ids) {
   })
   let size = _.groupBy(_.forEach(ids, function (value) { return value }), 'size')
   if (size.small) {
+    document.getElementById('userCard').className += ' small'
+    document.getElementById('currentUsername').className += ' small'
+    document.getElementById('currentDate').className += ' small'
     _.forEach(size.small, function (value) {
       let objct = value
       _.forEach(JSON.parse(file), function (key, value) {
@@ -76,9 +80,9 @@ function main (ids) {
             let lineCount = shelfmark.txt.length
             text.forEach(element => {
               if ((lineCount === 1) && (text.length === 1)) {
-                line.className = 'shelfmarkLine_' + i + ' oneLine'
+                line.className = 'shelfmarkLine_' + i + ' oneLine' + ' small'
               } else {
-                line.className = 'shelfmarkLine_' + i
+                line.className = 'shelfmarkLine_' + i + ' small'
               }
               if (element == '') {
                 let emptyLine = document.createElement('br')

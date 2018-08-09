@@ -160,3 +160,7 @@ tbody>tr:hover {
   background-color: grey;
   cursor: pointer;
 }
+
+#devMode {
+  display: none;
+}

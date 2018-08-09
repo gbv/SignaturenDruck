@@ -18,19 +18,20 @@ const configNew = {
   'big': {
     'printer': '\\\\ulbw2k812\\ulbps101',
     'label': {
-      'width': 99.47,
-      'height': 48.42
-    }
+      'width': 99970,
+      'height': 48920
+    },
+    'pdfName': 'printBig.pdf'
   },
   'small': {
     'printer': '\\\\ulbw2k812\\ulbps124',
     'label': {
-      'width': 74,
-      'height': 23
-    }
+      'width': 74500,
+      'height': 23500
+    },
+    'pdfName': 'printSmall.pdf'
   },
-  'unit': 'mm',
-  'printToPdf': true
+  'devMode': false
 }
 
 // name of signature storage json
@@ -128,14 +129,19 @@ app.on('activate', function () {
 
 // starts the printing process
 ipc.on('print', function (event, data) {
-  // console.log(data)
   savedData = data
-  if (savedData.big) {
-    // console.log(savedData.big)
-    printBig(savedData.big)
-  }
-  if (savedData.small) {
-    printSmall(savedData.small)
+  if (savedData.big || savedData.small) {
+    try {
+      if (savedData.big) {
+        printBig(savedData.big)
+      }
+      if (savedData.small) {
+        printSmall(savedData.small)
+      }
+      // mainWindow.webContents.send('printed', true)
+    } catch (error) {
+      throw error
+    }
   }
 })
 
@@ -143,6 +149,10 @@ ipc.on('print', function (event, data) {
 ipc.on('close', function (event) {
   mainWindow.close()
   app.quit()
+})
+
+ipc.on('printed', function (event) {
+  mainWindow.webContents.send('printMsg', true)
 })
 
 // invokes the generating and printing of printBig.pdf
@@ -164,28 +174,31 @@ function printBig (data) {
     // // since SumatraPDF v3.1.2 can't handle pdf pages where width > height we have to modify the settings accordingly
     // // there is already a fix in sight which should roll out with the next official SumatraPDF release
     // winBig.webContents.printToPDF({marginsType: 2, landscape: false, pageSize: { width: 99970, height: 110000 }}, (error, data) => {
-    winBig.webContents.printToPDF({marginsType: 2, landscape: true, pageSize: { width: 48920, height: 99970 }}, (error, data) => {
+    winBig.webContents.printToPDF({marginsType: 2, landscape: true, pageSize: { width: config.store.big.label.height, height: config.store.big.label.width }}, (error, data) => {
       if (error) throw error
-      fs.writeFile('./tmp/printBig.pdf', data, (error) => {
+      fs.writeFile('./tmp/' + config.store.big.pdfName, data, (error) => {
         if (error) throw error
-        console.log('Wrote printBig.pdf successfully')
+        console.log('Wrote ' + config.store.big.pdfName + ' successfully')
 
-        // printing with Foxit Reader 6.2.3.0815 via node-cmd
-        cmd.get(
-          // '"C:\\Program Files (x86)\\SumatraPDF\\SumatraPDF.exe" -print-to "\\\\http://jenlbs6-sun23.thulb.uni-jena.de:631\\SigGross" -print-settings "noscale" ".\\tmp\\printBig.pdf"',
-          '"C:\\Program Files (x86)\\Foxit Software\\Foxit Reader\\Foxit Reader.exe" /t ".\\tmp\\printBig.pdf" "\\\\ulbw2k812\\ulbps101"',
-          function (err, data, stderr) {
-            if (!err) {
-              console.log('all good ', data)
-            } else {
-              console.log('error ', err)
+        if (!config.store.devMode) {
+          // printing with Foxit Reader 6.2.3.0815 via node-cmd
+          cmd.get(
+            // '"C:\\Program Files (x86)\\SumatraPDF\\SumatraPDF.exe" -print-to "\\\\http://jenlbs6-sun23.thulb.uni-jena.de:631\\SigGross" -print-settings "noscale" ".\\tmp\\printBig.pdf"',
+            '"C:\\Program Files (x86)\\Foxit Software\\Foxit Reader\\Foxit Reader.exe"' + ' /t .\\tmp\\' + config.store.big.pdfName + ' ' + config.store.big.printer,
+            function (err, data, stderr) {
+              if (!err) {
+                console.log('all good ', data)
+              } else {
+                throw error
+              }
             }
-          }
-        )
+          )
+        }
       })
     })
-    // TODO -> set to .hide, .show is just for development
-    winBig.show()
+    if (config.store.devMode) {
+      winBig.show()
+    }
     winBig = null
   })
 }
@@ -201,29 +214,32 @@ function printSmall (data) {
   }))
   winSmall.once('ready-to-show', () => {
     winSmall.webContents.send('toPrint', data)
-    winSmall.webContents.printToPDF({marginsType: 2, landscape: true, pageSize: { width: 23500, height: 74500 }}, (error, data) => {
+    winSmall.webContents.printToPDF({marginsType: 2, landscape: true, pageSize: { width: config.store.small.label.height, height: config.store.small.label.width }}, (error, data) => {
     // winSmall.webContents.printToPDF({marginsType: 2, landscape: false, pageSize: { width: 74500, height: 80000 }}, (error, data) => {
       if (error) throw error
-      fs.writeFile('./tmp/printSmall.pdf', data, (error) => {
+      fs.writeFile('./tmp/' + config.store.small.pdfName, data, (error) => {
         if (error) throw error
-        console.log('Wrote printSmall.pdf successfully')
+        console.log('Wrote' + config.store.small.pdfName + ' successfully')
 
-        // printing with Foxit Reader 6.2.3.0815 via node-cmd
-        cmd.get(
-          // '"C:\\Program Files (x86)\\SumatraPDF\\SumatraPDF.exe" -print-to "\\\\http://jenlbs6-sun23.thulb.uni-jena.de:631\\SigGross" -print-settings "noscale" ".\\tmp\\printBig.pdf"',
-          '"C:\\Program Files (x86)\\Foxit Software\\Foxit Reader\\Foxit Reader.exe" /t ".\\tmp\\printSmall.pdf" "\\\\ulbw2k812\\ulbps124"',
-          function (err, data, stderr) {
-            if (!err) {
-              console.log('all good ', data)
-            } else {
-              console.log('error ', err)
+        if (!config.store.devMode) {
+          // printing with Foxit Reader 6.2.3.0815 via node-cmd
+          cmd.get(
+            // '"C:\\Program Files (x86)\\SumatraPDF\\SumatraPDF.exe" -print-to "\\\\http://jenlbs6-sun23.thulb.uni-jena.de:631\\SigGross" -print-settings "noscale" ".\\tmp\\printBig.pdf"',
+            '"C:\\Program Files (x86)\\Foxit Software\\Foxit Reader\\Foxit Reader.exe"' + ' /t .\\tmp\\' + config.store.small.pdfName + ' ' + config.store.small.printer,
+            function (err, data, stderr) {
+              if (!err) {
+                console.log('all good ', data)
+              } else {
+                throw error
+              }
             }
-          }
-        )
+          )
+        }
       })
     })
-    // TODO -> set to .hide, .show is just for development
-    winSmall.show()
+    if (config.store.devMode) {
+      winSmall.show()
+    }
     winSmall = null
   })
 }
