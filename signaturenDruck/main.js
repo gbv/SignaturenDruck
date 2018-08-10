@@ -45,7 +45,8 @@ let savedData
 // creates the mainWindow
 function createWindow () {
   checkConfig()
-  checkTmpDir()
+  checkDir('./tmp')
+  checkDir('C:\\Export')
   // Create the browser window.
   mainWindow = new BrowserWindow({width: 800, height: 580})
 
@@ -91,10 +92,11 @@ function checkConfig () {
     createConfig()
   }
 }
-// checks if the tmp-dir exists, else creates it
-function checkTmpDir () {
+
+// creates directory (if not already there)
+function checkDir (path) {
   try {
-    fs.mkdirSync('./tmp')
+    fs.mkdirSync(path)
   } catch (err) {
     if (err.code !== 'EEXIST') throw err
   }
