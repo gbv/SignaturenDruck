@@ -416,6 +416,7 @@ function printButton () {
   ipc.send('print', data)
 }
 
+// listens on printMsg, invokes the modal
 ipc.on('printMsg', function (event) {
   document.getElementById('myModal').style.display = 'block'
 })

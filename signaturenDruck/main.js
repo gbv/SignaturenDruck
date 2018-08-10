@@ -91,7 +91,7 @@ function checkConfig () {
     createConfig()
   }
 }
-
+// checks if the tmp-dir exists, else creates it
 function checkTmpDir () {
   try {
     fs.mkdirSync('./tmp')
@@ -151,6 +151,7 @@ ipc.on('close', function (event) {
   app.quit()
 })
 
+// listens on printed, invokes then printMsg via ipc
 ipc.on('printed', function (event) {
   mainWindow.webContents.send('printMsg', true)
 })
@@ -166,20 +167,13 @@ function printBig (data) {
   }))
   winBig.once('ready-to-show', () => {
     winBig.webContents.send('toPrint', data)
-    // generated pdf prints fine if printed manually using Adobe Reader
-    // Tested with Adobe Acrobat X Pro
-    // winBig.webContents.printToPDF({marginsType: 2, landscape: false, pageSize: { width: 48920, height: 99970 }}, (error, data) => {
 
     // generates a pdf file which is then printed silently via Foxit Reader v6.2.3.0815
-    // // since SumatraPDF v3.1.2 can't handle pdf pages where width > height we have to modify the settings accordingly
-    // // there is already a fix in sight which should roll out with the next official SumatraPDF release
-    // winBig.webContents.printToPDF({marginsType: 2, landscape: false, pageSize: { width: 99970, height: 110000 }}, (error, data) => {
     winBig.webContents.printToPDF({marginsType: 2, landscape: true, pageSize: { width: config.store.big.label.height, height: config.store.big.label.width }}, (error, data) => {
       if (error) throw error
       fs.writeFile('./tmp/' + config.store.big.pdfName, data, (error) => {
         if (error) throw error
         console.log('Wrote ' + config.store.big.pdfName + ' successfully')
-
         if (!config.store.devMode) {
           // printing with Foxit Reader 6.2.3.0815 via node-cmd
           cmd.get(
@@ -215,7 +209,6 @@ function printSmall (data) {
   winSmall.once('ready-to-show', () => {
     winSmall.webContents.send('toPrint', data)
     winSmall.webContents.printToPDF({marginsType: 2, landscape: true, pageSize: { width: config.store.small.label.height, height: config.store.small.label.width }}, (error, data) => {
-    // winSmall.webContents.printToPDF({marginsType: 2, landscape: false, pageSize: { width: 74500, height: 80000 }}, (error, data) => {
       if (error) throw error
       fs.writeFile('./tmp/' + config.store.small.pdfName, data, (error) => {
         if (error) throw error

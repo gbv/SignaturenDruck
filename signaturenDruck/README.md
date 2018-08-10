@@ -1,4 +1,25 @@
-# electron-quick-start
+# SignaturenDruck
+
+This is a Electron application to print shelfmarks read from a `.dnl`-file. It displays shelfmarks from the file in a table like structure. You can then select and print the shelfmarks you like.
+
+The printing process creates two `.pdf`-files (each for one size) and proceeds to print them silently via Foxit Reader.
+
+
+
+To use this application you'll need to install [Foxit Reader v6.2.3.0815](http://cdn01.foxitsoftware.com/pub/foxit/reader/desktop/win/6.x/6.2/enu/FoxitReader623.815_enu_Setup.exe) on your computer.
+
+To clone and run this repository you'll need [Git](https://git-scm.com) and [Node.js](https://nodejs.org/en/download/) (which comes with [npm](http://npmjs.com)) installed on your computer. From your command line:
+
+```bash
+# Clone this repository
+git clone https://github.com/EliDeh/abschlussProjekt
+# Go into the repository
+cd abschlussProjekt
+# Install dependencies
+npm install
+# Run the app
+npm start
+```
 
 **Clone and run for a quick way to see Electron in action.**
 
@@ -14,22 +35,6 @@ A basic Electron application needs just these files:
 
 You can learn more about each of these components within the [Quick Start Guide](https://electronjs.org/docs/tutorial/quick-start).
 
-## To Use
-
-To clone and run this repository you'll need [Git](https://git-scm.com) and [Node.js](https://nodejs.org/en/download/) (which comes with [npm](http://npmjs.com)) installed on your computer. From your command line:
-
-```bash
-# Clone this repository
-git clone https://github.com/electron/electron-quick-start
-# Go into the repository
-cd electron-quick-start
-# Install dependencies
-npm install
-# Run the app
-npm start
-```
-
-Note: If you're using Linux Bash for Windows, [see this guide](https://www.howtogeek.com/261575/how-to-run-graphical-linux-desktop-applications-from-windows-10s-bash-shell/) or use `node` from the command prompt.
 
 ## Resources for Learning Electron
 
