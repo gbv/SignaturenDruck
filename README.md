@@ -12,9 +12,9 @@ To clone and run this repository you'll need [Git](https://git-scm.com) and [Nod
 
 ```bash
 # Clone this repository
-git clone https://github.com/EliDeh/abschlussProjekt
+git clone https://github.com/EliDeh/SignaturenDruck
 # Go into the repository
-cd abschlussProjekt
+cd SignaturenDruck/signaturenDruck
 # Install dependencies
 npm install
 # Run the app
