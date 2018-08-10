@@ -23,6 +23,12 @@ npm start
 
 **Clone and run for a quick way to see Electron in action.**
 
+To build the app for win7/10 32bit:
+
+```bash
+npx electron-builder --win --ia32
+```
+
 ## License
 
 [CC0 1.0 (Public Domain)](LICENSE.md)
