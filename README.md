@@ -21,6 +21,12 @@ npm install
 npm start
 ```
 
+The app creates the directory `C:\\Export` and stores the `config.json` in it.
+
+In the `config.json` you can change the printers, pdf-filenames and the labelsizes.
+
+The devMode disables the actual printing, shows the else hidden label windows and creates then the 2 pdf-files.
+
 **Clone and run for a quick way to see Electron in action.**
 
 To build the app for win7/10 32bit:

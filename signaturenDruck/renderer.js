@@ -421,6 +421,12 @@ ipc.on('printMsg', function (event) {
   document.getElementById('myModal').style.display = 'block'
 })
 
+function openManually () {
+  ipc.send('openManually')
+}
+
+// adds event listener to the create manually button
+document.getElementById('btn_create_manually').addEventListener('click', openManually)
 // adds event listener to the deleteList button
 document.getElementById('btn_deleteList').addEventListener('click', deleteList)
 // adds event listener to the deleteFile button

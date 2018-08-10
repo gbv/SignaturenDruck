@@ -48,7 +48,11 @@ function createWindow () {
   checkDir('./tmp')
   checkDir('C:\\Export')
   // Create the browser window.
-  mainWindow = new BrowserWindow({width: 800, height: 580})
+  if (!config.store.devMode) {
+    mainWindow = new BrowserWindow({width: 800, height: 580})
+  } else {
+    mainWindow = new BrowserWindow({width: 800, height: 600})
+  }
 
   // and load the index.html of the app.
   mainWindow.loadURL(url.format({
@@ -236,6 +240,23 @@ function printSmall (data) {
       winSmall.show()
     }
     winSmall = null
+  })
+}
+
+ipc.on('openManually', function (event) {
+  createManualWindow()
+})
+
+function createManualWindow () {
+  let winManual = null
+  winManual = new BrowserWindow({width: 500, height: 300, show: false})
+  winManual.loadURL(url.format({
+    pathname: path.join(__dirname, 'manual.html'),
+    protocol: 'file',
+    slashes: true
+  }))
+  winManual.once('ready-to-show', () => {
+    winManual.show()
   })
 }
 
