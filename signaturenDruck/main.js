@@ -236,7 +236,7 @@ ipc.on('openManually', function (event) {
 
 function createManualWindow () {
   let winManual = null
-  winManual = new BrowserWindow({width: 500, height: 300, show: false})
+  winManual = new BrowserWindow({width: 600, height: 300, show: false})
   winManual.loadURL(url.format({
     pathname: path.join(__dirname, 'manual.html'),
     protocol: 'file',
