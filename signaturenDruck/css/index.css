@@ -39,54 +39,6 @@ body {
   /* border: 1px solid red; */
 }
 
-.big {
-  width: 80mm;
-  height: 43mm;
-}
-
-.small {
-  width: 74mm;
-  height: 23mm;
-}
-
-.indent>p {
-  font-size: 16pt;
-  margin: 0px;
-  padding-top: 0px;
-  padding-bottom: 0px;
-  margin-left: 45%;
-}
-
-.center>p {
-  font-size: 15pt;
-  margin: 0pt;
-  text-align: center;
-}
-
-.center>p#line1 {
-  margin-top: 30px;
-}
-
-#previewBox {
-  border: 1px solid black;
-  background-color: white;
-  float: right;
-  margin: 5px 0px 5px 5px;
-  border-radius: 2px;
-  font-family: "Arial Narrow";
-}
-
-p#line1 {
-  margin-top: 6px;
-}
-
-#line1,
-#line2,
-#line3,
-#line6 {
-  font-weight: bold;
-}
-
 th,
 td {
   text-align: center;

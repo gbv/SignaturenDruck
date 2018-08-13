@@ -5,12 +5,31 @@
 		<meta charset="UTF-8">
 		<title>Signaturendruck</title>
     <link rel="stylesheet" type="text/css" href="./css/manual.css">
+    <link rel="stylesheet" type="text/css" href="./css/preview.css">
     <link rel="stylesheet" type="text/css" href="./css/modal.css">
   </head>
 
 	<body>
     <div>
       <code>Hello World!</code>
+    </div>
+    <div id="container">
+      <div id="inputBox">
+        <div id="editorBox">
+          <input type="text" id="line_1"><br>
+          <input type="text" id="line_2"><br>
+          <input type="text" id="line_3"><br>
+          <input type="text" id="line_4"><br>
+          <input type="text" id="line_5"><br>
+          <input type="text" id="line_6">
+        </div>
+        <div id="lineSelectBox">
+          <input type="radio" name="numberOfLines" value="1" checked> 1 Zeile
+          <input type="radio" name="numberOfLines" value="3" checked> 3 Zeilen
+          <input type="radio" name="numberOfLines" value="6" checked> 6 Zeilen
+        </div>
+      </div>
+      <div id="previewBox" class="big"></div>
     </div>
     <!-- The Modal -->
     <div id="myModal" class="modal">

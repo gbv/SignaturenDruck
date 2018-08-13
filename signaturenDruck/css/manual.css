@@ -1,0 +1,10 @@
+#container {
+  /* border: double; */
+  overflow: hidden;
+}
+
+#inputBox {
+  float: left;
+  margin-top: 5px;
+  /* border: 1px solid red; */
+}
