@@ -55,7 +55,6 @@ module.exports = function (id) {
       div.id = id
       if (document.getElementById('short_' + id)) {
         if (document.getElementById('short_' + id).checked && length == 1) {
-          console.log(sig.txt)
           let text = sig.txt[0]
           let textSplit = text.split(' ')
           let countSpaces = textSplit.length
@@ -67,7 +66,6 @@ module.exports = function (id) {
             countSpaces -= 2
             i += 2
             j++
-            console.log(countSpaces)
           }
           if (countSpaces == 1) {
             sig.txt[j] = textSplit[i]

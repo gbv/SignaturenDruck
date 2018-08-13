@@ -79,8 +79,6 @@ function deleteJSON () {
     fs.unlink(sigJSON, function (err) {
       if (err) {
         throw err
-      } else {
-        console.log(sigJSON + ' wurde geloescht')
       }
     })
   }
@@ -179,18 +177,13 @@ function printBig (data) {
       if (error) throw error
       fs.writeFile('./tmp/' + config.store.big.pdfName, data, (error) => {
         if (error) throw error
-        console.log('Wrote ' + config.store.big.pdfName + ' successfully')
         if (!config.store.devMode) {
           // printing with Foxit Reader 6.2.3.0815 via node-cmd
           cmd.get(
             // '"C:\\Program Files (x86)\\SumatraPDF\\SumatraPDF.exe" -print-to "\\\\http://jenlbs6-sun23.thulb.uni-jena.de:631\\SigGross" -print-settings "noscale" ".\\tmp\\printBig.pdf"',
             '"C:\\Program Files (x86)\\Foxit Software\\Foxit Reader\\Foxit Reader.exe"' + ' /t .\\tmp\\' + config.store.big.pdfName + ' ' + config.store.big.printer,
-            function (err, data, stderr) {
-              if (!err) {
-                console.log('all good ', data)
-              } else {
-                throw error
-              }
+            function (error, data, stderr) {
+              if (error) throw error
             }
           )
         }
@@ -218,19 +211,13 @@ function printSmall (data) {
       if (error) throw error
       fs.writeFile('./tmp/' + config.store.small.pdfName, data, (error) => {
         if (error) throw error
-        console.log('Wrote' + config.store.small.pdfName + ' successfully')
-
         if (!config.store.devMode) {
           // printing with Foxit Reader 6.2.3.0815 via node-cmd
           cmd.get(
             // '"C:\\Program Files (x86)\\SumatraPDF\\SumatraPDF.exe" -print-to "\\\\http://jenlbs6-sun23.thulb.uni-jena.de:631\\SigGross" -print-settings "noscale" ".\\tmp\\printBig.pdf"',
             '"C:\\Program Files (x86)\\Foxit Software\\Foxit Reader\\Foxit Reader.exe"' + ' /t .\\tmp\\' + config.store.small.pdfName + ' ' + config.store.small.printer,
-            function (err, data, stderr) {
-              if (!err) {
-                console.log('all good ', data)
-              } else {
-                throw error
-              }
+            function (error, data, stderr) {
+              if (error) throw error
             }
           )
         }

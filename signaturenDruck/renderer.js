@@ -403,7 +403,6 @@ function printButton () {
       j++
     }
   }
-  // console.log(big, small)
   let data = {}
   if (b > 0) {
     // ipc.send('printBig', big);
