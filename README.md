@@ -25,7 +25,7 @@ The app creates the directory `C:\\Export` and stores the `config.json` in it.
 
 In the `config.json` you can change the printers, pdf-filenames and the labelsizes.
 
-The devMode disables the actual printing, shows the else hidden label windows and creates then the 2 pdf-files.
+The devMode disables the actual printing. It will show the else hidden label-windows. The pdf-files can be found at: `C:\Users\YourUsername\AppData\Local\Programs\SignaturenDruck\tmp`
 
 **Clone and run for a quick way to see Electron in action.**
 
