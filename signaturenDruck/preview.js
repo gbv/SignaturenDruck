@@ -56,20 +56,72 @@ module.exports = function (id) {
       if (document.getElementById('short_' + id)) {
         if (document.getElementById('short_' + id).checked && length == 1) {
           let text = sig.txt[0]
-          let textSplit = text.split(' ')
-          let countSpaces = textSplit.length
+          let indxSlash = text.indexOf('/')
+          let indxColon = text.indexOf(':')
+          sig.txt = []
+          sig.txt[0] = text
           let i = 0
-          let j = 0
-          while (countSpaces >= 2) {
-            sig.txt = []
-            sig.txt[j] = textSplit[i] + ' ' + textSplit[i + 1]
-            countSpaces -= 2
-            i += 2
-            j++
+          if (indxSlash !== -1) {
+            sig.txt[0] = text.substring(0, indxSlash + 1)
+            sig.txt[1] = text.substring(indxSlash + 1)
+            i = 1
           }
-          if (countSpaces == 1) {
-            sig.txt[j] = textSplit[i]
+          if (indxColon !== -1) {
+            if (i === 0) {
+              sig.txt[0] = text.substring(0, indxColon + 1)
+              sig.txt[1] = text.substring(indxColon + 1)
+              i = 1
+            } else {
+              let i = 0
+              let txt = []
+              let length = sig.txt.length
+              sig.txt.forEach(element => {
+                let indx = element.indexOf(':')
+                if (indx !== -1) {
+                  let j = 0
+                  while (j < i) {
+                    txt[j] = sig.txt[j]
+                    j++
+                  }
+                  let k = i
+                  txt[k] = element.substring(0, indx)
+                  k++
+                  txt[k] = element.substring(indx)
+                  k++
+                  while (k <= length) {
+                    txt[k] = sig.txt[k - 1]
+                    k++
+                  }
+                  sig.txt = txt
+                }
+                i++
+              })
+            }
           }
+          i = 0
+          let txt = []
+          let length = sig.txt.length
+          sig.txt.forEach(element => {
+            let elementParts = element.split(' ')
+            if (elementParts.length >= 3) {
+              let j = 0
+              while (j < i) {
+                txt[j] = sig.txt[j]
+                j++
+              }
+              let k = i
+              txt[k] = elementParts[0] + ' ' + elementParts[1]
+              k++
+              txt[k] = element.substring(txt[k - 1].length)
+              k++
+              while (k <= length) {
+                txt[k] = sig.txt[k - 1]
+                k++
+              }
+              sig.txt = txt
+            }
+            i++
+          })
         }
       }
       sig.txt.forEach(element => {

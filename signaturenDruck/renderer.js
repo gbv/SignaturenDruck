@@ -84,13 +84,18 @@ function writeToFile (allLines) {
     } else if (first4 >= 7001 && first4 <= 7099) {
       sig.exNr = extract.exNr(line)
     } else if (first4 == 7100) {
-      let txt = extract.txt(line)
-      let big = labelSize(txt)
+      let plainTxt = extract.txt(line)
+      let big = labelSize(plainTxt)
       if (big === false) {
         sig.bigLabel = false
       }
-      txt = txt.split(':')
-      sig.txt = txt
+      let txt = plainTxt.split(':')
+      if (txt.length === 6) {
+        sig.txt = txt
+      } else {
+        let txt = [plainTxt]
+        sig.txt = txt
+      }
       sig.txtLength = sig.txt.length
     } else if (first4 == 7901) {
       sig.date = extract.date(line)
@@ -228,9 +233,13 @@ function createPpnRow (row, value) {
 function createTxtCell (row, cellNr, objct) {
   let txtCell = row.insertCell(cellNr)
   txtCell.onclick = function () { pre(objct.id) }
-  _.forEach(objct.txt, function (value) {
-    txtCell.innerHTML += value + ' '
-  })
+  if (objct.txtLength === 1) {
+    txtCell.innerHTML = objct.txt
+  } else {
+    _.forEach(objct.txt, function (value) {
+      txtCell.innerHTML += value + ' '
+    })
+  }
   txtCell.className = 'txtCell'
 }
 

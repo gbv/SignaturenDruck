@@ -59,24 +59,76 @@ function main (ids) {
               div.className = 'shelfmark center small'
             }
             div.id = id
-            let text = shelfmark.txt
             if (objct.short && length == 1) {
-              text = shelfmark.txt[0]
-              let textSplit = text.split(' ')
-              let countSpaces = textSplit.length
+              let text = shelfmark.txt[0]
+              let indxSlash = text.indexOf('/')
+              let indxColon = text.indexOf(':')
+              shelfmark.txt = []
+              shelfmark.txt[0] = text
               let i = 0
-              let j = 0
-              text = []
-              while (countSpaces >= 2) {
-                text[j] = textSplit[i] + ' ' + textSplit[i + 1]
-                countSpaces -= 2
-                i += 2
-                j++
+              if (indxSlash !== -1) {
+                shelfmark.txt[0] = text.substring(0, indxSlash + 1)
+                shelfmark.txt[1] = text.substring(indxSlash + 1)
+                i = 1
               }
-              if (countSpaces == 1) {
-                text[j] = textSplit[i]
+              if (indxColon !== -1) {
+                if (i === 0) {
+                  shelfmark.txt[0] = text.substring(0, indxColon + 1)
+                  shelfmark.txt[1] = text.substring(indxColon + 1)
+                  i = 1
+                } else {
+                  let i = 0
+                  let txt = []
+                  let length = shelfmark.txt.length
+                  shelfmark.txt.forEach(element => {
+                    let indx = element.indexOf(':')
+                    if (indx !== -1) {
+                      let j = 0
+                      while (j < i) {
+                        txt[j] = shelfmark.txt[j]
+                        j++
+                      }
+                      let k = i
+                      txt[k] = element.substring(0, indx)
+                      k++
+                      txt[k] = element.substring(indx)
+                      k++
+                      while (k <= length) {
+                        txt[k] = shelfmark.txt[k - 1]
+                        k++
+                      }
+                      shelfmark.txt = txt
+                    }
+                    i++
+                  })
+                }
               }
+              i = 0
+              let txt = []
+              let length = shelfmark.txt.length
+              shelfmark.txt.forEach(element => {
+                let elementParts = element.split(' ')
+                if (elementParts.length >= 3) {
+                  let j = 0
+                  while (j < i) {
+                    txt[j] = shelfmark.txt[j]
+                    j++
+                  }
+                  let k = i
+                  txt[k] = elementParts[0] + ' ' + elementParts[1]
+                  k++
+                  txt[k] = element.substring(txt[k - 1].length)
+                  k++
+                  while (k <= length) {
+                    txt[k] = shelfmark.txt[k - 1]
+                    k++
+                  }
+                  shelfmark.txt = txt
+                }
+                i++
+              })
             }
+            let text = shelfmark.txt
             let lineCount = shelfmark.txt.length
             text.forEach(element => {
               if ((lineCount === 1) && (text.length === 1)) {
