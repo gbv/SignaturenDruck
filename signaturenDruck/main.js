@@ -56,7 +56,7 @@ function createWindow () {
 
   // and load the index.html of the app.
   mainWindow.loadURL(url.format({
-    pathname: path.join(__dirname, 'index.html'),
+    pathname: path.join(__dirname, '/html/index.html'),
     protocol: 'file:',
     slashes: true
   }))
@@ -163,9 +163,9 @@ ipc.on('printed', function (event) {
 // invokes the generating and printing of printBig.pdf
 function printBig (data) {
   let winBig = null
-  winBig = new BrowserWindow({ heihgt: 225, width: 500, show: false })
+  winBig = new BrowserWindow({ heihgt: 350, width: 500, show: false })
   winBig.loadURL(url.format({
-    pathname: path.join(__dirname, 'print.html'),
+    pathname: path.join(__dirname, 'html/print.html'),
     protocol: 'file:',
     slashes: true
   }))
@@ -199,9 +199,9 @@ function printBig (data) {
 // invokes the generating and printing of printSmall.pdf
 function printSmall (data) {
   let winSmall = null
-  winSmall = new BrowserWindow({width: 225, height: 500, show: false})
+  winSmall = new BrowserWindow({width: 350, height: 500, show: false})
   winSmall.loadURL(url.format({
-    pathname: path.join(__dirname, 'print.html'),
+    pathname: path.join(__dirname, 'html/print.html'),
     protocol: 'file:',
     slashes: true
   }))
@@ -238,7 +238,7 @@ function createManualWindow () {
   let winManual = null
   winManual = new BrowserWindow({width: 600, height: 300, show: false})
   winManual.loadURL(url.format({
-    pathname: path.join(__dirname, 'manual.html'),
+    pathname: path.join(__dirname, 'html/manual.html'),
     protocol: 'file',
     slashes: true
   }))

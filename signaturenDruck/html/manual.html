@@ -4,15 +4,12 @@
 	<head>
 		<meta charset="UTF-8">
 		<title>Signaturendruck</title>
-    <link rel="stylesheet" type="text/css" href="./css/manual.css">
-    <link rel="stylesheet" type="text/css" href="./css/preview.css">
-    <link rel="stylesheet" type="text/css" href="./css/modal.css">
+    <link rel="stylesheet" type="text/css" href="./../css/manual.css">
+    <link rel="stylesheet" type="text/css" href="./../css/preview.css">
+    <link rel="stylesheet" type="text/css" href="./../css/modal.css">
   </head>
 
 	<body>
-    <div>
-      <code>Hello World!</code>
-    </div>
     <div id="container">
       <div id="inputBox">
         <div id="editorBox">
@@ -24,12 +21,28 @@
           <input type="text" id="line_6">
         </div>
         <div id="lineSelectBox">
-          <input type="radio" name="numberOfLines" value="1" checked> 1 Zeile
-          <input type="radio" name="numberOfLines" value="3" checked> 3 Zeilen
+          <input type="radio" name="numberOfLines" value="1"> 1 Zeile
+          <input type="radio" name="numberOfLines" value="3"> 3 Zeilen
           <input type="radio" name="numberOfLines" value="6" checked> 6 Zeilen
         </div>
+        <div id="buttonBox">
+          <button id="btn_previous" class="button" disabled>Vorherige</button>
+          <button id="btn_delete" class="button">löschen</button>
+          <button id="btn_next" class="button">Nächste</button>
+          <br>
+          <button id="btn_saveAndExit" class="button">Übernehmen und Beenden</button>
+          <br>
+          <button id="btn_deleteAndExit" class="button">Verwerfen und Beenden</button>
+        </div>
       </div>
-      <div id="previewBox" class="big"></div>
+      <div id="previewBox" class="big indent">
+        <p id="line1" class="previewLine"> </p>
+        <p id="line2" class="previewLine"> </p>
+        <p id="line3" class="previewLine"> </p>
+        <p id="line4" class="previewLine"> </p>
+        <p id="line5" class="previewLine"> </p>
+        <p id="line6" class="previewLine"> </p>
+      </div>
     </div>
     <!-- The Modal -->
     <div id="myModal" class="modal">
@@ -43,7 +56,7 @@
     </div>
 		<script>
 			// You can also require other files to run in this process
-      require('./manualRenderer.js')
+      require('./../manualRenderer.js')
 		</script>
     <script>
       let modal = document.getElementById('myModal')
