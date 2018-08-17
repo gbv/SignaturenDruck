@@ -28,6 +28,8 @@ const DataExtract = require('./dataExtract.js')
 const strSecondLine = 'Bitte wählen sie eine Datei aus:'
 const strSecondLine2 = 'Eine andere Datei auswählen:'
 
+let objMan = null
+
 // function on window load
 window.onload = function () {
   document.getElementById('defaultPath').innerHTML = config.get('defaultPath')
@@ -196,6 +198,81 @@ function createTable (obj) {
   })
 }
 
+function addToTable (obj) {
+  let table = document.getElementById('shelfmarkTable').getElementsByTagName('tbody')[0]
+  let row = table.insertRow(0)
+  row.className = 'ppnRow'
+  createPpnRow(row, 'manual')
+  let i = 0
+  while (obj[i] !== undefined) {
+    row = table.insertRow(i + 1)
+    createTxtCell(row, 0, obj[i].oneLineTxt, obj[i].id)
+    createDateCell(row, 1, obj[i].id)
+    createExnrCell(row, 2, obj[i].id)
+    createShortShelfmarkCell(row, 3, obj[i].id)
+    createPrintCell(row, 4, obj[i].id)
+    createPrintCountCell(row, 5, obj[i].id)
+    // createLabelSizeCell(row, 6, objct)
+    console.log(obj[i])
+    i++
+  }
+
+  function createTxtCell (row, cellNr, txt, id) {
+    let txtCell = row.insertCell(cellNr)
+    txtCell.onclick = function () { preMan(id) }
+    txtCell.innerHTML = txt
+    txtCell.className = 'txtCell'
+  }
+
+  function createDateCell (row, cellNr, id) {
+    let dateCell = row.insertCell(cellNr)
+    dateCell.onclick = function () { preMan(id) }
+    dateCell.className = 'dateCell'
+    dateCell.innerHTML = '-'
+  }
+
+  function createExnrCell (row, cellNr, id) {
+    let isNrCell = row.insertCell(cellNr)
+    isNrCell.onclick = function () { preMan(id) }
+    isNrCell.className = 'isNrCell'
+    isNrCell.innerHTML = '-'
+  }
+
+  function createShortShelfmarkCell (row, cellNr, id) {
+    let shortShelfmarkCell = row.insertCell(cellNr)
+    shortShelfmarkCell.onclick = function () { preMan(id) }
+    shortShelfmarkCell.className = 'shortShelfmarkCell'
+    shortShelfmarkCell.innerHTML = '-'
+  }
+
+  function createPrintCell (row, cellNr, id) {
+    let printCell = row.insertCell(cellNr)
+    let input = document.createElement('input')
+    printCell.className = 'printCell'
+    input.id = 'print_' + 'm_' + id
+    input.type = 'checkbox'
+    input.name = 'toPrint'
+    input.value = id
+    input.onclick = function () { preMan(id) }
+    printCell.appendChild(input)
+  }
+
+  function createPrintCountCell (row, cellNr, id) {
+    let printCountCell = row.insertCell(cellNr)
+    let input = document.createElement('input')
+    printCountCell.className = 'printCountCell'
+    input.id = 'count_' + 'm_' + id
+    input.type = 'number'
+    input.max = 99
+    input.min = 1
+    input.name = 'printCount'
+    input.value = 1
+    printCountCell.appendChild(input)
+  }
+  // createLabelSizeCell(row, 6, objct)
+  // })
+}
+
 // creates the PPN row
 function createPpnRow (row, value) {
   let i = 0
@@ -240,6 +317,13 @@ function createTxtCell (row, cellNr, objct) {
       txtCell.innerHTML += value + ' '
     })
   }
+  txtCell.className = 'txtCell'
+}
+
+function createTxtCellManual (row, cellNr, txt, id) {
+  let txtCell = row.insertCell(cellNr)
+  txtCell.onclick = function () { preMan(id) }
+  txtCell.innerHTML = txt
   txtCell.className = 'txtCell'
 }
 
@@ -429,8 +513,53 @@ ipc.on('printMsg', function (event) {
   document.getElementById('myModal').style.display = 'block'
 })
 
+ipc.on('manual', function (event, data) {
+  objMan = data
+  addToTable(objMan)
+})
+
 function openManually () {
   ipc.send('openManually')
+}
+
+function preMan (id) {
+  let prevBox = document.getElementById('previewBox')
+  prevBox.classList = ''
+  if (objMan[id].lines == 1) {
+    prevBox.className = 'small center'
+    removeOld()
+    addLines()
+  } else if (objMan[id].lines == 3) {
+    prevBox.className = 'small indent'
+    removeOld()
+    addLines()
+  } else {
+    prevBox.className = 'big indent'
+    removeOld()
+    addLines()
+  }
+
+  function addLines () {
+    let line
+    let i = 0
+    let j
+    while (i < objMan[id].lines) {
+      j = i + 1
+      line = document.createElement('p')
+      line.id = 'line' + j
+      line.className = 'previewLine'
+      line.innerHTML = objMan[id].lineTxts[i]
+      prevBox.appendChild(line)
+      i++
+    }
+  }
+
+  function removeOld () {
+    let myNode = document.getElementById('previewBox')
+    while (myNode.firstChild) {
+      myNode.removeChild(myNode.firstChild)
+    }
+  }
 }
 
 // adds event listener to the create manually button

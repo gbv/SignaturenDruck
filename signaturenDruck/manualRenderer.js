@@ -5,6 +5,7 @@
   }
 
   for (let i = 1; i <= 6; i++) {
+    f()
     document.getElementById('line_' + i).addEventListener('keyup', function (event) {
       if (document.getElementById('line_' + i).value !== '') {
         document.getElementById('line' + i).innerHTML = document.getElementById('line_' + i).value
@@ -12,20 +13,6 @@
         document.getElementById('line' + i).innerHTML = ' '
       }
     })
-  }
-
-  function f () {
-    for (let i = 0, length = radioButtons.length; i < length; i++) {
-      if (radioButtons[i].checked) {
-        showInputs(radioButtons[i].value)
-      }
-    }
-  }
-
-  function showInputs (i) {
-    removeLines()
-    clearInput()
-    show(i)
   }
 })()
 
@@ -37,6 +24,33 @@ let objct = {
 }
 
 let id = 0
+
+function f () {
+  let radioButtons = document.getElementsByName('numberOfLines')
+  for (let i = 0, length = radioButtons.length; i < length; i++) {
+    if (radioButtons[i].checked) {
+      showInputs(radioButtons[i].value)
+      console.log(radioButtons[i].value)
+      document.getElementById('previewBox').classList = ''
+      if (radioButtons[i].value == 1) {
+        console.log('small center')
+        document.getElementById('previewBox').className = 'small center'
+      } else if (radioButtons[i].value == 3) {
+        console.log('small indent')
+        document.getElementById('previewBox').className = 'small indent'
+      } else {
+        console.log('big indent')
+        document.getElementById('previewBox').className = 'big indent'
+      }
+    }
+  }
+}
+
+function showInputs (i) {
+  removeLines()
+  clearInput()
+  show(i)
+}
 
 function show (i) {
   let j = 1
@@ -144,11 +158,30 @@ function deleteAndExit () {
   ipc.send('closeManual')
 }
 
+function saveAndExit () {
+  saveCurrent()
+  let indx = objct.manual.length - 1
+  let lastLength = objct.manual[indx].lineTxts.length
+  let isEmpty = true
+  let i = 0
+  while (i < lastLength) {
+    if (objct.manual[indx].lineTxts[i] !== '') {
+      isEmpty = false
+    }
+    i++
+  }
+  if (isEmpty) {
+    delete objct.manual[indx]
+  }
+  ipc.send('saveManual', objct.manual)
+}
+
 function getData () {
   clearInput()
   removeLines()
   setLines()
   show(getNumberOfLines())
+  f()
   loadData()
 }
 
@@ -186,16 +219,19 @@ function saveCurrent () {
   let lineTxts = []
   let numberOfLinesValue = getNumberOfLines()
   let i = 0
+  let oneLineTxt = ''
   while (i < (numberOfLinesValue)) {
     let k = i + 1
     lineTxts[i] = document.getElementById('line_' + k).value
+    oneLineTxt += document.getElementById('line_' + k).value + ' '
     i++
   }
   objct.manual[id] = {
     'id': id,
-    'size': document.getElementById('previewBox').className,
+    'size': document.getElementById('previewBox').className.split(' ')[0],
     'lines': numberOfLinesValue,
-    'lineTxts': lineTxts
+    'lineTxts': lineTxts,
+    'oneLineTxt': oneLineTxt
   }
 }
 
@@ -203,3 +239,4 @@ document.getElementById('btn_next').addEventListener('click', next)
 document.getElementById('btn_previous').addEventListener('click', previous)
 document.getElementById('btn_delete').addEventListener('click', deleteData)
 document.getElementById('btn_deleteAndExit').addEventListener('click', deleteAndExit)
+document.getElementById('btn_saveAndExit').addEventListener('click', saveAndExit)

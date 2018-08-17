@@ -252,5 +252,12 @@ ipc.on('closeManual', function (event) {
   winManual = null
 })
 
+ipc.on('saveManual', function (event, data) {
+  winManual.close()
+  winManual = null
+  mainWindow.webContents.send('manual', data)
+  console.log(data, data.length)
+})
+
 // In this file you can include the rest of your app's specific main process
 // code. You can also put them in separate files and require them here.
