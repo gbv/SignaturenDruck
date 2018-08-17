@@ -41,6 +41,7 @@ const sigJSON = 'signaturen.json'
 // be closed automatically when the JavaScript object is garbage collected.
 let mainWindow
 let savedData
+let winManual
 
 // creates the mainWindow
 function createWindow () {
@@ -235,7 +236,6 @@ ipc.on('openManually', function (event) {
 })
 
 function createManualWindow () {
-  let winManual = null
   winManual = new BrowserWindow({width: 600, height: 300, show: false})
   winManual.loadURL(url.format({
     pathname: path.join(__dirname, 'html/manual.html'),
@@ -246,6 +246,11 @@ function createManualWindow () {
     winManual.show()
   })
 }
+
+ipc.on('closeManual', function (event) {
+  winManual.close()
+  winManual = null
+})
 
 // In this file you can include the rest of your app's specific main process
 // code. You can also put them in separate files and require them here.

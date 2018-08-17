@@ -29,6 +29,9 @@
   }
 })()
 
+// required for ipc calls to the main process
+const ipc = require('electron').ipcRenderer
+
 let objct = {
   manual: []
 }
@@ -97,41 +100,49 @@ function previous () {
   }
   id--
   getData()
+  console.log('prev', objct.manual)
 }
 
-// function next () {
-//   console.log(objct.manual[id], objct.manual[id + 1])
-//   if (objct.manual[id] !== undefined) {
-//     console.log('here')
-//     saveCurrent()
-//     clearInput()
-//     removeLines()
-//     setLines()
-//     show(getNumberOfLines())
-//     loadData(id)
-//   } else {
-//     console.log(id)
-//     if (id === 0) {
-//       document.getElementById('btn_previous').disabled = false
-//     }
-//     saveCurrent()
-//     removeLines()
-//     show(getNumberOfLines())
-//     clearInput()
-//   }
-// }
+function deleteData () {
+  console.log('before', objct.manual)
+  reset()
+  changeOrder()
+  console.log('after', objct.manual)
 
-// function previous () {
-//   if (id > 0) {
-//     id--
-//   }
-//   if (id <= 0) {
-//     document.getElementById('btn_previous').disabled = true
-//   }
-//   if (id >= 0) {
-//     getPrev()
-//   }
-// }
+  function reset () {
+    objct.manual[id] = {}
+    removeLines()
+    show(getNumberOfLines())
+    clearInput()
+  }
+  function changeOrder () {
+    let i = id + 1
+    while (objct.manual[i] !== undefined) {
+      objct.manual[i - 1] = objct.manual[i]
+      objct.manual[i].id = i - 1
+      i++
+    }
+    delete objct.manual[i - 1]
+    if (id > 0) {
+      id--
+    }
+    if (id === 0) {
+      document.getElementById('btn_previous').disabled = true
+    }
+    if (objct.manual[id] !== undefined) {
+      getData()
+    } else {
+      removeLines()
+      show(getNumberOfLines())
+      clearInput()
+    }
+  }
+}
+
+function deleteAndExit () {
+  objct.manual = null
+  ipc.send('closeManual')
+}
 
 function getData () {
   clearInput()
@@ -190,3 +201,5 @@ function saveCurrent () {
 
 document.getElementById('btn_next').addEventListener('click', next)
 document.getElementById('btn_previous').addEventListener('click', previous)
+document.getElementById('btn_delete').addEventListener('click', deleteData)
+document.getElementById('btn_deleteAndExit').addEventListener('click', deleteAndExit)
