@@ -201,19 +201,19 @@ function createTable (obj) {
 function addToTable (obj) {
   let table = document.getElementById('shelfmarkTable').getElementsByTagName('tbody')[0]
   let row = table.insertRow(0)
-  row.className = 'ppnRow'
+  row.className = 'ppnRow manual'
   createPpnRow(row, 'manual')
   let i = 0
   while (obj[i] !== undefined) {
     row = table.insertRow(i + 1)
+    row.className = 'manual'
     createTxtCell(row, 0, obj[i].oneLineTxt, obj[i].id)
     createDateCell(row, 1, obj[i].id)
     createExnrCell(row, 2, obj[i].id)
     createShortShelfmarkCell(row, 3, obj[i].id)
     createPrintCell(row, 4, obj[i].id)
     createPrintCountCell(row, 5, obj[i].id)
-    // createLabelSizeCell(row, 6, objct)
-    console.log(obj[i])
+    createLabelSizeCell(row, 6, obj[i].id)
     i++
   }
 
@@ -242,6 +242,9 @@ function addToTable (obj) {
     let shortShelfmarkCell = row.insertCell(cellNr)
     shortShelfmarkCell.onclick = function () { preMan(id) }
     shortShelfmarkCell.className = 'shortShelfmarkCell'
+    if (obj[id].lines < 6) {
+      shortShelfmarkCell.id = 'short_m_' + id
+    }
     shortShelfmarkCell.innerHTML = '-'
   }
 
@@ -249,7 +252,7 @@ function addToTable (obj) {
     let printCell = row.insertCell(cellNr)
     let input = document.createElement('input')
     printCell.className = 'printCell'
-    input.id = 'print_' + 'm_' + id
+    input.id = 'print_m_' + id
     input.type = 'checkbox'
     input.name = 'toPrint'
     input.value = id
@@ -269,8 +272,16 @@ function addToTable (obj) {
     input.value = 1
     printCountCell.appendChild(input)
   }
-  // createLabelSizeCell(row, 6, objct)
-  // })
+
+  function createLabelSizeCell (row, cellNr, id) {
+    let labelSizeCell = row.insertCell(cellNr)
+    labelSizeCell.className = 'labelSizeCell'
+    if (obj[id].lines < 6) {
+      labelSizeCell.innerHTML = 'klein'
+    } else {
+      labelSizeCell.innerHTML = 'groß'
+    }
+  }
 }
 
 // creates the PPN row
@@ -317,13 +328,6 @@ function createTxtCell (row, cellNr, objct) {
       txtCell.innerHTML += value + ' '
     })
   }
-  txtCell.className = 'txtCell'
-}
-
-function createTxtCellManual (row, cellNr, txt, id) {
-  let txtCell = row.insertCell(cellNr)
-  txtCell.onclick = function () { preMan(id) }
-  txtCell.innerHTML = txt
   txtCell.className = 'txtCell'
 }
 
@@ -471,12 +475,18 @@ function printButton () {
   for (let i = 0; i < elems.length; i++) {
     if (elems[i].checked) {
       let data = {
+        'manual': false,
         'id': '',
         'count': '1',
         'size': 'big',
         'short': false
       }
-      data.id = elems[i].value
+      if (elems[i].id.includes('print_m_')) {
+        data.id = elems[i].id.split('print_')[1]
+        data.manual = true
+      } else {
+        data.id = elems[i].value
+      }
       let count = document.getElementById('count_' + data.id).value
       if ((count <= 99) && (count >= 1)) {
         data.count = count
@@ -498,14 +508,12 @@ function printButton () {
   }
   let data = {}
   if (b > 0) {
-    // ipc.send('printBig', big);
     data.big = big
   }
   if (s > 0) {
-    // ipc.send('printSmall', small);
     data.small = small
   }
-  ipc.send('print', data)
+  ipc.send('print', data, objMan)
 }
 
 // listens on printMsg, invokes the modal
@@ -515,11 +523,24 @@ ipc.on('printMsg', function (event) {
 
 ipc.on('manual', function (event, data) {
   objMan = data
+  deleteOldManual()
   addToTable(objMan)
 })
 
+ipc.on('removeManual', function (event) {
+  objMan = null
+  deleteOldManual()
+})
+
+function deleteOldManual () {
+  let elements = document.getElementsByClassName('manual')
+  while (elements.length > 0) {
+    elements[0].parentNode.removeChild(elements[0])
+  }
+}
+
 function openManually () {
-  ipc.send('openManually')
+  ipc.send('openManually', objMan)
 }
 
 function preMan (id) {

@@ -133,15 +133,15 @@ app.on('activate', function () {
 })
 
 // starts the printing process
-ipc.on('print', function (event, data) {
+ipc.on('print', function (event, data, dataMan) {
   savedData = data
   if (savedData.big || savedData.small) {
     try {
       if (savedData.big) {
-        printBig(savedData.big)
+        printBig(savedData.big, dataMan)
       }
       if (savedData.small) {
-        printSmall(savedData.small)
+        printSmall(savedData.small, dataMan)
       }
       // mainWindow.webContents.send('printed', true)
     } catch (error) {
@@ -162,7 +162,7 @@ ipc.on('printed', function (event) {
 })
 
 // invokes the generating and printing of printBig.pdf
-function printBig (data) {
+function printBig (data, dataMan) {
   let winBig = null
   winBig = new BrowserWindow({ heihgt: 350, width: 500, show: false })
   winBig.loadURL(url.format({
@@ -171,7 +171,7 @@ function printBig (data) {
     slashes: true
   }))
   winBig.once('ready-to-show', () => {
-    winBig.webContents.send('toPrint', data)
+    winBig.webContents.send('toPrint', data, dataMan)
 
     // generates a pdf file which is then printed silently via Foxit Reader v6.2.3.0815
     winBig.webContents.printToPDF({marginsType: 2, landscape: true, pageSize: { width: config.store.big.label.height, height: config.store.big.label.width }}, (error, data) => {
@@ -198,7 +198,7 @@ function printBig (data) {
 }
 
 // invokes the generating and printing of printSmall.pdf
-function printSmall (data) {
+function printSmall (data, dataMan) {
   let winSmall = null
   winSmall = new BrowserWindow({width: 350, height: 500, show: false})
   winSmall.loadURL(url.format({
@@ -207,7 +207,7 @@ function printSmall (data) {
     slashes: true
   }))
   winSmall.once('ready-to-show', () => {
-    winSmall.webContents.send('toPrint', data)
+    winSmall.webContents.send('toPrint', data, dataMan)
     winSmall.webContents.printToPDF({marginsType: 2, landscape: true, pageSize: { width: config.store.small.label.height, height: config.store.small.label.width }}, (error, data) => {
       if (error) throw error
       fs.writeFile('./tmp/' + config.store.small.pdfName, data, (error) => {
@@ -231,11 +231,11 @@ function printSmall (data) {
   })
 }
 
-ipc.on('openManually', function (event) {
-  createManualWindow()
+ipc.on('openManually', function (event, objMan) {
+  createManualWindow(objMan)
 })
 
-function createManualWindow () {
+function createManualWindow (objMan) {
   winManual = new BrowserWindow({width: 600, height: 300, show: false})
   winManual.loadURL(url.format({
     pathname: path.join(__dirname, 'html/manual.html'),
@@ -244,19 +244,20 @@ function createManualWindow () {
   }))
   winManual.once('ready-to-show', () => {
     winManual.show()
+    winManual.webContents.send('objMan', objMan)
   })
 }
 
 ipc.on('closeManual', function (event) {
   winManual.close()
   winManual = null
+  mainWindow.webContents.send('removeManual')
 })
 
 ipc.on('saveManual', function (event, data) {
   winManual.close()
   winManual = null
   mainWindow.webContents.send('manual', data)
-  console.log(data, data.length)
 })
 
 // In this file you can include the rest of your app's specific main process

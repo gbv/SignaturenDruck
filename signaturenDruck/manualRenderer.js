@@ -14,6 +14,10 @@
       }
     })
   }
+
+  document.getElementById('countCurrent').innerHTML = 1
+  document.getElementById('countMax').innerHTML = 1
+  focusFirst()
 })()
 
 // required for ipc calls to the main process
@@ -24,26 +28,38 @@ let objct = {
 }
 
 let id = 0
+let max = 1
+
+ipc.on('objMan', function (event, objMan) {
+  if (objMan !== null) {
+    objct.manual = objMan
+    id = objMan.length
+    max = objMan.length + 1
+    setCounters()
+    document.getElementById('btn_previous').disabled = false
+  }
+})
 
 function f () {
   let radioButtons = document.getElementsByName('numberOfLines')
   for (let i = 0, length = radioButtons.length; i < length; i++) {
     if (radioButtons[i].checked) {
       showInputs(radioButtons[i].value)
-      console.log(radioButtons[i].value)
       document.getElementById('previewBox').classList = ''
       if (radioButtons[i].value == 1) {
-        console.log('small center')
         document.getElementById('previewBox').className = 'small center'
       } else if (radioButtons[i].value == 3) {
-        console.log('small indent')
         document.getElementById('previewBox').className = 'small indent'
       } else {
-        console.log('big indent')
         document.getElementById('previewBox').className = 'big indent'
       }
+      break
     }
   }
+}
+
+function focusFirst () {
+  document.getElementById('line_1').focus()
 }
 
 function showInputs (i) {
@@ -92,18 +108,36 @@ function removeLines () {
   }
 }
 
+function setCounters () {
+  document.getElementById('countCurrent').innerHTML = id + 1
+  document.getElementById('countMax').innerHTML = max
+}
+
 function next () {
-  saveCurrent()
-  id++
-  if (id === 1) {
-    document.getElementById('btn_previous').disabled = false
+  let i = 0
+  let isEmpty = true
+  while (i < getNumberOfLines()) {
+    if (document.getElementById('line_' + (i + 1)).value !== '') {
+      isEmpty = false
+    }
+    i++
   }
-  if (objct.manual[id] !== undefined) {
-    getData()
-  } else {
-    removeLines()
-    show(getNumberOfLines())
-    clearInput()
+  if (!isEmpty) {
+    saveCurrent()
+    id++
+    if (id === 1) {
+      document.getElementById('btn_previous').disabled = false
+    }
+    if (objct.manual[id] !== undefined) {
+      getData()
+    } else {
+      removeLines()
+      show(getNumberOfLines())
+      clearInput()
+      max++
+      focusFirst()
+    }
+    setCounters()
   }
 }
 
@@ -114,14 +148,12 @@ function previous () {
   }
   id--
   getData()
-  console.log('prev', objct.manual)
+  setCounters()
 }
 
 function deleteData () {
-  console.log('before', objct.manual)
   reset()
   changeOrder()
-  console.log('after', objct.manual)
 
   function reset () {
     objct.manual[id] = {}
@@ -139,7 +171,9 @@ function deleteData () {
     delete objct.manual[i - 1]
     if (id > 0) {
       id--
+      max--
     }
+    setCounters()
     if (id === 0) {
       document.getElementById('btn_previous').disabled = true
     }
@@ -161,11 +195,17 @@ function deleteAndExit () {
 function saveAndExit () {
   saveCurrent()
   let indx = objct.manual.length - 1
-  let lastLength = objct.manual[indx].lineTxts.length
+  let lastLength
   let isEmpty = true
   let i = 0
+  if (objct.manual[indx] === undefined) {
+    while ((objct.manual[indx] === undefined) && (indx > 0)) {
+      indx--
+    }
+  }
+  lastLength = objct.manual[indx].lineTxts.length
   while (i < lastLength) {
-    if (objct.manual[indx].lineTxts[i] !== '') {
+    if ((objct.manual[indx].lineTxts[i] !== '') && (objct.manual[indx].lineTxts !== undefined)) {
       isEmpty = false
     }
     i++
