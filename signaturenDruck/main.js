@@ -9,7 +9,7 @@ const path = require('path')
 const url = require('url')
 const fs = require('fs')
 const Store = require('electron-store')
-const config = new Store({cwd: 'C:\\Export\\'})
+const config = new Store({cwd: 'C:\\Export\\SignaturenDruck'})
 const cmd = require('node-cmd')
 
 const configNew = {
@@ -47,7 +47,7 @@ let winManual
 function createWindow () {
   checkConfig()
   checkDir('./tmp')
-  checkDir('C:\\Export')
+  checkDir('C:\\Export\\SignaturenDruck')
   // Create the browser window.
   if (!config.store.devMode) {
     mainWindow = new BrowserWindow({width: 800, height: 580})
@@ -87,7 +87,7 @@ function deleteJSON () {
 
 // checks if config file exists, else creates one
 function checkConfig () {
-  if (fs.existsSync('C:\\Export\\config.json')) {
+  if (fs.existsSync('C:\\Export\\SignaturenDruck\\config.json')) {
     if (!config.has('defaultPath')) {
       createConfig()
     }
