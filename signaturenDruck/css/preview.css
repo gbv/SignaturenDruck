@@ -35,6 +35,10 @@
   margin-top: 30px;
 }
 
+.previewLine {
+  white-space: pre;
+}
+
 p#line1 {
   margin-top: 6px;
 }

@@ -1,4 +1,14 @@
-(function () {
+// required for ipc calls to the main process
+const ipc = require('electron').ipcRenderer
+
+let objct = {
+  manual: []
+}
+
+let id = 0
+let max = 1
+
+window.onload = function () {
   let radioButtons = document.getElementsByName('numberOfLines')
   for (let i = 0; radioButtons[ i ]; i++) {
     radioButtons[ i ].onclick = f
@@ -18,17 +28,7 @@
   document.getElementById('countCurrent').innerHTML = 1
   document.getElementById('countMax').innerHTML = 1
   focusFirst()
-})()
-
-// required for ipc calls to the main process
-const ipc = require('electron').ipcRenderer
-
-let objct = {
-  manual: []
 }
-
-let id = 0
-let max = 1
 
 ipc.on('objMan', function (event, objMan) {
   if (objMan !== null) {
@@ -103,7 +103,7 @@ function removeLines () {
   let i = 1
   while (i <= 6) {
     if (document.getElementById('line' + i)) {
-      document.getElementById('line' + i).outerHTML = ''
+      document.getElementById('line' + i).outerHTML = ' '
     }
     i++
   }
@@ -231,7 +231,11 @@ function loadData () {
   while (i <= objct.manual[id].lines) {
     let txt = objct.manual[id].lineTxts[i - 1]
     document.getElementById('line_' + i).value = txt
-    document.getElementById('line' + i).innerHTML = txt
+    if (txt === '' || txt === ' ') {
+      document.getElementById('line' + i).innerHTML = ' '
+    } else {
+      document.getElementById('line' + i).innerHTML = txt
+    }
     i++
   }
 }

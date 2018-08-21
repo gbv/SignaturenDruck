@@ -564,7 +564,11 @@ function preMan (id) {
       line = document.createElement('p')
       line.id = 'line' + j
       line.className = 'previewLine'
-      line.innerHTML = objMan[id].lineTxts[i]
+      if (objMan[id].lineTxts[i] === '') {
+        line.innerHTML = ' '
+      } else {
+        line.innerHTML = objMan[id].lineTxts[i]
+      }
       prevBox.appendChild(line)
       i++
     }
