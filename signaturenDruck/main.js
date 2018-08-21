@@ -43,6 +43,76 @@ let mainWindow
 let savedData
 let winManual
 
+// This method will be called when Electron has finished
+// initialization and is ready to create browser windows.
+// Some APIs can only be used after this event occurs.
+app.on('ready', createWindow)
+
+// Quit when all windows are closed.
+app.on('window-all-closed', function () {
+  // On OS X it is common for applications and their menu bar
+  // to stay active until the user quits explicitly with Cmd + Q
+  if (process.platform !== 'darwin') {
+    app.quit()
+  }
+})
+
+app.on('activate', function () {
+  // On OS X it's common to re-create a window in the app when the
+  // dock icon is clicked and there are no other windows open.
+  if (mainWindow === null) {
+    createWindow()
+  }
+})
+
+// starts the printing process
+ipc.on('print', function (event, data, dataMan) {
+  savedData = data
+  if (savedData.big || savedData.small) {
+    try {
+      if (savedData.big) {
+        printBig(savedData.big, dataMan)
+      }
+      if (savedData.small) {
+        printSmall(savedData.small, dataMan)
+      }
+      // mainWindow.webContents.send('printed', true)
+    } catch (error) {
+      throw error
+    }
+  }
+})
+
+// closes the application
+ipc.on('close', function (event) {
+  mainWindow.close()
+  app.quit()
+})
+
+// listens on printed, invokes then printMsg via ipc
+ipc.on('printed', function (event) {
+  mainWindow.webContents.send('printMsg', true)
+})
+
+// listens on openManually, invokes the opening process
+ipc.on('openManually', function (event, objMan) {
+  createManualWindow(objMan)
+})
+
+// listens on closeManual, closes the winManual and invokes the removeManual process
+ipc.on('closeManual', function (event) {
+  winManual.close()
+  winManual = null
+  mainWindow.webContents.send('removeManual')
+})
+
+// listens on saveManual, closes the winManual and passes the data along
+ipc.on('saveManual', function (event, data) {
+  winManual.close()
+  winManual = null
+  mainWindow.webContents.send('manual', data)
+})
+
 // creates the mainWindow
 function createWindow () {
   checkConfig()
@@ -109,57 +179,6 @@ function checkDir (path) {
 function createConfig () {
   config.set(configNew)
 }
-
-// This method will be called when Electron has finished
-// initialization and is ready to create browser windows.
-// Some APIs can only be used after this event occurs.
-app.on('ready', createWindow)
-
-// Quit when all windows are closed.
-app.on('window-all-closed', function () {
-  // On OS X it is common for applications and their menu bar
-  // to stay active until the user quits explicitly with Cmd + Q
-  if (process.platform !== 'darwin') {
-    app.quit()
-  }
-})
-
-app.on('activate', function () {
-  // On OS X it's common to re-create a window in the app when the
-  // dock icon is clicked and there are no other windows open.
-  if (mainWindow === null) {
-    createWindow()
-  }
-})
-
-// starts the printing process
-ipc.on('print', function (event, data, dataMan) {
-  savedData = data
-  if (savedData.big || savedData.small) {
-    try {
-      if (savedData.big) {
-        printBig(savedData.big, dataMan)
-      }
-      if (savedData.small) {
-        printSmall(savedData.small, dataMan)
-      }
-      // mainWindow.webContents.send('printed', true)
-    } catch (error) {
-      throw error
-    }
-  }
-})
-
-// closes the application
-ipc.on('close', function (event) {
-  mainWindow.close()
-  app.quit()
-})
-
-// listens on printed, invokes then printMsg via ipc
-ipc.on('printed', function (event) {
-  mainWindow.webContents.send('printMsg', true)
-})
 
 // invokes the generating and printing of printBig.pdf
 function printBig (data, dataMan) {
@@ -231,10 +250,7 @@ function printSmall (data, dataMan) {
   })
 }
 
-ipc.on('openManually', function (event, objMan) {
-  createManualWindow(objMan)
-})
-
+// creates the winManual
 function createManualWindow (objMan) {
   winManual = new BrowserWindow({width: 582, height: 355, show: false})
   winManual.loadURL(url.format({
@@ -247,18 +263,6 @@ function createManualWindow (objMan) {
     winManual.webContents.send('objMan', objMan)
   })
 }
-
-ipc.on('closeManual', function (event) {
-  winManual.close()
-  winManual = null
-  mainWindow.webContents.send('removeManual')
-})
-
-ipc.on('saveManual', function (event, data) {
-  winManual.close()
-  winManual = null
-  mainWindow.webContents.send('manual', data)
-})
 
 // In this file you can include the rest of your app's specific main process
 // code. You can also put them in separate files and require them here.
