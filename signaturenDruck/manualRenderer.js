@@ -93,6 +93,7 @@ function clearInput () {
   while (i <= 6) {
     if (document.getElementById('line_' + i)) {
       document.getElementById('line_' + i).value = ''
+      document.getElementById('line_' + i).placeholder = 'Zeile ' + i
     }
     i++
   }

@@ -1,14 +1,77 @@
+body {
+  background-color: RGB(240, 240, 240);
+  font-family: "Arial";
+  font-size: 10pt;
+}
+
 #container {
   /* border: double; */
   overflow: hidden;
+}
+#leftside {
+  float: left;
+}
+#rightside {
+  float: right;
 }
 
 #inputBox {
   float: left;
   margin-top: 5px;
+  text-align: center;
   /* border: 1px solid red; */
 }
 
 .previewLine {
   white-space: pre;
+}
+
+#editorBox > input {
+  margin: 1px;
+  width: 210px;
+  font-size: medium;
+}
+
+#lineSelectBox {
+  margin: 5px 15px 5px 15px;
+  text-align: center;
+  font-size: 15px;
+}
+
+.button {
+  background-color: white;
+  color: black;
+  border: 2px solid grey;
+  padding: 5px;
+  margin: 2px 0px 2px 0px;
+  text-align: center;
+  font-weight: bold;
+}
+.button:hover:enabled {
+  background-color: grey;
+  cursor: pointer;
+}
+.button[disabled] {
+  background-color: lightgray;
+  color: grey;
+}
+
+#btn_saveAndExit, #btn_deleteAndExit {
+  width: 100%;
+}
+
+#btn_previous {
+  width: 79px;
+}
+
+#editorBox {
+  height: 156px;
+}
+
+#previewBox {
+  margin: 5px !important;
+}
+
+#counter {
+  font-size: large;
 }

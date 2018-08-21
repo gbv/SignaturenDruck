@@ -202,7 +202,7 @@ function addToTable (obj) {
   let table = document.getElementById('shelfmarkTable').getElementsByTagName('tbody')[0]
   let row = table.insertRow(0)
   row.className = 'ppnRow manual'
-  createPpnRow(row, 'manual')
+  createPpnRow(row, 'manuell')
   let i = 0
   while (obj[i] !== undefined) {
     row = table.insertRow(i + 1)

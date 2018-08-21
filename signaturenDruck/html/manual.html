@@ -3,7 +3,7 @@
 
 	<head>
 		<meta charset="UTF-8">
-		<title>Signaturendruck</title>
+		<title>Signaturendruck / manuelles erstellen</title>
     <link rel="stylesheet" type="text/css" href="./../css/manual.css">
     <link rel="stylesheet" type="text/css" href="./../css/preview.css">
     <link rel="stylesheet" type="text/css" href="./../css/modal.css">
@@ -11,40 +11,51 @@
 
 	<body>
     <div id="container">
-      <div id="inputBox">
-        <div id="counter">
-          Signatur Nr. <span id="countCurrent"></span> von <span id="countMax"></span>
-        </div>
-        <div id="editorBox">
-          <input type="text" id="line_1"><br>
-          <input type="text" id="line_2"><br>
-          <input type="text" id="line_3"><br>
-          <input type="text" id="line_4"><br>
-          <input type="text" id="line_5"><br>
-          <input type="text" id="line_6">
-        </div>
-        <div id="lineSelectBox">
-          <input type="radio" name="numberOfLines" value="1"> 1 Zeile
-          <input type="radio" name="numberOfLines" value="3"> 3 Zeilen
-          <input type="radio" name="numberOfLines" value="6" checked> 6 Zeilen
-        </div>
-        <div id="buttonBox">
-          <button id="btn_previous" class="button" disabled>Vorherige</button>
-          <button id="btn_delete" class="button">löschen</button>
-          <button id="btn_next" class="button">Nächste</button>
-          <br>
-          <button id="btn_saveAndExit" class="button">Übernehmen und Beenden</button>
-          <br>
-          <button id="btn_deleteAndExit" class="button">Verwerfen und Beenden</button>
+      <div id="counter">
+        <strong>Signatur Nr. <span id="countCurrent"></span> von <span id="countMax"></span></strong>
+      </div>
+      <div id="leftside">
+        <div id="inputBox">
+          <div id="editorBox">
+            <input type="text" id="line_1"><br>
+            <input type="text" id="line_2"><br>
+            <input type="text" id="line_3"><br>
+            <input type="text" id="line_4"><br>
+            <input type="text" id="line_5"><br>
+            <input type="text" id="line_6">
+          </div>
+          <div id="buttonBox">
+            <div id="btn_grp_1">
+              <button id="btn_previous" class="button" disabled>Vorherige</button>
+              <button id="btn_delete" class="button">löschen</button>
+              <button id="btn_next" class="button">Nächste</button>
+            </div>
+            <div id="btn_grp_2">
+              <button id="btn_saveAndExit" class="button">Übernehmen und Beenden</button>
+            </div>
+            <div id="btn_grp_3">
+              <button id="btn_deleteAndExit" class="button">Verwerfen und Beenden</button>
+            </div>
+          </div>
         </div>
       </div>
-      <div id="previewBox">
-        <p id="line1" class="previewLine"> </p>
-        <p id="line2" class="previewLine"> </p>
-        <p id="line3" class="previewLine"> </p>
-        <p id="line4" class="previewLine"> </p>
-        <p id="line5" class="previewLine"> </p>
-        <p id="line6" class="previewLine"> </p>
+      <div id="rightside">
+        <div id="previewBox">
+          <p id="line1" class="previewLine"> </p>
+          <p id="line2" class="previewLine"> </p>
+          <p id="line3" class="previewLine"> </p>
+          <p id="line4" class="previewLine"> </p>
+          <p id="line5" class="previewLine"> </p>
+          <p id="line6" class="previewLine"> </p>
+        </div>
+        <div id="lineSelectBox">
+          <fieldset>
+            <legend>Optionen</legend>
+            <input type="radio" name="numberOfLines" value="1"> 1 Zeile
+            <input type="radio" name="numberOfLines" value="3"> 3 Zeilen
+            <input type="radio" name="numberOfLines" value="6" checked> 6 Zeilen
+          </fieldset>
+        </div>
       </div>
     </div>
     <!-- The Modal -->
