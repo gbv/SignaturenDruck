@@ -68,6 +68,22 @@ window.onload = function () {
   }
 }
 
+// listens on printMsg, invokes the modal
+ipc.on('printMsg', function (event) {
+  document.getElementById('myModal').style.display = 'block'
+})
+
+ipc.on('manual', function (event, data) {
+  objMan = data
+  deleteOldManual()
+  addToTable(objMan)
+})
+
+ipc.on('removeManual', function (event) {
+  objMan = null
+  deleteOldManual()
+})
+
 // extracts all the shelfmark data found in the lines and passes them to writeSignaturesToFile
 function writeToFile (allLines) {
   let obj = {
@@ -287,34 +303,29 @@ function addToTable (obj) {
 // creates the PPN row
 function createPpnRow (row, value) {
   let i = 0
-  let cell = row.insertCell(i)
+  createCell(row, i, 'ppnCell', value)
   i++
-  cell.innerHTML = 'PPN: ' + value
-  cell.className = 'ppnCell'
-  cell = row.insertCell(i)
+  createCell(row, i, 'dateCell')
   i++
-  cell.innerHTML = '<hr>'
-  cell.className = 'dateCell'
-  cell = row.insertCell(i)
+  createCell(row, i, 'isNrCell')
   i++
-  cell.innerHTML = '<hr>'
-  cell.className = 'isNrCell'
-  cell = row.insertCell(i)
+  createCell(row, i, 'shortShelfmarkCell')
   i++
-  cell.innerHTML = '<hr>'
-  cell.className = 'shortShelfmarkCell'
-  cell = row.insertCell(i)
+  createCell(row, i, 'printCell')
   i++
-  cell.innerHTML = '<hr>'
-  cell.className = 'printCell'
-  cell = row.insertCell(i)
+  createCell(row, i, 'printCountCell')
   i++
-  cell.innerHTML = '<hr>'
-  cell.className = 'printCountCell'
-  cell = row.insertCell(i)
-  i++
-  cell.innerHTML = '<hr>'
-  cell.className = 'labelSizeCell'
+  createCell(row, i, 'labelSizeCell')
+
+  function createCell (row, i, className, value) {
+    let cell = row.insertCell(i)
+    if (i === 0) {
+      cell.innerHTML = 'PPN: ' + value
+    } else {
+      cell.innerHTML = '<hr>'
+      cell.className = className
+    }
+  }
 }
 
 // creates the shelfmark text cell
@@ -515,22 +526,6 @@ function printButton () {
   }
   ipc.send('print', data, objMan)
 }
-
-// listens on printMsg, invokes the modal
-ipc.on('printMsg', function (event) {
-  document.getElementById('myModal').style.display = 'block'
-})
-
-ipc.on('manual', function (event, data) {
-  objMan = data
-  deleteOldManual()
-  addToTable(objMan)
-})
-
-ipc.on('removeManual', function (event) {
-  objMan = null
-  deleteOldManual()
-})
 
 function deleteOldManual () {
   let elements = document.getElementsByClassName('manual')
