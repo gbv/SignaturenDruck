@@ -58,12 +58,18 @@ function createSmall (data, dataMan, file) {
         let div = document.createElement('div')
         let line = document.createElement('p')
         div.className = getShelfmarkClass(objct, length)
+        if (shelfmark.removeIndent) {
+          div.classList.remove('indent')
+        }
         div.id = id
         let text = dataMan[manualId].lineTxts
         let lineCount = length
         text.forEach(element => {
           if ((lineCount == 1) && (text.length == 1)) {
             line.className = 'shelfmarkLine_' + i + ' oneLine' + ' small'
+            if (shelfmark.removeIndent) {
+              line.style.textAlign = 'left'
+            }
           } else {
             line.className = 'shelfmarkLine_' + i + ' small'
           }
@@ -201,6 +207,9 @@ function createBig (data, dataMan, file) {
       let div = document.createElement('div')
       let line = document.createElement('p')
       div.className = 'shelfmark indent'
+      if (dataMan[manualId].removeIndent) {
+        div.classList.remove('indent')
+      }
       div.id = id
       shelfmark.lineTxts.forEach(element => {
         line.className = 'shelfmarkLine_' + i

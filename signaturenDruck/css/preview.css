@@ -17,15 +17,7 @@
   height: 23mm;
 }
 
-.indent>p {
-  font-size: 16pt;
-  margin: 0px;
-  padding-top: 0px;
-  padding-bottom: 0px;
-  margin-left: 45%;
-}
-
-.center>p {
+.center > .previewLine {
   font-size: 15pt;
   margin: 0pt;
   text-align: center;
@@ -37,6 +29,15 @@
 
 .previewLine {
   white-space: pre;
+  margin: 0px;
+  font-size: 16pt;
+  margin: 0px;
+  padding-top: 0px;
+  padding-bottom: 0px;
+}
+
+.indent > .previewLine {
+  margin-left: 45%;
 }
 
 p#line1 {

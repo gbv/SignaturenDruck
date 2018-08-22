@@ -53,6 +53,7 @@ function f () {
       } else {
         document.getElementById('previewBox').className = 'big indent'
       }
+      toggleChkbx()
       break
     }
   }
@@ -134,6 +135,7 @@ function next () {
     } else {
       removeLines()
       show(getNumberOfLines())
+      toggleChkbx()
       clearInput()
       max++
       focusFirst()
@@ -221,9 +223,11 @@ function getData () {
   clearInput()
   removeLines()
   setLines()
+  toggleChkbx()
   show(getNumberOfLines())
   f()
   loadData()
+  toggleIndent()
 }
 
 function loadData () {
@@ -237,6 +241,9 @@ function loadData () {
       document.getElementById('line' + i).innerHTML = txt
     }
     i++
+  }
+  if (objct.manual[id].removeIndent) {
+    document.getElementById('chkbx_removeIndent').checked = true
   }
 }
 
@@ -260,11 +267,21 @@ function getNumberOfLines () {
   return numberOfLinesValue
 }
 
+function toggleChkbx () {
+  let chkbx = document.getElementById('chkbx_removeIndent')
+  chkbx.disabled = false
+  chkbx.checked = false
+}
+
 function saveCurrent () {
   let lineTxts = []
   let numberOfLinesValue = getNumberOfLines()
   let i = 0
   let oneLineTxt = ''
+  let removeIndent = false
+  if (document.getElementById('chkbx_removeIndent').checked) {
+    removeIndent = true
+  }
   while (i < (numberOfLinesValue)) {
     let k = i + 1
     lineTxts[i] = document.getElementById('line_' + k).value
@@ -276,7 +293,26 @@ function saveCurrent () {
     'size': document.getElementById('previewBox').className.split(' ')[0],
     'lines': numberOfLinesValue,
     'lineTxts': lineTxts,
-    'oneLineTxt': oneLineTxt
+    'oneLineTxt': oneLineTxt,
+    'removeIndent': removeIndent
+  }
+}
+
+function toggleIndent () {
+  let chkbx = document.getElementById('chkbx_removeIndent')
+  let previewClassList = document.getElementById('previewBox').classList
+  if (getNumberOfLines() != 1) {
+    if (chkbx.checked) {
+      previewClassList.remove('indent')
+    } else {
+      previewClassList.add('indent')
+    }
+  } else {
+    if (chkbx.checked) {
+      document.getElementById('line1').style.textAlign = 'left'
+    } else {
+      document.getElementById('line1').style.textAlign = 'center'
+    }
   }
 }
 
@@ -285,3 +321,4 @@ document.getElementById('btn_previous').addEventListener('click', previous)
 document.getElementById('btn_delete').addEventListener('click', deleteData)
 document.getElementById('btn_deleteAndExit').addEventListener('click', deleteAndExit)
 document.getElementById('btn_saveAndExit').addEventListener('click', saveAndExit)
+document.getElementById('chkbx_removeIndent').addEventListener('change', toggleIndent)

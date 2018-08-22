@@ -492,7 +492,8 @@ function printButton () {
         'id': '',
         'count': '1',
         'size': 'big',
-        'short': false
+        'short': false,
+        'removeIndent': false
       }
       if (elems[i].id.includes('print_m_')) {
         data.id = elems[i].id.split('print_')[1]
@@ -547,6 +548,9 @@ function preMan (id) {
     prevBox.className = 'small center'
     removeOld()
     addLines()
+    if (objMan[id].removeIndent) {
+      document.getElementById('line1').style.textAlign = 'left'
+    }
   } else if (objMan[id].lines == 3) {
     prevBox.className = 'small indent'
     removeOld()
@@ -555,6 +559,9 @@ function preMan (id) {
     prevBox.className = 'big indent'
     removeOld()
     addLines()
+  }
+  if (objMan[id].removeIndent) {
+    prevBox.classList.remove('indent')
   }
 
   function addLines () {
