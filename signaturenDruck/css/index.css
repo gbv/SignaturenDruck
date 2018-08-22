@@ -20,7 +20,6 @@ body {
 
 #buttonBox>button {
   width: 220px;
-  /* height: 20px; */
   padding: 5px;
   margin: 2px 10px 2px 10px;
   text-align: center;
@@ -28,7 +27,6 @@ body {
 }
 
 #container {
-  /* border: double; */
   overflow: hidden;
 }
 
@@ -36,7 +34,6 @@ body {
   float: left;
   margin-left: -10px;
   margin-top: 3px;
-  /* border: 1px solid red; */
 }
 
 th,
@@ -98,19 +95,24 @@ tbody>tr:hover {
   position: absolute;
   z-index: -1;
 }
+
 .button {
   background-color: white;
   color: black;
   border: 2px solid grey;
-  width: 220px;
   padding: 5px;
-  margin: 2px 10px 2px 10px;
   text-align: center;
   font-weight: bold;
 }
-.button:hover {
+
+.button:hover:enabled {
   background-color: grey;
   cursor: pointer;
+}
+
+.button[disabled] {
+  background-color: lightgray;
+  color: grey;
 }
 
 #devMode {

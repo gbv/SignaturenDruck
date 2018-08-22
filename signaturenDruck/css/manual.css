@@ -43,10 +43,12 @@ body {
   text-align: center;
   font-weight: bold;
 }
+
 .button:hover:enabled {
   background-color: grey;
   cursor: pointer;
 }
+
 .button[disabled] {
   background-color: lightgray;
   color: grey;

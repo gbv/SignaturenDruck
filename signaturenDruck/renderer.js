@@ -52,6 +52,7 @@ window.onload = function () {
   // Check the support for the File API support
   if (window.File && window.FileReader && window.FileList && window.Blob) {
     fileSelected.addEventListener('change', function () {
+      objMan = null
       fileTobeRead = fileSelected.files[0]
       let fileReader = new FileReader()
       fileReader.onload = function () {
@@ -582,6 +583,16 @@ function preMan (id) {
   }
 }
 
+function refresh () {
+  if (fs.existsSync(config.store.defaultPath)) {
+    objMan = null
+    let file = fs.readFileSync(config.store.defaultPath, 'utf-8')
+    let allLines = file.split(/\r\n|\n/)
+    writeToFile(allLines)
+    displayData()
+  }
+}
+
 // adds event listener to the create manually button
 document.getElementById('btn_create_manually').addEventListener('click', openManually)
 // adds event listener to the deleteList button
@@ -592,3 +603,5 @@ document.getElementById('btn_deleteFile').addEventListener('click', deleteFile)
 document.getElementById('btn_print').addEventListener('click', printButton)
 // adds event listener to the close button
 document.getElementById('btn_close').addEventListener('click', closeButton)
+// adds event listener to the refresh button
+document.getElementById('btn_refresh').addEventListener('click', refresh)
