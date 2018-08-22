@@ -36,6 +36,7 @@ window.onload = function () {
   if (config.get('devMode')) {
     document.getElementById('devMode').style.display = 'block'
   }
+  document.getElementById('modalTxt').innerHTML = config.get('modalTxt')
   let fileSelected = document.getElementById('fileToRead')
   let fileTobeRead
   if (fs.existsSync(config.get('defaultPath'))) {

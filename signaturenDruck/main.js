@@ -15,6 +15,7 @@ const cmd = require('node-cmd')
 const configNew = {
   'testKey': "Don't panic, this is just a test",
   'defaultPath': 'C://Export/download.dnl',
+  'modalTxt': 'Die ausgewählten Signaturen wurden gedruckt.',
   'big': {
     'printer': '\\\\ulbw2k812\\ulbps101',
     'label': {
