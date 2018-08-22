@@ -114,6 +114,10 @@ tbody>tr:hover {
   background-color: lightgray;
   color: grey;
 }
+/* 
+#columnPrint {
+  cursor: pointer;
+} */
 
 #devMode {
   display: none;

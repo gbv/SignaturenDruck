@@ -594,6 +594,17 @@ function refresh () {
   }
 }
 
+function invertPrintingSelection () {
+  let elems = document.querySelectorAll('[name=toPrint]')
+  for (let i = 0; i < elems.length; i++) {
+    if (elems[i].checked) {
+      elems[i].checked = false
+    } else {
+      elems[i].checked = true
+    }
+  }
+}
+
 // adds event listener to the create manually button
 document.getElementById('btn_create_manually').addEventListener('click', openManually)
 // adds event listener to the deleteList button
@@ -606,3 +617,5 @@ document.getElementById('btn_print').addEventListener('click', printButton)
 document.getElementById('btn_close').addEventListener('click', closeButton)
 // adds event listener to the refresh button
 document.getElementById('btn_refresh').addEventListener('click', refresh)
+// adds event listener to the print column
+document.getElementById('columnPrint').addEventListener('click', invertPrintingSelection)
