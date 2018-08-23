@@ -24,15 +24,10 @@ const config = new Store({cwd: 'C:\\Export\\SignaturenDruck'})
 // requires the dataExtract-module
 const DataExtract = require('./dataExtract.js')
 
-// initializes the 2 different strings for file-selection
-const strSecondLine = 'Bitte wählen sie eine Datei aus:'
-const strSecondLine2 = 'Eine andere Datei auswählen:'
-
 let objMan = null
 
 // function on window load
 window.onload = function () {
-  document.getElementById('defaultPath').innerHTML = config.get('defaultPath')
   if (config.get('devMode')) {
     document.getElementById('devMode').style.display = 'block'
   }
@@ -44,10 +39,10 @@ window.onload = function () {
     let allLines = file.split(/\r\n|\n/)
     writeToFile(allLines)
     displayData()
+    document.getElementById('defaultPath').innerHTML = config.get('defaultPath')
   } else {
-    displayFirstLine(false)
+    document.getElementById('defaultPath').innerHTML = 'nicht vorhanden'
     alert('Die Datei ' + config.get('defaultPath') + ' ist nicht vorhanden.')
-    changeSecondLine(strSecondLine)
   }
 
   // Check the support for the File API support
@@ -61,7 +56,6 @@ window.onload = function () {
         let allLines = file.split(/\r\n|\n/)
         writeToFile(allLines)
         displayData()
-        changeSecondLine(strSecondLine2)
       }
       fileReader.readAsText(fileTobeRead)
     }, false)
@@ -468,28 +462,11 @@ function deleteList () {
         while (myNode.firstChild) {
           myNode.removeChild(myNode.firstChild)
         }
-        displayFirstLine(false)
-        changeSecondLine(strSecondLine)
+        // changeSecondLine(strSecondLine)
         alert('Die Liste wurde gelöscht.')
       }
     })
   }
-}
-
-// toggles first line
-function displayFirstLine (bool) {
-  let firstLine = document.getElementById('firstLine')
-  if (bool) {
-    firstLine.style.display = 'block'
-  } else {
-    firstLine.style.display = 'none'
-  }
-}
-
-// changes secondLine
-function changeSecondLine (str) {
-  let secondLine = document.getElementById('secondLine').getElementsByTagName('span')[0]
-  secondLine.innerHTML = str
 }
 
 // deletes the shelfmark source file

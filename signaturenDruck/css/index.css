@@ -114,11 +114,24 @@ tbody>tr:hover {
   background-color: lightgray;
   color: grey;
 }
-/* 
-#columnPrint {
-  cursor: pointer;
-} */
 
 #devMode {
   display: none;
+}
+
+#datepicker {
+  border: 2px solid grey;
+  font-family: Arial, Helvetica, sans-serif;
+  width: 120px;
+  padding: 3px;
+  font-weight: 600;
+}
+
+#datepickerSpan {
+  float: right;
+}
+
+#columnPrint {
+  border: 0px;
+  background-color: RGB(240, 240, 240);
 }

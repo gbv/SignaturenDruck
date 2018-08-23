@@ -8,21 +8,19 @@
     <link rel="stylesheet" type="text/css" href="./../css/preview.css">
     <link rel="stylesheet" type="text/css" href="C:/Export/SignaturenDruck/user.css">
     <link rel="stylesheet" type="text/css" href="./../css/modal.css">
+    <link rel="stylesheet" type="text/css" href="./../css/all.css">
   </head>
 
 	<body>
 		<div>
-			<p id="firstLine">Die Signaturen stammen aus:
-        <span id="defaultPath"></span>
-        <button id="btn_refresh" class="button">erneut laden</button>
-			</p>
-			<p id="secondLine">
-				<span>Eine andere Datei auswählen: </span>
-				<input type="file" accept=".dnl" id="fileToRead" class="inputFile"/>
-        <label for="fileToRead" class="button">Wählen Sie eine Datei</label>
+      <p id="topLine">
+        Signaturendatei: <span id="defaultPath"></span>
+        <button id="btn_refresh" class="button"><i class="fas fa-sync"></i></button>
+        <input type="file" accept=".dnl" id="fileToRead" class="inputFile"/>
+        <label id="btn_fileToRead" for="fileToRead" class="button">Datei auswahl</label>
+        <span id="datepickerSpan"><label for="datepicker">Datumsfilter: </label>
+        <input id="datepicker" type="date"/></span>
       </p>
-      <label for="datepicker">Datumsfilter: </label>
-      <input id="datepicker" type="date"/>
 		</div>
 		<div id="tableBox">
 			<table id="shelfmarkTable">
