@@ -287,6 +287,7 @@ function addToTable (obj) {
     let dateCell = row.insertCell(cellNr)
     dateCell.onclick = function () { preMan(id) }
     dateCell.className = 'dateCell'
+    dateCell.id = 'dateCell_m_' + id
     dateCell.innerHTML = '-'
   }
 
@@ -391,6 +392,7 @@ function createDateCell (row, cellNr, objct) {
   let dateCell = row.insertCell(cellNr)
   dateCell.onclick = function () { pre(objct.id) }
   dateCell.className = 'dateCell'
+  dateCell.id = 'dateCell_' + objct.id
   dateCell.innerHTML = objct.date
 }
 
@@ -654,6 +656,26 @@ function invertPrintingSelection () {
   }
 }
 
+function selectByDate () {
+  let datepicker = document.getElementById('datepicker')
+  let pickedDate = datepicker.value
+  if (pickedDate !== '') {
+    let pickedDateFormated = pickedDate.replace(/(\d{2})(\d{2})-(\d{2})-(\d{2})/, '\$4-\$3-\$2')
+    console.log(pickedDateFormated)
+    let elems = document.querySelectorAll('[name=toPrint]')
+    for (let i = 0; i < elems.length; i++) {
+      let elemValue = elems[i].value
+      let date = document.getElementById('dateCell_' + elemValue).innerHTML
+      console.log(date)
+      if (date === pickedDateFormated) {
+        document.getElementById('print_' + elemValue).checked = true
+      } else {
+        document.getElementById('print_' + elemValue).checked = false
+      }
+    }
+  }
+}
+
 // adds event listener to the create manually button
 document.getElementById('btn_create_manually').addEventListener('click', openManually)
 // adds event listener to the deleteList button
@@ -668,3 +690,5 @@ document.getElementById('btn_close').addEventListener('click', closeButton)
 document.getElementById('btn_refresh').addEventListener('click', refresh)
 // adds event listener to the print column
 document.getElementById('columnPrint').addEventListener('click', invertPrintingSelection)
+// adds ebent listener to the datepicker
+document.getElementById('datepicker').addEventListener('change', selectByDate)

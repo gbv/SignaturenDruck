@@ -16,6 +16,7 @@ const configNew = {
   'testKey': "Don't panic, this is just a test",
   'defaultPath': 'C://Export/download.dnl',
   'modalTxt': 'Die ausgewählten Signaturen wurden gedruckt.',
+  'sortByPPN': false,
   'big': {
     'printer': '\\\\ulbw2k812\\ulbps101',
     'label': {
