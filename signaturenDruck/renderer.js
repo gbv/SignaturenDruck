@@ -177,7 +177,9 @@ function setIds (obj) {
 
 // creates the signaturen.json file
 function writeSignaturesToFile (json) {
-  json = JSON.stringify(groupByPPN(JSON.parse(json)))
+  if (config.store.sortByPPN) {
+    json = JSON.stringify(groupByPPN(JSON.parse(json)))
+  }
   fs.writeFileSync('signaturen.json', json, 'utf8')
 }
 
@@ -197,23 +199,62 @@ function displayData () {
 function createTable (obj) {
   let table = document.getElementById('shelfmarkTable').getElementsByTagName('tbody')[0]
   let i = 0
-  _.forEach(obj, function (key, value) {
-    let row = table.insertRow(i)
-    row.className = 'ppnRow'
-    createPpnRow(row, value)
-    _.forEach(key, function (objct) {
+  if (config.store.sortByPPN) {
+    _.forEach(obj, function (key, value) {
+      let row = table.insertRow(i)
+      row.className = 'ppnRow'
+      createPpnRow(row, value)
+      _.forEach(key, function (objct) {
+        i++
+        row = table.insertRow(i)
+        row.id = objct.PPN + '-0'
+        createTxtCell(row, 0, objct)
+        createDateCell(row, 1, objct)
+        createExnrCell(row, 2, objct)
+        createShortShelfmarkCell(row, 3, objct)
+        createPrintCell(row, 4, objct)
+        createPrintCountCell(row, 5, objct)
+        createLabelSizeCell(row, 6, objct)
+      })
       i++
-      row = table.insertRow(i)
-      createTxtCell(row, 0, objct)
-      createDateCell(row, 1, objct)
-      createExnrCell(row, 2, objct)
-      createShortShelfmarkCell(row, 3, objct)
-      createPrintCell(row, 4, objct)
-      createPrintCountCell(row, 5, objct)
-      createLabelSizeCell(row, 6, objct)
     })
-    i++
-  })
+  } else {
+    let i = 0
+    _.forEach(obj, function (key) {
+      let current = document.getElementById(key.PPN)
+      let row
+      if (current) {
+        let i = 0
+        while (document.getElementById(key.PPN + '-' + i)) {
+          i++
+        }
+        row = document.createElement('tr')
+        row.id = key.PPN + '-' + i
+        if (i === 0) {
+          current = document.getElementById(key.PPN)
+        } else {
+          current = document.getElementById(key.PPN + '-' + (i - 1))
+        }
+
+        current.parentNode.insertBefore(row, current.nextSibling)
+      } else {
+        row = table.insertRow(i)
+        row.className = 'ppnRow'
+        createPpnRow(row, key.PPN)
+        i++
+        row = table.insertRow(i)
+        row.id = key.PPN + '-0'
+      }
+      createTxtCell(row, 0, key)
+      createDateCell(row, 1, key)
+      createExnrCell(row, 2, key)
+      createShortShelfmarkCell(row, 3, key)
+      createPrintCell(row, 4, key)
+      createPrintCountCell(row, 5, key)
+      createLabelSizeCell(row, 6, key)
+      i++
+    })
+  }
 }
 
 function addToTable (obj) {
@@ -305,6 +346,7 @@ function addToTable (obj) {
 // creates the PPN row
 function createPpnRow (row, value) {
   let i = 0
+  row.id = value
   createCell(row, i, 'ppnCell', value)
   i++
   createCell(row, i, 'dateCell')
@@ -322,7 +364,7 @@ function createPpnRow (row, value) {
   function createCell (row, i, className, value) {
     let cell = row.insertCell(i)
     if (i === 0) {
-      cell.innerHTML = 'PPN: ' + value
+      cell.innerHTML = value
     } else {
       cell.innerHTML = '<hr>'
       cell.className = className
