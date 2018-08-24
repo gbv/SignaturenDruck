@@ -3,6 +3,8 @@ const electron = require('electron')
 const app = electron.app
 // Module to create native browser window.
 const BrowserWindow = electron.BrowserWindow
+// requires lodash
+const _ = require('lodash')
 
 const ipc = require('electron').ipcMain
 const path = require('path')
@@ -78,7 +80,6 @@ ipc.on('print', function (event, data, dataMan) {
       if (savedData.small) {
         printSmall(savedData.small, dataMan)
       }
-      // mainWindow.webContents.send('printed', true)
     } catch (error) {
       throw error
     }
@@ -265,6 +266,25 @@ function createManualWindow (objMan) {
     winManual.webContents.send('objMan', objMan)
   })
 }
+
+// function getPrinterNameList () {
+//   let printerList = mainWindow.webContents.getPrinters()
+//   let nameList = []
+//   let i = 0
+//   _.forEach(printerList, function (key) {
+//     nameList[i] = key.name
+//     i++
+//   })
+//   return nameList
+// }
+
+// function isIncluded (printer, printerList) {
+//   if (_.indexOf(printerList, printer) !== -1) {
+//     return true
+//   } else {
+//     return false
+//   }
+// }
 
 // In this file you can include the rest of your app's specific main process
 // code. You can also put them in separate files and require them here.

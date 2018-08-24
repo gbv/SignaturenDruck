@@ -24,12 +24,21 @@ const config = new Store({cwd: 'C:\\Export\\SignaturenDruck'})
 // requires the dataExtract-module
 const DataExtract = require('./dataExtract.js')
 
+const printerList = require('electron').remote.getCurrentWindow().webContents.getPrinters()
+
 let objMan = null
+let printerBig = true
+let printerSmall = true
 
 // function on window load
 window.onload = function () {
   if (config.get('devMode')) {
     document.getElementById('devMode').style.display = 'block'
+  }
+  checkPrinters()
+  if (!printerBig || !printerSmall) {
+    document.getElementById('btn_print').disabled = true
+    document.getElementById('btn_print').innerHTML = '<div class="tooltip">Drucken<span class="tooltiptext tooltip-right">Drucker nicht installiert/gefunden</span></div>'
   }
   document.getElementById('modalTxt').innerHTML = config.get('modalTxt')
   let fileSelected = document.getElementById('fileToRead')
@@ -50,6 +59,7 @@ window.onload = function () {
     fileSelected.addEventListener('change', function () {
       objMan = null
       fileTobeRead = fileSelected.files[0]
+      document.getElementById('defaultPath').innerHTML = fileTobeRead.path
       let fileReader = new FileReader()
       fileReader.onload = function () {
         let file = event.target.result
@@ -445,9 +455,17 @@ function createLabelSizeCell (row, cellNr, objct) {
   let labelSizeCell = row.insertCell(cellNr)
   labelSizeCell.className = 'labelSizeCell'
   if (objct.bigLabel) {
-    labelSizeCell.innerHTML = 'groß'
+    if (!printerBig) {
+      labelSizeCell.innerHTML = '<div class="tooltip"><i class="fas fa-exclamation-circle" style="color: red;"></i><span class="tooltiptext tooltip-left">Drucker nicht installiert/gefunden</span></div>'
+    } else {
+      labelSizeCell.innerHTML = 'groß'
+    }
   } else {
-    labelSizeCell.innerHTML = 'klein'
+    if (!printerSmall) {
+      labelSizeCell.innerHTML = '<div class="tooltip"><i class="fas fa-exclamation-circle" style="color: red;"></i><span class="tooltiptext tooltip-left">Drucker nicht installiert/gefunden</span></div>'
+    } else {
+      labelSizeCell.innerHTML = 'klein'
+    }
   }
 }
 
@@ -613,12 +631,25 @@ function preMan (id) {
 }
 
 function refresh () {
-  if (fs.existsSync(config.store.defaultPath)) {
-    objMan = null
-    let file = fs.readFileSync(config.store.defaultPath, 'utf-8')
-    let allLines = file.split(/\r\n|\n/)
-    writeToFile(allLines)
-    displayData()
+  let currentFile = document.getElementById('defaultPath').innerHTML
+  if (!readThisFile(currentFile)) {
+    if (readThisFile(config.get('defaultPath'))) {
+      document.getElementById('defaultPath').innerHTML = config.get('defaultPath')
+    } else {
+      document.getElementById('defaultPath').innerHTML = 'nicht vorhanden'
+    }
+  }
+
+  function readThisFile (path) {
+    if (fs.existsSync(path)) {
+      objMan = null
+      let file = fs.readFileSync(path, 'utf-8')
+      let allLines = file.split(/\r\n|\n/)
+      writeToFile(allLines)
+      displayData()
+      return true
+    }
+    return false
   }
 }
 
@@ -638,12 +669,10 @@ function selectByDate () {
   let pickedDate = datepicker.value
   if (pickedDate !== '') {
     let pickedDateFormated = pickedDate.replace(/(\d{2})(\d{2})-(\d{2})-(\d{2})/, '\$4-\$3-\$2')
-    console.log(pickedDateFormated)
     let elems = document.querySelectorAll('[name=toPrint]')
     for (let i = 0; i < elems.length; i++) {
       let elemValue = elems[i].value
       let date = document.getElementById('dateCell_' + elemValue).innerHTML
-      console.log(date)
       if (date === pickedDateFormated) {
         document.getElementById('print_' + elemValue).checked = true
       } else {
@@ -651,6 +680,30 @@ function selectByDate () {
       }
     }
   }
+}
+
+function getPrinterNameList () {
+  let nameList = []
+  let i = 0
+  _.forEach(printerList, function (key) {
+    nameList[i] = key.name
+    i++
+  })
+  return nameList
+}
+
+function isIncluded (printer, printerList) {
+  if (_.indexOf(printerList, printer) !== -1) {
+    return true
+  } else {
+    return false
+  }
+}
+
+function checkPrinters () {
+  let printerList = getPrinterNameList()
+  printerBig = isIncluded(config.store.big.printer, printerList)
+  printerSmall = isIncluded(config.store.small.printer, printerList)
 }
 
 // adds event listener to the create manually button
