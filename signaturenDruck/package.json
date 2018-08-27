@@ -4,7 +4,8 @@
   "description": "SignaturenDruck der ThULB",
   "main": "main.js",
   "scripts": {
-    "start": "electron ."
+    "start": "electron .",
+    "build:exe": "npx electron-builder --win --ia32"
   },
   "keywords": [
     "Electron",

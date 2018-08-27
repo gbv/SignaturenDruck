@@ -171,3 +171,7 @@ tbody>tr:hover {
   top: -11px;
   left: 125%;
 }
+
+td {
+  padding: 3px;
+}
