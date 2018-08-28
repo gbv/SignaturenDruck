@@ -481,9 +481,18 @@ function deleteList () {
           myNode.removeChild(myNode.firstChild)
         }
         // changeSecondLine(strSecondLine)
+        objMan = null
         alert('Die Liste wurde gelöscht.')
       }
     })
+  } else {
+    let myNode = document.getElementById('shelfmarkTableBody')
+    while (myNode.firstChild) {
+      myNode.removeChild(myNode.firstChild)
+    }
+    // changeSecondLine(strSecondLine)
+    objMan = null
+    alert('Die Liste wurde gelöscht.')
   }
 }
 

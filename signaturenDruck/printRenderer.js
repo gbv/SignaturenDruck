@@ -24,7 +24,10 @@ ipc.on('toPrint', function (event, data, dataMan) {
 })
 
 function main (ids, dataMan) {
-  let file = fs.readFileSync('signaturen.json', 'utf8')
+  let file = ''
+  if (fs.existsSync('signaturen.json')) {
+    file = fs.readFileSync('signaturen.json', 'utf8')
+  }
   addUsername()
   addDate()
 
