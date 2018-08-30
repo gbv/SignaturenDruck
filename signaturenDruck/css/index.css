@@ -78,9 +78,11 @@ table {
   margin: 0px 5px 5px 5px;
 }
 
-thead {
+thead th {
+  position: sticky;
+  top: 0;
+  z-index: 10;
   background-color: RGB(240, 240, 240);
-  border-spacing: 0px;
 }
 
 tbody>tr:hover {
