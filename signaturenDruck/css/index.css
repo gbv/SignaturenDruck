@@ -75,7 +75,7 @@ hr {
 
 table {
   border-collapse: collapse;
-  margin: 0px 5px 5px 5px;
+  /* margin: 0px 5px 5px 5px; */
 }
 
 thead th {
@@ -174,6 +174,6 @@ tbody>tr:hover {
   left: 125%;
 }
 
-td {
-  padding: 3px;
+td.txtCell {
+  padding-left: 5px;
 }
