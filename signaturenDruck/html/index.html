@@ -14,10 +14,16 @@
 	<body>
 		<div>
       <p id="topLine">
-        Signaturendatei: <span id="defaultPath"></span>
-        <button id="btn_refresh" class="button"><i class="fas fa-sync"></i></button>
-        <input type="file" accept=".dnl" id="fileToRead" class="inputFile"/>
-        <label id="btn_fileToRead" for="fileToRead" class="button">Dateiauswahl</label>
+        <span id="dnl">
+          Signaturendatei: <span id="defaultPath"></span>
+          <button id="btn_refresh" class="button"><i class="fas fa-sync"></i></button>
+          <input type="file" accept=".dnl" id="fileToRead" class="inputFile"/>
+          <label id="btn_fileToRead" for="fileToRead" class="button">Dateiauswahl</label>
+        </span>
+        <span id="sru" hidden>
+          <input id="input_barcode" type="text" placeholder="Barcode">
+          <button id="btn_barcode" class="button"><i class="fas fa-plus"></i></button>
+        </span>
         <span id="datepickerSpan"><label for="datepicker">Datumsfilter: </label>
         <input id="datepicker" type="date"/></span>
       </p>

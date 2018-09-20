@@ -27,6 +27,9 @@ const DataExtract = require('./dataExtract.js')
 const printerList = require('electron').remote.getCurrentWindow().webContents.getPrinters()
 
 let objMan = null
+let objSRU = {
+  all: []
+}
 let printerBig = true
 let printerSmall = true
 
@@ -43,15 +46,20 @@ window.onload = function () {
   document.getElementById('modalTxt').innerHTML = config.get('modalTxt')
   let fileSelected = document.getElementById('fileToRead')
   let fileTobeRead
-  if (fs.existsSync(config.get('defaultPath'))) {
-    let file = fs.readFileSync(config.get('defaultPath'), 'utf-8')
-    let allLines = file.split(/\r\n|\n/)
-    writeToFile(allLines)
-    displayData()
-    document.getElementById('defaultPath').innerHTML = config.get('defaultPath')
+  if (config.get('useSRU') === false) {
+    if (fs.existsSync(config.get('defaultPath'))) {
+      let file = fs.readFileSync(config.get('defaultPath'), 'utf-8')
+      let allLines = file.split(/\r\n|\n/)
+      writeToFile(allLines)
+      displayData()
+      document.getElementById('defaultPath').innerHTML = config.get('defaultPath')
+    } else {
+      document.getElementById('defaultPath').innerHTML = 'nicht vorhanden'
+      alert('Die Datei ' + config.get('defaultPath') + ' ist nicht vorhanden.')
+    }
   } else {
-    document.getElementById('defaultPath').innerHTML = 'nicht vorhanden'
-    alert('Die Datei ' + config.get('defaultPath') + ' ist nicht vorhanden.')
+    document.getElementById('dnl').hidden = true
+    document.getElementById('sru').hidden = false
   }
 
   // Check the support for the File API support
@@ -90,6 +98,17 @@ ipc.on('removeManual', function (event) {
   deleteOldManual()
 })
 
+ipc.on('addSRUdata', function (event, data) {
+  let indx = objSRU.all.length
+  objSRU.all[indx] = data
+  objSRU.all[indx].id = indx + 1
+  objSRU.all[indx].bigLabel = labelSize(data.plainTxt)
+  fs.writeFileSync('signaturen.json', JSON.stringify(objSRU.all), 'utf8')
+  clearTable()
+  createTable(objSRU.all)
+  console.log(objSRU)
+})
+
 // extracts all the shelfmark data found in the lines and passes them to writeSignaturesToFile
 function writeToFile (allLines) {
   let obj = {
@@ -98,9 +117,7 @@ function writeToFile (allLines) {
   let sig = new Shelfmark()
   let extract = new DataExtract()
   let ppnAktuell = ''
-  // let id = 1;
-  // sig.id = id;
-  // Reading line by line
+
   allLines.map((line) => {
     let first4 = extract.firstFour(line)
     if (first4 == '0100') {
@@ -127,8 +144,6 @@ function writeToFile (allLines) {
     if (sig.allSet()) {
       obj.all.push(sig.shelfmark)
       sig = new Shelfmark()
-      // id++;
-      // sig.id = id;
       sig.ppn = ppnAktuell
     }
   })
@@ -585,6 +600,13 @@ function deleteOldManual () {
   }
 }
 
+function clearTable () {
+  let myNode = document.getElementById('shelfmarkTableBody')
+  while (myNode.firstChild) {
+    myNode.removeChild(myNode.firstChild)
+  }
+}
+
 function openManually () {
   ipc.send('openManually', objMan)
 }
@@ -715,6 +737,17 @@ function checkPrinters () {
   printerSmall = isIncluded(config.store.small.printer, printerList)
 }
 
+function submitBarcode () {
+  ipc.send('loadFromSRU', document.getElementById('input_barcode').value)
+  document.getElementById('input_barcode').value = ''
+}
+
+function sendWithEnter (event) {
+  if (event.keyCode === 13) {
+    document.getElementById('btn_barcode').click()
+  }
+}
+
 // adds event listener to the create manually button
 document.getElementById('btn_create_manually').addEventListener('click', openManually)
 // adds event listener to the deleteList button
@@ -729,5 +762,9 @@ document.getElementById('btn_close').addEventListener('click', closeButton)
 document.getElementById('btn_refresh').addEventListener('click', refresh)
 // adds event listener to the print column
 document.getElementById('columnPrint').addEventListener('click', invertPrintingSelection)
-// adds ebent listener to the datepicker
+// adds event listener to the datepicker
 document.getElementById('datepicker').addEventListener('change', selectByDate)
+// adds event listener to the barcode button
+document.getElementById('btn_barcode').addEventListener('click', submitBarcode)
+// adds event listener to the barcode input
+document.getElementById('input_barcode').addEventListener('keyup', sendWithEnter)

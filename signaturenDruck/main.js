@@ -3,8 +3,6 @@ const electron = require('electron')
 const app = electron.app
 // Module to create native browser window.
 const BrowserWindow = electron.BrowserWindow
-// requires lodash
-const _ = require('lodash')
 
 const ipc = require('electron').ipcMain
 const path = require('path')
@@ -13,6 +11,7 @@ const fs = require('fs')
 const Store = require('electron-store')
 const config = new Store({cwd: 'C:\\Export\\SignaturenDruck'})
 const cmd = require('node-cmd')
+const {net} = require('electron')
 
 const configNew = {
   'testKey': "Don't panic, this is just a test",
@@ -35,6 +34,8 @@ const configNew = {
     },
     'pdfName': 'printSmall.pdf'
   },
+  'useSRU': false,
+  'SRUaddress': 'http://sru.gbv.de/opac-de-27',
   'devMode': false
 }
 
@@ -114,6 +115,112 @@ ipc.on('saveManual', function (event, data) {
   winManual.close()
   winManual = null
   mainWindow.webContents.send('manual', data)
+})
+
+ipc.on('loadFromSRU', function (event, barcode) {
+  let url = config.get('SRUaddress') + '?version=1.1&operation=searchRetrieve&query=pica.bar=' + barcode + '&maximumRecords=1&recordSchema=picaxml'
+  let request = net.request(url)
+  let allData = ''
+  let field209A = false
+  let exNr = ''
+  let isBarcodeLine = false
+  let isPpnLine = false
+  let shelfmark = ''
+  let pufferShelfmark = ''
+  let pufferExNr = ''
+  let ppnFromLine = ''
+  let isDateLine = false
+  let dateFromLine = ''
+  let barcodeFromLine = ''
+  let objSRU = {
+    'PPN': '',
+    'id': '',
+    'bigLabel': true,
+    'txt': [],
+    'txtLength': '',
+    'date': '',
+    'exNr': '',
+    'plainTxt': ''
+  }
+  request.on('response', (response) => {
+    response.on('data', (chunk) => {
+      allData += chunk
+    })
+    response.on('end', () => {
+      console.log('No more data in response.')
+      allData = allData.split(/\r\n|\n/)
+      allData.map((line) => {
+        setPPN(line)
+        setDate(line)
+        setShelfmark(line)
+        setBarcode(line)
+        if (barcode === barcodeFromLine) {
+          // push shelfmark and exNr and PPN to table
+          console.log(shelfmark, exNr, dateFromLine, barcode, ppnFromLine)
+          setObjct()
+          mainWindow.webContents.send('addSRUdata', objSRU)
+          barcodeFromLine = ''
+        }
+      })
+      fs.writeFileSync('sruResponse.txt', allData, 'utf8')
+    })
+  })
+  request.end()
+
+  function setPPN (line) {
+    if (/(<datafield tag="003@")/.test(line)) {
+      isPpnLine = true
+    } else if (isPpnLine) {
+      ppnFromLine = line.replace(/^(.*)(0">)(.*)(<\/subfield>)$/, '$3')
+      isPpnLine = false
+    }
+  }
+  function setDate (line) {
+    if (/(<datafield tag="201B")/.test(line)) {
+      isDateLine = true
+    } else if (isDateLine) {
+      if (/(code="0">)/.test(line)) {
+        dateFromLine = line.replace(/^(.*)(0">)(.*)(<\/subfield>)$/, '$3')
+        isDateLine = false
+      }
+    }
+  }
+  function setShelfmark (line) {
+    if (/(<datafield tag="209A")/.test(line)) {
+      pufferExNr = line.replace(/^(.*)(occurrence=")(\d{2})(")(.*)$/, '$3')
+      field209A = true
+    } else {
+      if (field209A && /(<\/datafield>)/.test(line)) {
+        field209A = false
+      } else if (field209A) {
+        if (/code="a">/.test(line)) {
+          pufferShelfmark = line.replace(/^(.*)(a">)(.*)(<\/subfield>)$/, '$3')
+        } else if (/code="x">00/.test(line)) {
+          exNr = pufferExNr
+          shelfmark = pufferShelfmark
+        }
+      }
+    }
+  }
+  function setBarcode (line) {
+    if (/(<datafield tag="209G")/.test(line)) {
+      isBarcodeLine = true
+    } else if (isBarcodeLine && /(<\/datafield>)/.test(line)) {
+      isBarcodeLine = false
+    } else if (isBarcodeLine) {
+      barcodeFromLine = line.replace(/^(.*)(code="a">)(.*)(<\/subfield>)$/, '$3')
+    }
+  }
+  function setObjct () {
+    objSRU.PPN = ppnFromLine
+    objSRU.id = 99
+    objSRU.bigLabel = true
+    objSRU.txt = shelfmark.split(':')
+    objSRU.txtLength = objSRU.txt.length
+    objSRU.date = dateFromLine
+    objSRU.exNr = exNr
+    objSRU.plainTxt = shelfmark
+  }
 })
 
 // creates the mainWindow
