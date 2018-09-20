@@ -106,7 +106,6 @@ ipc.on('addSRUdata', function (event, data) {
   fs.writeFileSync('signaturen.json', JSON.stringify(objSRU.all), 'utf8')
   clearTable()
   createTable(objSRU.all)
-  console.log(objSRU)
 })
 
 // extracts all the shelfmark data found in the lines and passes them to writeSignaturesToFile
@@ -495,8 +494,10 @@ function deleteList () {
         while (myNode.firstChild) {
           myNode.removeChild(myNode.firstChild)
         }
-        // changeSecondLine(strSecondLine)
         objMan = null
+        objSRU = {
+          all: []
+        }
         alert('Die Liste wurde gelöscht.')
       }
     })
@@ -505,8 +506,10 @@ function deleteList () {
     while (myNode.firstChild) {
       myNode.removeChild(myNode.firstChild)
     }
-    // changeSecondLine(strSecondLine)
     objMan = null
+    objSRU = {
+      all: []
+    }
     alert('Die Liste wurde gelöscht.')
   }
 }

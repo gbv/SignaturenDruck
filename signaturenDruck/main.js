@@ -55,16 +55,12 @@ app.on('ready', createWindow)
 
 // Quit when all windows are closed.
 app.on('window-all-closed', function () {
-  // On OS X it is common for applications and their menu bar
-  // to stay active until the user quits explicitly with Cmd + Q
   if (process.platform !== 'darwin') {
     app.quit()
   }
 })
 
 app.on('activate', function () {
-  // On OS X it's common to re-create a window in the app when the
-  // dock icon is clicked and there are no other windows open.
   if (mainWindow === null) {
     createWindow()
   }
@@ -118,18 +114,22 @@ ipc.on('saveManual', function (event, data) {
 })
 
 ipc.on('loadFromSRU', function (event, barcode) {
+  loadAndAddFromSRU(barcode)
+})
+
+function loadAndAddFromSRU (barcode) {
   let url = config.get('SRUaddress') + '?version=1.1&operation=searchRetrieve&query=pica.bar=' + barcode + '&maximumRecords=1&recordSchema=picaxml'
   let request = net.request(url)
   let allData = ''
   let field209A = false
-  let exNr = ''
   let isBarcodeLine = false
   let isPpnLine = false
+  let isDateLine = false
+  let exNr = ''
   let shelfmark = ''
   let pufferShelfmark = ''
   let pufferExNr = ''
   let ppnFromLine = ''
-  let isDateLine = false
   let dateFromLine = ''
   let barcodeFromLine = ''
   let objSRU = {
@@ -147,7 +147,6 @@ ipc.on('loadFromSRU', function (event, barcode) {
       allData += chunk
     })
     response.on('end', () => {
-      console.log('No more data in response.')
       allData = allData.split(/\r\n|\n/)
       allData.map((line) => {
         setPPN(line)
@@ -155,14 +154,11 @@ ipc.on('loadFromSRU', function (event, barcode) {
         setShelfmark(line)
         setBarcode(line)
         if (barcode === barcodeFromLine) {
-          // push shelfmark and exNr and PPN to table
-          console.log(shelfmark, exNr, dateFromLine, barcode, ppnFromLine)
           setObjct()
           mainWindow.webContents.send('addSRUdata', objSRU)
           barcodeFromLine = ''
         }
       })
-      fs.writeFileSync('sruResponse.txt', allData, 'utf8')
     })
   })
   request.end()
@@ -221,7 +217,7 @@ ipc.on('loadFromSRU', function (event, barcode) {
     objSRU.exNr = exNr
     objSRU.plainTxt = shelfmark
   }
-})
+}
 
 // creates the mainWindow
 function createWindow () {
@@ -241,14 +237,8 @@ function createWindow () {
     protocol: 'file:',
     slashes: true
   }))
-  // Open the DevTools.
-  // mainWindow.webContents.openDevTools()
-
   // Emitted when the window is closed.
   mainWindow.on('closed', function () {
-    // Dereference the window object, usually you would store windows
-    // in an array if your app supports multi windows, this is the time
-    // when you should delete the corresponding element.
     mainWindow = null
     deleteJSON()
   })
@@ -310,7 +300,6 @@ function printBig (data, dataMan) {
         if (!config.store.devMode) {
           // printing with Foxit Reader 6.2.3.0815 via node-cmd
           cmd.get(
-            // '"C:\\Program Files (x86)\\SumatraPDF\\SumatraPDF.exe" -print-to "\\\\http://jenlbs6-sun23.thulb.uni-jena.de:631\\SigGross" -print-settings "noscale" ".\\tmp\\printBig.pdf"',
             '"C:\\Program Files (x86)\\Foxit Software\\Foxit Reader\\Foxit Reader.exe"' + ' /t .\\tmp\\' + config.store.big.pdfName + ' ' + config.store.big.printer,
             function (error, data, stderr) {
               if (error) throw error
@@ -344,7 +333,6 @@ function printSmall (data, dataMan) {
         if (!config.store.devMode) {
           // printing with Foxit Reader 6.2.3.0815 via node-cmd
           cmd.get(
-            // '"C:\\Program Files (x86)\\SumatraPDF\\SumatraPDF.exe" -print-to "\\\\http://jenlbs6-sun23.thulb.uni-jena.de:631\\SigGross" -print-settings "noscale" ".\\tmp\\printBig.pdf"',
             '"C:\\Program Files (x86)\\Foxit Software\\Foxit Reader\\Foxit Reader.exe"' + ' /t .\\tmp\\' + config.store.small.pdfName + ' ' + config.store.small.printer,
             function (error, data, stderr) {
               if (error) throw error
