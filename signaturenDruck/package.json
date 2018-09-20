@@ -1,11 +1,12 @@
 {
   "name": "SignaturenDruck_neu",
-  "version": "1.0.3g",
+  "version": "1.0.3h",
   "description": "SignaturenDruck der ThULB",
   "main": "main.js",
   "scripts": {
     "start": "electron .",
-    "build:exe": "npx electron-builder --win --ia32"
+    "build:exe": "npx electron-builder --win --ia32",
+    "rebuild": "electron-rebuild -w keytar"
   },
   "keywords": [
     "Electron",
@@ -16,7 +17,8 @@
   "license": "CC BY",
   "devDependencies": {
     "electron": "^1.8.4",
-    "electron-builder": "^20.11.1"
+    "electron-builder": "^20.11.1",
+    "electron-rebuild": "^1.8.2"
   },
   "dependencies": {
     "electron-store": "^1.3.0",
