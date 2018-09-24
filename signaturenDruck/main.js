@@ -13,30 +13,50 @@ const config = new Store({cwd: 'C:\\Export\\SignaturenDruck'})
 const cmd = require('node-cmd')
 const {net} = require('electron')
 
+// default main config settings
 const configNew = {
   'testKey': "Don't panic, this is just a test",
   'defaultPath': 'C://Export/download.dnl',
   'modalTxt': 'Die ausgewählten Signaturen wurden gedruckt.',
   'sortByPPN': false,
-  'big': {
-    'printer': '\\\\ulbw2k812\\ulbps101',
-    'label': {
-      'width': 99970,
-      'height': 48920
-    },
-    'pdfName': 'printBig.pdf'
-  },
-  'small': {
-    'printer': '\\\\ulbw2k812\\ulbps124',
-    'label': {
-      'width': 74500,
-      'height': 23500
-    },
-    'pdfName': 'printSmall.pdf'
-  },
+  'newLineAfter': ':',
   'useSRU': false,
   'SRUaddress': 'http://sru.gbv.de/opac-de-27',
   'devMode': false
+}
+
+// default "big" label config
+const configBigNew = {
+  'name': 'gross',
+  'printer': '\\\\ulbw2k812\\ulbps101',
+  'label': {
+    'width': 99970,
+    'height': 48920
+  },
+  'pdfName': 'printBig.pdf',
+  'preview': {
+    'width': '80mm',
+    'height': '43mm'
+  },
+  'linesMin': 3,
+  'linesMax': 6
+}
+
+// default "small" label config
+const configSmallNew = {
+  'name': 'klein',
+  'printer': '\\\\ulbw2k812\\ulbps124',
+  'label': {
+    'width': 74500,
+    'height': 23500
+  },
+  'pdfName': 'printSmall.pdf',
+  'preview': {
+    'width': '74mm',
+    'height': '23mm'
+  },
+  'linesMin': 1,
+  'linesMax': 2
 }
 
 // name of signature storage json
@@ -114,7 +134,11 @@ ipc.on('saveManual', function (event, data) {
 })
 
 ipc.on('loadFromSRU', function (event, barcode) {
-  loadAndAddFromSRU(barcode)
+  if (barcode !== '') {
+    loadAndAddFromSRU(barcode).then(function (objSRU) {
+      mainWindow.webContents.send('addSRUdata', objSRU)
+    })
+  }
 })
 
 function loadAndAddFromSRU (barcode) {
@@ -140,28 +164,34 @@ function loadAndAddFromSRU (barcode) {
     'txtLength': '',
     'date': '',
     'exNr': '',
-    'plainTxt': ''
+    'plainTxt': '',
+    'error': ''
   }
-  request.on('response', (response) => {
-    response.on('data', (chunk) => {
-      allData += chunk
-    })
-    response.on('end', () => {
-      allData = allData.split(/\r\n|\n/)
-      allData.map((line) => {
-        setPPN(line)
-        setDate(line)
-        setShelfmark(line)
-        setBarcode(line)
-        if (barcode === barcodeFromLine) {
-          setObjct()
-          mainWindow.webContents.send('addSRUdata', objSRU)
-          barcodeFromLine = ''
-        }
+  return new Promise(function (resolve, reject) {
+    request.on('response', (response) => {
+      response.on('data', (chunk) => {
+        allData += chunk
+      })
+      response.on('end', () => {
+        allData = allData.split(/\r\n|\n/)
+        allData.map((line) => {
+          if (!recordCheck(line)) {
+            resolve(objSRU)
+          }
+          setPPN(line)
+          setDate(line)
+          setShelfmark(line)
+          setBarcode(line)
+          if (barcode === barcodeFromLine) {
+            setObjct()
+            resolve(objSRU)
+            barcodeFromLine = ''
+          }
+        })
       })
     })
+    request.end()
   })
-  request.end()
 
   function setPPN (line) {
     if (/(<datafield tag="003@")/.test(line)) {
@@ -211,11 +241,19 @@ function loadAndAddFromSRU (barcode) {
     objSRU.PPN = ppnFromLine
     objSRU.id = 99
     objSRU.bigLabel = true
-    objSRU.txt = shelfmark.split(':')
+    objSRU.txt = shelfmark.split(config.get('newLineAfter'))
     objSRU.txtLength = objSRU.txt.length
     objSRU.date = dateFromLine
     objSRU.exNr = exNr
     objSRU.plainTxt = shelfmark
+  }
+  function recordCheck (line) {
+    if (/<zs:numberOfRecords>0<\/zs:numberOfRecords>/.test(line)) {
+      objSRU.error = 'Barcode wurde nicht gefunden'
+      return false
+    } else {
+      return true
+    }
   }
 }
 
@@ -264,6 +302,14 @@ function checkConfig () {
   } else {
     createConfig()
   }
+  if (!fs.existsSync('C:\\Export\\SignaturenDruck\\Formate\\gross.json')) {
+    let configBig = new Store({name: 'gross', cwd: 'C:\\Export\\SignaturenDruck\\Formate'})
+    configBig.set(configBigNew)
+  }
+  if (!fs.existsSync('C:\\Export\\SignaturenDruck\\Formate\\klein.json')) {
+    let configSmall = new Store({name: 'klein', cwd: 'C:\\Export\\SignaturenDruck\\Formate'})
+    configSmall.set(configSmallNew)
+  }
 }
 
 // creates directory (if not already there)
@@ -291,16 +337,17 @@ function printBig (data, dataMan) {
   }))
   winBig.once('ready-to-show', () => {
     winBig.webContents.send('toPrint', data, dataMan)
+    let configBig = new Store({name: 'gross', cwd: 'C:\\Export\\SignaturenDruck\\Formate'})
 
     // generates a pdf file which is then printed silently via Foxit Reader v6.2.3.0815
-    winBig.webContents.printToPDF({marginsType: 2, landscape: true, pageSize: { width: config.store.big.label.height, height: config.store.big.label.width }}, (error, data) => {
+    winBig.webContents.printToPDF({marginsType: 2, landscape: true, pageSize: { width: configBig.store.label.height, height: configBig.store.label.width }}, (error, data) => {
       if (error) throw error
-      fs.writeFile('./tmp/' + config.store.big.pdfName, data, (error) => {
+      fs.writeFile('./tmp/' + configBig.store.pdfName, data, (error) => {
         if (error) throw error
         if (!config.store.devMode) {
           // printing with Foxit Reader 6.2.3.0815 via node-cmd
           cmd.get(
-            '"C:\\Program Files (x86)\\Foxit Software\\Foxit Reader\\Foxit Reader.exe"' + ' /t .\\tmp\\' + config.store.big.pdfName + ' ' + config.store.big.printer,
+            '"C:\\Program Files (x86)\\Foxit Software\\Foxit Reader\\Foxit Reader.exe"' + ' /t .\\tmp\\' + configBig.store.pdfName + ' ' + configBig.store.printer,
             function (error, data, stderr) {
               if (error) throw error
             }
@@ -326,14 +373,16 @@ function printSmall (data, dataMan) {
   }))
   winSmall.once('ready-to-show', () => {
     winSmall.webContents.send('toPrint', data, dataMan)
-    winSmall.webContents.printToPDF({marginsType: 2, landscape: true, pageSize: { width: config.store.small.label.height, height: config.store.small.label.width }}, (error, data) => {
+    let configSmall = new Store({name: 'small', cwd: 'C:\\Export\\SignaturenDruck\\Formate'})
+
+    winSmall.webContents.printToPDF({marginsType: 2, landscape: true, pageSize: { width: configSmall.store.label.height, height: configSmall.store.label.width }}, (error, data) => {
       if (error) throw error
-      fs.writeFile('./tmp/' + config.store.small.pdfName, data, (error) => {
+      fs.writeFile('./tmp/' + configSmall.store.pdfName, data, (error) => {
         if (error) throw error
         if (!config.store.devMode) {
           // printing with Foxit Reader 6.2.3.0815 via node-cmd
           cmd.get(
-            '"C:\\Program Files (x86)\\Foxit Software\\Foxit Reader\\Foxit Reader.exe"' + ' /t .\\tmp\\' + config.store.small.pdfName + ' ' + config.store.small.printer,
+            '"C:\\Program Files (x86)\\Foxit Software\\Foxit Reader\\Foxit Reader.exe"' + ' /t .\\tmp\\' + configSmall.store.pdfName + ' ' + configSmall.store.printer,
             function (error, data, stderr) {
               if (error) throw error
             }

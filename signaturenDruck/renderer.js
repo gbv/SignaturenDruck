@@ -20,6 +20,14 @@ const ipc = require('electron').ipcRenderer
 // requires the electron-store module and initializes it
 const Store = require('electron-store')
 const config = new Store({cwd: 'C:\\Export\\SignaturenDruck'})
+const configBig = new Store({
+  name: 'gross',
+  cwd: 'C:\\Export\\SignaturenDruck\\Formate'
+})
+const configSmall = new Store({
+  name: 'klein',
+  cwd: 'C:\\Export\\SignaturenDruck\\Formate'
+})
 
 // requires the dataExtract-module
 const DataExtract = require('./dataExtract.js')
@@ -50,7 +58,7 @@ window.onload = function () {
     if (fs.existsSync(config.get('defaultPath'))) {
       let file = fs.readFileSync(config.get('defaultPath'), 'utf-8')
       let allLines = file.split(/\r\n|\n/)
-      writeToFile(allLines)
+      getShelfmarksFromFile(allLines)
       displayData()
       document.getElementById('defaultPath').innerHTML = config.get('defaultPath')
     } else {
@@ -72,7 +80,8 @@ window.onload = function () {
       fileReader.onload = function () {
         let file = event.target.result
         let allLines = file.split(/\r\n|\n/)
-        writeToFile(allLines)
+        // getBarcodesFromFile(allLines)
+        writeShelfmarksToFile(JSON.stringify(setIds(getUnique(getShelfmarksFromFile(allLines)))))
         displayData()
       }
       fileReader.readAsText(fileTobeRead)
@@ -99,17 +108,29 @@ ipc.on('removeManual', function (event) {
 })
 
 ipc.on('addSRUdata', function (event, data) {
-  let indx = objSRU.all.length
-  objSRU.all[indx] = data
-  objSRU.all[indx].id = indx + 1
-  objSRU.all[indx].bigLabel = labelSize(data.plainTxt)
-  fs.writeFileSync('signaturen.json', JSON.stringify(objSRU.all), 'utf8')
-  clearTable()
-  createTable(objSRU.all)
+  if (data.error !== '') {
+    alert(data.error)
+  } else {
+    let indx = objSRU.all.length
+    objSRU.all[indx] = data
+    objSRU.all[indx].id = indx + 1
+    objSRU.all[indx].bigLabel = labelSize(data.plainTxt)
+    fs.writeFileSync('signaturen.json', JSON.stringify(objSRU.all), 'utf8')
+    clearTable()
+    createTable(objSRU.all)
+  }
 })
 
-// extracts all the shelfmark data found in the lines and passes them to writeSignaturesToFile
-function writeToFile (allLines) {
+function getBarcodesFromFile (allLines) {
+  allLines.map((line) => {
+    if (line.substr(0, 4) === '8200') {
+      ipc.send('loadFromSRU', line.substr(5))
+    }
+  })
+}
+
+// extracts all the shelfmark data found in the lines and passes them to writeShelfmarksToFile
+function getShelfmarksFromFile (allLines) {
   let obj = {
     all: []
   }
@@ -119,17 +140,17 @@ function writeToFile (allLines) {
 
   allLines.map((line) => {
     let first4 = extract.firstFour(line)
-    if (first4 == '0100') {
+    if (first4 === '0100') {
       sig.ppn = ppnAktuell = extract.ppn(line)
     } else if (first4 >= 7001 && first4 <= 7099) {
       sig.exNr = extract.exNr(line)
-    } else if (first4 == 7100) {
+    } else if (first4 === '7100') {
       let plainTxt = extract.txt(line)
       let big = labelSize(plainTxt)
       if (big === false) {
         sig.bigLabel = false
       }
-      let txt = plainTxt.split(':')
+      let txt = plainTxt.split(config.get('newLineAfter'))
       if (txt.length === 6) {
         sig.txt = txt
       } else {
@@ -137,7 +158,7 @@ function writeToFile (allLines) {
         sig.txt = txt
       }
       sig.txtLength = sig.txt.length
-    } else if (first4 == 7901) {
+    } else if (first4 === '7901') {
       sig.date = extract.date(line)
     }
     if (sig.allSet()) {
@@ -146,13 +167,12 @@ function writeToFile (allLines) {
       sig.ppn = ppnAktuell
     }
   })
-  // write every shelfmark to signaturen.json
-  writeSignaturesToFile(JSON.stringify(setIds(getUnique(obj))))
+  return obj
 }
 
 // retuns if label is big
 function labelSize (txt) {
-  let numberOfSeperators = getCountOfSeparators(txt, ':')
+  let numberOfSeperators = getCountOfSeparators(txt, config.get('newLineAfter'))
   let numberOfWhitespaces = getCountOfSeparators(txt, ' ')
   if ((numberOfSeperators >= 2) && (numberOfSeperators > numberOfWhitespaces)) {
     return true
@@ -194,7 +214,7 @@ function setIds (obj) {
 }
 
 // creates the signaturen.json file
-function writeSignaturesToFile (json) {
+function writeShelfmarksToFile (json) {
   if (config.store.sortByPPN) {
     json = JSON.stringify(groupByPPN(JSON.parse(json)))
   }
@@ -679,7 +699,7 @@ function refresh () {
       objMan = null
       let file = fs.readFileSync(path, 'utf-8')
       let allLines = file.split(/\r\n|\n/)
-      writeToFile(allLines)
+      getShelfmarksFromFile(allLines)
       displayData()
       return true
     }
@@ -702,7 +722,7 @@ function selectByDate () {
   let datepicker = document.getElementById('datepicker')
   let pickedDate = datepicker.value
   if (pickedDate !== '') {
-    let pickedDateFormated = pickedDate.replace(/(\d{2})(\d{2})-(\d{2})-(\d{2})/, '\$4-\$3-\$2')
+    let pickedDateFormated = pickedDate.replace(/(\d{2})(\d{2})-(\d{2})-(\d{2})/, '$4-$3-$2')
     let elems = document.querySelectorAll('[name=toPrint]')
     for (let i = 0; i < elems.length; i++) {
       let elemValue = elems[i].value
@@ -736,8 +756,8 @@ function isIncluded (printer, printerList) {
 
 function checkPrinters () {
   let printerList = getPrinterNameList()
-  printerBig = isIncluded(config.store.big.printer, printerList)
-  printerSmall = isIncluded(config.store.small.printer, printerList)
+  printerBig = isIncluded(configBig.store.printer, printerList)
+  printerSmall = isIncluded(configSmall.store.printer, printerList)
 }
 
 function submitBarcode () {
