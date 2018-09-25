@@ -96,17 +96,20 @@ ipc.on('printMsg', function (event) {
   document.getElementById('myModal').style.display = 'block'
 })
 
+// ipc listener to add new manual data to the table
 ipc.on('manual', function (event, data) {
   objMan = data
   deleteOldManual()
   addToTable(objMan)
 })
 
+// ipc listener to remove the manual data
 ipc.on('removeManual', function (event) {
   objMan = null
   deleteOldManual()
 })
 
+// ipc listener to add provided data to the SRU obj
 ipc.on('addSRUdata', function (event, data) {
   if (data.error !== '') {
     alert(data.error)
@@ -121,6 +124,7 @@ ipc.on('addSRUdata', function (event, data) {
   }
 })
 
+// function to get all lines from the .dnl file
 function getBarcodesFromFile (allLines) {
   allLines.map((line) => {
     if (line.substr(0, 4) === '8200') {
@@ -295,6 +299,7 @@ function createTable (obj) {
   }
 }
 
+// function to add all entries from the obj to the table
 function addToTable (obj) {
   let table = document.getElementById('shelfmarkTable').getElementsByTagName('tbody')[0]
   let row = table.insertRow(0)
@@ -616,6 +621,7 @@ function printButton () {
   ipc.send('print', data, objMan)
 }
 
+// funtion to delete all manual entries
 function deleteOldManual () {
   let elements = document.getElementsByClassName('manual')
   while (elements.length > 0) {
@@ -623,6 +629,7 @@ function deleteOldManual () {
   }
 }
 
+// function to clear the table
 function clearTable () {
   let myNode = document.getElementById('shelfmarkTableBody')
   while (myNode.firstChild) {
@@ -630,10 +637,12 @@ function clearTable () {
   }
 }
 
+// function to send objMan to the manual window
 function openManually () {
   ipc.send('openManually', objMan)
 }
 
+// function to preview the manual shelfmarks
 function preMan (id) {
   let prevBox = document.getElementById('previewBox')
   prevBox.classList = ''
@@ -684,6 +693,7 @@ function preMan (id) {
   }
 }
 
+// function to refresh the table
 function refresh () {
   let currentFile = document.getElementById('defaultPath').innerHTML
   if (!readThisFile(currentFile)) {
@@ -707,6 +717,7 @@ function refresh () {
   }
 }
 
+// function to invert the print-selection
 function invertPrintingSelection () {
   let elems = document.querySelectorAll('[name=toPrint]')
   for (let i = 0; i < elems.length; i++) {
@@ -718,6 +729,7 @@ function invertPrintingSelection () {
   }
 }
 
+// function to select shelfmarks per date
 function selectByDate () {
   let datepicker = document.getElementById('datepicker')
   let pickedDate = datepicker.value
@@ -736,6 +748,7 @@ function selectByDate () {
   }
 }
 
+// function to get the printerList
 function getPrinterNameList () {
   let nameList = []
   let i = 0
@@ -746,6 +759,7 @@ function getPrinterNameList () {
   return nameList
 }
 
+// function to check if printer is on the printerList
 function isIncluded (printer, printerList) {
   if (_.indexOf(printerList, printer) !== -1) {
     return true
@@ -754,17 +768,20 @@ function isIncluded (printer, printerList) {
   }
 }
 
+// function check if printers are available
 function checkPrinters () {
   let printerList = getPrinterNameList()
   printerBig = isIncluded(configBig.store.printer, printerList)
   printerSmall = isIncluded(configSmall.store.printer, printerList)
 }
 
+// function to submit the barcode
 function submitBarcode () {
   ipc.send('loadFromSRU', document.getElementById('input_barcode').value)
   document.getElementById('input_barcode').value = ''
 }
 
+// function to send with enter
 function sendWithEnter (event) {
   if (event.keyCode === 13) {
     document.getElementById('btn_barcode').click()
