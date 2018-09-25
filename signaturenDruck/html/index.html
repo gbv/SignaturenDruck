@@ -1,9 +1,9 @@
 <!DOCTYPE html>
 <html>
 
-	<head>
-		<meta charset="UTF-8">
-		<title>Signaturendruck</title>
+  <head>
+    <meta charset="UTF-8">
+    <title>Signaturendruck</title>
     <link rel="stylesheet" type="text/css" href="./../css/index.css">
     <link rel="stylesheet" type="text/css" href="./../css/preview.css">
     <link rel="stylesheet" type="text/css" href="C:/Export/SignaturenDruck/user.css">
@@ -11,8 +11,8 @@
     <link rel="stylesheet" type="text/css" href="./../css/all.css">
   </head>
 
-	<body>
-		<div>
+  <body>
+    <div>
       <p id="topLine">
         <span id="dnl">
           Signaturendatei: <span id="defaultPath"></span>
@@ -27,41 +27,41 @@
         <span id="datepickerSpan"><label for="datepicker">Datumsfilter: </label>
         <input id="datepicker" type="date"/></span>
       </p>
-		</div>
-		<div id="tableBox">
-			<table id="shelfmarkTable">
-				<thead>
-					<tr>
-						<th style="width: 35%">Signatur</th>
-						<th style="width: 20%">Bearbeitet am</th>
-						<th style="width: 15%">Exemplar</th>
-						<th style="width: 5%">Kurze Signatur</th>
-						<th style="width: 5%"><button id="columnPrint" class="button">Drucken</button></th>
-						<th style="width: 15%">Anzahl</th>
-						<th style="width: 5%">Größe</th>
-					</tr>
-				</thead>
-				<tbody id="shelfmarkTableBody">
+    </div>
+    <div id="tableBox">
+      <table id="shelfmarkTable">
+        <thead>
+          <tr>
+            <th style="width: 35%">Signatur</th>
+            <th style="width: 20%">Bearbeitet am</th>
+            <th style="width: 15%">Exemplar</th>
+            <th style="width: 5%">Kurze Signatur</th>
+            <th style="width: 5%"><button id="columnPrint" class="button">Drucken</button></th>
+            <th style="width: 15%">Anzahl</th>
+            <th style="width: 5%">Größe</th>
+          </tr>
+        </thead>
+        <tbody id="shelfmarkTableBody">
 
-				</tbody>
-			</table>
-		</div>
-		<div id="container">
-			<div id="buttonBox">
+        </tbody>
+      </table>
+    </div>
+    <div id="container">
+      <div id="buttonBox">
         <button id="btn_create_manually" class="button">Manuelles Anlegen</button>
         <br>
-				<button id="btn_deleteFile" class="button">Lösche Download Datei</button>
-				<br>
-				<button id="btn_deleteList" class="button">Liste löschen</button>
-				<br>
-				<button id="btn_print" class="button">Drucken</button>
-				<br>
-				<button id="btn_close" class="button">Beenden</button>
+        <button id="btn_deleteFile" class="button">Lösche Download Datei</button>
+        <br>
+        <button id="btn_deleteList" class="button">Liste löschen</button>
+        <br>
+        <button id="btn_print" class="button">Drucken</button>
+        <br>
+        <button id="btn_close" class="button">Beenden</button>
         <br>
         <button id="devMode" class="button" disabled>devMode active</button>
-			</div>
-			<div id="previewBox" class="big"></div>
-		</div>
+      </div>
+      <div id="previewBox" class="big"></div>
+    </div>
     <!-- The Modal -->
     <div id="myModal" class="modal">
 
@@ -72,10 +72,10 @@
       </div>
 
     </div>
-		<script>
-			// You can also require other files to run in this process
+    <script>
+      // You can also require other files to run in this process
       require('./../renderer.js')
-		</script>
+    </script>
     <script>
       let modal = document.getElementById('myModal')
       // Get the <span> element that closes the modal
@@ -93,6 +93,6 @@
         }
       }
     </script>
-	</body>
+  </body>
 
 </html>
