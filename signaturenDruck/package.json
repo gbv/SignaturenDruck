@@ -6,6 +6,7 @@
   "scripts": {
     "start": "electron .",
     "build:exe": "npx electron-builder --win --ia32",
+    "build:exe64": "npx electron-builder --win --x64",
     "rebuild": "electron-rebuild -w keytar"
   },
   "keywords": [

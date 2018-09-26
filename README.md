@@ -32,7 +32,13 @@ The devMode disables the actual printing. It will show the else hidden label-win
 To build the app for win7/10 32bit:
 
 ```bash
-npx electron-builder --win --ia32
+npm run build:exe
+```
+
+To build the app for win7/10 64bit:
+
+```bash
+npm run build:exe64
 ```
 
 ## License
