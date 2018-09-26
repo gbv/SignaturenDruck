@@ -67,7 +67,7 @@ window.onload = function () {
     if (fs.existsSync(config.get('defaultPath'))) {
       let file = fs.readFileSync(config.get('defaultPath'), 'utf-8')
       let allLines = file.split(/\r\n|\n/)
-      getShelfmarksFromFile(allLines)
+      writeShelfmarksToFile(JSON.stringify(setIds(getUnique(getShelfmarksFromFile(allLines)))))
       displayData()
       document.getElementById('defaultPath').innerHTML = config.get('defaultPath')
     } else {
