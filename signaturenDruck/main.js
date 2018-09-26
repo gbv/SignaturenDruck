@@ -67,6 +67,7 @@ const sigJSON = 'signaturen.json'
 let mainWindow
 let savedData
 let winManual
+let winConfig
 
 // This method will be called when Electron has finished
 // initialization and is ready to create browser windows.
@@ -139,6 +140,10 @@ ipc.on('loadFromSRU', function (event, barcode) {
       mainWindow.webContents.send('addSRUdata', objSRU)
     })
   }
+})
+
+ipc.on('openConfigWindow', function (event) {
+  createConfigWindow()
 })
 
 function loadAndAddFromSRU (barcode) {
@@ -408,6 +413,18 @@ function createManualWindow (objMan) {
   winManual.once('ready-to-show', () => {
     winManual.show()
     winManual.webContents.send('objMan', objMan)
+  })
+}
+
+function createConfigWindow () {
+  winConfig = new BrowserWindow({width: 400, height: 300, show: false})
+  winConfig.loadURL(url.format({
+    pathname: path.join(__dirname, 'html/config.html'),
+    protocol: 'file',
+    slashes: true
+  }))
+  winConfig.once('ready-to-show', () => {
+    winConfig.show()
   })
 }
 

@@ -1,20 +1,10 @@
 #previewBox {
-  border: 1px solid black;
+  /* border: 1px solid black;
   background-color: white;
   float: right;
   margin: 5px 0px 5px 5px;
   border-radius: 2px;
-  font-family: "Arial Narrow";
-}
-
-.big {
-  width: 80mm;
-  height: 43mm;
-}
-
-.small {
-  width: 74mm;
-  height: 23mm;
+  font-family: "Arial Narrow"; */
 }
 
 .center > .previewLine {

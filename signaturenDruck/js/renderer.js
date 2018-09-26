@@ -43,6 +43,15 @@ let printerSmall = true
 
 // function on window load
 window.onload = function () {
+  let myStyles = document.createElement('style')
+  document.head.appendChild(myStyles)
+  let styleSheet = myStyles.sheet
+
+  styleSheet.insertRule('#previewBox { ' + config.get('previewBox') + '}', 0)
+
+  styleSheet.insertRule('.big { width: ' + configBig.get('preview.width') + '; height: ' + configBig.get('preview.height') + '; }', 0)
+  styleSheet.insertRule('.small { width: ' + configSmall.get('preview.width') + '; height: ' + configSmall.get('preview.height') + '; }', 0)
+
   if (config.get('devMode')) {
     document.getElementById('devMode').style.display = 'block'
   }
@@ -788,6 +797,13 @@ function sendWithEnter (event) {
   }
 }
 
+function openConfigWindow (event) {
+  if (event.altKey && event.ctrlKey && event.keyCode === 69) {
+    console.log('Hey')
+    ipc.send('openConfigWindow')
+  }
+}
+
 // adds event listener to the create manually button
 document.getElementById('btn_create_manually').addEventListener('click', openManually)
 // adds event listener to the deleteList button
@@ -808,3 +824,5 @@ document.getElementById('datepicker').addEventListener('change', selectByDate)
 document.getElementById('btn_barcode').addEventListener('click', submitBarcode)
 // adds event listener to the barcode input
 document.getElementById('input_barcode').addEventListener('keyup', sendWithEnter)
+// adds event listener to the window to open config window
+document.addEventListener('keydown', openConfigWindow)
