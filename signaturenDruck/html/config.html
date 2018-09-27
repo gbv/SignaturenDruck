@@ -5,17 +5,97 @@
     <meta charset="UTF-8">
     <title>Signaturendruck</title>
     <link rel="stylesheet" type="text/css" href="./../css/config.css">
+    <link rel="stylesheet" type="text/css" href="./../css/modal.css">
+    <link rel="stylesheet" type="text/css" href="./../css/all.css">
+    <style>
+      .spacer {
+        padding: 5px;
+      }
+    </style>
   </head>
 
   <body>
-    <div id="toPrint">
-      <div id="userCard" class="shelfmark indent">
-        <p id="currentUsername" class="shelfmarkLine_1"></p>
-        <p id="currentDate" class="shelfmarkLine_2"></p>
+    <div id="previewBox">
+      <p id="line_1">Zeile 1</p>
+    </div>
+    <div id="labelSize">
+      <fieldset>
+        <legend>Label</legend>
+        <span class="spacer">
+          <label for="input_labelHeight">Höhe</label>
+          <input id="input_labelHeight" style="margin-left: 13px; width: 40px;" type="number" value="43" /> in mm
+        </span><br />
+        <span class="spacer">
+          <label for="input_labelWidth">Breite</label>
+          <input id="input_labelWidth" style="margin-left: 10px; width: 40px;" type="number" value="80" /> in mm
+        </span>
+        <span class="spacer">
+          <label for="input_labelLines">Anzahl der Zeilen</label>
+          <input id="input_labelLines" style="width: 40px;" value="1" disabled/>
+          <button id="btn_addLine" class="button">+</button>
+          <button id="btn_removeLine" class="button">-</button>
+        </span>
+      </fieldset>
+    </div>
+    <div id="paperSize">
+      <fieldset>
+        <legend>Papier</legend>
+        <span class="spacer">
+          <label for="input_paperHeight">Höhe</label>
+          <input id="input_paperHeight" type="number" value="48920" /> in μm
+        </span><br />
+        <span class="spacer">
+          <label for="input_paperWidth">Breite</label>
+          <input id="input_paperWidth" type="number" value="99970" /> in μm
+        </span>
+      </fieldset>
+    </div>
+    <div>
+      <fieldset>
+        <span class="spacer">
+            <input id="input_fileName" type="text" />
+        </span>
+        <span class="spacer">
+            <input id="input_printerName" type="text" />
+        </span>
+        <span class="spacer">
+            <input id="input_pdfName" type="text" />
+        </span>
+      </fieldset>
+    </div>
+    <div id="buttonBox">
+      <fieldset>
+        <button id="btn_save" class="button">Speichern</button>
+        <button id="btn_close" class="button">Schließen</button>
+      </fieldset>
+    </div>
+    <!-- The Modal -->
+    <div id="myModal" class="modal">
+      <!-- Modal content -->
+      <div class="modal-content">
+        <span class="close">&times;</span>
+        <p id="modalTxt"></p>
       </div>
     </div>
     <script>
-      require('./../configRenderer.js')
+      require('./../js/configRenderer.js')
+    </script>
+    <script>
+      let modal = document.getElementById('myModal')
+      // Get the <span> element that closes the modal
+      let span = document.getElementsByClassName('close')[0]
+
+      // When the user clicks on <span> (x), close the modal
+      span.onclick = function() {
+        modal.style.display = 'none'
+      }
+
+      // When the user clicks anywhere outside of the modal, close it
+      window.onclick = function(event) {
+        if (event.target == modal) {
+          modal.style.display = 'none'
+        }
+      }
     </script>
   </body>
 

@@ -1,0 +1,20 @@
+body {
+  background-color: RGB(240, 240, 240);
+  font-family: "Arial";
+  font-size: 10pt;
+}
+#previewBox {
+  width: 80mm;
+  height: 43mm;
+  border: 1px solid black;
+  background-color: white;
+  margin: 5px auto 5px auto;
+  border-radius: 2px;
+  font-family: "Arial Narrow";
+}
+.spacer {
+  padding: 5px;
+}
+.spacer > input {
+  margin: 5px 0px 5px 0px;
+}

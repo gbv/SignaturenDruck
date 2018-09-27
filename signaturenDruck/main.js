@@ -38,8 +38,7 @@ const configBigNew = {
     'width': '80mm',
     'height': '43mm'
   },
-  'linesMin': 3,
-  'linesMax': 6
+  'lines': 6
 }
 
 // default "small" label config
@@ -55,8 +54,7 @@ const configSmallNew = {
     'width': '74mm',
     'height': '23mm'
   },
-  'linesMin': 1,
-  'linesMax': 2
+  'linesMin': 1
 }
 
 // name of signature storage json
@@ -104,9 +102,20 @@ ipc.on('print', function (event, data, dataMan) {
   }
 })
 
+app.on('close', () => {
+  mainWindow.close()
+  mainWindow = null
+  winManual.close()
+  winManual = null
+  winConfig.close()
+  winConfig = null
+  app.quit()
+})
+
 // closes the application
 ipc.on('close', function (event) {
   mainWindow.close()
+  mainWindow = null
   app.quit()
 })
 
@@ -134,6 +143,7 @@ ipc.on('saveManual', function (event, data) {
   mainWindow.webContents.send('manual', data)
 })
 
+// listens on loadFromSRU, invokes the loadAndAddFromSRU function with the provided barcode
 ipc.on('loadFromSRU', function (event, barcode) {
   if (barcode !== '') {
     loadAndAddFromSRU(barcode).then(function (objSRU) {
@@ -142,10 +152,22 @@ ipc.on('loadFromSRU', function (event, barcode) {
   }
 })
 
+// listens on openConfigWindow, invokes the createConfigWindow function
 ipc.on('openConfigWindow', function (event) {
   createConfigWindow()
 })
 
+// listens on closeWinConfig, invokes the closeWinConfig function
+ipc.on('closeWinConfig', function (event) {
+  closeWinConfig()
+})
+
+function closeWinConfig () {
+  winConfig.close()
+  winConfig = null
+}
+
+// loads the shelfmark with the matching barcode from SRU, adds it to the table
 function loadAndAddFromSRU (barcode) {
   let url = config.get('SRUaddress') + '?version=1.1&operation=searchRetrieve&query=pica.bar=' + barcode + '&maximumRecords=1&recordSchema=picaxml'
   let request = net.request(url)
@@ -283,6 +305,8 @@ function createWindow () {
   // Emitted when the window is closed.
   mainWindow.on('closed', function () {
     mainWindow = null
+    winManual = null
+    winConfig = null
     deleteJSON()
   })
 }
@@ -416,8 +440,9 @@ function createManualWindow (objMan) {
   })
 }
 
+// creates the winConfig
 function createConfigWindow () {
-  winConfig = new BrowserWindow({width: 400, height: 300, show: false})
+  winConfig = new BrowserWindow({width: 400, height: 500, show: false})
   winConfig.loadURL(url.format({
     pathname: path.join(__dirname, 'html/config.html'),
     protocol: 'file',
