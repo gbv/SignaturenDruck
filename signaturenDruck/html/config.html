@@ -7,61 +7,84 @@
     <link rel="stylesheet" type="text/css" href="./../css/config.css">
     <link rel="stylesheet" type="text/css" href="./../css/modal.css">
     <link rel="stylesheet" type="text/css" href="./../css/all.css">
-    <style>
-      .spacer {
-        padding: 5px;
-      }
-    </style>
-  </head>
+  </head> 
 
   <body>
     <div id="previewBox">
-      <p id="line_1">Zeile 1</p>
+      <div id="innerBox">
+        <p id="line_1">Zeile 1</p>
+      </div>
     </div>
-    <div id="labelSize">
-      <fieldset>
-        <legend>Label</legend>
-        <span class="spacer">
-          <label for="input_labelHeight">Höhe</label>
-          <input id="input_labelHeight" style="margin-left: 13px; width: 40px;" type="number" value="43" /> in mm
-        </span><br />
-        <span class="spacer">
-          <label for="input_labelWidth">Breite</label>
-          <input id="input_labelWidth" style="margin-left: 10px; width: 40px;" type="number" value="80" /> in mm
-        </span>
-        <span class="spacer">
-          <label for="input_labelLines">Anzahl der Zeilen</label>
-          <input id="input_labelLines" style="width: 40px;" value="1" disabled/>
-          <button id="btn_addLine" class="button">+</button>
-          <button id="btn_removeLine" class="button">-</button>
-        </span>
-      </fieldset>
-    </div>
-    <div id="paperSize">
-      <fieldset>
-        <legend>Papier</legend>
-        <span class="spacer">
-          <label for="input_paperHeight">Höhe</label>
-          <input id="input_paperHeight" type="number" value="48920" /> in μm
-        </span><br />
-        <span class="spacer">
-          <label for="input_paperWidth">Breite</label>
-          <input id="input_paperWidth" type="number" value="99970" /> in μm
-        </span>
-      </fieldset>
-    </div>
-    <div>
-      <fieldset>
-        <span class="spacer">
+    <div id="configInputs">
+      <div id="labelSize">
+        <fieldset>
+          <legend>Label</legend>
+          <span class="spacer">
+            <label for="input_labelHeight">Höhe</label>
+            <input id="input_labelHeight" class="fixedWidth" style="margin-left: 13px;" type="number" value="43" /> in mm
+          </span><br />
+          <span class="spacer">
+            <label for="input_labelWidth">Breite</label>
+            <input id="input_labelWidth" class="fixedWidth" style="margin-left: 10px;" type="number" value="80" /> in mm
+          </span><br />
+          <span class="spacer">
+            <label for="input_labelLines">Anzahl der Zeilen</label>
+            <input id="input_labelLines" class="fixedWidth" value="1" disabled/>
+            <button id="btn_addLine" class="button">+</button>
+            <button id="btn_removeLine" class="button">-</button>
+          </span><br />
+          <span class="spacer">
+            <label for="lineSpace">Zeilenabstand</label>
+            <input id="lineSpace" class="fixedWidth" type="number" value="5" />
+          </span><br />
+          <span class="spacer">
+            <label for="centerHor">Horizontal zentrieren</label>
+            <input id="centerHor" type="checkbox" />
+          </span><br />
+          <span class="spacer">
+            <label for="centerVer">Vertikal zentrieren</label>
+            <input id="centerVer" type="checkbox" />
+          </span>
+          <table id="tableLines">
+            <thead>
+              <tr>
+                <th>Zeile</th>
+                <th>Schriftart</th>
+                <th>Schriftgröße</th>
+                <th>Fett</th>
+                <th>Kursiv</th>
+                <th>Einzug</th>
+              </tr>
+            </thead>
+            <tbody id="tableLinesBody"></tbody>
+          </table>
+        </fieldset>
+      </div>
+      <div id="paperSize">
+        <fieldset>
+          <legend>Papier</legend>
+          <span class="spacer">
+            <label for="input_paperHeight">Höhe</label>
+            <input id="input_paperHeight" class="fixedWidthExtended" type="number" value="48920" /> in μm
+          </span><br />
+          <span class="spacer">
+            <label for="input_paperWidth">Breite</label>
+            <input id="input_paperWidth" class="fixedWidthExtended" type="number" value="99970" /> in μm
+          </span>
+        </fieldset>
+      </div>
+      <div>
+        <fieldset>
+          <span class="spacer">
+            <label for="input_fileName">Dateiname</label>
             <input id="input_fileName" type="text" />
-        </span>
-        <span class="spacer">
+          </span><br />
+          <span class="spacer">
+            <label for="input_printerName">Druckername</label>
             <input id="input_printerName" type="text" />
-        </span>
-        <span class="spacer">
-            <input id="input_pdfName" type="text" />
-        </span>
-      </fieldset>
+          </span>
+        </fieldset>
+      </div>
     </div>
     <div id="buttonBox">
       <fieldset>
