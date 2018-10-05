@@ -12,7 +12,7 @@ const _ = require('lodash')
 const fs = require('fs')
 
 // requires the preview-module
-const pre = require('./preview.js')
+// const pre = require('./preview.js')
 
 // required for ipc calls to the main process
 const ipc = require('electron').ipcRenderer
@@ -40,6 +40,8 @@ let objSRU = {
 }
 let printerBig = true
 let printerSmall = true
+let formats = []
+let selectOptions = []
 
 // function on window load
 window.onload = function () {
@@ -51,7 +53,7 @@ window.onload = function () {
 
   styleSheet.insertRule('.big { width: ' + configBig.get('preview.width') + '; height: ' + configBig.get('preview.height') + '; }', 0)
   styleSheet.insertRule('.small { width: ' + configSmall.get('preview.width') + '; height: ' + configSmall.get('preview.height') + '; }', 0)
-
+  loadFormats()
   if (config.get('devMode')) {
     document.getElementById('devMode').style.display = 'block'
   }
@@ -500,20 +502,104 @@ function createPrintCountCell (row, cellNr, objct) {
 
 // creates the label size cell
 function createLabelSizeCell (row, cellNr, objct) {
-  let labelSizeCell = row.insertCell(cellNr)
-  labelSizeCell.className = 'labelSizeCell'
+  let cell = row.insertCell(cellNr)
+  let select = document.createElement('select')
+  select.id = 'templateSelect_' + objct.id
+  selectOptions.forEach(element => {
+    let size = document.createElement('option')
+    size.value = element
+    size.innerHTML = element
+    select.appendChild(size)
+  })
+  select.onchange = function () { changePreview(objct.id) }
   if (objct.bigLabel) {
-    if (!printerBig) {
-      labelSizeCell.innerHTML = '<div class="tooltip"><i class="fas fa-exclamation-circle" style="color: red;"></i><span class="tooltiptext tooltip-left">Drucker nicht installiert/gefunden</span></div>'
-    } else {
-      labelSizeCell.innerHTML = 'groß'
-    }
+    select.value = 'gross'
   } else {
-    if (!printerSmall) {
-      labelSizeCell.innerHTML = '<div class="tooltip"><i class="fas fa-exclamation-circle" style="color: red;"></i><span class="tooltiptext tooltip-left">Drucker nicht installiert/gefunden</span></div>'
-    } else {
-      labelSizeCell.innerHTML = 'klein'
+    select.value = 'klein'
+  }
+  cell.appendChild(select)
+  // let labelSizeCell = row.insertCell(cellNr)
+  // labelSizeCell.className = 'labelSizeCell'
+  // if (objct.bigLabel) {
+  //   if (!printerBig) {
+  //     labelSizeCell.innerHTML = '<div class="tooltip"><i class="fas fa-exclamation-circle" style="color: red;"></i><span class="tooltiptext tooltip-left">Drucker nicht installiert/gefunden</span></div>'
+  //   } else {
+  //     labelSizeCell.innerHTML = 'groß'
+  //   }
+  // } else {
+  //   if (!printerSmall) {
+  //     labelSizeCell.innerHTML = '<div class="tooltip"><i class="fas fa-exclamation-circle" style="color: red;"></i><span class="tooltiptext tooltip-left">Drucker nicht installiert/gefunden</span></div>'
+  //   } else {
+  //     labelSizeCell.innerHTML = 'klein'
+  //   }
+  // }
+}
+
+function changePreview (id) {
+  let format = document.getElementById('templateSelect_' + id).value
+  let previewBox = document.getElementById('previewBox')
+  previewBox.style.width = formats[format].label.width
+  previewBox.style.height = formats[format].label.height
+  changeLineSpace()
+  centerHor()
+  centerVer()
+  styleLines()
+
+  function styleLines () {
+    let i = 0
+    while (i < formats[format].lines) {
+      let line = document.getElementById('line_' + (i + 1))
+      line.style.fontFamily = formats[format].linesData[i].font
+      line.style.fontSize = formats[format].linesData[i].fontSize
+      if (formats[format].linesData[i].bold) {
+        line.style.fontWeight = 'bold'
+      } else {
+        line.style.fontWeight = 'inherit'
+      }
+      if (formats[format].linesData[i].italic) {
+        line.style.fontStyle = 'italic'
+      } else {
+        line.style.fontStyle = 'normal'
+      }
+      line.style.marginLeft = formats[format].linesData[i].indent + '%'
+      i++
     }
+  }
+
+  function centerVer () {
+    if (formats[format].centerVer) {
+      document.getElementById('previewBox').style.alignItems = 'center'
+    } else {
+      document.getElementById('previewBox').style.alignItems = 'initial'
+    }
+  }
+
+  function centerHor () {
+    if (formats[format].centerHor) {
+      document.getElementById('previewBox').style.justifyContent = 'center'
+      document.getElementsByClassName('innerBox')[0].style.width = 'initial'
+    } else {
+      document.getElementById('previewBox').style.justifyContent = 'initial'
+      document.getElementsByClassName('innerBox')[0].style.width = '100%'
+    }
+  }
+
+  function changeLineSpace () {
+    let lines = document.getElementsByClassName('innerBox')[0].children.length
+    let i = 1
+    while (i <= lines) {
+      document.getElementById('line_' + i).style.marginBottom = document.getElementById('line_' + i).style.marginTop = formats[format].lineSpace + 'px'
+      i++
+    }
+  }
+}
+
+function loadFormats () {
+  let files = fs.readdirSync('C:\\Export\\SignaturenDruck\\Formate')
+  for (let file of files) {
+    let fileName = file.split('.json')[0]
+    selectOptions.push(fileName)
+    formats[fileName] = JSON.parse(fs.readFileSync('C:\\Export\\SignaturenDruck\\Formate\\' + file, 'utf8'))
   }
 }
 
@@ -802,6 +888,51 @@ function openConfigWindow (event) {
     console.log('Hey')
     ipc.send('openConfigWindow')
   }
+}
+
+function pre (id) {
+  let myNode = document.getElementById('previewBox')
+  while (myNode.firstChild) {
+    myNode.removeChild(myNode.firstChild)
+  }
+  let file = fs.readFileSync('signaturen.json', 'utf8')
+  if (config.store.sortByPPN) {
+    _.forEach(JSON.parse(file), function (key, value) {
+      let sig = ''
+      let found = ''
+      found = _.find(key, { 'id': Number(id) })
+      if (found !== undefined) {
+        sig = found
+        showData(sig, id)
+      }
+    })
+  } else {
+    let found = _.find(JSON.parse(file), { 'id': Number(id) })
+    if (found !== undefined) {
+      showData(found, id)
+    }
+  }
+  changePreview(id)
+}
+
+function showData (shelfmark) {
+  let i = 1
+  let line
+  let innerBox = document.createElement('div')
+  innerBox.className = 'innerBox'
+  shelfmark.txt.forEach(element => {
+    line = document.createElement('p')
+    line.id = 'line_' + i
+    if (element == '') {
+      let emptyLine = document.createElement('br')
+      line.appendChild(emptyLine)
+    } else {
+      line.innerHTML = element
+    }
+    innerBox.appendChild(line)
+    i++
+  })
+  document.getElementById('previewBox').appendChild(innerBox)
 }
 
 // adds event listener to the create manually button

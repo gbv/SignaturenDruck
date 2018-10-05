@@ -30,27 +30,80 @@ const configBigNew = {
   'name': 'gross',
   'printer': '\\\\ulbw2k812\\ulbps101',
   'label': {
-    'width': 99970,
-    'height': 48920
-  },
-  'pdfName': 'printBig.pdf',
-  'preview': {
     'width': '80mm',
     'height': '43mm'
   },
-  'lines': 6
+  'pdfName': 'printBig.pdf',
+  'paper': {
+    'width': '99970',
+    'height': '48920'
+  },
+  'lines': '6',
+  'centerHor': false,
+  'centerVer': true,
+  'lineSpace': '2',
+  'linesData': [
+    {
+      'id': 1,
+      'font': 'Arial Narrow',
+      'fontSize': '16',
+      'bold': true,
+      'italic': false,
+      'indent': '45'
+    },
+    {
+      'id': 2,
+      'font': 'Arial Narrow',
+      'fontSize': '16',
+      'bold': true,
+      'italic': false,
+      'indent': '45'
+    },
+    {
+      'id': 3,
+      'font': 'Arial Narrow',
+      'fontSize': '16',
+      'bold': true,
+      'italic': false,
+      'indent': '45'
+    },
+    {
+      'id': 4,
+      'font': 'Arial Narrow',
+      'fontSize': '16',
+      'bold': false,
+      'italic': false,
+      'indent': '45'
+    },
+    {
+      'id': 5,
+      'font': 'Arial Narrow',
+      'fontSize': '16',
+      'bold': false,
+      'italic': false,
+      'indent': '45'
+    },
+    {
+      'id': 6,
+      'font': 'Arial Narrow',
+      'fontSize': '16',
+      'bold': true,
+      'italic': false,
+      'indent': '45'
+    }
+  ]
 }
 
 // default "small" label config
 const configSmallNew = {
   'name': 'klein',
   'printer': '\\\\ulbw2k812\\ulbps124',
-  'label': {
+  'paper': {
     'width': 74500,
     'height': 23500
   },
   'pdfName': 'printSmall.pdf',
-  'preview': {
+  'label': {
     'width': '74mm',
     'height': '23mm'
   },

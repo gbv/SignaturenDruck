@@ -1,13 +1,24 @@
 #previewBox {
-  /* border: 1px solid black;
+  width: 80mm;
+  height: 43mm;
+  border: 1px solid black;
   background-color: white;
-  float: right;
-  margin: 5px 0px 5px 5px;
+  margin: 5px auto 5px auto;
   border-radius: 2px;
-  font-family: "Arial Narrow"; */
+  font-family: "Arial Narrow";
+  font-size: 14pt;
+  display: flex;
+  overflow: hidden;
 }
 
-.center > .previewLine {
+.innerBox {
+  width: 100%;
+}
+.innerBox > p {
+  width: 100%;
+}
+
+/* .center > .previewLine {
   font-size: 15pt;
   margin: 0pt;
   text-align: center;
@@ -39,4 +50,4 @@ p#line1 {
 #line3,
 #line6 {
   font-weight: bold;
-}
+} */
