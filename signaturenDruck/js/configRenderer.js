@@ -67,7 +67,7 @@ function setObjct () {
       'height': document.getElementById('input_labelHeight').value + 'mm'
     },
     'pdfName': document.getElementById('input_fileName').value + '.pdf',
-    'preview': {
+    'paper': {
       'width': document.getElementById('input_paperWidth').value,
       'height': document.getElementById('input_paperHeight').value
     },
