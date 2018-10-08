@@ -21,11 +21,11 @@ const ipc = require('electron').ipcRenderer
 const Store = require('electron-store')
 const config = new Store({cwd: 'C:\\Export\\SignaturenDruck'})
 const configBig = new Store({
-  name: 'gross',
+  name: 'thulb_gross',
   cwd: 'C:\\Export\\SignaturenDruck\\Formate'
 })
 const configSmall = new Store({
-  name: 'klein',
+  name: 'thulb_klein',
   cwd: 'C:\\Export\\SignaturenDruck\\Formate'
 })
 
@@ -38,30 +38,39 @@ let objMan = null
 let objSRU = {
   all: []
 }
-let printerBig = true
-let printerSmall = true
 let formats = []
 let selectOptions = []
+let printerFound = []
 
 // function on window load
 window.onload = function () {
-  let myStyles = document.createElement('style')
-  document.head.appendChild(myStyles)
-  let styleSheet = myStyles.sheet
-
-  styleSheet.insertRule('#previewBox { ' + config.get('previewBox') + '}', 0)
-
-  styleSheet.insertRule('.big { width: ' + configBig.get('preview.width') + '; height: ' + configBig.get('preview.height') + '; }', 0)
-  styleSheet.insertRule('.small { width: ' + configSmall.get('preview.width') + '; height: ' + configSmall.get('preview.height') + '; }', 0)
+  addStyleFiles()
   loadFormats()
   if (config.get('devMode')) {
     document.getElementById('devMode').style.display = 'block'
   }
   checkPrinters()
-  if (!printerBig || !printerSmall) {
-    document.getElementById('btn_print').disabled = true
-    document.getElementById('btn_print').innerHTML = '<div class="tooltip">Drucken<span class="tooltiptext tooltip-right">Drucker nicht installiert/gefunden</span></div>'
+  let printerNotFound = []
+  for (let printer in printerFound) {
+    if (!printerFound[printer]) {
+      printerNotFound.push(printer)
+    }
   }
+  let str = ''
+  if (printerNotFound.length > 0) {
+    if (printerNotFound.length === 1) {
+      str = 'Der Drucker des Formats: "' + printerNotFound[0] + '" wurde nicht gefunden'
+    } else {
+      str = 'Die Drucker der folgenden Formate wurden nicht gefunden: "'
+      printerNotFound.forEach(element => {
+        str += element + ', '
+      })
+      str = str.substr(0, str.length - 2)
+      str += '"'
+    }
+    document.getElementById('btn_print').innerHTML = '<div class="tooltip">Drucken<span class="tooltiptext tooltip-right">' + str + '</span></div>'
+  }
+
   document.getElementById('modalTxt').innerHTML = config.get('modalTxt')
   let fileSelected = document.getElementById('fileToRead')
   let fileTobeRead
@@ -332,14 +341,14 @@ function addToTable (obj) {
 
   function createTxtCell (row, cellNr, txt, id) {
     let txtCell = row.insertCell(cellNr)
-    txtCell.onclick = function () { preMan(id) }
+    txtCell.onclick = function () { pre('m_' + id) }
     txtCell.innerHTML = txt
     txtCell.className = 'txtCell'
   }
 
   function createDateCell (row, cellNr, id) {
     let dateCell = row.insertCell(cellNr)
-    dateCell.onclick = function () { preMan(id) }
+    dateCell.onclick = function () { pre('m_' + id) }
     dateCell.className = 'dateCell'
     dateCell.id = 'dateCell_m_' + id
     dateCell.innerHTML = '-'
@@ -347,14 +356,14 @@ function addToTable (obj) {
 
   function createExnrCell (row, cellNr, id) {
     let isNrCell = row.insertCell(cellNr)
-    isNrCell.onclick = function () { preMan(id) }
+    isNrCell.onclick = function () { pre('m_' + id) }
     isNrCell.className = 'isNrCell'
     isNrCell.innerHTML = '-'
   }
 
   function createShortShelfmarkCell (row, cellNr, id) {
     let shortShelfmarkCell = row.insertCell(cellNr)
-    shortShelfmarkCell.onclick = function () { preMan(id) }
+    shortShelfmarkCell.onclick = function () { pre('m_' + id) }
     shortShelfmarkCell.className = 'shortShelfmarkCell'
     if (obj[id].lines < 6) {
       shortShelfmarkCell.id = 'short_m_' + id
@@ -370,7 +379,7 @@ function addToTable (obj) {
     input.type = 'checkbox'
     input.name = 'toPrint'
     input.value = id
-    input.onclick = function () { preMan(id) }
+    input.onclick = function () { pre('m_' + id) }
     printCell.appendChild(input)
   }
 
@@ -388,13 +397,34 @@ function addToTable (obj) {
   }
 
   function createLabelSizeCell (row, cellNr, id) {
-    let labelSizeCell = row.insertCell(cellNr)
-    labelSizeCell.className = 'labelSizeCell'
-    if (obj[id].lines < 6) {
-      labelSizeCell.innerHTML = 'klein'
-    } else {
-      labelSizeCell.innerHTML = 'groß'
+    let cell = row.insertCell(cellNr)
+    let select = document.createElement('select')
+    select.id = 'templateSelect_m_' + id
+    selectOptions.forEach(element => {
+      let size = document.createElement('option')
+      size.value = element
+      size.innerHTML = element
+      if (!printerFound[element]) {
+        size.disabled = true
+      }
+      select.appendChild(size)
+    })
+    console.log(id)
+    select.onchange = function () { pre('m_' + id) }
+    if (obj[id].lines == 1) {
+      if (printerFound['thulb_klein_1']) {
+        select.value = 'thulb_klein_1'
+      }
+    } else if (obj[id].lines <= 3) {
+      if (printerFound['thulb_klein']) {
+        select.value = 'thulb_klein'
+      }
+    } else if (obj[id].lines <= 6) {
+      if (printerFound['thulb_gross']) {
+        select.value = 'thulb_gross'
+      }
     }
+    cell.appendChild(select)
   }
 }
 
@@ -509,89 +539,27 @@ function createLabelSizeCell (row, cellNr, objct) {
     let size = document.createElement('option')
     size.value = element
     size.innerHTML = element
+    if (!printerFound[element]) {
+      size.disabled = true
+    }
     select.appendChild(size)
   })
-  select.onchange = function () { changePreview(objct.id) }
-  if (objct.bigLabel) {
-    select.value = 'gross'
-  } else {
-    select.value = 'klein'
+  console.log(objct)
+  select.onchange = function () { pre(objct.id) }
+  if (objct.txt.length == 1) {
+    if (printerFound['thulb_klein_1']) {
+      select.value = 'thulb_klein_1'
+    }
+  } else if (objct.txt.length <= 3) {
+    if (printerFound['thulb_klein']) {
+      select.value = 'thulb_klein'
+    }
+  } else if (objct.txt.length <= 6) {
+    if (printerFound['thulb_gross']) {
+      select.value = 'thulb_gross'
+    }
   }
   cell.appendChild(select)
-  // let labelSizeCell = row.insertCell(cellNr)
-  // labelSizeCell.className = 'labelSizeCell'
-  // if (objct.bigLabel) {
-  //   if (!printerBig) {
-  //     labelSizeCell.innerHTML = '<div class="tooltip"><i class="fas fa-exclamation-circle" style="color: red;"></i><span class="tooltiptext tooltip-left">Drucker nicht installiert/gefunden</span></div>'
-  //   } else {
-  //     labelSizeCell.innerHTML = 'groß'
-  //   }
-  // } else {
-  //   if (!printerSmall) {
-  //     labelSizeCell.innerHTML = '<div class="tooltip"><i class="fas fa-exclamation-circle" style="color: red;"></i><span class="tooltiptext tooltip-left">Drucker nicht installiert/gefunden</span></div>'
-  //   } else {
-  //     labelSizeCell.innerHTML = 'klein'
-  //   }
-  // }
-}
-
-function changePreview (id) {
-  let format = document.getElementById('templateSelect_' + id).value
-  let previewBox = document.getElementById('previewBox')
-  previewBox.style.width = formats[format].label.width
-  previewBox.style.height = formats[format].label.height
-  changeLineSpace()
-  centerHor()
-  centerVer()
-  styleLines()
-
-  function styleLines () {
-    let i = 0
-    while (i < formats[format].lines) {
-      let line = document.getElementById('line_' + (i + 1))
-      line.style.fontFamily = formats[format].linesData[i].font
-      line.style.fontSize = formats[format].linesData[i].fontSize
-      if (formats[format].linesData[i].bold) {
-        line.style.fontWeight = 'bold'
-      } else {
-        line.style.fontWeight = 'inherit'
-      }
-      if (formats[format].linesData[i].italic) {
-        line.style.fontStyle = 'italic'
-      } else {
-        line.style.fontStyle = 'normal'
-      }
-      line.style.marginLeft = formats[format].linesData[i].indent + '%'
-      i++
-    }
-  }
-
-  function centerVer () {
-    if (formats[format].centerVer) {
-      document.getElementById('previewBox').style.alignItems = 'center'
-    } else {
-      document.getElementById('previewBox').style.alignItems = 'initial'
-    }
-  }
-
-  function centerHor () {
-    if (formats[format].centerHor) {
-      document.getElementById('previewBox').style.justifyContent = 'center'
-      document.getElementsByClassName('innerBox')[0].style.width = 'initial'
-    } else {
-      document.getElementById('previewBox').style.justifyContent = 'initial'
-      document.getElementsByClassName('innerBox')[0].style.width = '100%'
-    }
-  }
-
-  function changeLineSpace () {
-    let lines = document.getElementsByClassName('innerBox')[0].children.length
-    let i = 1
-    while (i <= lines) {
-      document.getElementById('line_' + i).style.marginBottom = document.getElementById('line_' + i).style.marginTop = formats[format].lineSpace + 'px'
-      i++
-    }
-  }
 }
 
 function loadFormats () {
@@ -737,57 +705,6 @@ function openManually () {
   ipc.send('openManually', objMan)
 }
 
-// function to preview the manual shelfmarks
-function preMan (id) {
-  let prevBox = document.getElementById('previewBox')
-  prevBox.classList = ''
-  if (objMan[id].lines == 1) {
-    prevBox.className = 'small center'
-    removeOld()
-    addLines()
-    if (objMan[id].removeIndent) {
-      document.getElementById('line1').style.textAlign = 'left'
-    }
-  } else if (objMan[id].lines == 3) {
-    prevBox.className = 'small indent'
-    removeOld()
-    addLines()
-  } else {
-    prevBox.className = 'big indent'
-    removeOld()
-    addLines()
-  }
-  if (objMan[id].removeIndent) {
-    prevBox.classList.remove('indent')
-  }
-
-  function addLines () {
-    let line
-    let i = 0
-    let j
-    while (i < objMan[id].lines) {
-      j = i + 1
-      line = document.createElement('p')
-      line.id = 'line' + j
-      line.className = 'previewLine'
-      if (objMan[id].lineTxts[i] === '') {
-        line.innerHTML = ' '
-      } else {
-        line.innerHTML = objMan[id].lineTxts[i]
-      }
-      prevBox.appendChild(line)
-      i++
-    }
-  }
-
-  function removeOld () {
-    let myNode = document.getElementById('previewBox')
-    while (myNode.firstChild) {
-      myNode.removeChild(myNode.firstChild)
-    }
-  }
-}
-
 // function to refresh the table
 function refresh () {
   let currentFile = document.getElementById('defaultPath').innerHTML
@@ -866,8 +783,9 @@ function isIncluded (printer, printerList) {
 // function check if printers are available
 function checkPrinters () {
   let printerList = getPrinterNameList()
-  printerBig = isIncluded(configBig.store.printer, printerList)
-  printerSmall = isIncluded(configSmall.store.printer, printerList)
+  for (let format in formats) {
+    printerFound[format] = isIncluded(formats[format].printer, printerList)
+  }
 }
 
 // function to submit the barcode
@@ -885,34 +803,48 @@ function sendWithEnter (event) {
 
 function openConfigWindow (event) {
   if (event.altKey && event.ctrlKey && event.keyCode === 69) {
-    console.log('Hey')
     ipc.send('openConfigWindow')
   }
 }
 
 function pre (id) {
-  let myNode = document.getElementById('previewBox')
-  while (myNode.firstChild) {
-    myNode.removeChild(myNode.firstChild)
-  }
-  let file = fs.readFileSync('signaturen.json', 'utf8')
-  if (config.store.sortByPPN) {
-    _.forEach(JSON.parse(file), function (key, value) {
-      let sig = ''
-      let found = ''
-      found = _.find(key, { 'id': Number(id) })
+  removeOld()
+  if (!String(id).includes('m_')) {
+    let file = fs.readFileSync('signaturen.json', 'utf8')
+    if (config.store.sortByPPN) {
+      _.forEach(JSON.parse(file), function (key, value) {
+        let sig = ''
+        let found = ''
+        found = _.find(key, { 'id': Number(id) })
+        if (found !== undefined) {
+          sig = found
+          showData(sig.txt)
+        }
+      })
+    } else {
+      let found = _.find(JSON.parse(file), { 'id': Number(id) })
       if (found !== undefined) {
-        sig = found
-        showData(sig, id)
+        showData(found.txt)
       }
-    })
+    }
+    document.getElementsByClassName('innerBox')[0].className = 'innerBox'
   } else {
-    let found = _.find(JSON.parse(file), { 'id': Number(id) })
-    if (found !== undefined) {
-      showData(found, id)
+    let cleanId = id.split('m_')[1]
+    showData(objMan[cleanId].lineTxts)
+    if (objMan[cleanId].removeIndent) {
+      document.getElementsByClassName('innerBox')[0].className = 'innerBox noIndent'
+    } else {
+      document.getElementsByClassName('innerBox')[0].className = 'innerBox'
     }
   }
   changePreview(id)
+
+  function removeOld () {
+    let myNode = document.getElementById('previewBox')
+    while (myNode.firstChild) {
+      myNode.removeChild(myNode.firstChild)
+    }
+  }
 }
 
 function showData (shelfmark) {
@@ -920,7 +852,7 @@ function showData (shelfmark) {
   let line
   let innerBox = document.createElement('div')
   innerBox.className = 'innerBox'
-  shelfmark.txt.forEach(element => {
+  shelfmark.forEach(element => {
     line = document.createElement('p')
     line.id = 'line_' + i
     if (element == '') {
@@ -933,6 +865,24 @@ function showData (shelfmark) {
     i++
   })
   document.getElementById('previewBox').appendChild(innerBox)
+}
+
+function changePreview (id) {
+  let format = document.getElementById('templateSelect_' + id).value
+  let previewBox = document.getElementById('previewBox')
+  previewBox.className = 'format_' + format
+}
+
+function addStyleFiles () {
+  let files = fs.readdirSync('C:\\Export\\SignaturenDruck\\FormateCSS')
+  for (let file of files) {
+    let fileName = file.split('.css')[0]
+    let cssLink = document.createElement('link')
+    cssLink.rel = 'stylesheet'
+    cssLink.type = 'text/css'
+    cssLink.href = 'C:/Export/SignaturenDruck/FormateCSS/' + fileName + '.css'
+    document.head.appendChild(cssLink)
+  }
 }
 
 // adds event listener to the create manually button

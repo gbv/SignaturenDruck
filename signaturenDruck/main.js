@@ -27,7 +27,7 @@ const configNew = {
 
 // default "big" label config
 const configBigNew = {
-  'name': 'gross',
+  'name': 'thulb_gross',
   'printer': '\\\\ulbw2k812\\ulbps101',
   'label': {
     'width': '80mm',
@@ -96,18 +96,47 @@ const configBigNew = {
 
 // default "small" label config
 const configSmallNew = {
-  'name': 'klein',
+  'name': 'thulb_klein',
   'printer': '\\\\ulbw2k812\\ulbps124',
-  'paper': {
-    'width': 74500,
-    'height': 23500
-  },
-  'pdfName': 'printSmall.pdf',
   'label': {
     'width': '74mm',
     'height': '23mm'
   },
-  'linesMin': 1
+  'pdfName': 'printSmall.pdf',
+  'paper': {
+    'width': '74500',
+    'height': '23500'
+  },
+  'lines': '3',
+  'centerHor': false,
+  'centerVer': true,
+  'lineSpace': '2',
+  'linesData': [
+    {
+      'id': 1,
+      'font': 'Arial Narrow',
+      'fontSize': '15',
+      'bold': true,
+      'italic': false,
+      'indent': '45'
+    },
+    {
+      'id': 2,
+      'font': 'Arial Narrow',
+      'fontSize': '15',
+      'bold': true,
+      'italic': false,
+      'indent': '45'
+    },
+    {
+      'id': 3,
+      'font': 'Arial Narrow',
+      'fontSize': '15',
+      'bold': true,
+      'italic': false,
+      'indent': '45'
+    }
+  ]
 }
 
 // name of signature storage json
@@ -203,6 +232,10 @@ ipc.on('loadFromSRU', function (event, barcode) {
       mainWindow.webContents.send('addSRUdata', objSRU)
     })
   }
+})
+
+ipc.on('newConfig', function (event) {
+  mainWindow.reload()
 })
 
 // listens on openConfigWindow, invokes the createConfigWindow function
@@ -384,12 +417,12 @@ function checkConfig () {
   } else {
     createConfig()
   }
-  if (!fs.existsSync('C:\\Export\\SignaturenDruck\\Formate\\gross.json')) {
-    let configBig = new Store({name: 'gross', cwd: 'C:\\Export\\SignaturenDruck\\Formate'})
+  if (!fs.existsSync('C:\\Export\\SignaturenDruck\\Formate\\thulb_gross.json')) {
+    let configBig = new Store({name: 'thulb_gross', cwd: 'C:\\Export\\SignaturenDruck\\Formate'})
     configBig.set(configBigNew)
   }
-  if (!fs.existsSync('C:\\Export\\SignaturenDruck\\Formate\\klein.json')) {
-    let configSmall = new Store({name: 'klein', cwd: 'C:\\Export\\SignaturenDruck\\Formate'})
+  if (!fs.existsSync('C:\\Export\\SignaturenDruck\\Formate\\thulb_klein.json')) {
+    let configSmall = new Store({name: 'thulb_klein', cwd: 'C:\\Export\\SignaturenDruck\\Formate'})
     configSmall.set(configSmallNew)
   }
 }
@@ -419,7 +452,7 @@ function printBig (data, dataMan) {
   }))
   winBig.once('ready-to-show', () => {
     winBig.webContents.send('toPrint', data, dataMan)
-    let configBig = new Store({name: 'gross', cwd: 'C:\\Export\\SignaturenDruck\\Formate'})
+    let configBig = new Store({name: 'thulb_gross', cwd: 'C:\\Export\\SignaturenDruck\\Formate'})
 
     // generates a pdf file which is then printed silently via Foxit Reader v6.2.3.0815
     winBig.webContents.printToPDF({marginsType: 2, landscape: true, pageSize: { width: configBig.store.label.height, height: configBig.store.label.width }}, (error, data) => {
@@ -455,7 +488,7 @@ function printSmall (data, dataMan) {
   }))
   winSmall.once('ready-to-show', () => {
     winSmall.webContents.send('toPrint', data, dataMan)
-    let configSmall = new Store({name: 'small', cwd: 'C:\\Export\\SignaturenDruck\\Formate'})
+    let configSmall = new Store({name: 'thulb_klein', cwd: 'C:\\Export\\SignaturenDruck\\Formate'})
 
     winSmall.webContents.printToPDF({marginsType: 2, landscape: true, pageSize: { width: configSmall.store.label.height, height: configSmall.store.label.width }}, (error, data) => {
       if (error) throw error

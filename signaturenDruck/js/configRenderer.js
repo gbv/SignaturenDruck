@@ -51,7 +51,10 @@ function changeLabelWidth (event) {
 function saveConfig () {
   if (document.getElementById('input_fileName').value !== '') {
     if (!fs.existsSync('C:\\Export\\SignaturenDruck\\Formate\\' + document.getElementById('input_fileName').value + '.json')) {
-      fs.writeFileSync('C:\\Export\\SignaturenDruck\\Formate\\' + document.getElementById('input_fileName').value + '.json', JSON.stringify(setObjct()), 'utf8')
+      let objct = setObjct()
+      fs.writeFileSync('C:\\Export\\SignaturenDruck\\FormateCSS\\' + document.getElementById('input_fileName').value + '.css', createCSS(objct), 'utf8')
+      fs.writeFileSync('C:\\Export\\SignaturenDruck\\Formate\\' + document.getElementById('input_fileName').value + '.json', JSON.stringify(objct), 'utf8')
+      ipc.send('newConfig')
     } else {
       console.log('already exists')
     }
@@ -96,6 +99,62 @@ function setObjct () {
   newConfig.linesData = linesData
 
   return newConfig
+}
+
+function createCSS (obj) {
+  let contentCSS = ''
+  contentCSS = label(contentCSS)
+  contentCSS = centerHor(contentCSS)
+  contentCSS = centerVer(contentCSS)
+  contentCSS = lineSpace(contentCSS)
+  contentCSS = linesStyle(contentCSS)
+  function linesStyle(str) {
+    for (let line of obj.linesData) {
+      str += '.format_' + obj.name + ' > .innerBox > #line_' + line.id + ' {\n'
+      str += 'font-family: ' + line.font + ';\n'
+      str += 'font-size: ' + line.fontSize + 'pt;\n'
+      if (line.bold) {
+        str += 'font-weight: bold;\n'
+      } else {
+        str += 'font-weight: normal;\n'
+      }
+      if (line.italic) {
+        str += 'font-style: italic;\n'
+      } else {
+        str += 'font-style: normal;\n'
+      }
+      str += 'margin-left: ' + line.indent + '%;\n'
+      str += '}\n'
+    }
+    return str
+  }
+  function lineSpace (str) {
+    str += '.format_' + obj.name + ' > .innerBox > p {\nmargin: ' + obj.lineSpace + 'px 0px ' + obj.lineSpace + 'px 0px;\n}\n'
+    return str
+  }
+  function centerVer (str) {
+    if (obj.centerVer) {
+      str += '.format_' + obj.name + '{\nalign-items: center;\n}\n'
+    } else {
+      str += '.format_' + obj.name + '{\nalign-items: initial;\n}\n'
+    }
+    return str
+  }
+  function centerHor (str) {
+    if (obj.centerHor) {
+      str += '.format_' + obj.name + '{\njustify-content: center;\n}\n'
+      str += '.format_' + obj.name + ' > .innerBox {\nwidth: initial;\n}\n'
+    } else {
+      str += '.format_' + obj.name + '{\njustify-content: initial;\n}\n'
+      str += '.format_' + obj.name + ' > .innerBox {\nwidth: 100%;\n}\n'
+    }
+    return str
+  }
+  function label (str) {
+    str += '.format_' + obj.name + ' {\nwidth: ' + obj.label.width + ';\nheight: ' + obj.label.height + ';\n}\n'
+    return str
+  }
+  return contentCSS
 }
 
 function close () {

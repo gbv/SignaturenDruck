@@ -4,6 +4,10 @@ body {
   font-size: 10pt;
 }
 
+*:focus {
+  outline: none;
+}
+
 #tableBox {
   border: 1px solid grey;
   overflow-y: scroll;
@@ -80,7 +84,7 @@ table {
 thead th {
   position: sticky;
   top: 0;
-  z-index: 10;
+  z-index: 1;
   background-color: RGB(240, 240, 240);
 }
 
@@ -182,4 +186,8 @@ td.txtCell {
   font-family: Arial, Helvetica, sans-serif;
   padding: 5px;
   font-weight: 600;
+}
+
+.noIndent > p {
+  margin-left: 0px !important;
 }

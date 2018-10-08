@@ -1,6 +1,6 @@
 #previewBox {
-  width: 80mm;
-  height: 43mm;
+  /* width: 80mm; */
+  /* height: 43mm; */
   border: 1px solid black;
   background-color: white;
   margin: 5px auto 5px auto;
@@ -8,6 +8,7 @@
   font-family: "Arial Narrow";
   font-size: 14pt;
   display: flex;
+  float: right;
   overflow: hidden;
 }
 
