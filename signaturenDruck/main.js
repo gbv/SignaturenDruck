@@ -28,120 +28,6 @@ const configNew = {
   'devMode': false
 }
 
-// default "big" label config
-const configBigNew = {
-  'name': 'thulb_gross',
-  'printer': '\\\\ulbw2k812\\ulbps101',
-  'label': {
-    'width': '80mm',
-    'height': '43mm'
-  },
-  'pdfName': 'printBig.pdf',
-  'paper': {
-    'width': '99970',
-    'height': '48920'
-  },
-  'lines': '6',
-  'centerHor': false,
-  'centerVer': true,
-  'lineSpace': '2',
-  'linesData': [
-    {
-      'id': 1,
-      'font': 'Arial Narrow',
-      'fontSize': '16',
-      'bold': true,
-      'italic': false,
-      'indent': '45'
-    },
-    {
-      'id': 2,
-      'font': 'Arial Narrow',
-      'fontSize': '16',
-      'bold': true,
-      'italic': false,
-      'indent': '45'
-    },
-    {
-      'id': 3,
-      'font': 'Arial Narrow',
-      'fontSize': '16',
-      'bold': true,
-      'italic': false,
-      'indent': '45'
-    },
-    {
-      'id': 4,
-      'font': 'Arial Narrow',
-      'fontSize': '16',
-      'bold': false,
-      'italic': false,
-      'indent': '45'
-    },
-    {
-      'id': 5,
-      'font': 'Arial Narrow',
-      'fontSize': '16',
-      'bold': false,
-      'italic': false,
-      'indent': '45'
-    },
-    {
-      'id': 6,
-      'font': 'Arial Narrow',
-      'fontSize': '16',
-      'bold': true,
-      'italic': false,
-      'indent': '45'
-    }
-  ]
-}
-
-// default "small" label config
-const configSmallNew = {
-  'name': 'thulb_klein',
-  'printer': '\\\\ulbw2k812\\ulbps124',
-  'label': {
-    'width': '74mm',
-    'height': '23mm'
-  },
-  'pdfName': 'printSmall.pdf',
-  'paper': {
-    'width': '74500',
-    'height': '23500'
-  },
-  'lines': '3',
-  'centerHor': false,
-  'centerVer': true,
-  'lineSpace': '2',
-  'linesData': [
-    {
-      'id': 1,
-      'font': 'Arial Narrow',
-      'fontSize': '15',
-      'bold': true,
-      'italic': false,
-      'indent': '45'
-    },
-    {
-      'id': 2,
-      'font': 'Arial Narrow',
-      'fontSize': '15',
-      'bold': true,
-      'italic': false,
-      'indent': '45'
-    },
-    {
-      'id': 3,
-      'font': 'Arial Narrow',
-      'fontSize': '15',
-      'bold': true,
-      'italic': false,
-      'indent': '45'
-    }
-  ]
-}
-
 // name of signature storage json
 const sigJSON = 'signaturen.json'
 
@@ -379,9 +265,11 @@ function loadAndAddFromSRU (barcode) {
 
 // creates the mainWindow
 function createWindow () {
-  checkConfig()
   checkDir('./tmp')
   checkDir('C:\\Export\\SignaturenDruck')
+  checkDir('C:\\Export\\SignaturenDruck\\Formate')
+  checkDir('C:\\Export\\SignaturenDruck\\FormateCSS')
+  checkConfig()
   // Create the browser window.
   if (!config.store.devMode) {
     mainWindow = new BrowserWindow({width: 800, height: 580})
@@ -424,13 +312,19 @@ function checkConfig () {
   } else {
     createConfig()
   }
-  if (!fs.existsSync('C:\\Export\\SignaturenDruck\\Formate\\thulb_gross.json')) {
-    let configBig = new Store({name: 'thulb_gross', cwd: 'C:\\Export\\SignaturenDruck\\Formate'})
-    configBig.set(configBigNew)
-  }
-  if (!fs.existsSync('C:\\Export\\SignaturenDruck\\Formate\\thulb_klein.json')) {
-    let configSmall = new Store({name: 'thulb_klein', cwd: 'C:\\Export\\SignaturenDruck\\Formate'})
-    configSmall.set(configSmallNew)
+  let defaultConfigs = ['thulb_gross', 'thulb_klein', 'thulb_klein_1']
+  defaultConfigs.forEach(fileName => {
+    checkAndCreate(fileName)
+  })
+  function checkAndCreate (fileName) {
+    if (!fs.existsSync('C:\\Export\\SignaturenDruck\\Formate\\' + fileName + '.json')) {
+      let file = fs.readFileSync('./defaultFiles/' + fileName + '.json', 'utf8')
+      fs.writeFileSync('C:\\Export\\SignaturenDruck\\Formate\\' + fileName + '.json', file, 'utf8')
+    }
+    if (!fs.existsSync('C:\\Export\\SignaturenDruck\\FormateCSS\\' + fileName + '.css')) {
+      let file = fs.readFileSync('./defaultFiles/' + fileName + '.css', 'utf8')
+      fs.writeFileSync('C:\\Export\\SignaturenDruck\\FormateCSS\\' + fileName + '.css', file, 'utf8')
+    }
   }
 }
 

@@ -1,0 +1,27 @@
+{
+  "name": "thulb_klein_1",
+  "printer": "\\\\ulbw2k812\\ulbps124",
+  "label": {
+    "width": "74mm",
+    "height": "23mm"
+  },
+  "pdfName": "thulb_klein_1.pdf",
+  "paper": {
+    "width": "74500",
+    "height": "23500"
+  },
+  "lines": "1",
+  "centerHor": true,
+  "centerVer": true,
+  "lineSpace": "5",
+  "linesData": [
+    {
+      "id": 1,
+      "font": "Arial Narrow",
+      "fontSize": "15",
+      "bold": true,
+      "italic": false,
+      "indent": "0"
+    }
+  ]
+}
