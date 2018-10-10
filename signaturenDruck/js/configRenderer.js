@@ -8,10 +8,6 @@ const fs = require('fs')
 // requires the lodash-module
 const _ = require('lodash')
 
-// requires the electron-store module and initializes it
-const Store = require('electron-store')
-const config = new Store({cwd: 'C:\\Export\\SignaturenDruck'})
-
 // required for ipc calls to the main process
 const ipc = require('electron').ipcRenderer
 
@@ -56,7 +52,7 @@ function saveConfig () {
       fs.writeFileSync('C:\\Export\\SignaturenDruck\\Formate\\' + document.getElementById('input_fileName').value + '.json', JSON.stringify(objct), 'utf8')
       ipc.send('newConfig')
     } else {
-      console.log('already exists')
+      alert('Ein Format mit diesem Namen ist bereits vorhanden.')
     }
   }
 }
@@ -108,9 +104,10 @@ function createCSS (obj) {
   contentCSS = centerVer(contentCSS)
   contentCSS = lineSpace(contentCSS)
   contentCSS = linesStyle(contentCSS)
-  function linesStyle(str) {
+
+  function linesStyle (str) {
     for (let line of obj.linesData) {
-      str += '.format_' + obj.name + ' > .innerBox > #line_' + line.id + ' {\n'
+      str += '.format_' + obj.name + ' > .innerBox > .line_' + line.id + ' {\n'
       str += 'font-family: ' + line.font + ';\n'
       str += 'font-size: ' + line.fontSize + 'pt;\n'
       if (line.bold) {
@@ -134,24 +131,22 @@ function createCSS (obj) {
   }
   function centerVer (str) {
     if (obj.centerVer) {
-      str += '.format_' + obj.name + '{\nalign-items: center;\n}\n'
+      str += '.format_' + obj.name + ' {\nalign-items: center;\n}\n'
     } else {
-      str += '.format_' + obj.name + '{\nalign-items: initial;\n}\n'
+      str += '.format_' + obj.name + ' {\nalign-items: initial;\n}\n'
     }
     return str
   }
   function centerHor (str) {
     if (obj.centerHor) {
-      str += '.format_' + obj.name + '{\njustify-content: center;\n}\n'
-      str += '.format_' + obj.name + ' > .innerBox {\nwidth: initial;\n}\n'
+      str += '.format_' + obj.name + ' {\ntext-align: center;\n}\n'
     } else {
-      str += '.format_' + obj.name + '{\njustify-content: initial;\n}\n'
-      str += '.format_' + obj.name + ' > .innerBox {\nwidth: 100%;\n}\n'
+      str += '.format_' + obj.name + ' {\ntext-align: initial;\n}\n'
     }
     return str
   }
   function label (str) {
-    str += '.format_' + obj.name + ' {\nwidth: ' + obj.label.width + ';\nheight: ' + obj.label.height + ';\n}\n'
+    str += '#previewBox.format_' + obj.name + ' {\nwidth: ' + obj.label.width + ';\nheight: ' + obj.label.height + ';\n}\n'
     return str
   }
   return contentCSS
@@ -314,11 +309,9 @@ function changeLineFontSize (event) {
 
 function centerHor () {
   if (!document.getElementById('centerHor').checked) {
-    document.getElementById('previewBox').style.justifyContent = 'initial'
-    document.getElementById('innerBox').style.width = '100%'
+    document.getElementById('previewBox').style.textAlign = 'initial'
   } else {
-    document.getElementById('previewBox').style.justifyContent = 'center'
-    document.getElementById('innerBox').style.width = 'initial'
+    document.getElementById('previewBox').style.textAlign = 'center'
   }
 }
 
