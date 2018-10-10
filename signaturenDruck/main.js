@@ -13,6 +13,9 @@ const config = new Store({cwd: 'C:\\Export\\SignaturenDruck'})
 const cmd = require('node-cmd')
 const {net} = require('electron')
 
+// requires lodash
+const _ = require('lodash')
+
 // default main config settings
 const configNew = {
   'testKey': "Don't panic, this is just a test",
@@ -145,9 +148,10 @@ const sigJSON = 'signaturen.json'
 // Keep a global reference of the window object, if you don't, the window will
 // be closed automatically when the JavaScript object is garbage collected.
 let mainWindow
-let savedData
 let winManual
 let winConfig
+
+let formats = []
 
 // This method will be called when Electron has finished
 // initialization and is ready to create browser windows.
@@ -169,19 +173,14 @@ app.on('activate', function () {
 
 // starts the printing process
 ipc.on('print', function (event, data, dataMan) {
-  savedData = data
-  if (savedData.big || savedData.small) {
-    try {
-      if (savedData.big) {
-        printBig(savedData.big, dataMan)
-      }
-      if (savedData.small) {
-        printSmall(savedData.small, dataMan)
-      }
-    } catch (error) {
-      throw error
-    }
-  }
+  loadFormats()
+  let usedFormats = []
+  _.forEach(data, function (key, value) {
+    usedFormats.push(value)
+  })
+  usedFormats.forEach(element => {
+    printData(element, data[element], dataMan)
+  })
 })
 
 app.on('close', () => {
@@ -251,6 +250,14 @@ ipc.on('closeWinConfig', function (event) {
 function closeWinConfig () {
   winConfig.close()
   winConfig = null
+}
+
+function loadFormats () {
+  let files = fs.readdirSync('C:\\Export\\SignaturenDruck\\Formate')
+  for (let file of files) {
+    let fileName = file.split('.json')[0]
+    formats[fileName] = JSON.parse(fs.readFileSync('C:\\Export\\SignaturenDruck\\Formate\\' + file, 'utf8'))
+  }
 }
 
 // loads the shelfmark with the matching barcode from SRU, adds it to the table
@@ -441,28 +448,23 @@ function createConfig () {
   config.set(configNew)
 }
 
-// invokes the generating and printing of printBig.pdf
-function printBig (data, dataMan) {
-  let winBig = null
-  winBig = new BrowserWindow({ heihgt: 350, width: 500, show: false })
-  winBig.loadURL(url.format({
+function printData (format, data, dataMan) {
+  let winPrint = null
+  winPrint = new BrowserWindow({width: 899, height: 900, show: false})
+  winPrint.loadURL(url.format({
     pathname: path.join(__dirname, 'html/print.html'),
     protocol: 'file:',
     slashes: true
   }))
-  winBig.once('ready-to-show', () => {
-    winBig.webContents.send('toPrint', data, dataMan)
-    let configBig = new Store({name: 'thulb_gross', cwd: 'C:\\Export\\SignaturenDruck\\Formate'})
-
-    // generates a pdf file which is then printed silently via Foxit Reader v6.2.3.0815
-    winBig.webContents.printToPDF({marginsType: 2, landscape: true, pageSize: { width: configBig.store.label.height, height: configBig.store.label.width }}, (error, data) => {
+  winPrint.once('ready-to-show', () => {
+    winPrint.webContents.send('toPrint', format, formats, data, dataMan)
+    winPrint.webContents.printToPDF({marginsType: 2, landscape: true, pageSize: { width: formats[format].paper.height, height: formats[format].paper.width }}, (error, data) => {
       if (error) throw error
-      fs.writeFile('./tmp/' + configBig.store.pdfName, data, (error) => {
+      fs.writeFile('./tmp/' + formats[format].pdfName, data, (error) => {
         if (error) throw error
         if (!config.store.devMode) {
-          // printing with Foxit Reader 6.2.3.0815 via node-cmd
           cmd.get(
-            '"C:\\Program Files (x86)\\Foxit Software\\Foxit Reader\\Foxit Reader.exe"' + ' /t .\\tmp\\' + configBig.store.pdfName + ' ' + configBig.store.printer,
+            '"C:\\Program Files (x86)\\Foxit Software\\Foxit Reader\\Foxit Reader.exe"' + ' /t .\\tmp\\' + formats[format].pdfName + ' ' + formats[format].printer,
             function (error, data, stderr) {
               if (error) throw error
             }
@@ -471,44 +473,9 @@ function printBig (data, dataMan) {
       })
     })
     if (config.store.devMode) {
-      winBig.show()
+      winPrint.show()
     }
-    winBig = null
-  })
-}
-
-// invokes the generating and printing of printSmall.pdf
-function printSmall (data, dataMan) {
-  let winSmall = null
-  winSmall = new BrowserWindow({width: 350, height: 500, show: false})
-  winSmall.loadURL(url.format({
-    pathname: path.join(__dirname, 'html/print.html'),
-    protocol: 'file:',
-    slashes: true
-  }))
-  winSmall.once('ready-to-show', () => {
-    winSmall.webContents.send('toPrint', data, dataMan)
-    let configSmall = new Store({name: 'thulb_klein', cwd: 'C:\\Export\\SignaturenDruck\\Formate'})
-
-    winSmall.webContents.printToPDF({marginsType: 2, landscape: true, pageSize: { width: configSmall.store.label.height, height: configSmall.store.label.width }}, (error, data) => {
-      if (error) throw error
-      fs.writeFile('./tmp/' + configSmall.store.pdfName, data, (error) => {
-        if (error) throw error
-        if (!config.store.devMode) {
-          // printing with Foxit Reader 6.2.3.0815 via node-cmd
-          cmd.get(
-            '"C:\\Program Files (x86)\\Foxit Software\\Foxit Reader\\Foxit Reader.exe"' + ' /t .\\tmp\\' + configSmall.store.pdfName + ' ' + configSmall.store.printer,
-            function (error, data, stderr) {
-              if (error) throw error
-            }
-          )
-        }
-      })
-    })
-    if (config.store.devMode) {
-      winSmall.show()
-    }
-    winSmall = null
+    winPrint = null
   })
 }
 
