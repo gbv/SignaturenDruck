@@ -50,26 +50,6 @@ window.onload = function () {
     document.getElementById('devMode').style.display = 'block'
   }
   checkPrinters()
-  let printerNotFound = []
-  for (let printer in printerFound) {
-    if (!printerFound[printer]) {
-      printerNotFound.push(printer)
-    }
-  }
-  let str = ''
-  if (printerNotFound.length > 0) {
-    if (printerNotFound.length === 1) {
-      str = 'Der Drucker des Formats: "' + printerNotFound[0] + '" wurde nicht gefunden'
-    } else {
-      str = 'Die Drucker der folgenden Formate wurden nicht gefunden: "'
-      printerNotFound.forEach(element => {
-        str += element + ', '
-      })
-      str = str.substr(0, str.length - 2)
-      str += '"'
-    }
-    document.getElementById('btn_print').innerHTML = '<div class="tooltip">Drucken<span class="tooltiptext tooltip-right">' + str + '</span></div>'
-  }
 
   document.getElementById('modalTxt').innerHTML = config.get('modalTxt')
   let fileSelected = document.getElementById('fileToRead')
@@ -175,23 +155,102 @@ function getShelfmarksFromFile (allLines) {
         sig.bigLabel = false
       }
       let txt = plainTxt.split(config.get('newLineAfter'))
+      sig.txtLength = txt.length
       if (txt.length === 6) {
         sig.txt = txt
+        _.forEach(txt, function (value) {
+          sig.txtOneLine += value + ' '
+        })
       } else {
         let txt = [plainTxt]
         sig.txt = txt
+        sig.txtOneLine = plainTxt
       }
-      sig.txtLength = sig.txt.length
     } else if (first4 === '7901') {
       sig.date = extract.date(line)
     }
     if (sig.allSet()) {
+      if (sig.txtLength < 3) {
+        createMultipleLines()
+      }
       obj.all.push(sig.shelfmark)
       sig = new Shelfmark()
       sig.ppn = ppnAktuell
     }
   })
   return obj
+
+  function createMultipleLines () {
+    let txt = sig.txtOneLine
+    let indxSlash = txt.indexOf('/')
+    let indxColon = txt.indexOf(':')
+    let i = 0
+    sig.txt = []
+    sig.txt[0] = txt
+    if (indxSlash !== -1) {
+      setSigTxt0and1(indxSlash, txt)
+      i = 1
+    }
+    if (indxColon !== -1) {
+      if (i === 0) {
+        setSigTxt0and1(indxColon, txt)
+      } else {
+        let i = 0
+        let txt = []
+        let length = sig.txt.length
+        sig.txt.forEach(element => {
+          let indx = element.indexOf(':')
+          if (indx !== -1) {
+            let j = 0
+            while (j < i) {
+              txt[j] = sig.txt[j]
+              j++
+            }
+            let k = i
+            txt[k] = element.substring(0, indx)
+            k++
+            txt[k] = element.substring(indx)
+            k++
+            while (k <= length) {
+              txt[k] = sig.txt[k - 1]
+              k++
+            }
+            sig.txt = txt
+          }
+          i++
+        })
+      }
+    }
+    i = 0
+    txt = []
+    let length = sig.txt.length
+    sig.txt.forEach(element => {
+      let elementParts = element.split(' ')
+      if (elementParts.length >= 3) {
+        let j = 0
+        while (j < i) {
+          txt[j] = sig.txt[j]
+          j++
+        }
+        let k = i
+        txt[k] = elementParts[0] + ' ' + elementParts[1]
+        k++
+        txt[k] = element.substring(txt[k - 1].length)
+        k++
+        while (k <= length) {
+          txt[k] = sig.txt[k - 1]
+          k++
+        }
+        sig.txt = txt
+      }
+      i++
+    })
+  }
+
+  function setSigTxt0and1 (indx, txt) {
+    sig.txt[0] = txt.substring(0, indx + 1)
+    sig.txt[1] = txt.substring(indx + 1)
+  }
 }
 
 // retuns if label is big
@@ -409,7 +468,6 @@ function addToTable (obj) {
       }
       select.appendChild(size)
     })
-    console.log(id)
     select.onchange = function () { pre('m_' + id) }
     if (obj[id].lines == 1) {
       if (printerFound['thulb_klein_1']) {
@@ -461,13 +519,7 @@ function createPpnRow (row, value) {
 function createTxtCell (row, cellNr, objct) {
   let txtCell = row.insertCell(cellNr)
   txtCell.onclick = function () { pre(objct.id) }
-  if (objct.txtLength === 1) {
-    txtCell.innerHTML = objct.txt
-  } else {
-    _.forEach(objct.txt, function (value) {
-      txtCell.innerHTML += value + ' '
-    })
-  }
+  txtCell.innerHTML = objct.txtOneLine
   txtCell.className = 'txtCell'
 }
 
@@ -498,8 +550,18 @@ function createShortShelfmarkCell (row, cellNr, objct) {
     input.type = 'checkbox'
     input.name = 'shortShelfmark'
     input.value = objct.id
-    input.onclick = function () { pre(objct.id) }
+    input.onclick = function () {
+      changeFormat(objct.id)
+      pre(objct.id)
+    }
     shortShelfmarkCell.appendChild(input)
+  }
+  function changeFormat (id) {
+    if (document.getElementById('short_' + id).checked) {
+      document.getElementById('templateSelect_' + id).value = 'thulb_klein'
+    } else {
+      document.getElementById('templateSelect_' + id).value = 'thulb_klein_1'
+    }
   }
 }
 
@@ -544,17 +606,16 @@ function createLabelSizeCell (row, cellNr, objct) {
     }
     select.appendChild(size)
   })
-  console.log(objct)
   select.onchange = function () { pre(objct.id) }
-  if (objct.txt.length == 1) {
+  if (objct.txtLength <= 2) {
     if (printerFound['thulb_klein_1']) {
       select.value = 'thulb_klein_1'
     }
-  } else if (objct.txt.length <= 3) {
+  } else if (objct.txtLength === 3) {
     if (printerFound['thulb_klein']) {
       select.value = 'thulb_klein'
     }
-  } else if (objct.txt.length <= 6) {
+  } else if (objct.txtLength <= 6) {
     if (printerFound['thulb_gross']) {
       select.value = 'thulb_gross'
     }
@@ -631,12 +692,9 @@ function closeButton () {
 
 // gathers the data to print and invokes printing via ipc
 function printButton () {
-  let dataAll = {}
-  let big = {}
-  let b = 0
-  let small = {}
-  let s = 0
-  let j = 0
+  let dataAll = {
+    all: []
+  }
 
   let elems = document.querySelectorAll('[name=toPrint]')
   for (let i = 0; i < elems.length; i++) {
@@ -645,43 +703,50 @@ function printButton () {
         'manual': false,
         'id': '',
         'count': '1',
-        'size': 'big',
-        'short': false,
-        'removeIndent': false
+        'removeIndent': false,
+        'format': '',
+        'isShort': false
       }
+      dataAll.all.push(setData(data, i))
+    }
+  }
+  ipc.send('print', _.groupBy(dataAll.all, 'format'), objMan)
+
+  function setData (data, i) {
+    setIdAndManual()
+    setFormat()
+    setCount()
+    checkIfShort()
+
+    return data
+
+    function checkIfShort () {
+      if (document.getElementById('short_' + data.id).checked) {
+        data.isShort = true
+      }
+    }
+    function setCount () {
+      let count = document.getElementById('count_' + data.id).value
+      if ((count <= 99) && (count >= 1)) {
+        data.count = count
+      } else if (count > 99) {
+        data.count = 99
+      } else if (count < 1) {
+        data.count = 1
+      }
+    }
+    function setFormat () {
+      data.format = document.getElementById('templateSelect_' + data.id).value
+    }
+    function setIdAndManual () {
       if (elems[i].id.includes('print_m_')) {
         data.id = elems[i].id.split('print_')[1]
         data.manual = true
       } else {
         data.id = elems[i].value
       }
-      let count = document.getElementById('count_' + data.id).value
-      if ((count <= 99) && (count >= 1)) {
-        data.count = count
-      }
-      if (document.getElementById('short_' + data.id)) {
-        if (document.getElementById('short_' + data.id).checked) {
-          data.short = true
-        }
-        data.size = 'small'
-        small[s] = data
-        s++
-      } else {
-        big[b] = data
-        b++
-      }
-      dataAll[j] = data
-      j++
     }
   }
-  let data = {}
-  if (b > 0) {
-    data.big = big
-  }
-  if (s > 0) {
-    data.small = small
-  }
-  ipc.send('print', data, objMan)
 }
 
 // funtion to delete all manual entries
@@ -786,6 +851,26 @@ function checkPrinters () {
   for (let format in formats) {
     printerFound[format] = isIncluded(formats[format].printer, printerList)
   }
+  let printerNotFound = []
+  for (let printer in printerFound) {
+    if (!printerFound[printer]) {
+      printerNotFound.push(printer)
+    }
+  }
+  let str = ''
+  if (printerNotFound.length > 0) {
+    if (printerNotFound.length === 1) {
+      str = 'Der Drucker des Formats: "' + printerNotFound[0] + '" wurde nicht gefunden'
+    } else {
+      str = 'Die Drucker der folgenden Formate wurden nicht gefunden: "'
+      printerNotFound.forEach(element => {
+        str += element + ', '
+      })
+      str = str.substr(0, str.length - 2)
+      str += '"'
+    }
+    document.getElementById('btn_print').innerHTML = '<div class="tooltip">Drucken<span class="tooltiptext tooltip-right">' + str + '</span></div>'
+  }
 }
 
 // function to submit the barcode
@@ -818,13 +903,33 @@ function pre (id) {
         found = _.find(key, { 'id': Number(id) })
         if (found !== undefined) {
           sig = found
-          showData(sig.txt)
+          if (sig.txtLength <= 2) {
+            if (document.getElementById('short_' + sig.id).checked) {
+              showData(sig.txt)
+            } else {
+              let data = []
+              data[0] = sig.txtOneLine
+              showData(data)
+            }
+          } else {
+            showData(sig.txt)
+          }
         }
       })
     } else {
       let found = _.find(JSON.parse(file), { 'id': Number(id) })
       if (found !== undefined) {
-        showData(found.txt)
+        if (found.txtLength <= 2) {
+          if (document.getElementById('short_' + found.id).checked) {
+            showData(found.txt)
+          } else {
+            let data = []
+            data[0] = found.txtOneLine
+            showData(data)
+          }
+        } else {
+          showData(found.txt)
+        }
       }
     }
     document.getElementsByClassName('innerBox')[0].className = 'innerBox'
@@ -855,6 +960,7 @@ function showData (shelfmark) {
   shelfmark.forEach(element => {
     line = document.createElement('p')
     line.id = 'line_' + i
+    line.className = 'line_' + i
     if (element == '') {
       let emptyLine = document.createElement('br')
       line.appendChild(emptyLine)
