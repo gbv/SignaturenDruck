@@ -20,14 +20,6 @@ const ipc = require('electron').ipcRenderer
 // requires the electron-store module and initializes it
 const Store = require('electron-store')
 const config = new Store({cwd: 'C:\\Export\\SignaturenDruck'})
-const configBig = new Store({
-  name: 'thulb_gross',
-  cwd: 'C:\\Export\\SignaturenDruck\\Formate'
-})
-const configSmall = new Store({
-  name: 'thulb_klein',
-  cwd: 'C:\\Export\\SignaturenDruck\\Formate'
-})
 
 // requires the dataExtract-module
 const DataExtract = require('./dataExtract.js')
