@@ -713,8 +713,11 @@ function printButton () {
     return data
 
     function checkIfShort () {
-      if (document.getElementById('short_' + data.id).checked) {
-        data.isShort = true
+      let shortCkbx = document.getElementById('short_' + data.id)
+      if (shortCkbx) {
+        if (shortCkbx.checked) {
+          data.isShort = true
+        }
       }
     }
     function setCount () {
