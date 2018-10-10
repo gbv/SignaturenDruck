@@ -7,6 +7,7 @@ class shelfmark {
     this._date = ''
     this._id = ''
     this._bigLabel = true
+    this._txtOneLine = ''
   }
 
   // Setter
@@ -31,6 +32,9 @@ class shelfmark {
   set bigLabel (bool) {
     this._bigLabel = bool
   }
+  set txtOneLine (str) {
+    this._txtOneLine = str
+  }
 
   // Getter
   get ppn () {
@@ -54,8 +58,11 @@ class shelfmark {
   get bigLabel () {
     return this._bigLabel
   }
+  get txtOneLine () {
+    return this._txtOneLine
+  }
   get shelfmark () {
-    return {'PPN': this._ppn, 'id': this._id, 'bigLabel': this._bigLabel, 'txt': this._txt, 'txtLength': this._txtLength, 'date': this._date, 'exNr': this._exNr}
+    return {'PPN': this._ppn, 'id': this._id, 'bigLabel': this._bigLabel, 'txtOneLine': this._txtOneLine, 'txt': this._txt, 'txtLength': this._txtLength, 'date': this._date, 'exNr': this._exNr}
   }
 
   // Method
