@@ -11,19 +11,31 @@ const _ = require('lodash')
 // requires the username-module
 const username = require('username')
 
-// requires the electron-store module and initializes it
-const Store = require('electron-store')
-const config = new Store({cwd: 'C:\\Export\\SignaturenDruck'})
-
 // required for ipc calls to the main process
 const ipc = require('electron').ipcRenderer
 
-ipc.on('toPrint', function (event, data, dataMan) {
-  main(data, dataMan)
+window.onload = function () {
+  addStyleLinks()
+
+  function addStyleLinks () {
+    let files = fs.readdirSync('C:\\Export\\SignaturenDruck\\FormateCSS')
+    for (let file of files) {
+      let fileName = file.split('.css')[0]
+      let cssLink = document.createElement('link')
+      cssLink.rel = 'stylesheet'
+      cssLink.type = 'text/css'
+      cssLink.href = 'C:/Export/SignaturenDruck/FormateCSS/' + fileName + '.css'
+      document.head.appendChild(cssLink)
+    }
+  }
+}
+
+ipc.on('toPrint', function (event, format, formats, data, dataMan) {
+  main(format, formats, data, dataMan)
   ipc.send('printed', true)
 })
 
-function main (ids, dataMan) {
+function main (format, formats, data, dataMan) {
   let file = ''
   if (fs.existsSync('signaturen.json')) {
     file = fs.readFileSync('signaturen.json', 'utf8')
@@ -31,272 +43,53 @@ function main (ids, dataMan) {
   addUsername()
   addDate()
 
-  _.forEach((ids), function (value) {
-    if ((value.count < 1) || (value.count > 99)) {
-      if (value.count > 99) {
-        value.count = 99
+  createPage(format, formats, data, dataMan, file)
+}
+
+function createPage (format, formats, data, dataMan, file) {
+  addStyle(format)
+  _.forEach(data, function (value) {
+    let div = document.createElement('div')
+    div.className = 'innerBox'
+    div.id = value.id
+
+    let linesData = getData(value.id, value)
+    let i = 1
+    linesData.forEach(line => {
+      let p = document.createElement('p')
+      p.className = 'line_' + i
+      if (line == '') {
+        p.appendChild(document.createElement('br'))
       } else {
-        value.count = 1
+        p.innerHTML = line
       }
-    }
+      div.appendChild(p)
+      i++
+    })
+    document.getElementById('toPrint').appendChild(div)
   })
-  let size = _.groupBy(_.forEach(ids, function (value) { return value }), 'size')
-  if (size.small) {
-    createSmall(size.small, dataMan, file)
-  }
-  if (size.big) {
-    createBig(size.big, dataMan, file)
-  }
-}
 
-function createSmall (data, dataMan, file) {
-  document.getElementById('userCard').className += ' small'
-  document.getElementById('currentUsername').className += ' small'
-  document.getElementById('currentDate').className += ' small'
-  _.forEach(data, function (value) {
-    let objct = value
-    if (objct.manual) {
-      let manualId = objct.id.split('m_')[1]
-      let shelfmark = dataMan[manualId]
-      for (let count = 0; count < objct.count; count++) {
-        let length = shelfmark.lines
-        let id = objct.id
-        let i = 1
-        let div = document.createElement('div')
-        let line = document.createElement('p')
-        div.className = getShelfmarkClass(objct, length)
-        if (shelfmark.removeIndent) {
-          div.classList.remove('indent')
-        }
-        div.id = id
-        let text = dataMan[manualId].lineTxts
-        let lineCount = length
-        text.forEach(element => {
-          if ((lineCount == 1) && (text.length == 1)) {
-            line.className = 'shelfmarkLine_' + i + ' oneLine' + ' small'
-            if (shelfmark.removeIndent) {
-              line.style.textAlign = 'left'
-            }
-          } else {
-            line.className = 'shelfmarkLine_' + i + ' small'
-          }
-          if (element == '') {
-            let emptyLine = document.createElement('br')
-            line.appendChild(emptyLine)
-          } else {
-            line.innerHTML = element
-          }
-          div.appendChild(line)
-          line = document.createElement('p')
-          i++
-        })
-        document.getElementById('toPrint').appendChild(div)
-      }
+  function getData (id, data) {
+    if (id.includes('m_')) {
+      return dataMan[id.split('m_')[1]].lineTxts
     } else {
-      showDataSmall(file, objct)
-    }
-  })
-}
-
-function createBig (data, dataMan, file) {
-  _.forEach(data, function (value) {
-    let objct = value
-    if (objct.manual) {
-      let manualId = objct.id.split('m_')[1]
-      let shelfmark = dataMan[manualId]
-      let id = shelfmark.id
-      let i = 1
-      let div = document.createElement('div')
-      let line = document.createElement('p')
-      div.className = 'shelfmark indent'
-      if (dataMan[manualId].removeIndent) {
-        div.classList.remove('indent')
-      }
-      div.id = id
-      shelfmark.lineTxts.forEach(element => {
-        line.className = 'shelfmarkLine_' + i
-        if (element == '') {
-          let emptyLine = document.createElement('br')
-          line.appendChild(emptyLine)
+      let shelfmarkData = _.find(JSON.parse(file), { 'id': Number(id) })
+      if (shelfmarkData.txtLength <= 2) {
+        if (data.isShort) {
+          return shelfmarkData.txt
         } else {
-          line.innerHTML = element
+          let tmp = []
+          tmp[0] = shelfmarkData.txtOneLine
+          return tmp
         }
-        div.appendChild(line)
-        line = document.createElement('p')
-        i++
-      })
-      document.getElementById('toPrint').appendChild(div)
-    } else {
-      showDataBig(file, objct)
-    }
-  })
-}
-
-function showDataBig (file, objct) {
-  if (config.store.sortByPPN) {
-    _.forEach(JSON.parse(file), function (key, value) {
-      let found = _.find(key, {'id': Number(objct.id)})
-      if (found !== undefined) {
-        createFromData(found)
-      }
-    })
-  } else {
-    let found = _.find(JSON.parse(file), { 'id': Number(objct.id) })
-    if (found !== undefined) {
-      createFromData(found)
-    }
-  }
-
-  function createFromData (shelfmark) {
-    if (shelfmark != '') {
-      for (let count = 0; count < objct.count; count++) {
-        let id = shelfmark.id
-        let i = 1
-        let div = document.createElement('div')
-        let line = document.createElement('p')
-        div.className = 'shelfmark indent'
-        div.id = id
-        shelfmark.txt.forEach(element => {
-          line.className = 'shelfmarkLine_' + i
-          if (element == '') {
-            let emptyLine = document.createElement('br')
-            line.appendChild(emptyLine)
-          } else {
-            line.innerHTML = element
-          }
-          div.appendChild(line)
-          line = document.createElement('p')
-          i++
-        })
-        document.getElementById('toPrint').appendChild(div)
+      } else {
+        return shelfmarkData.txt
       }
     }
   }
-}
 
-function showDataSmall (file, objct) {
-  if (config.store.sortByPPN) {
-    _.forEach(JSON.parse(file), function (key, value) {
-      let found = _.find(key, {'id': Number(objct.id)})
-      if (found !== undefined) {
-        createFromData(found)
-      }
-    })
-  } else {
-    let found = _.find(JSON.parse(file), { 'id': Number(objct.id) })
-    if (found !== undefined) {
-      createFromData(found)
-    }
-  }
-
-  function createFromData (shelfmark) {
-    if (shelfmark != '') {
-      for (let count = 0; count < objct.count; count++) {
-        let length = shelfmark.txtLength
-        let id = shelfmark.id
-        let i = 1
-        let div = document.createElement('div')
-        let line = document.createElement('p')
-        div.className = getShelfmarkClass(objct, length)
-        div.id = id
-        if (objct.short && length == 1) {
-          let text = shelfmark.txt[0]
-          let indxSlash = text.indexOf('/')
-          let indxColon = text.indexOf(':')
-          shelfmark.txt = []
-          shelfmark.txt[0] = text
-          let i = 0
-          if (indxSlash !== -1) {
-            shelfmark.txt[0] = text.substring(0, indxSlash + 1)
-            shelfmark.txt[1] = text.substring(indxSlash + 1)
-            i = 1
-          }
-          if (indxColon !== -1) {
-            if (i === 0) {
-              shelfmark.txt[0] = text.substring(0, indxColon + 1)
-              shelfmark.txt[1] = text.substring(indxColon + 1)
-              i = 1
-            } else {
-              let i = 0
-              let txt = []
-              let length = shelfmark.txt.length
-              shelfmark.txt.forEach(element => {
-                let indx = element.indexOf(':')
-                if (indx !== -1) {
-                  let j = 0
-                  while (j < i) {
-                    txt[j] = shelfmark.txt[j]
-                    j++
-                  }
-                  let k = i
-                  txt[k] = element.substring(0, indx)
-                  k++
-                  txt[k] = element.substring(indx)
-                  k++
-                  while (k <= length) {
-                    txt[k] = shelfmark.txt[k - 1]
-                    k++
-                  }
-                  shelfmark.txt = txt
-                }
-                i++
-              })
-            }
-          }
-          i = 0
-          let txt = []
-          let length = shelfmark.txt.length
-          shelfmark.txt.forEach(element => {
-            let elementParts = element.split(' ')
-            if (elementParts.length >= 3) {
-              let j = 0
-              while (j < i) {
-                txt[j] = shelfmark.txt[j]
-                j++
-              }
-              let k = i
-              txt[k] = elementParts[0] + ' ' + elementParts[1]
-              k++
-              txt[k] = element.substring(txt[k - 1].length)
-              k++
-              while (k <= length) {
-                txt[k] = shelfmark.txt[k - 1]
-                k++
-              }
-              shelfmark.txt = txt
-            }
-            i++
-          })
-        }
-        let text = shelfmark.txt
-        let lineCount = shelfmark.txt.length
-        text.forEach(element => {
-          if ((lineCount === 1) && (text.length === 1)) {
-            line.className = 'shelfmarkLine_' + i + ' oneLine' + ' small'
-          } else {
-            line.className = 'shelfmarkLine_' + i + ' small'
-          }
-          if (element == '') {
-            let emptyLine = document.createElement('br')
-            line.appendChild(emptyLine)
-          } else {
-            line.innerHTML = element
-          }
-          div.appendChild(line)
-          line = document.createElement('p')
-          i++
-        })
-        document.getElementById('toPrint').appendChild(div)
-      }
-    }
-  }
-}
-
-function getShelfmarkClass (objct, length) {
-  if (objct.short || length != 1) {
-    return 'shelfmark indent small'
-  } else {
-    return 'shelfmark center small'
+  function addStyle (fileName) {
+    document.getElementById('toPrint').className = 'format_' + fileName
   }
 }
 
