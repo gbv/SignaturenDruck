@@ -48,6 +48,7 @@ function main (format, formats, data, dataMan) {
 
 function createPage (format, formats, data, dataMan, file) {
   addStyle(format)
+  console.log(data)
   _.forEach(data, function (value) {
     for (let count = 0; count < value.count; count++) {
       let div = document.createElement('div')
