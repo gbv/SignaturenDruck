@@ -1,20 +1,26 @@
 #previewBox.format_thulb_klein_1 {
-  width: 74mm;
-  height: 23mm;
-  }
-  .format_thulb_klein_1 {
-  text-align: center;
-  }
-  .format_thulb_klein_1 {
-  align-items: center;
-  }
-  .format_thulb_klein_1 > .innerBox > p {
-  margin: 0px 0px 0px 0px;
-  }
-  .format_thulb_klein_1 > .innerBox > .line_1 {
-  font-family: Arial Narrow;
-  font-size: 15pt;
-  font-weight: bold;
-  font-style: normal;
-  margin-left: 0%;
-  }
+width: 74mm;
+height: 23mm;
+}
+.format_thulb_klein_1 {
+text-align: center;
+}
+.format_thulb_klein_1 {
+align-items: center;
+}
+#toPrint.format_thulb_klein_1 > .innerBox {
+height: 23mm;
+display: flex;
+justify-content: center;
+flex-direction: column;
+}
+.format_thulb_klein_1 > .innerBox > p {
+margin: 0px 0px 0px 0px;
+}
+.format_thulb_klein_1 > .innerBox > .line_1 {
+font-family: Arial Narrow;
+font-size: 15pt;
+font-weight: bold;
+font-style: normal;
+margin-left: 0%;
+}

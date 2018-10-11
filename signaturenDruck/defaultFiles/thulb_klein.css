@@ -1,34 +1,40 @@
 #previewBox.format_thulb_klein {
-  width: 74mm;
-  height: 23mm;
-  }
-  .format_thulb_klein{
-  text-align: initial;
-  }
-  .format_thulb_klein{
-  align-items: center;
-  }
-  .format_thulb_klein > .innerBox > p {
-  margin: 0px 0px 0px 0px;
-  }
-  .format_thulb_klein > .innerBox > .line_1 {
-  font-family: Arial Narrow;
-  font-size: 15pt;
-  font-weight: bold;
-  font-style: normal;
-  margin-left: 45%;
-  }
-  .format_thulb_klein > .innerBox > .line_2 {
-  font-family: Arial Narrow;
-  font-size: 15pt;
-  font-weight: bold;
-  font-style: normal;
-  margin-left: 45%;
-  }
-  .format_thulb_klein > .innerBox > .line_3 {
-  font-family: Arial Narrow;
-  font-size: 15pt;
-  font-weight: bold;
-  font-style: normal;
-  margin-left: 45%;
-  }
+width: 74mm;
+height: 23mm;
+}
+.format_thulb_klein{
+text-align: initial;
+}
+.format_thulb_klein{
+align-items: center;
+}
+#toPrint.format_thulb_klein > .innerBox {
+height: 23mm;
+display: flex;
+justify-content: center;
+flex-direction: column;
+}
+.format_thulb_klein > .innerBox > p {
+margin: 0px 0px 0px 0px;
+}
+.format_thulb_klein > .innerBox > .line_1 {
+font-family: Arial Narrow;
+font-size: 15pt;
+font-weight: bold;
+font-style: normal;
+margin-left: 45%;
+}
+.format_thulb_klein > .innerBox > .line_2 {
+font-family: Arial Narrow;
+font-size: 15pt;
+font-weight: bold;
+font-style: normal;
+margin-left: 45%;
+}
+.format_thulb_klein > .innerBox > .line_3 {
+font-family: Arial Narrow;
+font-size: 15pt;
+font-weight: bold;
+font-style: normal;
+margin-left: 45%;
+}

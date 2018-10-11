@@ -8,6 +8,12 @@
   .format_thulb_gross{
   align-items: center;
   }
+  #toPrint.format_thulb_gross > .innerBox {
+  height: 43mm;
+  display: flex;
+  justify-content: center;
+  flex-direction: column;
+  }
   .format_thulb_gross > .innerBox > p {
   margin: 0px 0px 0px 0px;
   }
