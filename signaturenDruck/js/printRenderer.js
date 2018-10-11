@@ -48,25 +48,28 @@ function main (format, formats, data, dataMan) {
 
 function createPage (format, formats, data, dataMan, file) {
   addStyle(format)
+  console.log(data)
   _.forEach(data, function (value) {
-    let div = document.createElement('div')
-    div.className = 'innerBox'
-    div.id = value.id
+    for (let count = 0; count < value.count; count++) {
+      let div = document.createElement('div')
+      div.className = 'innerBox'
+      div.id = value.id
 
-    let linesData = getData(value.id, value)
-    let i = 1
-    linesData.forEach(line => {
-      let p = document.createElement('p')
-      p.className = 'line_' + i
-      if (line == '') {
-        p.appendChild(document.createElement('br'))
-      } else {
-        p.innerHTML = line
-      }
-      div.appendChild(p)
-      i++
-    })
-    document.getElementById('toPrint').appendChild(div)
+      let linesData = getData(value.id, value)
+      let i = 1
+      linesData.forEach(line => {
+        let p = document.createElement('p')
+        p.className = 'line_' + i
+        if (line == '') {
+          p.appendChild(document.createElement('br'))
+        } else {
+          p.innerHTML = line
+        }
+        div.appendChild(p)
+        i++
+      })
+      document.getElementById('toPrint').appendChild(div)
+    }
   })
 
   function getData (id, data) {
