@@ -17,15 +17,15 @@
   "author": "Elias Dehler",
   "license": "CC BY",
   "devDependencies": {
-    "electron": "^1.8.4",
-    "electron-builder": "^20.11.1",
+    "electron": "^3.0.4",
+    "electron-builder": "^20.28.4",
     "electron-rebuild": "^1.8.2"
   },
   "dependencies": {
-    "electron-store": "^1.3.0",
+    "electron-store": "^2.0.0",
     "font-manager": "^0.3.0",
-    "lodash": "^4.17.10",
+    "lodash": "^4.17.11",
     "node-cmd": "^3.0.0",
-    "username": "^3.0.0"
+    "username": "^4.0.0"
   }
 }
