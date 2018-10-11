@@ -11,7 +11,6 @@ const fs = require('fs')
 const Store = require('electron-store')
 const config = new Store({cwd: 'C:\\Export\\SignaturenDruck'})
 const cmd = require('node-cmd')
-const {net} = require('electron')
 
 // requires lodash
 const _ = require('lodash')
@@ -284,25 +283,6 @@ function createConfigWindow () {
     winConfig.show()
   })
 }
-
-// function getPrinterNameList () {
-//   let printerList = mainWindow.webContents.getPrinters()
-//   let nameList = []
-//   let i = 0
-//   _.forEach(printerList, function (key) {
-//     nameList[i] = key.name
-//     i++
-//   })
-//   return nameList
-// }
-
-// function isIncluded (printer, printerList) {
-//   if (_.indexOf(printerList, printer) !== -1) {
-//     return true
-//   } else {
-//     return false
-//   }
-// }
 
 // In this file you can include the rest of your app's specific main process
 // code. You can also put them in separate files and require them here.

@@ -11,9 +11,6 @@ const _ = require('lodash')
 // requires the fs-module
 const fs = require('fs')
 
-// requires the preview-module
-// const pre = require('./preview.js')
-
 // required for ipc calls to the main process
 const ipc = require('electron').ipcRenderer
 
