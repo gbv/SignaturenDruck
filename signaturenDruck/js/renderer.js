@@ -179,13 +179,13 @@ function createTable (obj) {
         i++
         row = table.insertRow(i)
         row.id = objct.PPN + '-0'
-        createTxtCell(row, 0, objct)
-        createDateCell(row, 1, objct)
-        createExnrCell(row, 2, objct)
-        createShortShelfmarkCell(row, 3, objct)
-        createPrintCell(row, 4, objct)
-        createPrintCountCell(row, 5, objct)
-        createLabelSizeCell(row, 6, objct)
+        createTxtCell(row, 0, objct.id, objct.txtOneLine)
+        createDateCell(row, 1, objct.id, objct.date)
+        createExnrCell(row, 2, objct.id, objct.exNr)
+        createShortShelfmarkCell(row, 3, objct.id, objct.bigLabel)
+        createPrintCell(row, 4, objct.id)
+        createPrintCountCell(row, 5, objct.id)
+        createLabelSizeCell(row, 6, objct.id, key.txtLength)
       })
       i++
     })
@@ -216,13 +216,13 @@ function createTable (obj) {
         row = table.insertRow(i)
         row.id = key.PPN + '-0'
       }
-      createTxtCell(row, 0, key)
-      createDateCell(row, 1, key)
-      createExnrCell(row, 2, key)
-      createShortShelfmarkCell(row, 3, key)
-      createPrintCell(row, 4, key)
-      createPrintCountCell(row, 5, key)
-      createLabelSizeCell(row, 6, key)
+      createTxtCell(row, 0, key.id, key.txtOneLine)
+      createDateCell(row, 1, key.id, key.date)
+      createExnrCell(row, 2, key.id, key.exNr)
+      createShortShelfmarkCell(row, 3, key.id, key.bigLabel)
+      createPrintCell(row, 4, key.id)
+      createPrintCountCell(row, 5, key.id)
+      createLabelSizeCell(row, 6, key.id, key.txtLength)
       i++
     })
   }
@@ -238,101 +238,15 @@ function addToTable (obj) {
   while (obj[i] !== undefined) {
     row = table.insertRow(i + 1)
     row.className = 'manual'
-    createTxtCell(row, 0, obj[i].oneLineTxt, obj[i].id)
-    createDateCell(row, 1, obj[i].id)
-    createExnrCell(row, 2, obj[i].id)
-    createShortShelfmarkCell(row, 3, obj[i].id)
-    createPrintCell(row, 4, obj[i].id)
-    createPrintCountCell(row, 5, obj[i].id)
-    createLabelSizeCell(row, 6, obj[i].id)
+    console.log(obj[i])
+    createTxtCell(row, 0, ('m_' + obj[i].id), obj[i].oneLineTxt)
+    createDateCell(row, 1, ('m_' + obj[i].id))
+    createExnrCell(row, 2, ('m_' + obj[i].id))
+    createShortShelfmarkCell(row, 3, ('m_' + obj[i].id), obj[i].size)
+    createPrintCell(row, 4, ('m_' + obj[i].id))
+    createPrintCountCell(row, 5, ('m_' + obj[i].id))
+    createLabelSizeCell(row, 6, ('m_' + obj[i].id), obj[i].lines)
     i++
-  }
-
-  function createTxtCell (row, cellNr, txt, id) {
-    let txtCell = row.insertCell(cellNr)
-    txtCell.onclick = function () { pre('m_' + id) }
-    txtCell.innerHTML = txt
-    txtCell.className = 'txtCell'
-  }
-
-  function createDateCell (row, cellNr, id) {
-    let dateCell = row.insertCell(cellNr)
-    dateCell.onclick = function () { pre('m_' + id) }
-    dateCell.className = 'dateCell'
-    dateCell.id = 'dateCell_m_' + id
-    dateCell.innerHTML = '-'
-  }
-
-  function createExnrCell (row, cellNr, id) {
-    let isNrCell = row.insertCell(cellNr)
-    isNrCell.onclick = function () { pre('m_' + id) }
-    isNrCell.className = 'isNrCell'
-    isNrCell.innerHTML = '-'
-  }
-
-  function createShortShelfmarkCell (row, cellNr, id) {
-    let shortShelfmarkCell = row.insertCell(cellNr)
-    shortShelfmarkCell.onclick = function () { pre('m_' + id) }
-    shortShelfmarkCell.className = 'shortShelfmarkCell'
-    if (obj[id].lines < 6) {
-      shortShelfmarkCell.id = 'short_m_' + id
-    }
-    shortShelfmarkCell.innerHTML = '-'
-  }
-
-  function createPrintCell (row, cellNr, id) {
-    let printCell = row.insertCell(cellNr)
-    let input = document.createElement('input')
-    printCell.className = 'printCell'
-    input.id = 'print_m_' + id
-    input.type = 'checkbox'
-    input.name = 'toPrint'
-    input.value = id
-    input.onclick = function () { pre('m_' + id) }
-    printCell.appendChild(input)
-  }
-
-  function createPrintCountCell (row, cellNr, id) {
-    let printCountCell = row.insertCell(cellNr)
-    let input = document.createElement('input')
-    printCountCell.className = 'printCountCell'
-    input.id = 'count_' + 'm_' + id
-    input.type = 'number'
-    input.max = 99
-    input.min = 1
-    input.name = 'printCount'
-    input.value = 1
-    printCountCell.appendChild(input)
-  }
-
-  function createLabelSizeCell (row, cellNr, id) {
-    let cell = row.insertCell(cellNr)
-    let select = document.createElement('select')
-    select.id = 'templateSelect_m_' + id
-    selectOptions.forEach(element => {
-      let size = document.createElement('option')
-      size.value = element
-      size.innerHTML = element
-      if (!printerFound[element]) {
-        size.disabled = true
-      }
-      select.appendChild(size)
-    })
-    select.onchange = function () { pre('m_' + id) }
-    if (obj[id].lines == 1) {
-      if (printerFound['thulb_klein_1']) {
-        select.value = 'thulb_klein_1'
-      }
-    } else if (obj[id].lines <= 3) {
-      if (printerFound['thulb_klein']) {
-        select.value = 'thulb_klein'
-      }
-    } else if (obj[id].lines <= 6) {
-      if (printerFound['thulb_gross']) {
-        select.value = 'thulb_gross'
-      }
-    }
-    cell.appendChild(select)
   }
 }
 
@@ -366,45 +280,49 @@ function createPpnRow (row, value) {
 }
 
 // creates the shelfmark text cell
-function createTxtCell (row, cellNr, objct) {
+function createTxtCell (row, cellNr, id, txt) {
   let txtCell = row.insertCell(cellNr)
-  txtCell.onclick = function () { pre(objct.id) }
-  txtCell.innerHTML = objct.txtOneLine
+  txtCell.onclick = function () { pre(id) }
+  txtCell.innerHTML = txt
   txtCell.className = 'txtCell'
 }
 
 // creates the date cell
-function createDateCell (row, cellNr, objct) {
+function createDateCell (row, cellNr, id, date = '-') {
   let dateCell = row.insertCell(cellNr)
-  dateCell.onclick = function () { pre(objct.id) }
+  dateCell.onclick = function () { pre(id) }
   dateCell.className = 'dateCell'
-  dateCell.id = 'dateCell_' + objct.id
-  dateCell.innerHTML = objct.date
+  dateCell.id = 'dateCell_' + id
+  dateCell.innerHTML = date
 }
 
 // create the ex. nr. cell
-function createExnrCell (row, cellNr, objct) {
+function createExnrCell (row, cellNr, id, exNr = '-') {
   let isNrCell = row.insertCell(cellNr)
-  isNrCell.onclick = function () { pre(objct.id) }
+  isNrCell.onclick = function () { pre(id) }
   isNrCell.className = 'isNrCell'
-  isNrCell.innerHTML = objct.exNr
+  isNrCell.innerHTML = exNr
 }
 
 // creates the short shelfmark cell
-function createShortShelfmarkCell (row, cellNr, objct) {
+function createShortShelfmarkCell (row, cellNr, id, size) {
   let shortShelfmarkCell = row.insertCell(cellNr)
   shortShelfmarkCell.className = 'shortShelfmarkCell'
-  if (!objct.bigLabel) {
-    let input = document.createElement('input')
-    input.id = 'short_' + objct.id
-    input.type = 'checkbox'
-    input.name = 'shortShelfmark'
-    input.value = objct.id
-    input.onclick = function () {
-      changeFormat(objct.id)
-      pre(objct.id)
+  if (!size) {
+    if (!String(id).includes('m_')) {
+      let input = document.createElement('input')
+      input.id = 'short_' + id
+      input.type = 'checkbox'
+      input.name = 'shortShelfmark'
+      input.value = id
+      input.onclick = function () {
+        changeFormat(id)
+        pre(id)
+      }
+      shortShelfmarkCell.appendChild(input)
+    } else {
+      shortShelfmarkCell.id = 'short_' + id
     }
-    shortShelfmarkCell.appendChild(input)
   }
   function changeFormat (id) {
     if (document.getElementById('short_' + id).checked) {
@@ -416,24 +334,24 @@ function createShortShelfmarkCell (row, cellNr, objct) {
 }
 
 // creates the print cell
-function createPrintCell (row, cellNr, objct) {
+function createPrintCell (row, cellNr, id) {
   let printCell = row.insertCell(cellNr)
   let input = document.createElement('input')
   printCell.className = 'printCell'
-  input.id = 'print_' + objct.id
+  input.id = 'print_' + id
   input.type = 'checkbox'
   input.name = 'toPrint'
-  input.value = objct.id
-  input.onclick = function () { pre(objct.id) }
+  input.value = id
+  input.onclick = function () { pre(id) }
   printCell.appendChild(input)
 }
 
 // creates the print count cell
-function createPrintCountCell (row, cellNr, objct) {
+function createPrintCountCell (row, cellNr, id) {
   let printCountCell = row.insertCell(cellNr)
   let input = document.createElement('input')
   printCountCell.className = 'printCountCell'
-  input.id = 'count_' + objct.id
+  input.id = 'count_' + id
   input.type = 'number'
   input.max = 99
   input.min = 1
@@ -443,10 +361,10 @@ function createPrintCountCell (row, cellNr, objct) {
 }
 
 // creates the label size cell
-function createLabelSizeCell (row, cellNr, objct) {
+function createLabelSizeCell (row, cellNr, id, lines) {
   let cell = row.insertCell(cellNr)
   let select = document.createElement('select')
-  select.id = 'templateSelect_' + objct.id
+  select.id = 'templateSelect_' + id
   selectOptions.forEach(element => {
     let size = document.createElement('option')
     size.value = element
@@ -456,16 +374,16 @@ function createLabelSizeCell (row, cellNr, objct) {
     }
     select.appendChild(size)
   })
-  select.onchange = function () { pre(objct.id) }
-  if (objct.txtLength <= 2) {
+  select.onchange = function () { pre(id) }
+  if (Number(lines) <= 2) {
     if (printerFound['thulb_klein_1']) {
       select.value = 'thulb_klein_1'
     }
-  } else if (objct.txtLength === 3) {
+  } else if (Number(lines) === 3) {
     if (printerFound['thulb_klein']) {
       select.value = 'thulb_klein'
     }
-  } else if (objct.txtLength <= 6) {
+  } else if (Number(lines) <= 6) {
     if (printerFound['thulb_gross']) {
       select.value = 'thulb_gross'
     }
