@@ -171,6 +171,7 @@ function loadAndAddFromSRU (barcode) {
     'date': '',
     'exNr': '',
     'plainTxt': '',
+    'txtOneLine': '',
     'error': ''
   }
   return new Promise(function (resolve, reject) {
@@ -252,6 +253,88 @@ function loadAndAddFromSRU (barcode) {
     objSRU.date = dateFromLine
     objSRU.exNr = exNr
     objSRU.plainTxt = shelfmark
+    if (objSRU.txtLength < 3) {
+      createMultipleLines()
+    }
+    if (shelfmark.split(config.get('newLineAfter')).length === 6) {
+      _.forEach(shelfmark.split(config.get('newLineAfter')), function (value) {
+        objSRU.txtOneLine += value + ' '
+      })
+    } else {
+      let txt = [shelfmark]
+      objSRU.txt = txt
+      objSRU.txtOneLine = shelfmark
+    }
+    function createMultipleLines () {
+      let txt = objSRU.txtOneLine
+      let indxSlash = txt.indexOf('/')
+      let indxColon = txt.indexOf(':')
+      let i = 0
+      objSRU.txt = []
+      objSRU.txt[0] = txt
+      if (indxSlash !== -1) {
+        setSigTxt0and1(indxSlash, txt)
+        i = 1
+      }
+      if (indxColon !== -1) {
+        if (i === 0) {
+          setSigTxt0and1(indxColon, txt)
+        } else {
+          let i = 0
+          let txt = []
+          let length = objSRU.txt.length
+          objSRU.txt.forEach(element => {
+            let indx = element.indexOf(':')
+            if (indx !== -1) {
+              let j = 0
+              while (j < i) {
+                txt[j] = objSRU.txt[j]
+                j++
+              }
+              let k = i
+              txt[k] = element.substring(0, indx)
+              k++
+              txt[k] = element.substring(indx)
+              k++
+              while (k <= length) {
+                txt[k] = objSRU.txt[k - 1]
+                k++
+              }
+              objSRU.txt = txt
+            }
+            i++
+          })
+        }
+      }
+      i = 0
+      txt = []
+      let length = objSRU.txt.length
+      objSRU.txt.forEach(element => {
+        let elementParts = element.split(' ')
+        if (elementParts.length >= 3) {
+          let j = 0
+          while (j < i) {
+            txt[j] = objSRU.txt[j]
+            j++
+          }
+          let k = i
+          txt[k] = elementParts[0] + ' ' + elementParts[1]
+          k++
+          txt[k] = element.substring(txt[k - 1].length)
+          k++
+          while (k <= length) {
+            txt[k] = objSRU.txt[k - 1]
+            k++
+          }
+          objSRU.txt = txt
+        }
+        i++
+      })
+    }
+    function setSigTxt0and1 (indx, txt) {
+      objSRU.txt[0] = txt.substring(0, indx + 1)
+      objSRU.txt[1] = txt.substring(indx + 1)
+    }
   }
   function recordCheck (line) {
     if (/<zs:numberOfRecords>0<\/zs:numberOfRecords>/.test(line)) {
