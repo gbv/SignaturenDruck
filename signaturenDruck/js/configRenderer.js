@@ -132,6 +132,7 @@ function createCSS (obj) {
   function centerVer (str) {
     if (obj.centerVer) {
       str += '.format_' + obj.name + ' {\nalign-items: center;\n}\n'
+      str += '#toPrint > .innerBox {\nheight: ' + obj.label.height + ';\ndisplay: flex;\njustify-content: center;\nflex-direction: column;\n}\n'
     } else {
       str += '.format_' + obj.name + ' {\nalign-items: initial;\n}\n'
     }
