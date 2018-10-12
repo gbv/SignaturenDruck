@@ -60,17 +60,13 @@ window.onload = function () {
   if (window.File && window.FileReader && window.FileList && window.Blob) {
     fileSelected.addEventListener('change', function () {
       objMan = null
-      fileTobeRead = fileSelected.files[0]
-      document.getElementById('defaultPath').innerHTML = fileTobeRead.path
-      let fileReader = new FileReader()
-      fileReader.onload = function () {
-        let file = event.target.result
-        let allLines = file.split(/\r\n|\n/)
-        // getBarcodesFromFile(allLines)
-        writeShelfmarksToFile(JSON.stringify(setIds(getUnique(loadDataFromFile(allLines)))))
-        displayData()
-      }
-      fileReader.readAsText(fileTobeRead)
+      fileTobeRead = fileSelected.files[0].path
+      document.getElementById('defaultPath').innerHTML = fileTobeRead
+      let file = fs.readFileSync(fileTobeRead, 'utf-8')
+      let allLines = file.split(/\r\n|\n/)
+      // getBarcodesFromFile(allLines)
+      writeShelfmarksToFile(JSON.stringify(setIds(getUnique(loadDataFromFile(allLines)))))
+      displayData()
     }, false)
   } else {
     alert('Files are not supported')
