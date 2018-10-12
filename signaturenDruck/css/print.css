@@ -15,6 +15,9 @@
   .innerBox {
     page-break-before: always;
   }
+  .noIndent > p {
+    margin-left: 0px !important;
+  }
   /* body {
     -webkit-print-color-adjust: exact;
   } */

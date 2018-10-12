@@ -238,7 +238,6 @@ function addToTable (obj) {
   while (obj[i] !== undefined) {
     row = table.insertRow(i + 1)
     row.className = 'manual'
-    console.log(obj[i])
     createTxtCell(row, 0, ('m_' + obj[i].id), obj[i].oneLineTxt)
     createDateCell(row, 1, ('m_' + obj[i].id))
     createExnrCell(row, 2, ('m_' + obj[i].id))
@@ -706,6 +705,11 @@ function pre (id) {
     document.getElementsByClassName('innerBox')[0].className = 'innerBox'
   } else {
     let cleanId = id.split('m_')[1]
+    checkIfNoIndent(cleanId)
+  }
+  changePreview(id)
+
+  function checkIfNoIndent (cleanId) {
     showData(objMan[cleanId].lineTxts)
     if (objMan[cleanId].removeIndent) {
       document.getElementsByClassName('innerBox')[0].className = 'innerBox noIndent'
@@ -713,7 +717,6 @@ function pre (id) {
       document.getElementsByClassName('innerBox')[0].className = 'innerBox'
     }
   }
-  changePreview(id)
 
   function removeOld () {
     let myNode = document.getElementById('previewBox')

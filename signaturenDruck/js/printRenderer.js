@@ -55,6 +55,11 @@ function createPage (format, formats, data, dataMan, file) {
       div.id = value.id
 
       let linesData = getData(value.id, value)
+      if (String(value.id).includes('m_')) {
+        if (dataMan[value.id.split('m_')[1]].removeIndent) {
+          div.className = 'innerBox noIndent'
+        }
+      }
       let i = 1
       linesData.forEach(line => {
         let p = document.createElement('p')
