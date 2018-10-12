@@ -64,7 +64,7 @@ function createPage (format, formats, data, dataMan, file) {
       linesData.forEach(line => {
         let p = document.createElement('p')
         p.className = 'line_' + i
-        if (line == '') {
+        if (line === '') {
           p.appendChild(document.createElement('br'))
         } else {
           p.innerHTML = line

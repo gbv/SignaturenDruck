@@ -60,7 +60,7 @@ module.exports = function (id) {
 }
 
 function showData (sig) {
-  if (sig != '') {
+  if (sig !== '') {
     let length = sig.txtLength
     let id = sig.id
     let i = 1
@@ -68,13 +68,13 @@ function showData (sig) {
     let line = document.createElement('p')
     div.className = 'shelfmark center'
     if (isSmall) {
-      if (isShort || length != 1) {
+      if (isShort || length !== 1) {
         div.className = 'shelfmark indent'
       }
     }
     div.id = id
     if (document.getElementById('short_' + id)) {
-      if (document.getElementById('short_' + id).checked && length == 1) {
+      if (document.getElementById('short_' + id).checked && length === 1) {
         let text = sig.txt[0]
         let indxSlash = text.indexOf('/')
         let indxColon = text.indexOf(':')
@@ -147,7 +147,7 @@ function showData (sig) {
     sig.txt.forEach(element => {
       line.className = 'previewLine'
       line.id = 'line' + i
-      if (element == '') {
+      if (element === '') {
         let emptyLine = document.createElement('br')
         line.appendChild(emptyLine)
       } else {

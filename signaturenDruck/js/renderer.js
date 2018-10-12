@@ -106,14 +106,15 @@ ipc.on('addSRUdata', function (event, data) {
   }
 })
 
-// function to get all lines from the .dnl file
-function getBarcodesFromFile (allLines) {
-  allLines.map((line) => {
-    if (line.substr(0, 4) === '8200') {
-      ipc.send('loadFromSRU', line.substr(5))
-    }
-  })
-}
+// // function to get all lines from the .dnl file via SRU
+// // not enabled atm because it messes up the order
+// function getBarcodesFromFile (allLines) {
+//   allLines.map((line) => {
+//     if (line.substr(0, 4) === '8200') {
+//       ipc.send('loadFromSRU', line.substr(5))
+//     }
+//   })
+// }
 
 // removes duplicates
 function getUnique (obj) {
@@ -731,7 +732,7 @@ function showData (shelfmark) {
     line = document.createElement('p')
     line.id = 'line_' + i
     line.className = 'line_' + i
-    if (element == '') {
+    if (element === '') {
       let emptyLine = document.createElement('br')
       line.appendChild(emptyLine)
     } else {

@@ -46,9 +46,9 @@ function f () {
     if (radioButtons[i].checked) {
       showInputs(radioButtons[i].value)
       document.getElementById('previewBox').classList = ''
-      if (radioButtons[i].value == 1) {
+      if (radioButtons[i].value === 1) {
         document.getElementById('previewBox').className = 'small center'
-      } else if (radioButtons[i].value == 3) {
+      } else if (radioButtons[i].value === 3) {
         document.getElementById('previewBox').className = 'small indent'
       } else {
         document.getElementById('previewBox').className = 'big indent'
@@ -301,7 +301,7 @@ function saveCurrent () {
 function toggleIndent () {
   let chkbx = document.getElementById('chkbx_removeIndent')
   let previewClassList = document.getElementById('previewBox').classList
-  if (getNumberOfLines() != 1) {
+  if (Number(getNumberOfLines()) !== 1) {
     if (chkbx.checked) {
       previewClassList.remove('indent')
     } else {
