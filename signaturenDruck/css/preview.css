@@ -1,6 +1,4 @@
 #previewBox {
-  /* width: 80mm; */
-  /* height: 43mm; */
   border: 1px solid black;
   background-color: white;
   margin: 5px auto 5px auto;
@@ -18,37 +16,3 @@
 .innerBox > p {
   width: 100%;
 }
-
-/* .center > .previewLine {
-  font-size: 15pt;
-  margin: 0pt;
-  text-align: center;
-}
-
-.center>p#line1 {
-  margin-top: 30px;
-}
-
-.previewLine {
-  white-space: pre;
-  margin: 0px;
-  font-size: 16pt;
-  margin: 0px;
-  padding-top: 0px;
-  padding-bottom: 0px;
-}
-
-.indent > .previewLine {
-  margin-left: 45%;
-}
-
-p#line1 {
-  margin-top: 6px;
-}
-
-#line1,
-#line2,
-#line3,
-#line6 {
-  font-weight: bold;
-} */
