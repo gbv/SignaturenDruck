@@ -1,67 +1,67 @@
 {
-	"name": "thulb_gross",
-	"printer": "\\\\ulbw2k812\\ulbps101",
-	"label": {
-		"width": "80mm",
-		"height": "43mm"
-	},
-	"pdfName": "thulb_gross.pdf",
-	"paper": {
-		"width": "99970",
-		"height": "48920"
-	},
-	"lines": "6",
-	"centerHor": false,
-	"centerVer": true,
-	"lineSpace": "0",
-	"linesData": [
-		{
-			"id": 1,
-			"font": "Arial Narrow",
-			"fontSize": "16",
-			"bold": true,
-			"italic": false,
-			"indent": "45"
-		},
-		{
-			"id": 2,
-			"font": "Arial Narrow",
-			"fontSize": "16",
-			"bold": true,
-			"italic": false,
-			"indent": "45"
-		},
-		{
-			"id": 3,
-			"font": "Arial Narrow",
-			"fontSize": "16",
-			"bold": true,
-			"italic": false,
-			"indent": "45"
-		},
-		{
-			"id": 4,
-			"font": "Arial Narrow",
-			"fontSize": "16",
-			"bold": false,
-			"italic": false,
-			"indent": "45"
-		},
-		{
-			"id": 5,
-			"font": "Arial Narrow",
-			"fontSize": "16",
-			"bold": false,
-			"italic": false,
-			"indent": "45"
-		},
-		{
-			"id": 6,
-			"font": "Arial Narrow",
-			"fontSize": "16",
-			"bold": true,
-			"italic": false,
-			"indent": "45"
-		}
-	]
+  "name": "thulb_gross",
+  "printer": "\\\\ulbw2k812\\ulbps101",
+  "label": {
+    "width": "80mm",
+    "height": "43mm"
+  },
+  "pdfName": "thulb_gross.pdf",
+  "paper": {
+    "width": "99970",
+    "height": "48920"
+  },
+  "lines": "6",
+  "centerHor": false,
+  "centerVer": true,
+  "lineSpace": "0",
+  "linesData": [
+    {
+      "id": 1,
+      "font": "Arial Narrow",
+      "fontSize": "16",
+      "bold": true,
+      "italic": false,
+      "indent": "45"
+    },
+    {
+      "id": 2,
+      "font": "Arial Narrow",
+      "fontSize": "16",
+      "bold": true,
+      "italic": false,
+      "indent": "45"
+    },
+    {
+      "id": 3,
+      "font": "Arial Narrow",
+      "fontSize": "16",
+      "bold": true,
+      "italic": false,
+      "indent": "45"
+    },
+    {
+      "id": 4,
+      "font": "Arial Narrow",
+      "fontSize": "16",
+      "bold": false,
+      "italic": false,
+      "indent": "45"
+    },
+    {
+      "id": 5,
+      "font": "Arial Narrow",
+      "fontSize": "16",
+      "bold": false,
+      "italic": false,
+      "indent": "45"
+    },
+    {
+      "id": 6,
+      "font": "Arial Narrow",
+      "fontSize": "16",
+      "bold": true,
+      "italic": false,
+      "indent": "45"
+    }
+  ]
 }

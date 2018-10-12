@@ -1,5 +1,24 @@
 @media print {
+  #toPrint > #userCard.innerBox {
+    margin-top: -2mm;
+    margin-bottom: -2mm;
+  }
+  #userCard {
+    text-align: center;
+    font-family: "Arial Narrow";
+    font-size: 15pt;
+    font-weight: bold;
+  }
+  #userCard > p {
+    width: 100%
+  }
   .innerBox {
     page-break-before: always;
   }
+  /* body {
+    -webkit-print-color-adjust: exact;
+  } */
+  /* .innerBox {
+    background-color: grey;
+  } */
 }

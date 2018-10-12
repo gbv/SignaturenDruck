@@ -1,43 +1,43 @@
 {
-	"name": "thulb_klein",
-	"printer": "\\\\ulbw2k812\\ulbps124",
-	"label": {
-		"width": "74mm",
-		"height": "23mm"
-	},
-	"pdfName": "thulb_klein.pdf",
-	"paper": {
-		"width": "74500",
-		"height": "23500"
-	},
-	"lines": "3",
-	"centerHor": false,
-	"centerVer": true,
-	"lineSpace": "0",
-	"linesData": [
-		{
-			"id": 1,
-			"font": "Arial Narrow",
-			"fontSize": "15",
-			"bold": true,
-			"italic": false,
-			"indent": "45"
-		},
-		{
-			"id": 2,
-			"font": "Arial Narrow",
-			"fontSize": "15",
-			"bold": true,
-			"italic": false,
-			"indent": "45"
-		},
-		{
-			"id": 3,
-			"font": "Arial Narrow",
-			"fontSize": "15",
-			"bold": true,
-			"italic": false,
-			"indent": "45"
-		}
-	]
+  "name": "thulb_klein",
+  "printer": "\\\\ulbw2k812\\ulbps124",
+  "label": {
+    "width": "74mm",
+    "height": "23mm"
+  },
+  "pdfName": "thulb_klein.pdf",
+  "paper": {
+    "width": "74500",
+    "height": "23500"
+  },
+  "lines": "3",
+  "centerHor": false,
+  "centerVer": true,
+  "lineSpace": "0",
+  "linesData": [
+    {
+      "id": 1,
+      "font": "Arial Narrow",
+      "fontSize": "15",
+      "bold": true,
+      "italic": false,
+      "indent": "45"
+    },
+    {
+      "id": 2,
+      "font": "Arial Narrow",
+      "fontSize": "15",
+      "bold": true,
+      "italic": false,
+      "indent": "45"
+    },
+    {
+      "id": 3,
+      "font": "Arial Narrow",
+      "fontSize": "15",
+      "bold": true,
+      "italic": false,
+      "indent": "45"
+    }
+  ]
 }

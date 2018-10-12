@@ -1,15 +1,16 @@
-#previewBox.format_thulb_gross{
+#previewBox.format_thulb_gross {
   width: 80mm;
   height: 43mm;
   }
-  .format_thulb_gross{
+  .format_thulb_gross {
   text-align: initial;
   }
-  .format_thulb_gross{
+  .format_thulb_gross {
   align-items: center;
   }
-  #toPrint.format_thulb_gross > .innerBox {
+  #toPrint.format_thulb_gross> .innerBox {
   height: 43mm;
+  width: 80mm;
   display: flex;
   justify-content: center;
   flex-direction: column;
@@ -58,4 +59,9 @@
   font-weight: bold;
   font-style: normal;
   margin-left: 45%;
+  }
+  @media print {
+  #toPrint.format_thulb_gross > .innerBox {
+  margin: 2.96mm 0mm 0mm 7.984999999999999mm;
+  }
   }

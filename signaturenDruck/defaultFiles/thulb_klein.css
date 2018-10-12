@@ -2,14 +2,15 @@
 width: 74mm;
 height: 23mm;
 }
-.format_thulb_klein{
+.format_thulb_klein {
 text-align: initial;
 }
-.format_thulb_klein{
+.format_thulb_klein {
 align-items: center;
 }
-#toPrint.format_thulb_klein > .innerBox {
+#toPrint.format_thulb_klein> .innerBox {
 height: 23mm;
+width: 74mm;
 display: flex;
 justify-content: center;
 flex-direction: column;
@@ -37,4 +38,9 @@ font-size: 15pt;
 font-weight: bold;
 font-style: normal;
 margin-left: 45%;
+}
+@media print {
+#toPrint.format_thulb_klein > .innerBox {
+margin: 0mm 0mm 0mm -1.75mm;
+}
 }
