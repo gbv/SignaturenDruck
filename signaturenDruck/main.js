@@ -261,7 +261,7 @@ function printData (format, data, dataMan) {
 function createManualWindow (objMan) {
   winManual = new BrowserWindow({width: 582, height: 355, show: false})
   winManual.loadURL(url.format({
-    pathname: path.join(__dirname, 'html/manual.html'),
+    pathname: path.join(__dirname, 'html/manual_rework.html'),
     protocol: 'file',
     slashes: true
   }))

@@ -16,12 +16,6 @@
       <div id="leftside">
         <div id="inputBox">
           <div id="editorBox">
-            <input type="text" id="line_1"><br>
-            <input type="text" id="line_2"><br>
-            <input type="text" id="line_3"><br>
-            <input type="text" id="line_4"><br>
-            <input type="text" id="line_5"><br>
-            <input type="text" id="line_6">
           </div>
           <div id="buttonBox">
             <div id="btn_grp_1">
@@ -40,19 +34,11 @@
       </div>
       <div id="rightside">
         <div id="previewBox">
-          <p id="line1" class="previewLine"> </p>
-          <p id="line2" class="previewLine"> </p>
-          <p id="line3" class="previewLine"> </p>
-          <p id="line4" class="previewLine"> </p>
-          <p id="line5" class="previewLine"> </p>
-          <p id="line6" class="previewLine"> </p>
         </div>
         <div id="lineSelectBox">
           <fieldset>
             <legend>Optionen</legend>
-            <input type="radio" name="numberOfLines" value="1"> 1 Zeile
-            <input type="radio" name="numberOfLines" value="3"> 3 Zeilen
-            <input type="radio" name="numberOfLines" value="6" checked> 6 Zeilen
+            <select id="formatSelect"></select>
             <hr>
             <input type="checkbox" id="chkbx_removeIndent" name="removeIndent"/>
             <label for="chkbx_removeIndent">Einzug entfernen</label>
@@ -70,10 +56,10 @@
       </div>
 
     </div>
-		<script>
-			// You can also require other files to run in this process
-      require('./../js/manualRenderer.js')
-		</script>
+    <script>
+      // You can also require other files to run in this process
+      require('./../js/manualRenderer_rework.js')
+    </script>
     <script>
       let modal = document.getElementById('myModal')
       // Get the <span> element that closes the modal
