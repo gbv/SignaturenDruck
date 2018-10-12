@@ -104,7 +104,30 @@ function createCSS (obj) {
   contentCSS = centerVer(contentCSS)
   contentCSS = lineSpace(contentCSS)
   contentCSS = linesStyle(contentCSS)
+  contentCSS = printCenterLabel(contentCSS)
 
+  return contentCSS
+
+  function printCenterLabel (str) {
+    let marginTopValue = (obj.paper.height - fromMilliToMicro(obj.label.height)) / 2000
+    let marginLeftValue = (obj.paper.width - fromMilliToMicro(obj.label.width)) / 2000
+    if (marginTopValue <= 1) {
+      marginTopValue = 0
+    }
+    /*
+    with electron 3.0.4 and printToPDF(marginsType 1) there is a margin of 2mm by default
+    even with @print margin 0mm
+    thats why we substract 2
+    */
+    marginLeftValue = marginLeftValue - 2
+    str += '@media print {\n#toPrint.format_' + obj.name + ' > .innerBox {\nmargin: ' + marginTopValue + 'mm 0mm 0mm ' + marginLeftValue + 'mm;\n}\n}'
+
+    return str
+
+    function fromMilliToMicro (str) {
+      return (str.split('mm')[0] * 1000)
+    }
+  }
   function linesStyle (str) {
     for (let line of obj.linesData) {
       str += '.format_' + obj.name + ' > .innerBox > .line_' + line.id + ' {\n'
@@ -132,9 +155,10 @@ function createCSS (obj) {
   function centerVer (str) {
     if (obj.centerVer) {
       str += '.format_' + obj.name + ' {\nalign-items: center;\n}\n'
-      str += '#toPrint > .innerBox {\nheight: ' + obj.label.height + ';\ndisplay: flex;\njustify-content: center;\nflex-direction: column;\n}\n'
+      str += '#toPrint.format_' + obj.name + '> .innerBox {\nheight: ' + obj.label.height + ';\nwidth: ' + obj.label.width + ';\ndisplay: flex;\njustify-content: center;\nflex-direction: column;\n}\n'
     } else {
       str += '.format_' + obj.name + ' {\nalign-items: initial;\n}\n'
+      str += '#toPrint.format_' + obj.name + '.innerBox {\nheight: ' + obj.label.height + ';\nwidth: ' + obj.label.width + ';\n}\n'
     }
     return str
   }
@@ -150,7 +174,6 @@ function createCSS (obj) {
     str += '#previewBox.format_' + obj.name + ' {\nwidth: ' + obj.label.width + ';\nheight: ' + obj.label.height + ';\n}\n'
     return str
   }
-  return contentCSS
 }
 
 function close () {
