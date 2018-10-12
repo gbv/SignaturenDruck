@@ -236,7 +236,7 @@ function printData (format, data, dataMan) {
   }))
   winPrint.once('ready-to-show', () => {
     winPrint.webContents.send('toPrint', format, formats, data, dataMan)
-    winPrint.webContents.printToPDF({marginsType: 2, landscape: true, pageSize: { width: formats[format].paper.height, height: formats[format].paper.width }}, (error, data) => {
+    winPrint.webContents.printToPDF({marginsType: 1, landscape: true, pageSize: { width: formats[format].paper.height, height: formats[format].paper.width }}, (error, data) => {
       if (error) throw error
       fs.writeFile('./tmp/' + formats[format].pdfName, data, (error) => {
         if (error) throw error
