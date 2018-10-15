@@ -19,6 +19,7 @@ const _ = require('lodash')
 const configNew = {
   'testKey': "Don't panic, this is just a test",
   'defaultPath': 'C://Export/download.dnl',
+  'defaultFormat': 'thulb_gross',
   'modalTxt': 'Die ausgewählten Signaturen wurden gedruckt.',
   'sortByPPN': false,
   'newLineAfter': ':',

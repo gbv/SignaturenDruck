@@ -3,6 +3,9 @@ const ipc = require('electron').ipcRenderer
 
 const fs = require('fs')
 
+const Store = require('electron-store')
+const config = new Store({cwd: 'C:\\Export\\SignaturenDruck'})
+
 let objct = {
   manual: []
 }
@@ -16,6 +19,7 @@ let selectOptions = []
 window.onload = function () {
   loadFormats()
   pushFormatsToSelect()
+  selectDefaultFormat()
   createByFormat(getFormatSelected().lines)
 }
 
@@ -188,6 +192,10 @@ function saveCurrent () {
   }
 }
 
+function selectDefaultFormat () {
+  document.getElementById('formatSelect').value = config.get('defaultFormat')
+}
+
 function next () {
   let i = 1
   let isEmpty = true
@@ -206,6 +214,7 @@ function next () {
     if (objct.manual[id] !== undefined) {
       loadData()
     } else {
+      selectDefaultFormat()
       createByFormat(getFormatSelected().lines)
       max++
       focusFirst()
@@ -247,6 +256,7 @@ function deleteData () {
     if (objct.manual[id] !== undefined) {
       loadData()
     } else {
+      selectDefaultFormat()
       createByFormat(getFormatSelected().lines)
     }
   }
