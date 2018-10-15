@@ -82,7 +82,9 @@ ipc.on('printMsg', function (event) {
 ipc.on('manual', function (event, data) {
   objMan = data
   deleteOldManual()
-  addToTable(objMan)
+  if (objMan !== undefined && objMan !== null && objMan.length !== 0) {
+    addToTable(objMan)
+  }
 })
 
 // ipc listener to remove the manual data

@@ -1,0 +1,79 @@
+body {
+  background-color: RGB(240, 240, 240);
+  font-family: "Arial";
+  font-size: 10pt;
+}
+
+p:after {
+  content:"";
+  display:inline-block;
+  width:0px;
+}
+
+.button {
+  background-color: white;
+  color: black;
+  border: 2px solid grey;
+  padding: 5px;
+  margin: 2px 0px 2px 0px;
+  text-align: center;
+  font-weight: bold;
+}
+
+.button:hover:enabled {
+  background-color: grey;
+  cursor: pointer;
+}
+
+.button[disabled] {
+  background-color: lightgray;
+  color: grey;
+}
+
+.noIndent > p {
+  margin-left: 0px !important;
+}
+
+#btn_saveAndExit, #btn_deleteAndExit {
+  width: 100%;
+}
+
+#btn_previous {
+  width: 79px;
+}
+
+#container {
+  overflow: hidden;
+}
+
+#counter {
+  font-size: large;
+}
+
+#editorBox {
+  height: auto;
+}
+
+#editorBox > input {
+  margin: 1px;
+  width: 210px;
+  font-size: medium;
+}
+
+#inputBox {
+  float: left;
+  margin-top: 5px;
+  text-align: center;
+}
+
+#leftside {
+  float: left;
+}
+
+#previewBox {
+  margin: 5px !important;
+}
+
+#rightside {
+  float: right;
+}
