@@ -13,12 +13,15 @@ const ipc = require('electron').ipcRenderer
 
 const fontManager = require('font-manager')
 
+const printerList = require('electron').remote.getCurrentWindow().webContents.getPrinters()
+
 let lineCounter = 1
 
 let fonts = []
 
 window.onload = function () {
   setFontsList()
+  setPrinterSelect()
   changeLineSpace()
   addTableLine()
   document.getElementById('line_1').style.fontFamily = document.getElementById('fontLine_1').value
@@ -36,6 +39,22 @@ function setFontsList () {
   fonts.sort()
 }
 
+function setPrinterSelect () {
+  let list = getPrinterNameList()
+  let select = document.getElementById('selectPrinter')
+  let option = document.createElement('option')
+  option.value = ''
+  option.innerHTML = '--auswählen--'
+  option.selected = true
+  select.appendChild(option)
+  list.forEach(element => {
+    option = document.createElement('option')
+    option.value = element
+    option.innerHTML = element
+    select.appendChild(option)
+  })
+}
+
 function changeLabelHeight (event) {
   document.getElementById('previewBox').style.height = document.getElementById('input_labelHeight').value + 'mm'
 }
@@ -46,19 +65,20 @@ function changeLabelWidth (event) {
 
 function saveConfig () {
   if (document.getElementById('input_fileName').value !== '') {
-    if (document.getElementById('input_printerName').value !== '') {
+    if (document.getElementById('selectPrinter').value !== '') {
       if (!fs.existsSync('C:\\Export\\SignaturenDruck\\Formate\\' + document.getElementById('input_fileName').value + '.json')) {
         let objct = setObjct()
-        fs.writeFileSync('C:\\Export\\SignaturenDruck\\FormateCSS\\' + document.getElementById('input_fileName').value + '.css', createCSS(objct), 'utf8')
-        fs.writeFileSync('C:\\Export\\SignaturenDruck\\Formate\\' + document.getElementById('input_fileName').value + '.json', JSON.stringify(objct), 'utf8')
-        ipc.send('newConfig')
+        console.log(objct)
+        // fs.writeFileSync('C:\\Export\\SignaturenDruck\\FormateCSS\\' + document.getElementById('input_fileName').value + '.css', createCSS(objct), 'utf8')
+        // fs.writeFileSync('C:\\Export\\SignaturenDruck\\Formate\\' + document.getElementById('input_fileName').value + '.json', JSON.stringify(objct), 'utf8')
+        // ipc.send('newConfig')
       } else {
         alert('Ein Format mit diesem Namen ist bereits vorhanden.')
         document.getElementById('input_fileName').focus()
       }
     } else {
       alert('Es muss ein Druckername angegeben werden.')
-      document.getElementById('input_printerName').focus()
+      document.getElementById('selectPrinter').focus()
     }
   } else {
     alert('Es muss ein Formatname vergeben werden')
@@ -69,7 +89,7 @@ function saveConfig () {
 function setObjct () {
   let newConfig = {
     'name': document.getElementById('input_fileName').value,
-    'printer': document.getElementById('input_printerName').value,
+    'printer': document.getElementById('selectPrinter').value,
     'label': {
       'width': document.getElementById('input_labelWidth').value + 'mm',
       'height': document.getElementById('input_labelHeight').value + 'mm'
@@ -357,6 +377,16 @@ function centerVer () {
   } else {
     document.getElementById('previewBox').style.alignItems = 'center'
   }
+}
+
+function getPrinterNameList () {
+  let nameList = []
+  let i = 0
+  _.forEach(printerList, function (key) {
+    nameList[i] = key.name
+    i++
+  })
+  return nameList
 }
 
 // adds event listener to the labelSize line add and remove buttons
