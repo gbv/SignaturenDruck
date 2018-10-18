@@ -1,0 +1,88 @@
+/* general styles */
+html {
+  background-color: inherit;
+}
+body {
+  line-height: inherit;
+}
+.columns {
+  margin-top: 10px !important;
+  margin-bottom: 10px !important;
+  margin-left: 0px !important;
+  margin-right: 0px !important;
+}
+.column {
+  padding: 0px !important;
+}
+.column > .box {
+  margin: 5px !important;
+}
+.box {
+  margin: 10px !important;
+}
+.field-label {
+  text-align: left !important;
+}
+
+/* configInputs */
+#configInputs {
+  margin-left: 5px !important;
+  margin-right: 5px !important;
+}
+
+/* nameBox */
+#input_fileName, #input_printerName {
+  width: 187px !important;
+}
+#fileNameLabel {
+  margin-right: 44px !important;
+}
+
+/* paperBox styles */
+#input_paperHeight, #input_paperWidth {
+  width: 100px !important;
+}
+#paperBox > .field > .field-label {
+  margin-right: 80px !important;
+}
+#paperBox > .field > .field-label > label {
+  width: 45px !important;
+}
+
+/* labelBox */
+#input_labelLines {
+  width: 170px !important;
+}
+#label_height, #label_width, #label_rows {
+  margin-right: 50px !important;
+}
+#label_rowSpace {
+  margin-right: 36px !important;
+}
+#label_centerHor {
+  margin-right: 26px !important;
+}
+#label_centerVer {
+  margin-right: 29px !important;
+}
+#centerHor, #centerVer {
+  margin-top: 20px !important;
+}
+
+/* tableBox styles */
+#tableBox {
+  margin-top: 10px !important;
+}
+
+/* table styles */
+tbody > tr > td:first-child {
+  padding-top: 11px !important;
+}
+tbody > tr > td:nth-child(4) {
+  padding-top: 11px !important;
+  padding-left: 17px !important;
+}
+tbody > tr > td:nth-child(5) {
+  padding-top: 11px !important;
+  padding-left: 25px !important;
+}

@@ -1,125 +1,233 @@
 <!DOCTYPE html>
 <html>
 
-  <head>
-    <meta charset="UTF-8">
-    <title>Signaturendruck</title>
-    <link rel="stylesheet" type="text/css" href="./../css/config.css">
-    <link rel="stylesheet" type="text/css" href="./../css/modal.css">
-    <link rel="stylesheet" type="text/css" href="./../css/all.css">
-  </head> 
+<head>
+  <meta charset="UTF-8">
+  <title>Signaturendruck</title>
+  <link rel="stylesheet" type="text/css" href="./../css/bulma.css">
+  <link rel="stylesheet" type="text/css" href="./../css/config.css">
+  <link rel="stylesheet" type="text/css" href="./../css/modal.css">
+  <link rel="stylesheet" type="text/css" href="./../css/all.css">
+  <link rel="stylesheet" type="text/css" href="./../css/ownStyle.css">
+</head>
 
-  <body>
-    <div id="previewBox">
-      <div id="innerBox">
-        <p id="line_1">Zeile 1</p>
+<body>
+  <div id="previewBox">
+    <div id="innerBox">
+      <p id="line_1">Zeile 1</p>
+    </div>
+  </div>
+  <div id="configInputs">
+    <div class="columns">
+      <div class="column">
+        <div class="box">
+            <div class="field is-horizontal">
+              <div class="field-label is-normal" id="fileNameLabel">
+                <label class="label">Dateiname</label>
+              </div>
+              <div class="field-body">
+                <div class="field">
+                  <p class="control">
+                    <input id="input_fileName" class="input" type="text" placeholder="z.B. thulb_gross"/>
+                  </p>
+                </div>
+              </div>
+            </div>
+            <div class="field is-horizontal">
+              <div class="field-label is-normal">
+                <label class="label">Druckername</label>
+              </div>
+              <div class="field-body">
+                <div class="field">
+                  <p class="control">
+                    <input id="input_printerName" class="input" type="text" placeholder="z.B. \\ulbw2k812\ulbps124"/>
+                  </p>
+                </div>
+              </div>
+            </div>
+        </div>
+        <div id="paperBox" class="box">
+          <h2>Papier</h2>
+          <div class="field is-horizontal">
+            <div class="field-label is-normal">
+              <label class="label">Höhe</label>
+            </div>
+            <div class="field-body">
+              <div class="field has-addons">
+                <p class="control">
+                  <input id="input_paperHeight" class="input" type="number" value="48920" />
+                </p>
+                <p class="control">
+                  <a class="button is-static">μm</a>
+                </p>
+              </div>
+            </div>
+          </div>
+          <div class="field is-horizontal">
+            <div class="field-label is-normal">
+              <label class="label">Breite</label>
+            </div>
+            <div class="field-body">
+              <div class="field has-addons">
+                <p class="control">
+                  <input id="input_paperWidth" class="input" type="number" value="99970" />
+                </p>
+                <p class="control">
+                  <a class="button is-static">μm</a>
+                </p>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="column">
+        <div id="labelBox" class="box">
+            <h2>Label</h2>
+            <div class="field is-horizontal">
+              <div class="field-label is-normal" id="label_height">
+                <label class="label">Höhe</label>
+              </div>
+              <div class="field-body">
+                <div class="field has-addons">
+                  <p class="control">
+                    <input id="input_labelHeight" class="input" type="number" value="43" />
+                  </p>
+                  <p class="control">
+                    <a class="button is-static">
+                      mm
+                    </a>
+                  </p>
+                </div>
+              </div>
+            </div>
+            <div class="field is-horizontal">
+              <div class="field-label is-normal" id="label_width">
+                <label class="label">Breite</label>
+              </div>
+              <div class="field-body">
+                <div class="field has-addons">
+                  <p class="control">
+                    <input id="input_labelWidth" class="input" type="number" value="80" />
+                  </p>
+                  <p class="control">
+                    <a class="button is-static">
+                      mm
+                    </a>
+                  </p>
+                </div>
+              </div>
+            </div>
+            <div class="field is-horizontal">
+              <div class="field-label is-normal" id="label_rows">
+                <label class="label">Zeilen</label>
+              </div>
+              <div class="field-body">
+                <div class="field has-addons">
+                  <p class="control">
+                    <input id="input_labelLines" class="input" value="1" readonly />
+                  </p>
+                  <p class="control">
+                    <a id="btn_removeLine" class="button">-</a>
+                  </p>
+                  <p class="control">
+                    <a id="btn_addLine" class="button">+</a>
+                  </p>
+                </div>
+              </div>
+            </div>
+            <div class="field is-horizontal">
+              <div class="field-label is-normal" id="label_rowSpace">
+                <label class="label">Zeilen&shy;abstand</label>
+              </div>
+              <div class="field-body">
+                <div class="field">
+                  <p class="control">
+                    <input id="lineSpace" class="input" type="number" value="5" />
+                  </p>
+                </div>
+              </div>
+            </div>
+            <div class="field is-horizontal">
+              <div class="field-label is-normal" id="label_centerHor">
+                <label class="label">Horizontal zentrieren</label>
+              </div>
+              <div class="field-body">
+                <div class="field">
+                  <p class="control">
+                    <input id="centerHor" type="checkbox" />
+                  </p>
+                </div>
+              </div>
+            </div>
+            <div class="field is-horizontal">
+              <div class="field-label is-normal" id="label_centerVer">
+                <label class="label">Vertikal zentrieren</label>
+              </div>
+              <div class="field-body">
+                <div class="field">
+                  <p class="control">
+                    <input id="centerVer" type="checkbox" />
+                  </p>
+                </div>
+              </div>
+            </div>
+        </div>
       </div>
     </div>
-    <div id="configInputs">
-      <div id="labelSize">
-        <fieldset>
-          <legend>Label</legend>
-          <span class="spacer">
-            <label for="input_labelHeight">Höhe</label>
-            <input id="input_labelHeight" class="fixedWidth" style="margin-left: 13px;" type="number" value="43" /> in mm
-          </span><br />
-          <span class="spacer">
-            <label for="input_labelWidth">Breite</label>
-            <input id="input_labelWidth" class="fixedWidth" style="margin-left: 10px;" type="number" value="80" /> in mm
-          </span><br />
-          <span class="spacer">
-            <label for="input_labelLines">Anzahl der Zeilen</label>
-            <input id="input_labelLines" class="fixedWidth" value="1" disabled/>
-            <button id="btn_addLine" class="button">+</button>
-            <button id="btn_removeLine" class="button">-</button>
-          </span><br />
-          <span class="spacer">
-            <label for="lineSpace">Zeilenabstand</label>
-            <input id="lineSpace" class="fixedWidth" type="number" value="5" />
-          </span><br />
-          <span class="spacer">
-            <label for="centerHor">Horizontal zentrieren</label>
-            <input id="centerHor" type="checkbox" />
-          </span><br />
-          <span class="spacer">
-            <label for="centerVer">Vertikal zentrieren</label>
-            <input id="centerVer" type="checkbox" />
-          </span>
-          <table id="tableLines">
-            <thead>
-              <tr>
-                <th>Zeile</th>
-                <th>Schriftart</th>
-                <th>Schriftgröße</th>
-                <th>Fett</th>
-                <th>Kursiv</th>
-                <th>Einzug</th>
-              </tr>
-            </thead>
-            <tbody id="tableLinesBody"></tbody>
-          </table>
-        </fieldset>
-      </div>
-      <div id="paperSize">
-        <fieldset>
-          <legend>Papier</legend>
-          <span class="spacer">
-            <label for="input_paperHeight">Höhe</label>
-            <input id="input_paperHeight" class="fixedWidthExtended" type="number" value="48920" /> in μm
-          </span><br />
-          <span class="spacer">
-            <label for="input_paperWidth">Breite</label>
-            <input id="input_paperWidth" class="fixedWidthExtended" type="number" value="99970" /> in μm
-          </span>
-        </fieldset>
-      </div>
-      <div>
-        <fieldset>
-          <span class="spacer">
-            <label for="input_fileName">Dateiname</label>
-            <input id="input_fileName" type="text" />
-          </span><br />
-          <span class="spacer">
-            <label for="input_printerName">Druckername</label>
-            <input id="input_printerName" type="text" />
-          </span>
-        </fieldset>
-      </div>
+  </div>
+  <div id="tableBox" class="box">
+    <table id="tableLines" class="table is-narrow">
+      <thead>
+        <tr>
+          <th>Zeile</th>
+          <th>Schriftart</th>
+          <th>Schriftgröße</th>
+          <th>Fett</th>
+          <th>Kursiv</th>
+          <th>Einzug</th>
+        </tr>
+      </thead>
+      <tbody id="tableLinesBody"></tbody>
+    </table>
+  </div>
+  </div>
+  <div id="buttonBox" class="box level">
+    <div class="level-left">
+      <button id="btn_save" class="button is-success">Speichern</button>
     </div>
-    <div id="buttonBox">
-      <fieldset>
-        <button id="btn_save" class="button">Speichern</button>
-        <button id="btn_close" class="button">Schließen</button>
-      </fieldset>
+    <div class="level-right">
+      <button id="btn_close" class="button is-danger">Schließen</button>
     </div>
-    <!-- The Modal -->
-    <div id="myModal" class="modal">
-      <!-- Modal content -->
-      <div class="modal-content">
-        <span class="close">&times;</span>
-        <p id="modalTxt"></p>
-      </div>
+  </div>
+  <!-- The Modal -->
+  <div id="myModal" class="modal">
+    <!-- Modal content -->
+    <div class="modal-content">
+      <span class="close">&times;</span>
+      <p id="modalTxt"></p>
     </div>
-    <script>
-      require('./../js/configRenderer.js')
-    </script>
-    <script>
-      let modal = document.getElementById('myModal')
-      // Get the <span> element that closes the modal
-      let span = document.getElementsByClassName('close')[0]
+  </div>
+  
+  <script>
+    require('./../js/configRenderer.js')
+  </script>
+  <script>
+    let modal = document.getElementById('myModal')
+    // Get the <span> element that closes the modal
+    let span = document.getElementsByClassName('close')[0]
 
-      // When the user clicks on <span> (x), close the modal
-      span.onclick = function() {
+    // When the user clicks on <span> (x), close the modal
+    span.onclick = function () {
+      modal.style.display = 'none'
+    }
+
+    // When the user clicks anywhere outside of the modal, close it
+    window.onclick = function (event) {
+      if (event.target == modal) {
         modal.style.display = 'none'
       }
-
-      // When the user clicks anywhere outside of the modal, close it
-      window.onclick = function(event) {
-        if (event.target == modal) {
-          modal.style.display = 'none'
-        }
-      }
-    </script>
-  </body>
+    }
+  </script>
+</body>
 
 </html>

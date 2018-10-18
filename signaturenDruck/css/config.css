@@ -19,7 +19,7 @@ body {
 #innerBox > p {
   width: 100%;
 }
-#configInputs {
+/* #configInputs {
   font-family: "Arial";
   font-size: 10pt;
 }
@@ -34,4 +34,4 @@ body {
 }
 .fixedWidthExtended {
   width: 60px;
-}
+} */
