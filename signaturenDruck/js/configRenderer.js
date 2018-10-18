@@ -131,7 +131,7 @@ function createCSS (obj) {
   function linesStyle (str) {
     for (let line of obj.linesData) {
       str += '.format_' + obj.name + ' > .innerBox > .line_' + line.id + ' {\n'
-      str += 'font-family: ' + line.font + ';\n'
+      str += 'font-family: "' + line.font + '";\n'
       str += 'font-size: ' + line.fontSize + 'pt;\n'
       if (line.bold) {
         str += 'font-weight: bold;\n'
@@ -236,6 +236,8 @@ function removeTableLine (id) {
 
 function addTableLineFontSelect (id, row) {
   let cell = row.insertCell(1)
+  let selectDiv = document.createElement('div')
+  selectDiv.className = 'select'
   let select = document.createElement('select')
   select.id = 'fontLine_' + (id + 1)
   fonts.forEach(element => {
@@ -248,7 +250,8 @@ function addTableLineFontSelect (id, row) {
     select.appendChild(font)
   })
   select.addEventListener('input', changeLineFont)
-  cell.appendChild(select)
+  selectDiv.appendChild(select)
+  cell.appendChild(selectDiv)
 }
 
 function addTableLineFontSize (id, row) {
@@ -257,7 +260,7 @@ function addTableLineFontSize (id, row) {
   input.id = 'fontSizeLine_' + (id + 1)
   input.type = 'number'
   input.value = 14
-  input.className = 'fixedWidth'
+  input.className = 'input'
   input.addEventListener('input', changeLineFontSize)
   cell.appendChild(input)
 }
@@ -286,7 +289,7 @@ function addTableLineIndent (id, row) {
   input.id = 'indent_' + (id + 1)
   input.type = 'number'
   input.value = 0
-  input.className = 'fixedWidth'
+  input.className = 'input'
   input.addEventListener('input', changeLineIndent)
   cell.appendChild(input)
 }
@@ -316,7 +319,7 @@ function changeLineBold (event) {
 
 function changeLineFont (event) {
   let elemId = getId(event)
-  document.getElementById('line_' + elemId).style.fontFamily = document.getElementById('fontLine_' + elemId).value
+  document.getElementById('line_' + elemId).style.fontFamily = '"' + document.getElementById('fontLine_' + elemId).value + '"'
 }
 
 function getId (event) {
