@@ -46,14 +46,23 @@ function changeLabelWidth (event) {
 
 function saveConfig () {
   if (document.getElementById('input_fileName').value !== '') {
-    if (!fs.existsSync('C:\\Export\\SignaturenDruck\\Formate\\' + document.getElementById('input_fileName').value + '.json')) {
-      let objct = setObjct()
-      fs.writeFileSync('C:\\Export\\SignaturenDruck\\FormateCSS\\' + document.getElementById('input_fileName').value + '.css', createCSS(objct), 'utf8')
-      fs.writeFileSync('C:\\Export\\SignaturenDruck\\Formate\\' + document.getElementById('input_fileName').value + '.json', JSON.stringify(objct), 'utf8')
-      ipc.send('newConfig')
+    if (document.getElementById('input_printerName').value !== '') {
+      if (!fs.existsSync('C:\\Export\\SignaturenDruck\\Formate\\' + document.getElementById('input_fileName').value + '.json')) {
+        let objct = setObjct()
+        fs.writeFileSync('C:\\Export\\SignaturenDruck\\FormateCSS\\' + document.getElementById('input_fileName').value + '.css', createCSS(objct), 'utf8')
+        fs.writeFileSync('C:\\Export\\SignaturenDruck\\Formate\\' + document.getElementById('input_fileName').value + '.json', JSON.stringify(objct), 'utf8')
+        ipc.send('newConfig')
+      } else {
+        alert('Ein Format mit diesem Namen ist bereits vorhanden.')
+        document.getElementById('input_fileName').focus()
+      }
     } else {
-      alert('Ein Format mit diesem Namen ist bereits vorhanden.')
+      alert('Es muss ein Druckername angegeben werden.')
+      document.getElementById('input_printerName').focus()
     }
+  } else {
+    alert('Es muss ein Formatname vergeben werden')
+    document.getElementById('input_fileName').focus()
   }
 }
 
