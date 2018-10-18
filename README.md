@@ -6,7 +6,10 @@ The printing process creates two `.pdf`-files (each for one size) and proceeds t
 
 
 
-To use this application you'll need to install [Foxit Reader v6.2.3.0815](http://cdn01.foxitsoftware.com/pub/foxit/reader/desktop/win/6.x/6.2/enu/FoxitReader623.815_enu_Setup.exe) on your computer.
+To use this application you'll need to download the [PDFtoPrinter.exe](http://www.columbia.edu/~em36/pdftoprinter.html) and copy it to
+```bash
+C:\Program Files\PDFtoPrinter\
+```
 
 To clone and run this repository you'll need [Git](https://git-scm.com) and [Node.js](https://nodejs.org/en/download/) (which comes with [npm](http://npmjs.com)) installed on your computer. From your command line:
 

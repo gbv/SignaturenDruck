@@ -243,7 +243,8 @@ function printData (format, data, dataMan) {
         if (error) throw error
         if (!config.store.devMode) {
           cmd.get(
-            '"C:\\Program Files (x86)\\Foxit Software\\Foxit Reader\\Foxit Reader.exe"' + ' /t .\\tmp\\' + formats[format].pdfName + ' ' + formats[format].printer,
+            '"C:\\Program Files\\PDFtoPrinter\\PDFtoPrinter" "' + path.join(__dirname, '.\\tmp\\' + formats[format].pdfName) + '" "' + formats[format].printer + '"',
+            // '"C:\\Program Files (x86)\\Foxit Software\\Foxit Reader\\Foxit Reader.exe"' + ' /t .\\tmp\\' + formats[format].pdfName + ' ' + formats[format].printer,
             function (error, data, stderr) {
               if (error) throw error
             }
@@ -274,7 +275,7 @@ function createManualWindow (objMan) {
 
 // creates the winConfig
 function createConfigWindow () {
-  winConfig = new BrowserWindow({width: 540, height: 800, show: false})
+  winConfig = new BrowserWindow({width: 800, height: 800, show: false})
   winConfig.loadURL(url.format({
     pathname: path.join(__dirname, 'html/config.html'),
     protocol: 'file',
