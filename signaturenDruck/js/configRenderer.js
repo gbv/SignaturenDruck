@@ -68,10 +68,10 @@ function saveConfig () {
     if (document.getElementById('selectPrinter').value !== '') {
       if (!fs.existsSync('C:\\Export\\SignaturenDruck\\Formate\\' + document.getElementById('input_fileName').value + '.json')) {
         let objct = setObjct()
-        console.log(objct)
-        // fs.writeFileSync('C:\\Export\\SignaturenDruck\\FormateCSS\\' + document.getElementById('input_fileName').value + '.css', createCSS(objct), 'utf8')
-        // fs.writeFileSync('C:\\Export\\SignaturenDruck\\Formate\\' + document.getElementById('input_fileName').value + '.json', JSON.stringify(objct), 'utf8')
-        // ipc.send('newConfig')
+        fs.writeFileSync('C:\\Export\\SignaturenDruck\\FormateCSS\\' + document.getElementById('input_fileName').value + '.css', createCSS(objct), 'utf8')
+        fs.writeFileSync('C:\\Export\\SignaturenDruck\\Formate\\' + document.getElementById('input_fileName').value + '.json', JSON.stringify(objct), 'utf8')
+        ipc.send('newConfig')
+        alert('Das Format wurde hinzugefügt.')
       } else {
         alert('Ein Format mit diesem Namen ist bereits vorhanden.')
         document.getElementById('input_fileName').focus()
@@ -271,7 +271,7 @@ function addTableLineFontSelect (id, row) {
   select.id = 'fontLine_' + (id + 1)
   fonts.forEach(element => {
     let font = document.createElement('option')
-    if (element === 'Arial') {
+    if (element === 'Arial Narrow') {
       font.selected = true
     }
     font.value = element
