@@ -24,6 +24,11 @@ body {
   text-align: left !important;
 }
 
+/* formatSelect */
+#label_selectFormat {
+  margin-right: 71px !important;
+}
+
 /* configInputs */
 #configInputs {
   margin-left: 5px !important;

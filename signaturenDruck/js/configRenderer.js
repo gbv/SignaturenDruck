@@ -18,10 +18,14 @@ const printerList = require('electron').remote.getCurrentWindow().webContents.ge
 let lineCounter = 1
 
 let fonts = []
+let formats = []
+let selectOptions = []
 
 window.onload = function () {
   setFontsList()
   setPrinterSelect()
+  getFormats()
+  setFormatsSelect()
   changeLineSpace()
   addTableLine()
   document.getElementById('line_1').style.fontFamily = document.getElementById('fontLine_1').value
@@ -53,6 +57,105 @@ function setPrinterSelect () {
     option.innerHTML = element
     select.appendChild(option)
   })
+}
+
+function getFormats () {
+  let files = fs.readdirSync('C:\\Export\\SignaturenDruck\\Formate')
+  for (let file of files) {
+    let fileName = file.split('.json')[0]
+    selectOptions.push(fileName)
+    formats[fileName] = JSON.parse(fs.readFileSync('C:\\Export\\SignaturenDruck\\Formate\\' + file, 'utf8'))
+  }
+}
+
+function setFormatsSelect () {
+  let select = document.getElementById('selectFormat')
+  selectOptions.forEach(element => {
+    let option = document.createElement('option')
+    option.value = element
+    option.innerHTML = element
+    select.appendChild(option)
+  })
+  select.onchange = function () {
+    loadDataFromFormat(select.value)
+  }
+}
+
+function loadDataFromFormat (formatName) {
+  let format = formats[formatName]
+  document.getElementById('input_fileName').value = format.name
+  document.getElementById('selectPrinter').value = format.printer
+  document.getElementById('input_paperHeight').value = Number(format.paper.height)
+  document.getElementById('input_paperWidth').value = Number(format.paper.width)
+  document.getElementById('input_labelHeight').value = Number(format.label.height.split('mm')[0])
+  changeLabelHeight()
+  document.getElementById('input_labelWidth').value = Number(format.label.width.split('mm')[0])
+  changeLabelWidth()
+  let i = document.getElementById('input_labelLines').value
+  while (i < format.lines) {
+    document.getElementById('btn_addLine').click()
+    i++
+  }
+  while (i > format.lines) {
+    document.getElementById('btn_removeLine').click()
+    i--
+  }
+  document.getElementById('input_labelLines').value = Number(format.lines)
+  document.getElementById('lineSpace').value = Number(format.lineSpace)
+  changeLineSpace()
+  let centerHor = document.getElementById('centerHor')
+  if (format.centerHor) {
+    if (!centerHor.checked) {
+      centerHor.click()
+    }
+  } else {
+    if (centerHor.checked) {
+      centerHor.click()
+    }
+  }
+  let centerVer = document.getElementById('centerVer')
+  if (format.centerVer) {
+    if (!centerVer.checked) {
+      centerVer.click()
+    }
+  } else {
+    if (centerVer.checked) {
+      centerVer.click()
+    }
+  }
+  document.getElementById('centerHor').checked = format.centerHor
+  document.getElementById('centerVer').checked = format.centerVer
+  for (let i = 1; i <= format.lines; i++) {
+    let k = i - 1
+    document.getElementById('fontLine_' + i).value = format.linesData[k].font
+    let evt = {'target': {'id': ''}}
+    evt.target.id = '_' + i
+    changeLineFont(evt)
+    document.getElementById('fontSizeLine_' + i).value = format.linesData[k].fontSize
+    changeLineFontSize(evt)
+    let chkbx = document.getElementById('bold_' + i)
+    if (format.linesData[k].bold) {
+      if (!chkbx.checked) {
+        chkbx.click()
+      }
+    } else {
+      if (chkbx.checked) {
+        chkbx.click()
+      }
+    }
+    chkbx = document.getElementById('italic_' + i)
+    if (format.linesData[k].italic) {
+      if (!chkbx.checked) {
+        chkbx.click()
+      }
+    } else {
+      if (chkbx.checked) {
+        chkbx.click()
+      }
+    }
+    document.getElementById('indent_' + i).value = format.linesData[k].indent
+    changeLineIndent(evt)
+  }
 }
 
 function changeLabelHeight (event) {
