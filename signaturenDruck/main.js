@@ -11,6 +11,11 @@ const fs = require('fs')
 const Store = require('electron-store')
 const config = new Store({cwd: 'C:\\Export\\SignaturenDruck'})
 const cmd = require('node-cmd')
+require('electron-context-menu')({
+  prepend: (params, BrowserWindow) => [{
+    // label: ''
+  }]
+})
 
 // requires lodash
 const _ = require('lodash')
