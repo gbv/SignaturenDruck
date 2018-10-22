@@ -184,7 +184,7 @@ function createTable (obj) {
         createShortShelfmarkCell(row, 3, objct.id, objct.bigLabel)
         createPrintCell(row, 4, objct.id)
         createPrintCountCell(row, 5, objct.id)
-        createLabelSizeCell(row, 6, objct.id, key.txtLength)
+        createLabelSizeCell(row, 6, objct.id, objct.txtLength)
       })
       i++
     })
@@ -373,6 +373,7 @@ function createLabelSizeCell (row, cellNr, id, lines) {
     select.appendChild(size)
   })
   select.onchange = function () { pre(id) }
+  console.log(lines)
   if (Number(lines) <= 2) {
     if (printerFound['thulb_klein_1']) {
       select.value = 'thulb_klein_1'
@@ -667,39 +668,12 @@ function pre (id) {
     let file = fs.readFileSync('signaturen.json', 'utf8')
     if (config.store.sortByPPN) {
       _.forEach(JSON.parse(file), function (key, value) {
-        let sig = ''
-        let found = ''
-        found = _.find(key, { 'id': Number(id) })
-        if (found !== undefined) {
-          sig = found
-          if (sig.txtLength <= 2) {
-            if (document.getElementById('short_' + sig.id).checked) {
-              showData(sig.txt)
-            } else {
-              let data = []
-              data[0] = sig.txtOneLine
-              showData(data)
-            }
-          } else {
-            showData(sig.txt)
-          }
-        }
+        let found = _.find(key, { 'id': Number(id) })
+        searchAndShow(found)
       })
     } else {
       let found = _.find(JSON.parse(file), { 'id': Number(id) })
-      if (found !== undefined) {
-        if (found.txtLength <= 2) {
-          if (document.getElementById('short_' + found.id).checked) {
-            showData(found.txt)
-          } else {
-            let data = []
-            data[0] = found.txtOneLine
-            showData(data)
-          }
-        } else {
-          showData(found.txt)
-        }
-      }
+      searchAndShow(found)
     }
     document.getElementsByClassName('innerBox')[0].className = 'innerBox'
   } else {
@@ -707,6 +681,22 @@ function pre (id) {
     checkIfNoIndent(cleanId)
   }
   changePreview(id)
+
+  function searchAndShow (found) {
+    if (found !== undefined) {
+      if (found.txtLength <= 2) {
+        if (document.getElementById('short_' + found.id).checked) {
+          showData(found.txt)
+        } else {
+          let data = []
+          data[0] = found.txtOneLine
+          showData(data)
+        }
+      } else {
+        showData(found.txt)
+      }
+    }
+  }
 
   function checkIfNoIndent (cleanId) {
     showData(objMan[cleanId].lineTxts)
