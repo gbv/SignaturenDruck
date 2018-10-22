@@ -17,11 +17,12 @@
   "author": "Elias Dehler",
   "license": "CC BY",
   "devDependencies": {
-    "electron": "^3.0.4",
+    "electron": "^2.0.12",
     "electron-builder": "^20.28.4",
     "electron-rebuild": "^1.8.2"
   },
   "dependencies": {
+    "electron-context-menu": "^0.10.0",
     "electron-store": "^2.0.0",
     "font-manager": "^0.3.0",
     "lodash": "^4.17.11",
