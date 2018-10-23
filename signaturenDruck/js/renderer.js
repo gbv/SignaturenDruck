@@ -147,9 +147,6 @@ function setIds (obj) {
 
 // creates the signaturen.json file
 function writeShelfmarksToFile (json) {
-  if (config.store.sortByPPN) {
-    json = JSON.stringify(groupByPPN(JSON.parse(json)))
-  }
   fs.writeFileSync('signaturen.json', json, 'utf8')
 }
 
@@ -162,7 +159,11 @@ function displayData () {
       myNode.removeChild(myNode.firstChild)
     }
   }
-  createTable(JSON.parse(file))
+  if (config.get('sortByPPN')) {
+    createTable(groupByPPN(JSON.parse(file)))
+  } else {
+    createTable(JSON.parse(file))
+  }
 }
 
 // creates the displayed table with the provided data
@@ -243,7 +244,7 @@ function addToTable (obj) {
     createShortShelfmarkCell(row, 3, ('m_' + obj[i].id), obj[i].size)
     createPrintCell(row, 4, ('m_' + obj[i].id))
     createPrintCountCell(row, 5, ('m_' + obj[i].id))
-    createLabelSizeCell(row, 6, ('m_' + obj[i].id), obj[i].lines)
+    createLabelSizeCell(row, 6, ('m_' + obj[i].id), obj[i].lines, obj[i].format)
     i++
   }
 }
@@ -306,22 +307,27 @@ function createExnrCell (row, cellNr, id, exNr = '-') {
 function createShortShelfmarkCell (row, cellNr, id, size) {
   let shortShelfmarkCell = row.insertCell(cellNr)
   shortShelfmarkCell.className = 'shortShelfmarkCell'
-  if (!size) {
-    if (!String(id).includes('m_')) {
-      let input = document.createElement('input')
-      input.id = 'short_' + id
-      input.type = 'checkbox'
-      input.name = 'shortShelfmark'
-      input.value = id
-      input.onclick = function () {
-        changeFormat(id)
-        pre(id)
+  if (config.get('thulbMode')) {
+    if (!size) {
+      if (!String(id).includes('m_')) {
+        let input = document.createElement('input')
+        input.id = 'short_' + id
+        input.type = 'checkbox'
+        input.name = 'shortShelfmark'
+        input.value = id
+        input.onclick = function () {
+          changeFormat(id)
+          pre(id)
+        }
+        shortShelfmarkCell.appendChild(input)
+      } else {
+        shortShelfmarkCell.id = 'short_' + id
       }
-      shortShelfmarkCell.appendChild(input)
-    } else {
-      shortShelfmarkCell.id = 'short_' + id
     }
+  } else {
+    shortShelfmarkCell.id = 'short_' + id
   }
+
   function changeFormat (id) {
     if (document.getElementById('short_' + id).checked) {
       document.getElementById('templateSelect_' + id).value = 'thulb_klein'
@@ -359,7 +365,7 @@ function createPrintCountCell (row, cellNr, id) {
 }
 
 // creates the label size cell
-function createLabelSizeCell (row, cellNr, id, lines) {
+function createLabelSizeCell (row, cellNr, id, lines, format = '') {
   let cell = row.insertCell(cellNr)
   let select = document.createElement('select')
   select.id = 'templateSelect_' + id
@@ -373,18 +379,25 @@ function createLabelSizeCell (row, cellNr, id, lines) {
     select.appendChild(size)
   })
   select.onchange = function () { pre(id) }
-  console.log(lines)
-  if (Number(lines) <= 2) {
-    if (printerFound['thulb_klein_1']) {
-      select.value = 'thulb_klein_1'
-    }
-  } else if (Number(lines) === 3) {
-    if (printerFound['thulb_klein']) {
-      select.value = 'thulb_klein'
-    }
-  } else if (Number(lines) <= 6) {
-    if (printerFound['thulb_gross']) {
-      select.value = 'thulb_gross'
+  if (format !== '') {
+    select.value = format
+  } else {
+    if (config.get('thulbMode')) {
+      if (Number(lines) <= 2) {
+        if (printerFound['thulb_klein_1']) {
+          select.value = 'thulb_klein_1'
+        }
+      } else if (Number(lines) === 3) {
+        if (printerFound['thulb_klein']) {
+          select.value = 'thulb_klein'
+        }
+      } else if (Number(lines) <= 6) {
+        if (printerFound['thulb_gross']) {
+          select.value = 'thulb_gross'
+        }
+      }
+    } else {
+      select.value = config.get('defaultFormat')
     }
   }
   cell.appendChild(select)
@@ -664,27 +677,21 @@ function openConfigWindow (event) {
 
 function pre (id) {
   removeOld()
+  changePreview(id)
   if (!String(id).includes('m_')) {
     let file = fs.readFileSync('signaturen.json', 'utf8')
-    if (config.store.sortByPPN) {
-      _.forEach(JSON.parse(file), function (key, value) {
-        let found = _.find(key, { 'id': Number(id) })
-        searchAndShow(found)
-      })
-    } else {
-      let found = _.find(JSON.parse(file), { 'id': Number(id) })
-      searchAndShow(found)
-    }
+    let found = _.find(JSON.parse(file), { 'id': Number(id) })
+    searchAndShow(found)
     document.getElementsByClassName('innerBox')[0].className = 'innerBox'
   } else {
     let cleanId = id.split('m_')[1]
     checkIfNoIndent(cleanId)
   }
-  changePreview(id)
 
   function searchAndShow (found) {
     if (found !== undefined) {
-      if (found.txtLength <= 2) {
+      let format = document.getElementById('templateSelect_' + id).value
+      if (found.txtLength <= 2 && config.get('thulbMode')) {
         if (document.getElementById('short_' + found.id).checked) {
           showData(found.txt)
         } else {
@@ -693,7 +700,11 @@ function pre (id) {
           showData(data)
         }
       } else {
-        showData(found.txt)
+        if (Number(formats[format].lines) === 1) {
+          showData(found.txtOneLine)
+        } else {
+          showData(found.txt)
+        }
       }
     }
   }
@@ -720,19 +731,27 @@ function showData (shelfmark) {
   let line
   let innerBox = document.createElement('div')
   innerBox.className = 'innerBox'
-  shelfmark.forEach(element => {
+  if (Array.isArray(shelfmark)) {
+    shelfmark.forEach(element => {
+      line = document.createElement('p')
+      line.id = 'line_' + i
+      line.className = 'line_' + i
+      if (element === '') {
+        let emptyLine = document.createElement('br')
+        line.appendChild(emptyLine)
+      } else {
+        line.innerHTML = element
+      }
+      innerBox.appendChild(line)
+      i++
+    })
+  } else {
     line = document.createElement('p')
     line.id = 'line_' + i
     line.className = 'line_' + i
-    if (element === '') {
-      let emptyLine = document.createElement('br')
-      line.appendChild(emptyLine)
-    } else {
-      line.innerHTML = element
-    }
+    line.innerHTML = shelfmark
     innerBox.appendChild(line)
-    i++
-  })
+  }
   document.getElementById('previewBox').appendChild(innerBox)
 }
 

@@ -115,8 +115,10 @@ module.exports = function (barcode) {
     objSRU.date = dateFromLine
     objSRU.exNr = exNr
     objSRU.plainTxt = shelfmark
-    if (objSRU.txtLength < 3) {
-      objSRU.txt = createMultipleLines(shelfmark)
+    if (config.get('thulbMode')) {
+      if (objSRU.txtLength < 3) {
+        objSRU.txt = createMultipleLines(shelfmark)
+      }
     }
   }
   function recordCheck (line) {

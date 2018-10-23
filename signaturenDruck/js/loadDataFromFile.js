@@ -34,13 +34,18 @@ module.exports = function (allLines) {
       }
       let txt = plainTxt.split(config.get('newLineAfter'))
       sig.txtLength = txt.length
-      if (txt.length === 6) {
-        sig.txt = txt
-        _.forEach(txt, function (value) {
-          sig.txtOneLine += value + ' '
-        })
+      if (config.get('thulbMode')) {
+        if (txt.length === 6) {
+          sig.txt = txt
+          _.forEach(txt, function (value) {
+            sig.txtOneLine += value + ' '
+          })
+        } else {
+          let txt = [plainTxt]
+          sig.txt = txt
+          sig.txtOneLine = plainTxt
+        }
       } else {
-        let txt = [plainTxt]
         sig.txt = txt
         sig.txtOneLine = plainTxt
       }
@@ -48,8 +53,10 @@ module.exports = function (allLines) {
       sig.date = extract.date(line)
     }
     if (sig.allSet()) {
-      if (sig.txtLength < 3) {
-        sig.txt = createMultipleLines(plainTxt)
+      if (config.get('thulbMode')) {
+        if (sig.txtLength < 3) {
+          sig.txt = createMultipleLines(plainTxt)
+        }
       }
       obj.all.push(sig.shelfmark)
       sig = new Shelfmark()

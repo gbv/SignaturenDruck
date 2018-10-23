@@ -14,8 +14,15 @@ const username = require('username')
 // required for ipc calls to the main process
 const ipc = require('electron').ipcRenderer
 
+// requires the electron-store module and initializes it
+const Store = require('electron-store')
+const config = new Store({cwd: 'C:\\Export\\SignaturenDruck'})
+
+let formats = []
+
 window.onload = function () {
   addStyleLinks()
+  loadFormats()
 
   function addStyleLinks () {
     let files = fs.readdirSync('C:\\Export\\SignaturenDruck\\FormateCSS')
@@ -30,12 +37,12 @@ window.onload = function () {
   }
 }
 
-ipc.on('toPrint', function (event, format, formats, data, dataMan) {
-  main(format, formats, data, dataMan)
+ipc.on('toPrint', function (event, format, data, dataMan) {
+  main(format, data, dataMan)
   ipc.send('printed', true)
 })
 
-function main (format, formats, data, dataMan) {
+function main (format, data, dataMan) {
   let file = ''
   if (fs.existsSync('signaturen.json')) {
     file = fs.readFileSync('signaturen.json', 'utf8')
@@ -43,45 +50,55 @@ function main (format, formats, data, dataMan) {
   addUsername()
   addDate()
 
-  createPage(format, formats, data, dataMan, file)
+  createPage(format, data, dataMan, file)
 }
 
-function createPage (format, formats, data, dataMan, file) {
+function createPage (format, data, dataMan, file) {
   addStyle(format)
   _.forEach(data, function (value) {
     for (let count = 0; count < value.count; count++) {
       let div = document.createElement('div')
       div.className = 'innerBox'
       div.id = value.id
-
-      let linesData = getData(value.id, value)
+      let linesData = getData(value.id, value, formats[format].lines)
       if (String(value.id).includes('m_')) {
         if (dataMan[value.id.split('m_')[1]].removeIndent) {
           div.className = 'innerBox noIndent'
         }
       }
-      let i = 1
-      linesData.forEach(line => {
+      if (Number(formats[format].lines) === 1) {
         let p = document.createElement('p')
-        p.className = 'line_' + i
-        if (line === '') {
-          p.appendChild(document.createElement('br'))
-        } else {
-          p.innerHTML = line
-        }
+        p.className = 'line_1'
+        p.innerHTML = linesData
         div.appendChild(p)
-        i++
-      })
+      } else {
+        let i = 1
+        linesData.forEach(line => {
+          let p = document.createElement('p')
+          p.className = 'line_' + i
+          if (line === '') {
+            p.appendChild(document.createElement('br'))
+          } else {
+            p.innerHTML = line
+          }
+          div.appendChild(p)
+          i++
+        })
+      }
       document.getElementById('toPrint').appendChild(div)
     }
   })
 
-  function getData (id, data) {
+  function getData (id, data, lines) {
     if (id.includes('m_')) {
-      return dataMan[id.split('m_')[1]].lineTxts
+      if (Number(lines) === 1) {
+        return dataMan[id.split('m_')[1]].lineTxts.join(' ')
+      } else {
+        return dataMan[id.split('m_')[1]].lineTxts
+      }
     } else {
       let shelfmarkData = _.find(JSON.parse(file), { 'id': Number(id) })
-      if (shelfmarkData.txtLength <= 2) {
+      if (shelfmarkData.txtLength <= 2 && config.get('thulbMode')) {
         if (data.isShort) {
           return shelfmarkData.txt
         } else {
@@ -90,7 +107,11 @@ function createPage (format, formats, data, dataMan, file) {
           return tmp
         }
       } else {
-        return shelfmarkData.txt
+        if (Number(lines) === 1) {
+          return shelfmarkData.txtOneLine
+        } else {
+          return shelfmarkData.txt
+        }
       }
     }
   }
@@ -120,4 +141,12 @@ function addDate () {
 
   today = dd + '.' + mm + '.' + yyyy
   document.getElementById('currentDate').innerHTML = today
+}
+
+function loadFormats () {
+  let files = fs.readdirSync('C:\\Export\\SignaturenDruck\\Formate')
+  for (let file of files) {
+    let fileName = file.split('.json')[0]
+    formats[fileName] = JSON.parse(fs.readFileSync('C:\\Export\\SignaturenDruck\\Formate\\' + file, 'utf8'))
+  }
 }

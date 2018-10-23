@@ -30,6 +30,7 @@ const configNew = {
   'newLineAfter': ':',
   'useSRU': false,
   'SRUaddress': 'http://sru.gbv.de/opac-de-27',
+  'thulbMode': true,
   'devMode': false
 }
 
@@ -241,7 +242,7 @@ function printData (format, data, dataMan) {
     slashes: true
   }))
   winPrint.once('ready-to-show', () => {
-    winPrint.webContents.send('toPrint', format, formats, data, dataMan)
+    winPrint.webContents.send('toPrint', format, data, dataMan)
     winPrint.webContents.printToPDF({marginsType: 1, landscape: true, pageSize: { width: formats[format].paper.height, height: formats[format].paper.width }}, (error, data) => {
       if (error) throw error
       fs.writeFile('./tmp/' + formats[format].pdfName, data, (error) => {
