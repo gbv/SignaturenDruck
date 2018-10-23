@@ -1,6 +1,6 @@
 {
   "name": "SignaturenDruck_neu",
-  "version": "1.0.3h",
+  "version": "1.0.4",
   "description": "SignaturenDruck der ThULB",
   "main": "main.js",
   "scripts": {
