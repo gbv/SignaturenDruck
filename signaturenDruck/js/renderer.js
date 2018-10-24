@@ -18,6 +18,8 @@ const config = new Store({cwd: 'C:\\Export\\SignaturenDruck'})
 const getLabelSize = require('./getLabelSize.js')
 const loadDataFromFile = require('./loadDataFromFile')
 
+const XRegExp = require('xregexp')
+
 const printerList = require('electron').remote.getCurrentWindow().webContents.getPrinters()
 
 let objMan = null
@@ -681,11 +683,84 @@ function pre (id) {
   if (!String(id).includes('m_')) {
     let file = fs.readFileSync('signaturen.json', 'utf8')
     let found = _.find(JSON.parse(file), { 'id': Number(id) })
+    let format = document.getElementById('templateSelect_' + id).value
+    getLinesByFormat(format, found.txtOneLine)
     searchAndShow(found)
     document.getElementsByClassName('innerBox')[0].className = 'innerBox'
   } else {
     let cleanId = id.split('m_')[1]
     checkIfNoIndent(cleanId)
+  }
+
+  function getLinesByFormat (format, shelfmarkRAW) {
+    let reg = ''
+    // let shelfmarkLines = []
+    // let regX = formats[format].regex
+    // shelfmarkRAW = 'HIS:SP:680::2:2107'
+
+    /* thulb_gross */
+    // if (config.get('thulbMode')) {
+    //   reg = XRegExp(
+    //     `^(?<first> [^\\s]*) \\s?
+    //       (?<second> [^\\s]*) \\s?
+    //       (?<third> [^\\s]*) \\s?
+    //       (?<fourth> [^\\s]*) \\s?
+    //       (?<fifth> [^\\s]*) \\s?
+    //       (?<sixth> .*)
+    //     `, 'x'
+    //   )
+    // } else {
+    //   let delimiter = config.get('newLineAfter')
+    //   if (delimiter === ' ') {
+    //     delimiter = '\\s'
+    //   } else if (delimiter === '.') {
+    //     delimiter = '\\.'
+    //   }
+    //   reg = XRegExp(
+    //     `^(?<first> [^` + delimiter + `]*) ` + delimiter + `?
+    //       (?<second> [^` + delimiter + `]*) ` + delimiter + `?
+    //       (?<third> [^` + delimiter + `]*) ` + delimiter + `?
+    //       (?<fourth> [^` + delimiter + `]*) ` + delimiter + `?
+    //       (?<fifth> [^` + delimiter + `]*) ` + delimiter + `?
+    //       (?<sixth> .*)
+    //     `, 'x'
+    //   )
+    // }
+
+    /* thulb_klein */
+    if (config.get('thulbMode')) {
+      reg = XRegExp(
+        `^(?<first> .*?\\s[^\\s]+) \\s?
+          (?<second> [^(\\s:)]+) \\s?:?
+          (?<third> .*)
+        `, 'x'
+      )
+    } else {
+      let delimiter = config.get('newLineAfter')
+      if (delimiter === ' ') {
+        delimiter = '\\s'
+      } else if (delimiter === '.') {
+        delimiter = '\\.'
+      }
+      reg = XRegExp(
+        `^(?<first> [^` + delimiter + `]*) ` + delimiter + `?
+          (?<second> [^` + delimiter + `]*) ` + delimiter + `?
+          (?<third> [^` + delimiter + `]*) ` + delimiter + `?
+          (?<fourth> [^` + delimiter + `]*) ` + delimiter + `?
+          (?<fifth> [^` + delimiter + `]*) ` + delimiter + `?
+          (?<sixth> .*)
+        `, 'x'
+      )
+    }
+
+    console.log(shelfmarkRAW, 'first --> ', XRegExp.exec(shelfmarkRAW, reg))
+
+    // let regX = ['/^(.*?):(.*?):(.*?):(.*?):(.*?):(.*?)$/']
+    // regX.forEach(element => {
+    //   // shelfmarkLines.push()
+    //   console.log('first --> ', XRegExp.exec(shelfmarkRAW, XRegExp(element, 'x')))
+    // })
+    // return shelfmarkLines
   }
 
   function searchAndShow (found) {

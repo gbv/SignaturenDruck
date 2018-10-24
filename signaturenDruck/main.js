@@ -10,7 +10,6 @@ const url = require('url')
 const fs = require('fs')
 const Store = require('electron-store')
 const config = new Store({cwd: 'C:\\Export\\SignaturenDruck'})
-const cmd = require('node-cmd')
 const Shell = require('node-powershell')
 require('electron-context-menu')({
   prepend: (params, BrowserWindow) => [{
@@ -246,19 +245,20 @@ function printData (format, data, dataMan) {
     winPrint.webContents.send('toPrint', format, data, dataMan)
     winPrint.webContents.printToPDF({marginsType: 1, landscape: true, pageSize: { width: formats[format].paper.height, height: formats[format].paper.width }}, (error, data) => {
       if (error) throw error
-      fs.writeFile('./tmp/' + formats[format].pdfName, data, (error) => {
+      let fileName = formats[format].name + '_' + new Date().getTime() + '.pdf'
+      fs.writeFile('./tmp/' + fileName, data, (error) => {
         if (error) throw error
         let ps = new Shell({
           executionPolicy: 'Bypass',
           noProfile: true
         })
         if (!config.store.devMode) {
-          ps.addCommand('Start-Process "' + path.join(__dirname, '.\\tmp\\' + formats[format].pdfName) + '" -Verb PrintTo "' + formats[format].printer + '" -PassThru | %{sleep 4;$_} | kill')
+          ps.addCommand('Start-Process "' + path.join(__dirname, '.\\tmp\\' + fileName) + '" -Verb PrintTo "' + formats[format].printer + '" -PassThru | %{sleep 4;$_} | kill')
           ps.invoke().then(output => {
-            fs.unlinkSync(path.join(__dirname, '.\\tmp\\' + formats[format].pdfName))
+            fs.unlinkSync(path.join(__dirname, '.\\tmp\\' + fileName))
           })
         } else {
-          ps.addCommand('Start-Process "' + path.join(__dirname, '.\\tmp\\' + formats[format].pdfName) + '"')
+          ps.addCommand('Start-Process "' + path.join(__dirname, '.\\tmp\\' + fileName) + '"')
           ps.invoke().then(output => { ps.dispose() }).catch(err => {
             console.log(err)
             ps.dispose()
