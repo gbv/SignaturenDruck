@@ -11,6 +11,7 @@ const fs = require('fs')
 const Store = require('electron-store')
 const config = new Store({cwd: 'C:\\Export\\SignaturenDruck'})
 const cmd = require('node-cmd')
+const Shell = require('node-powershell')
 require('electron-context-menu')({
   prepend: (params, BrowserWindow) => [{
     // label: ''
@@ -247,14 +248,21 @@ function printData (format, data, dataMan) {
       if (error) throw error
       fs.writeFile('./tmp/' + formats[format].pdfName, data, (error) => {
         if (error) throw error
+        let ps = new Shell({
+          executionPolicy: 'Bypass',
+          noProfile: true
+        })
         if (!config.store.devMode) {
-          cmd.get(
-            '"C:\\Program Files\\PDFtoPrinter\\PDFtoPrinter" "' + path.join(__dirname, '.\\tmp\\' + formats[format].pdfName) + '" "' + formats[format].printer + '"',
-            // '"C:\\Program Files (x86)\\Foxit Software\\Foxit Reader\\Foxit Reader.exe"' + ' /t .\\tmp\\' + formats[format].pdfName + ' ' + formats[format].printer,
-            function (error, data, stderr) {
-              if (error) throw error
-            }
-          )
+          ps.addCommand('Start-Process "' + path.join(__dirname, '.\\tmp\\' + formats[format].pdfName) + '" -Verb PrintTo "' + formats[format].printer + '" -PassThru | %{sleep 4;$_} | kill')
+          ps.invoke().then(output => {
+            fs.unlinkSync(path.join(__dirname, '.\\tmp\\' + formats[format].pdfName))
+          })
+        } else {
+          ps.addCommand('Start-Process "' + path.join(__dirname, '.\\tmp\\' + formats[format].pdfName) + '"')
+          ps.invoke().then(output => { ps.dispose() }).catch(err => {
+            console.log(err)
+            ps.dispose()
+          })
         }
       })
     })
