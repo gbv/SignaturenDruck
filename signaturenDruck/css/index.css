@@ -10,6 +10,7 @@ body {
 
 #tableBox {
   border: 1px solid grey;
+  overflow-x: hidden; 
   overflow-y: scroll;
   height: 260px;
   background-color: RGB(255, 254, 225);
