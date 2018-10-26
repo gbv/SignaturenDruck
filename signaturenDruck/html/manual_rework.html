@@ -4,48 +4,71 @@
 	<head>
 		<meta charset="UTF-8">
     <title>Signaturendruck / manuelles erstellen</title>
+    <link rel="stylesheet" type="text/css" href="./../css/bulma.css">
     <link rel="stylesheet" type="text/css" href="./../css/preview.css">
     <link rel="stylesheet" type="text/css" href="./../css/manual_rework.css">
     <link rel="stylesheet" type="text/css" href="./../css/modal.css">
   </head>
 
 	<body>
-    <div id="container">
-      <div id="counter">
-        <strong>Signatur Nr. <span id="countCurrent"></span> von <span id="countMax"></span></strong>
-      </div>
-      <div id="leftside">
-        <div id="inputBox">
-          <div id="editorBox">
-          </div>
-          <div id="buttonBox">
-            <div id="btn_grp_1">
-              <button id="btn_previous" class="button" disabled>Vorherige</button>
-              <button id="btn_delete" class="button">löschen</button>
-              <button id="btn_next" class="button">Nächste</button>
+    <div id="outerColumns" class="columns is-mobile">
+      <div class="column">
+        <div id="leftside">
+          <div id="inputBox" class="box">
+            <div id="editorBox">
             </div>
-            <div id="btn_grp_2">
-              <button id="btn_saveAndExit" class="button">Übernehmen und Beenden</button>
-            </div>
-            <div id="btn_grp_3">
-              <button id="btn_deleteAndExit" class="button">Verwerfen und Beenden</button>
+            <div id="buttonBox">
+              <div id="btn_grp_1" class="columns is-mobile">
+                <div class="column is-one-third">
+                  <button id="btn_previous" class="button" disabled>Vorherige</button>
+                </div>
+                <div class="column is-one-third">
+                  <button id="btn_delete" class="button">löschen</button>
+                </div>
+                <div class="column is-one-third">
+                  <button id="btn_next" class="button">Nächste</button>
+                </div>
+              </div>
+              <div id="btn_grp_2">
+                <button id="btn_saveAndExit" class="button">Übernehmen und Beenden</button>
+              </div>
+              <div id="btn_grp_3">
+                <button id="btn_deleteAndExit" class="button">Verwerfen und Beenden</button>
+              </div>
             </div>
           </div>
         </div>
       </div>
-      <div id="rightside">
-        <div id="previewBox">
-          <div id="innerPreviewBox" class="innerBox">
-          </div>
+      <div class="column">
+        <div id="counter" class="box">
+          <strong>Signatur Nr. <span id="countCurrent"></span> von <span id="countMax"></span></strong>
         </div>
-        <div id="lineSelectBox">
-          <fieldset>
-            <legend>Optionen</legend>
-            <select id="formatSelect"></select>
-            <hr>
-            <input type="checkbox" id="chkbx_removeIndent" name="removeIndent"/>
-            <label for="chkbx_removeIndent">Einzug entfernen</label>
-          </fieldset>
+        <div id="rightside" class="box">
+          <div id="previewBox">
+            <div id="innerPreviewBox" class="innerBox">
+            </div>
+          </div>
+          <hr>
+          <div id="lineSelectBox">
+            <div class="level is-mobile">
+              <div class="level-left">
+                <label id="label_format" class="level-item label">Format</label>
+              </div>
+              <div class="level-right">
+                <div id="format" class="level-item select">
+                  <select id="formatSelect"></select>
+                </div>
+              </div>
+            </div>
+            <div class="level is-mobile">
+              <div class="level-left">
+                <label id="label_chkbx_removeIndent" class="level-item label">Einzug entfernen</label>
+              </div>
+              <div class="level-right">
+                <input type="checkbox" id="chkbx_removeIndent" name="removeIndent">
+              </div>
+            </div>
+          </div>
         </div>
       </div>
     </div>

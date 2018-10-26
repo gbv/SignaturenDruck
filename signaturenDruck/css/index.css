@@ -1,7 +1,8 @@
-body {
+html, body {
   background-color: RGB(240, 240, 240);
   font-family: "Arial";
   font-size: 10pt;
+  line-height: initial;
 }
 
 *:focus {
@@ -9,10 +10,12 @@ body {
 }
 
 #tableBox {
-  border: 1px solid grey;
+  border-top: 1px solid black;
+  border-bottom: 1px solid black;
   overflow-x: hidden; 
   overflow-y: scroll;
   height: 260px;
+  width: 100%;
   background-color: RGB(255, 254, 225);
 }
 
@@ -25,10 +28,7 @@ body {
 
 #buttonBox>button {
   width: 220px;
-  padding: 5px;
   margin: 2px 10px 2px 10px;
-  text-align: center;
-  font-weight: bold;
 }
 
 #container {
@@ -43,12 +43,13 @@ body {
 
 th,
 td {
-  text-align: center;
+  text-align: center !important;
+  vertical-align: middle !important;
 }
 
 .txtCell {
   width: 35%;
-  text-align: left;
+  text-align: left !important;
 }
 
 .dateCell {
@@ -68,6 +69,10 @@ td {
 
 hr {
   width: 101%;
+  background-color: initial !important;
+  border-style: inset !important;
+  border-width: 1px !important;
+  margin: 5px 0 !important;
 }
 
 .ppnRow {
@@ -75,7 +80,9 @@ hr {
 }
 
 .printCountCell>input {
-  text-align: center;
+  width: 55px !important;
+  font-size: 10pt !important;
+
 }
 
 table {
@@ -102,23 +109,9 @@ tbody>tr:hover {
   z-index: -1;
 }
 
-.button {
-  background-color: white;
-  color: black;
-  border: 2px solid grey;
-  padding: 5px;
-  text-align: center;
-  font-weight: bold;
-}
-
 .button:hover:enabled {
-  background-color: grey;
+  /* background-color: grey; */
   cursor: pointer;
-}
-
-.button[disabled] {
-  background-color: lightgray;
-  color: grey;
 }
 
 #devMode {
@@ -126,20 +119,15 @@ tbody>tr:hover {
 }
 
 #datepicker {
-  border: 2px solid grey;
-  font-family: Arial, Helvetica, sans-serif;
-  width: 120px;
-  padding: 3px;
-  font-weight: 600;
-}
-
-#datepickerSpan {
-  float: right;
+  width: 155px;
 }
 
 #columnPrint {
   border: 0px;
   background-color: RGB(240, 240, 240);
+  font-family: Arial;
+  font-size: 10pt;
+  font-weight: bold;
 }
 
 .tooltip {
@@ -183,12 +171,31 @@ td.txtCell {
 }
 
 #input_barcode {
-  border: 2px solid grey;
   font-family: Arial, Helvetica, sans-serif;
-  padding: 5px;
   font-weight: 600;
 }
 
 .noIndent > p {
   margin-left: 0px !important;
+}
+
+#topLine {
+  margin: 5px;
+}
+#defaultPath{
+  margin-right: 5px;
+}
+#btn_refresh {
+  margin-right: 5px;
+}
+
+#sru {
+  display: none;
+}
+
+#shelfmarkTableBody > tr:first-of-type > td:first-of-type {
+  padding-top: 7px !important;
+}
+#shelfmarkTableBody > tr:first-of-type > td > hr {
+  margin-top: 12px !important;
 }

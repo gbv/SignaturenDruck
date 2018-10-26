@@ -10,8 +10,8 @@ body {
   border-radius: 2px;
   font-family: "Arial Narrow";
   font-size: 14pt;
-  display: flex;
-  float: left;
+  display: flex !important;
+  float: none !important;
   overflow: hidden;
 }
 #innerBox {
@@ -20,19 +20,3 @@ body {
 #innerBox > p {
   width: 100%;
 }
-/* #configInputs {
-  font-family: "Arial";
-  font-size: 10pt;
-}
-.spacer {
-  padding: 5px;
-}
-.spacer > input {
-  margin: 5px 0px 5px 0px;
-}
-.fixedWidth {
-  width: 40px;
-}
-.fixedWidthExtended {
-  width: 60px;
-} */

@@ -5,6 +5,7 @@
   <meta charset="UTF-8">
   <title>Signaturendruck</title>
   <link rel="stylesheet" type="text/css" href="./../css/bulma.css">
+  <link rel="stylesheet" type="text/css" href="./../css/preview.css">
   <link rel="stylesheet" type="text/css" href="./../css/config.css">
   <link rel="stylesheet" type="text/css" href="./../css/modal.css">
   <link rel="stylesheet" type="text/css" href="./../css/all.css">
@@ -12,9 +13,44 @@
 </head>
 
 <body>
-  <div id="previewBox">
-    <div id="innerBox">
-      <p id="line_1">Zeile 1</p>
+  <div id="topRow">
+    <div class="columns">
+      <div class="column">
+        <div id="previewBox">
+          <div id="innerBox">
+            <p id="line_1"></p>
+          </div>
+        </div>
+      </div>
+      <div class="column">
+        <div class="box" id="delimBox">
+          <h2 class="subtitle is-4">Signatur</h2>
+          <div class="field is-horizontal">
+            <div class="field-label is-normal" id="label_delimiter">
+              <label class="label">Trennzeichen</label>
+            </div>
+            <div class="field-body">
+              <div class="field">
+                <p class="control">
+                  <input id="input_delimiter" class="input" type="text" maxlength="1" value=":" />
+                </p>
+              </div>
+            </div>
+          </div>
+          <div class="field is-horizontal">
+            <div class="field-label is-normal" id="label_example">
+              <label class="label">Beispiel</label>
+            </div>
+            <div class="field-body">
+              <div class="field">
+                <p class="control">
+                  <input id="input_example" class="input" type="text" value="PÄD:TG:1420:Dan::2017" />
+                </p>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
     </div>
   </div>
   <div id="configInputs">
@@ -39,32 +75,32 @@
           </div>
         </div>
         <div class="box">
-            <div class="field is-horizontal">
-              <div class="field-label is-normal" id="fileNameLabel">
-                <label class="label">Formatname</label>
-              </div>
-              <div class="field-body">
-                <div class="field">
-                  <p class="control">
-                    <input id="input_fileName" class="input" type="text" placeholder="z.B. thulb_gross"/>
-                  </p>
-                </div>
+          <div class="field is-horizontal">
+            <div class="field-label is-normal" id="fileNameLabel">
+              <label class="label">Formatname</label>
+            </div>
+            <div class="field-body">
+              <div class="field">
+                <p class="control">
+                  <input id="input_fileName" class="input" type="text" placeholder="z.B. thulb_gross"/>
+                </p>
               </div>
             </div>
-            <div class="field is-horizontal">
-              <div class="field-label is-normal">
-                <label class="label">Druckername</label>
-              </div>
-              <div class="field-body">
-                <div class="field">
-                  <p class="control">
-                    <div class="select">
-                      <select id="selectPrinter"></select>
-                    </div>
-                  </p>
-                </div>
+          </div>
+          <div class="field is-horizontal">
+            <div class="field-label is-normal">
+              <label class="label">Druckername</label>
+            </div>
+            <div class="field-body">
+              <div class="field">
+                <p class="control">
+                  <div class="select">
+                    <select id="selectPrinter"></select>
+                  </div>
+                </p>
               </div>
             </div>
+          </div>
         </div>
         <div id="paperBox" class="box">
           <h2 class="subtitle is-4">Papier</h2>

@@ -4,6 +4,7 @@
   <head>
     <meta charset="UTF-8">
     <title>Signaturendruck</title>
+    <link rel="stylesheet" type="text/css" href="./../css/bulma.css">
     <link rel="stylesheet" type="text/css" href="./../css/index.css">
     <link rel="stylesheet" type="text/css" href="./../css/preview.css">
     <link rel="stylesheet" type="text/css" href="C:/Export/SignaturenDruck/user.css">
@@ -13,19 +14,25 @@
 
   <body>
     <div>
-      <p id="topLine">
-        <span id="dnl">
-          Signaturendatei: <span id="defaultPath"></span>
-          <button id="btn_refresh" class="button"><i class="fas fa-sync"></i></button>
-          <input type="file" accept=".dnl" id="fileToRead" class="inputFile"/>
-          <label id="btn_fileToRead" for="fileToRead" class="button">Dateiauswahl</label>
+      <p id="topLine" class="level is-mobile">
+        <span class="level-left">
+          <span id="dnl" class="level-item">
+            Signaturendatei: <span id="defaultPath"></span>
+            <button id="btn_refresh" class="button"><i class="fas fa-sync"></i></button>
+            <input type="file" accept=".dnl" id="fileToRead" class="inputFile"/>
+            <label id="btn_fileToRead" for="fileToRead" class="button">Dateiauswahl</label>
+          </span>
+          <span id="sru" class="level-item">
+            <input id="input_barcode" class="input" type="text" placeholder="Barcode">
+            <button id="btn_barcode" class="button"><i class="fas fa-plus"></i></button>
+          </span>
         </span>
-        <span id="sru" hidden>
-          <input id="input_barcode" type="text" placeholder="Barcode">
-          <button id="btn_barcode" class="button"><i class="fas fa-plus"></i></button>
+        <span class="level-right">
+          <span id="datepickerSpan" class="level-item">
+            <label for="datepicker">Datumsfilter: </label>
+            <input id="datepicker" class="input" type="date"/>
+          </span>
         </span>
-        <span id="datepickerSpan"><label for="datepicker">Datumsfilter: </label>
-        <input id="datepicker" type="date"/></span>
       </p>
     </div>
     <div id="tableBox">

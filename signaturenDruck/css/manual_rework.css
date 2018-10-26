@@ -1,7 +1,11 @@
-body {
+html {
+  overflow-x: scroll !important;
+}
+html, body {
   background-color: RGB(240, 240, 240);
   font-family: "Arial";
   font-size: 10pt;
+  line-height: initial;
 }
 
 p:after {
@@ -10,18 +14,20 @@ p:after {
   width:0px;
 }
 
+hr {
+  border-width: 1px;
+  border-style: inset;
+  margin: 8px 0;
+}
+
 .button {
   background-color: white;
   color: black;
-  border: 2px solid grey;
   padding: 5px;
   margin: 2px 0px 2px 0px;
-  text-align: center;
-  font-weight: bold;
 }
 
 .button:hover:enabled {
-  background-color: grey;
   cursor: pointer;
 }
 
@@ -38,16 +44,17 @@ p:after {
   width: 100%;
 }
 
-#btn_previous {
-  width: 79px;
-}
-
 #container {
   overflow: hidden;
 }
 
 #counter {
   font-size: large;
+  margin-top: 5px;
+  margin-bottom: 5px;
+  padding-top: 6px;
+  padding-bottom: 6px;
+  text-align: center;
 }
 
 #editorBox {
@@ -55,25 +62,63 @@ p:after {
 }
 
 #editorBox > input {
-  margin: 1px;
-  width: 210px;
-  font-size: medium;
+  margin: 2px;
 }
 
 #inputBox {
-  float: left;
   margin-top: 5px;
   text-align: center;
 }
 
-#leftside {
-  float: left;
-}
-
 #previewBox {
-  margin: 5px !important;
+  display: block;
+  float: none;
+}
+#rightside {
+  margin-top: 5px;
 }
 
-#rightside {
-  float: right;
+#outerColumns.columns {
+  margin-left: 4px;
+  margin-right: 4px;
+  margin-bottom: 5px;
+}
+#outerColumns.columns > .column:first-of-type {
+  padding-right: 3px;
+}
+#outerColumns.columns > .column:last-of-type {
+  padding-left: 2px;
+}
+
+#btn_grp_1 {
+  margin: 3px 0;
+}
+.column.is-one-third > button {
+  width: 100%;
+  margin: 0px;
+}
+.column.is-one-third {
+  padding: 0px;
+}
+.columns > .column.is-one-third:first-of-type {
+  padding: 0px;
+}
+.columns > .column.is-one-third {
+  padding: 0 2px;
+}
+.columns > .column.is-one-third:last-of-type {
+  padding: 0px;
+}
+
+.level {
+  justify-content: normal;
+}
+.level-right {
+  margin-left: 10px;
+}
+#label_format {
+  margin-right: 85px;
+}
+#label_chkbx_removeIndent {
+  margin-right: 23px;
 }

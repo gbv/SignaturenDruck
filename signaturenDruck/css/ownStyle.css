@@ -24,6 +24,24 @@ body {
   text-align: left !important;
 }
 
+/* delimBox */
+#input_delimiter {
+  width: 35px;
+}
+#label_example {
+  margin-right: 66px !important;
+}
+#input_example {
+  width: 210px;
+}
+#topRow {
+  margin-left: 5px !important;
+  margin-right: 5px !important;
+}
+#topRow > .columns {
+  margin-bottom: 0px !important;
+}
+
 /* formatSelect */
 #label_selectFormat {
   margin-right: 71px !important;
@@ -33,6 +51,10 @@ body {
 #configInputs {
   margin-left: 5px !important;
   margin-right: 5px !important;
+}
+#configInputs > .columns {
+  margin-top: 0px !important;
+  margin-bottom: 5px !important;
 }
 
 /* nameBox */
@@ -76,7 +98,7 @@ body {
 
 /* tableBox styles */
 #tableBox {
-  margin-top: 10px !important;
+  margin-top: 0px !important;
 }
 
 /* table styles */
