@@ -163,9 +163,9 @@ function createWindow () {
   checkConfig()
   // Create the browser window.
   if (!config.store.devMode) {
-    mainWindow = new BrowserWindow({width: 800, height: 580})
+    mainWindow = new BrowserWindow({width: 800, height: 520, backgroundColor: '#f0f0f0'})
   } else {
-    mainWindow = new BrowserWindow({width: 800, height: 600})
+    mainWindow = new BrowserWindow({width: 800, height: 550, backgroundColor: '#f0f0f0'})
   }
 
   // and load the index.html of the app.
@@ -275,7 +275,7 @@ function printData (format, data, dataMan) {
 
 // creates the winManual
 function createManualWindow (objMan) {
-  winManual = new BrowserWindow({width: 582, height: 355, show: false})
+  winManual = new BrowserWindow({width: 650, height: 420, show: false})
   winManual.loadURL(url.format({
     pathname: path.join(__dirname, 'html/manual_rework.html'),
     protocol: 'file',
@@ -289,7 +289,7 @@ function createManualWindow (objMan) {
 
 // creates the winConfig
 function createConfigWindow () {
-  winConfig = new BrowserWindow({width: 800, height: 880, show: false})
+  winConfig = new BrowserWindow({width: 800, height: 890, show: false})
   winConfig.loadURL(url.format({
     pathname: path.join(__dirname, 'html/config.html'),
     protocol: 'file',
