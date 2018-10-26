@@ -28,6 +28,7 @@ window.onload = function () {
   setFormatsSelect()
   changeLineSpace()
   addTableLine()
+  addText()
   document.getElementById('line_1').style.fontFamily = document.getElementById('fontLine_1').value
 }
 
@@ -78,6 +79,7 @@ function setFormatsSelect () {
   })
   select.onchange = function () {
     loadDataFromFormat(select.value)
+    addText()
   }
 }
 
@@ -206,7 +208,8 @@ function setObjct () {
     'centerHor': document.getElementById('centerHor').checked,
     'centerVer': document.getElementById('centerVer').checked,
     'lineSpace': document.getElementById('lineSpace').value,
-    'linesData': ''
+    'linesData': '',
+    'lineDelimiter': document.getElementById('input_delimiter').value
   }
 
   let linesData = []
@@ -322,6 +325,33 @@ function addLine () {
   document.getElementById('input_labelLines').value = lineCounter
   addTableLine(lineCounter)
   changeLineSpace()
+  addText()
+}
+
+function addText () {
+  let numberOfLines = document.getElementById('innerBox').childElementCount
+  let example = document.getElementById('input_example').value
+  let delimiter = document.getElementById('input_delimiter').value
+  if (numberOfLines === 1) {
+    document.getElementById('line_1').innerHTML = example
+  } else {
+    let parts = example.split(delimiter)
+    for (let i = 1; i <= numberOfLines; i++) {
+      if (parts[i - 1] === '') {
+        let emptyLine = document.createElement('br')
+        document.getElementById('line_' + i).innerHTML = ''
+        document.getElementById('line_' + i).appendChild(emptyLine)
+      } else {
+        document.getElementById('line_' + i).innerHTML = parts[i - 1]
+      }
+    }
+  }
+}
+
+function changeDelim () {
+  if (document.getElementById('input_delimiter').value !== '') {
+    addText()
+  }
 }
 
 function removeLine () {
@@ -332,6 +362,7 @@ function removeLine () {
     toDelete.parentNode.removeChild(toDelete)
     lineCounter--
     document.getElementById('input_labelLines').value = lineCounter
+    addText()
   }
 }
 
@@ -504,7 +535,11 @@ document.getElementById('btn_save').addEventListener('click', saveConfig)
 document.getElementById('btn_close').addEventListener('click', close)
 // adds event listener to the lineSpace input
 document.getElementById('lineSpace').addEventListener('input', changeLineSpace)
-// adds enevt listener to toe centerHor input
+// adds event listener to the centerHor input
 document.getElementById('centerHor').addEventListener('click', centerHor)
-// adds enevt listener to toe centerVer input
+// adds event listener to the centerVer input
 document.getElementById('centerVer').addEventListener('click', centerVer)
+// adds event listener to the shelfmark example input
+document.getElementById('input_example').addEventListener('input', addText)
+// adds event listener to the delimiter input
+document.getElementById('input_delimiter').addEventListener('input', changeDelim)

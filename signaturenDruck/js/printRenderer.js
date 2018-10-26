@@ -14,9 +14,7 @@ const username = require('username')
 // required for ipc calls to the main process
 const ipc = require('electron').ipcRenderer
 
-// requires the electron-store module and initializes it
-const Store = require('electron-store')
-const config = new Store({cwd: 'C:\\Export\\SignaturenDruck'})
+const XRegExp = require('xregexp')
 
 let formats = []
 
@@ -60,7 +58,7 @@ function createPage (format, data, dataMan, file) {
       let div = document.createElement('div')
       div.className = 'innerBox'
       div.id = value.id
-      let linesData = getData(value.id, value, formats[format].lines)
+      let linesData = getData(value.id, formats[format])
       if (String(value.id).includes('m_')) {
         if (dataMan[value.id.split('m_')[1]].removeIndent) {
           div.className = 'innerBox noIndent'
@@ -89,7 +87,8 @@ function createPage (format, data, dataMan, file) {
     }
   })
 
-  function getData (id, data, lines) {
+  function getData (id, format) {
+    let lines = format.lines
     if (id.includes('m_')) {
       if (Number(lines) === 1) {
         return dataMan[id.split('m_')[1]].lineTxts.join(' ')
@@ -97,20 +96,24 @@ function createPage (format, data, dataMan, file) {
         return dataMan[id.split('m_')[1]].lineTxts
       }
     } else {
-      let shelfmarkData = _.find(JSON.parse(file), { 'id': Number(id) })
-      if (shelfmarkData.txtLength <= 2 && config.get('thulbMode')) {
-        if (data.isShort) {
-          return shelfmarkData.txt
-        } else {
-          let tmp = []
-          tmp[0] = shelfmarkData.txtOneLine
-          return tmp
+      let oneLine = _.find(JSON.parse(file), { 'id': Number(id) }).txtOneLine
+      let delimiter = format.lineDelimiter
+      if (format.splitByRegEx) {
+        let regExString = ''
+        format.splitByRegEx.forEach(element => {
+          regExString += element
+        })
+        let regEx = XRegExp(regExString, 'x')
+        let lines = XRegExp.exec(oneLine, regEx)
+        if (lines.length > 1) {
+          lines.shift()
         }
+        return lines
       } else {
-        if (Number(lines) === 1) {
-          return shelfmarkData.txtOneLine
+        if (delimiter === '') {
+          return oneLine
         } else {
-          return shelfmarkData.txt
+          return oneLine.split(delimiter)
         }
       }
     }

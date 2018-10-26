@@ -100,6 +100,7 @@ function createByFormat (numberOfLines) {
     while (i <= numberOfLines) {
       let input = document.createElement('input')
       input.id = 'inputLine_' + i
+      input.className = 'input'
       input.type = 'text'
       box.appendChild(input)
       if (i !== numberOfLines) {

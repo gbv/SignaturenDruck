@@ -37,12 +37,9 @@ module.exports = function (allLines) {
       if (config.get('thulbMode')) {
         if (txt.length === 6) {
           sig.txt = txt
-          _.forEach(txt, function (value) {
-            sig.txtOneLine += value + ' '
-          })
+          sig.txtOneLine = plainTxt
         } else {
-          let txt = [plainTxt]
-          sig.txt = txt
+          sig.txt = [plainTxt]
           sig.txtOneLine = plainTxt
         }
       } else {

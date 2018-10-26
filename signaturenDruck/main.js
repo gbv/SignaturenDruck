@@ -28,6 +28,7 @@ const configNew = {
   'modalTxt': 'Die ausgewählten Signaturen wurden gedruckt.',
   'sortByPPN': false,
   'newLineAfter': ':',
+  'showDelimiter': true,
   'useSRU': false,
   'SRUaddress': 'http://sru.gbv.de/opac-de-27',
   'thulbMode': true,

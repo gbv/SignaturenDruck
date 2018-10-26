@@ -39,5 +39,11 @@
       "italic": false,
       "indent": "45"
     }
+  ],
+  "lineDelimiter": ":",
+  "splitByRegEx": [
+    "(^.*?\\s[^\\s]+) \\s?",
+    "([^(\\s:)]+) \\s?:?",
+    "(.*)"
   ]
 }

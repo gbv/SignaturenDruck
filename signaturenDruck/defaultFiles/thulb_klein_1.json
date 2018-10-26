@@ -23,5 +23,9 @@
       "italic": false,
       "indent": "0"
     }
+  ],
+  "lineDelimiter": ":",
+  "splitByRegEx": [
+    "(.*)"
   ]
 }

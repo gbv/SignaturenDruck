@@ -54,8 +54,8 @@ window.onload = function () {
       alert('Die Datei ' + config.get('defaultPath') + ' ist nicht vorhanden.')
     }
   } else {
-    document.getElementById('dnl').hidden = true
-    document.getElementById('sru').hidden = false
+    document.getElementById('dnl').style.display = 'none'
+    document.getElementById('sru').style.display = 'flex'
   }
 
   // Check the support for the File API support
@@ -358,6 +358,7 @@ function createPrintCountCell (row, cellNr, id) {
   let input = document.createElement('input')
   printCountCell.className = 'printCountCell'
   input.id = 'count_' + id
+  input.className = 'input'
   input.type = 'number'
   input.max = 99
   input.min = 1
@@ -369,6 +370,8 @@ function createPrintCountCell (row, cellNr, id) {
 // creates the label size cell
 function createLabelSizeCell (row, cellNr, id, lines, format = '') {
   let cell = row.insertCell(cellNr)
+  let div = document.createElement('div')
+  div.className = 'select'
   let select = document.createElement('select')
   select.id = 'templateSelect_' + id
   selectOptions.forEach(element => {
@@ -402,7 +405,8 @@ function createLabelSizeCell (row, cellNr, id, lines, format = '') {
       select.value = config.get('defaultFormat')
     }
   }
-  cell.appendChild(select)
+  div.appendChild(select)
+  cell.appendChild(div)
 }
 
 function loadFormats () {
@@ -684,101 +688,52 @@ function pre (id) {
     let file = fs.readFileSync('signaturen.json', 'utf8')
     let found = _.find(JSON.parse(file), { 'id': Number(id) })
     let format = document.getElementById('templateSelect_' + id).value
-    getLinesByFormat(format, found.txtOneLine)
-    searchAndShow(found)
+    searchAndShow(found, format, getLinesByFormat(format, found.txtOneLine))
     document.getElementsByClassName('innerBox')[0].className = 'innerBox'
   } else {
     let cleanId = id.split('m_')[1]
     checkIfNoIndent(cleanId)
   }
 
-  function getLinesByFormat (format, shelfmarkRAW) {
-    let reg = ''
-    // let shelfmarkLines = []
-    // let regX = formats[format].regex
-    // shelfmarkRAW = 'HIS:SP:680::2:2107'
-
-    /* thulb_gross */
-    // if (config.get('thulbMode')) {
-    //   reg = XRegExp(
-    //     `^(?<first> [^\\s]*) \\s?
-    //       (?<second> [^\\s]*) \\s?
-    //       (?<third> [^\\s]*) \\s?
-    //       (?<fourth> [^\\s]*) \\s?
-    //       (?<fifth> [^\\s]*) \\s?
-    //       (?<sixth> .*)
-    //     `, 'x'
-    //   )
-    // } else {
-    //   let delimiter = config.get('newLineAfter')
-    //   if (delimiter === ' ') {
-    //     delimiter = '\\s'
-    //   } else if (delimiter === '.') {
-    //     delimiter = '\\.'
-    //   }
-    //   reg = XRegExp(
-    //     `^(?<first> [^` + delimiter + `]*) ` + delimiter + `?
-    //       (?<second> [^` + delimiter + `]*) ` + delimiter + `?
-    //       (?<third> [^` + delimiter + `]*) ` + delimiter + `?
-    //       (?<fourth> [^` + delimiter + `]*) ` + delimiter + `?
-    //       (?<fifth> [^` + delimiter + `]*) ` + delimiter + `?
-    //       (?<sixth> .*)
-    //     `, 'x'
-    //   )
-    // }
-
-    /* thulb_klein */
-    if (config.get('thulbMode')) {
-      reg = XRegExp(
-        `^(?<first> .*?\\s[^\\s]+) \\s?
-          (?<second> [^(\\s:)]+) \\s?:?
-          (?<third> .*)
-        `, 'x'
-      )
-    } else {
-      let delimiter = config.get('newLineAfter')
-      if (delimiter === ' ') {
-        delimiter = '\\s'
-      } else if (delimiter === '.') {
-        delimiter = '\\.'
+  function getLinesByFormat (formatName, shelfmarkRAW) {
+    let format = formats[formatName]
+    let delimiter = format.lineDelimiter
+    if (format.splitByRegEx) {
+      let regExString = ''
+      format.splitByRegEx.forEach(element => {
+        regExString += element
+      })
+      let regEx = XRegExp(regExString, 'x')
+      let lines = XRegExp.exec(shelfmarkRAW, regEx)
+      if (lines.length > 1) {
+        lines.shift()
       }
-      reg = XRegExp(
-        `^(?<first> [^` + delimiter + `]*) ` + delimiter + `?
-          (?<second> [^` + delimiter + `]*) ` + delimiter + `?
-          (?<third> [^` + delimiter + `]*) ` + delimiter + `?
-          (?<fourth> [^` + delimiter + `]*) ` + delimiter + `?
-          (?<fifth> [^` + delimiter + `]*) ` + delimiter + `?
-          (?<sixth> .*)
-        `, 'x'
-      )
+      return lines
+    } else {
+      if (delimiter === '') {
+        return shelfmarkRAW
+      } else {
+        return shelfmarkRAW.split(delimiter)
+      }
     }
-
-    console.log(shelfmarkRAW, 'first --> ', XRegExp.exec(shelfmarkRAW, reg))
-
-    // let regX = ['/^(.*?):(.*?):(.*?):(.*?):(.*?):(.*?)$/']
-    // regX.forEach(element => {
-    //   // shelfmarkLines.push()
-    //   console.log('first --> ', XRegExp.exec(shelfmarkRAW, XRegExp(element, 'x')))
-    // })
-    // return shelfmarkLines
   }
 
-  function searchAndShow (found) {
+  function searchAndShow (found, format, linesArray) {
+    let lines = found.txtLength
+    let id = found.id
+    let oneLine = found.txtOneLine
     if (found !== undefined) {
-      let format = document.getElementById('templateSelect_' + id).value
-      if (found.txtLength <= 2 && config.get('thulbMode')) {
-        if (document.getElementById('short_' + found.id).checked) {
+      if (lines <= 2 && config.get('thulbMode')) {
+        if (document.getElementById('short_' + id).checked) {
           showData(found.txt)
         } else {
-          let data = []
-          data[0] = found.txtOneLine
-          showData(data)
+          showData(oneLine)
         }
       } else {
         if (Number(formats[format].lines) === 1) {
-          showData(found.txtOneLine)
+          showData(oneLine)
         } else {
-          showData(found.txt)
+          showData(linesArray)
         }
       }
     }
