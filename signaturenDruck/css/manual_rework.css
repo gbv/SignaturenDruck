@@ -71,7 +71,7 @@ hr {
 }
 
 #previewBox {
-  display: block;
+  display: flex;
   float: none;
 }
 #rightside {
