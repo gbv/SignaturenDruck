@@ -27,6 +27,6 @@ margin-left: 0%;
 }
 @media print {
 #toPrint.format_thulb_klein_1 > .innerBox {
-margin: 2.25mm 0mm 0mm -1.75mm;
+margin: 2.25mm 0mm 0mm 0.75mm;
 }
 }

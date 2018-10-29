@@ -71,21 +71,34 @@ function createPage (format, data, dataMan, file) {
         div.appendChild(p)
       } else {
         let i = 1
-        linesData.forEach(line => {
-          let p = document.createElement('p')
-          p.className = 'line_' + i
-          if (line === '') {
-            p.appendChild(document.createElement('br'))
-          } else {
-            p.innerHTML = line
-          }
-          div.appendChild(p)
-          i++
-        })
+        createLines(div, formats[format].lines, value.id)
+        document.getElementById('toPrint').appendChild(div)
+        if (Array.isArray(linesData)) {
+          linesData.forEach(lineTxt => {
+            let line = document.getElementById(value.id + '_line_' + i)
+            if (lineTxt !== '') {
+              line.innerHTML = lineTxt
+            }
+            i++
+          })
+        } else {
+          let line = document.getElementById(value.id + '_line_' + i)
+          line.innerHTML = linesData
+        }
       }
-      document.getElementById('toPrint').appendChild(div)
     }
   })
+
+  function createLines (innerBox, formatLines, id) {
+    for (let i = 1; i <= formatLines; i++) {
+      let line = document.createElement('p')
+      line.id = id + '_line_' + i
+      line.className = 'line_' + i
+      let emptyLine = document.createElement('br')
+      line.appendChild(emptyLine)
+      innerBox.appendChild(line)
+    }
+  }
 
   function getData (id, format) {
     let lines = format.lines
@@ -105,10 +118,14 @@ function createPage (format, data, dataMan, file) {
         })
         let regEx = XRegExp(regExString, 'x')
         let lines = XRegExp.exec(oneLine, regEx)
-        if (lines.length > 1) {
-          lines.shift()
+        if (lines !== null) {
+          if (lines.length > 1) {
+            lines.shift()
+          }
+          return lines
+        } else {
+          return oneLine
         }
-        return lines
       } else {
         if (delimiter === '') {
           return oneLine

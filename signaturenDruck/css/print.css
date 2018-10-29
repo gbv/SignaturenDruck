@@ -14,8 +14,12 @@
   }
   .innerBox {
     page-break-before: always;
+    /* background-color: grey; */
   }
   .noIndent > p {
     margin-left: 0px !important;
   }
+  /* body {
+    -webkit-print-color-adjust: exact;
+  } */
 }

@@ -684,15 +684,15 @@ function openConfigWindow (event) {
 function pre (id) {
   removeOld()
   changePreview(id)
+  let formatName = document.getElementById('templateSelect_' + id).value
   if (!String(id).includes('m_')) {
     let file = fs.readFileSync('signaturen.json', 'utf8')
     let found = _.find(JSON.parse(file), { 'id': Number(id) })
-    let format = document.getElementById('templateSelect_' + id).value
-    searchAndShow(found, format, getLinesByFormat(format, found.txtOneLine))
+    searchAndShow(found, formatName, getLinesByFormat(formatName, found.txtOneLine))
     document.getElementsByClassName('innerBox')[0].className = 'innerBox'
   } else {
     let cleanId = id.split('m_')[1]
-    checkIfNoIndent(cleanId)
+    checkIfNoIndent(cleanId, formats[formatName].lines)
   }
 
   function getLinesByFormat (formatName, shelfmarkRAW) {
@@ -722,29 +722,30 @@ function pre (id) {
     }
   }
 
-  function searchAndShow (found, format, linesArray) {
+  function searchAndShow (found, formatName, linesArray) {
     let lines = found.txtLength
+    let formatLines = formats[formatName].lines
     let id = found.id
     let oneLine = found.txtOneLine
     if (found !== undefined) {
       if (lines <= 2 && config.get('thulbMode')) {
         if (document.getElementById('short_' + id).checked) {
-          showData(found.txt)
+          showData(found.txt, formatLines)
         } else {
-          showData(oneLine)
+          showData(oneLine, formatLines)
         }
       } else {
-        if (Number(formats[format].lines) === 1) {
-          showData(oneLine)
+        if (Number(formatLines) === 1) {
+          showData(oneLine, formatLines)
         } else {
-          showData(linesArray)
+          showData(linesArray, formatLines)
         }
       }
     }
   }
 
-  function checkIfNoIndent (cleanId) {
-    showData(objMan[cleanId].lineTxts)
+  function checkIfNoIndent (cleanId, formatLines) {
+    showData(objMan[cleanId].lineTxts, formatLines)
     if (objMan[cleanId].removeIndent) {
       document.getElementsByClassName('innerBox')[0].className = 'innerBox noIndent'
     } else {
@@ -760,33 +761,48 @@ function pre (id) {
   }
 }
 
-function showData (shelfmark) {
+function showData (shelfmark, formatLines) {
   let i = 1
   let line
   let innerBox = document.createElement('div')
   innerBox.className = 'innerBox'
+  createLines(innerBox, formatLines)
+  document.getElementById('previewBox').appendChild(innerBox)
   if (Array.isArray(shelfmark)) {
     shelfmark.forEach(element => {
+      line = document.getElementById('line_' + i)
+      if (line !== null) {
+        if (element !== '') {
+          line.innerHTML = element
+        }
+        i++
+      } else {
+        innerBox = document.getElementsByClassName('innerBox')[0]
+        line = document.createElement('p')
+        line.id = 'line_' + i
+        line.className = 'line_' + i
+        if (element !== '') {
+          line.innerHTML = element
+        }
+        innerBox.appendChild(line)
+        i++
+      }
+    })
+  } else {
+    line = document.getElementById('line_' + i)
+    line.innerHTML = shelfmark
+  }
+
+  function createLines (innerBox, formatLines) {
+    for (let i = 1; i <= formatLines; i++) {
       line = document.createElement('p')
       line.id = 'line_' + i
       line.className = 'line_' + i
-      if (element === '') {
-        let emptyLine = document.createElement('br')
-        line.appendChild(emptyLine)
-      } else {
-        line.innerHTML = element
-      }
+      let emptyLine = document.createElement('br')
+      line.appendChild(emptyLine)
       innerBox.appendChild(line)
-      i++
-    })
-  } else {
-    line = document.createElement('p')
-    line.id = 'line_' + i
-    line.className = 'line_' + i
-    line.innerHTML = shelfmark
-    innerBox.appendChild(line)
+    }
   }
-  document.getElementById('previewBox').appendChild(innerBox)
 }
 
 function changePreview (id) {
