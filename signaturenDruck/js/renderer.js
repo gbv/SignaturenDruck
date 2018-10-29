@@ -705,7 +705,6 @@ function pre (id) {
       })
       let regEx = XRegExp(regExString, 'x')
       let lines = XRegExp.exec(shelfmarkRAW, regEx)
-      console.log(lines)
       if (lines === null) {
         return shelfmarkRAW
       } else {
