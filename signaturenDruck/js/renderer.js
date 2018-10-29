@@ -705,10 +705,15 @@ function pre (id) {
       })
       let regEx = XRegExp(regExString, 'x')
       let lines = XRegExp.exec(shelfmarkRAW, regEx)
-      if (lines.length > 1) {
-        lines.shift()
+      console.log(lines)
+      if (lines === null) {
+        return shelfmarkRAW
+      } else {
+        if (lines.length > 1) {
+          lines.shift()
+        }
+        return lines
       }
-      return lines
     } else {
       if (delimiter === '') {
         return shelfmarkRAW
