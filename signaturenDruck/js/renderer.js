@@ -323,11 +323,19 @@ function createShortShelfmarkCell (row, cellNr, id, size) {
         }
         shortShelfmarkCell.appendChild(input)
       } else {
-        shortShelfmarkCell.id = 'short_' + id
+        shortShelfmarkCell.onclick = function () {
+          pre(id)
+        }
+      }
+    } else {
+      shortShelfmarkCell.onclick = function () {
+        pre(id)
       }
     }
   } else {
-    shortShelfmarkCell.id = 'short_' + id
+    shortShelfmarkCell.onclick = function () {
+      pre(id)
+    }
   }
 
   function changeFormat (id) {
