@@ -199,3 +199,7 @@ td.txtCell {
 #shelfmarkTableBody > tr:first-of-type > td > hr {
   margin-top: 12px !important;
 }
+
+#columnPrint.button:focus:not(:active) {
+  box-shadow: none !important;
+}
