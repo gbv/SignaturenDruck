@@ -199,7 +199,7 @@ function saveConfig () {
     document.getElementById('input_fileName').focus()
   }
 
-  function writeToFiles() {
+  function writeToFiles () {
     let objct = setObjct()
     fs.writeFileSync('C:\\Export\\SignaturenDruck\\FormateCSS\\' + document.getElementById('input_fileName').value + '.css', createCSS(objct), 'utf8')
     fs.writeFileSync('C:\\Export\\SignaturenDruck\\Formate\\' + document.getElementById('input_fileName').value + '.json', JSON.stringify(objct), 'utf8')

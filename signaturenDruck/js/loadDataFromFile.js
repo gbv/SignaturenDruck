@@ -1,6 +1,3 @@
-// requires lodash
-const _ = require('lodash')
-
 // requires the electron-store module and initializes it
 const Store = require('electron-store')
 const config = new Store({cwd: 'C:\\Export\\SignaturenDruck'})

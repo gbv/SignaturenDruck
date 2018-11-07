@@ -1,6 +1,3 @@
-// requires lodash
-const _ = require('lodash')
-
 const {net} = require('electron')
 
 // requires the electron-store module and initializes it
