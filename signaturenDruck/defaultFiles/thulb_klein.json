@@ -41,6 +41,7 @@
     }
   ],
   "lineDelimiter": ":",
+  "marginTop": "",
   "splitByRegEx": [
     "(^.*?\\s[^\\s]+) \\s?",
     "([^(\\s:)]+) \\s?:?",

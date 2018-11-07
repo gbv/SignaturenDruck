@@ -17,6 +17,7 @@ const printerList = require('electron').remote.getCurrentWindow().webContents.ge
 
 let lineCounter = 1
 
+let currentFormat = ''
 let fonts = []
 let formats = []
 let selectOptions = []
@@ -78,13 +79,18 @@ function setFormatsSelect () {
     select.appendChild(option)
   })
   select.onchange = function () {
-    loadDataFromFormat(select.value)
-    addText()
+    if (select.value !== '') {
+      loadDataFromFormat(select.value)
+      addText()
+    } else {
+      currentFormat = ''
+    }
   }
 }
 
 function loadDataFromFormat (formatName) {
   let format = formats[formatName]
+  currentFormat = format
   document.getElementById('input_fileName').value = format.name
   document.getElementById('selectPrinter').value = format.printer
   document.getElementById('input_paperHeight').value = Number(format.paper.height)
@@ -127,6 +133,7 @@ function loadDataFromFormat (formatName) {
   }
   document.getElementById('centerHor').checked = format.centerHor
   document.getElementById('centerVer').checked = format.centerVer
+  document.getElementById('marginTop').value = format.marginTop
   for (let i = 1; i <= format.lines; i++) {
     let k = i - 1
     document.getElementById('fontLine_' + i).value = format.linesData[k].font
@@ -172,14 +179,16 @@ function saveConfig () {
   if (document.getElementById('input_fileName').value !== '') {
     if (document.getElementById('selectPrinter').value !== '') {
       if (!fs.existsSync('C:\\Export\\SignaturenDruck\\Formate\\' + document.getElementById('input_fileName').value + '.json')) {
-        let objct = setObjct()
-        fs.writeFileSync('C:\\Export\\SignaturenDruck\\FormateCSS\\' + document.getElementById('input_fileName').value + '.css', createCSS(objct), 'utf8')
-        fs.writeFileSync('C:\\Export\\SignaturenDruck\\Formate\\' + document.getElementById('input_fileName').value + '.json', JSON.stringify(objct), 'utf8')
-        ipc.send('newConfig')
+        writeToFiles()
         alert('Das Format wurde hinzugefügt.')
       } else {
-        alert('Ein Format mit diesem Namen ist bereits vorhanden.')
-        document.getElementById('input_fileName').focus()
+        let override = confirm('Ein Format mit diesem Namen ist bereits vorhanden.\nSoll dieses überschrieben werden?')
+        if (override) {
+          writeToFiles()
+          alert('Das Format wurde hinzugefügt.')
+        } else {
+          document.getElementById('input_fileName').focus()
+        }
       }
     } else {
       alert('Es muss ein Druckername angegeben werden.')
@@ -188,6 +197,13 @@ function saveConfig () {
   } else {
     alert('Es muss ein Formatname vergeben werden')
     document.getElementById('input_fileName').focus()
+  }
+
+  function writeToFiles() {
+    let objct = setObjct()
+    fs.writeFileSync('C:\\Export\\SignaturenDruck\\FormateCSS\\' + document.getElementById('input_fileName').value + '.css', createCSS(objct), 'utf8')
+    fs.writeFileSync('C:\\Export\\SignaturenDruck\\Formate\\' + document.getElementById('input_fileName').value + '.json', JSON.stringify(objct), 'utf8')
+    ipc.send('newConfig')
   }
 }
 
@@ -209,7 +225,12 @@ function setObjct () {
     'centerVer': document.getElementById('centerVer').checked,
     'lineSpace': document.getElementById('lineSpace').value,
     'linesData': '',
-    'lineDelimiter': document.getElementById('input_delimiter').value
+    'lineDelimiter': document.getElementById('input_delimiter').value,
+    'marginTop': document.getElementById('marginTop').value
+  }
+
+  if (currentFormat.splitByRegEx) {
+    newConfig.splitByRegEx = currentFormat.splitByRegEx
   }
 
   let linesData = []
@@ -255,8 +276,14 @@ function createCSS (obj) {
     thats why we substract 2
     */
     marginLeftValue = marginLeftValue - 2
-    str += '@media print {\n#toPrint.format_' + obj.name + ' > .innerBox {\nmargin: ' + marginTopValue + 'mm 0mm 0mm ' + marginLeftValue + 'mm;\n}\n}'
 
+    let marginTopAdjustmentValue = document.getElementById('marginTop').value
+    if (marginTopAdjustmentValue === '') {
+      marginTopAdjustmentValue = 0
+    }
+    str += '@media print {\n#toPrint.format_' + obj.name + ' > .innerBox {\nmargin: ' + marginTopValue + 'mm 0mm 0mm ' + marginLeftValue + 'mm;\n}\n'
+    str += '#toPrint.format_' + obj.name + ' > .innerBox > .line_1 {\nmargin-top: ' + marginTopAdjustmentValue + 'mm;\n}\n'
+    str += '}'
     return str
 
     function fromMilliToMicro (str) {

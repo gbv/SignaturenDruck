@@ -95,6 +95,9 @@ body {
 #centerHor, #centerVer {
   margin-top: 20px !important;
 }
+#label_marginTop {
+  margin-right: 18px !important;
+}
 
 /* tableBox styles */
 #tableBox {

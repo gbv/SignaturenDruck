@@ -64,4 +64,7 @@ margin-left: 45%;
 #toPrint.format_thulb_gross > .innerBox {
 margin: 2.96mm 0mm 0mm 7.984999999999999mm;
 }
+#toPrint.format_thulb_gross > .innerBox > .line_1 {
+margin-top: -2mm;
+}
 }
