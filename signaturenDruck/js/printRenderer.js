@@ -67,8 +67,9 @@ function createPage (format, data, dataMan, file) {
       if (Number(formats[format].lines) === 1) {
         let p = document.createElement('p')
         p.className = 'line_1'
-        p.innerHTML = linesData
+        p.innerHTML = linesData[0]
         div.appendChild(p)
+        document.getElementById('toPrint').appendChild(div)
       } else {
         let i = 1
         createLines(div, formats[format].lines, value.id)
