@@ -65,7 +65,7 @@
     }
   ],
   "lineDelimiter": ":",
-  "marginTop": -2,
+  "marginTop": -3,
   "splitByRegEx": [
     "^([^:]*) :?",
     "([^:]*) :?",
