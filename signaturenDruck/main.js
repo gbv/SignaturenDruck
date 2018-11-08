@@ -210,11 +210,11 @@ function checkConfig () {
   })
   function checkAndCreate (fileName) {
     if (!fs.existsSync('C:\\Export\\SignaturenDruck\\Formate\\' + fileName + '.json')) {
-      let file = fs.readFileSync('./defaultFiles/' + fileName + '.json', 'utf8')
+      let file = fs.readFileSync(path.join(__dirname, 'defaultFiles/' + fileName + '.json'), 'utf8')
       fs.writeFileSync('C:\\Export\\SignaturenDruck\\Formate\\' + fileName + '.json', file, 'utf8')
     }
     if (!fs.existsSync('C:\\Export\\SignaturenDruck\\FormateCSS\\' + fileName + '.css')) {
-      let file = fs.readFileSync('./defaultFiles/' + fileName + '.css', 'utf8')
+      let file = fs.readFileSync(path.join(__dirname, 'defaultFiles/' + fileName + '.css'), 'utf8')
       fs.writeFileSync('C:\\Export\\SignaturenDruck\\FormateCSS\\' + fileName + '.css', file, 'utf8')
     }
   }
