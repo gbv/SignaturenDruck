@@ -36,3 +36,7 @@
   text-decoration: none;
   cursor: pointer;
 }
+
+#modalTxt {
+  margin-top: 10px;
+}
