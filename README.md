@@ -72,9 +72,9 @@ Dabei handelt es sich um:
 
 Sind diese Ordner/Dateien vorhanden so wird die geprüft ob die Datei die in der `config.json` unter `defaultPath` angegeben ist existiert.  
 Ist dies der Fall dann werden die enthaltenen Daten geladen und angezeigt.
-![Erfolgreiches laden der Daten](./docu/imgs/erfolgreicherStart.png)  
+![Erfolgreiches laden der Daten](https://github.com/EliDeh/SignaturenDruck/blob/master/docu/imgs/erfolgreicherStart.png)  
 Sollte dies nicht der Fall sein so wird dies in der Oberfläche angezeigt.
-![Keine DefaultDatei vorhanden](./docu/imgs/startOhneDefaultDatei.png)  
+![Keine DefaultDatei vorhanden](https://github.com/EliDeh/SignaturenDruck/blob/master/docu/imgs/startOhneDefaultDatei.png)  
 
 ### Andere Datei auswählen
 
@@ -93,7 +93,7 @@ Der Druck der ausgewählten Signaturen erfolgt dann mit einem Klick auf die Scha
 ### Manuelles Anlegen
 
 Der SignaturenDruck ermöglicht nicht nur den Druck von Signaturen aus einer Datei, sondern auch das erstellen von manuellen Signaturen. Mit einem Klick auf die Schaltfläche `Manuelles Anlegen` öffnet sich folgendes Fenster zur Eingabe:  
-![Oberfläche manuelles Anlegen](./docu/imgs/oberflaecheManuellesAnlegen.png)
+![Oberfläche manuelles Anlegen](https://github.com/EliDeh/SignaturenDruck/blob/master/docu/imgs/oberflaecheManuellesAnlegen.png)
 
 Auf der linken Seite befinden sich die Eingabefelder der jeweiligen Zeilen und die Schaltflächen.  
 Auf der rechten Seite befinden sich die Übersicht um welche manuelle Signatur es sich handelt, die Vorschau der Signatur, die Auswahl des Formats und die Option den Einzug zu entfernen.  
