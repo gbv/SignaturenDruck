@@ -93,7 +93,7 @@ Der Druck der ausgewählten Signaturen erfolgt dann mit einem Klick auf die Scha
 ### Manuelles Anlegen
 
 Der SignaturenDruck ermöglicht nicht nur den Druck von Signaturen aus einer Datei, sondern auch das erstellen von manuellen Signaturen. Mit einem Klick auf die Schaltfläche `Manuelles Anlegen` öffnet sich folgendes Fenster zur Eingabe:  
-![Oberfläche manuelles Anlegen](docu/imgs/oberflaecheManuellesAnlegen.png)
+![Oberfläche manuelles Anlegen](/docu/imgs/oberflaecheManuellesAnlegen.png?raw=true)
 
 Auf der linken Seite befinden sich die Eingabefelder der jeweiligen Zeilen und die Schaltflächen.  
 Auf der rechten Seite befinden sich die Übersicht um welche manuelle Signatur es sich handelt, die Vorschau der Signatur, die Auswahl des Formats und die Option den Einzug zu entfernen.  
