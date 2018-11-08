@@ -71,10 +71,10 @@ Dabei handelt es sich um:
     - `./thulb_klein_1.css`
 
 Sind diese Ordner/Dateien vorhanden so wird die geprüft ob die Datei die in der `config.json` unter `defaultPath` angegeben ist existiert.  
-Ist dies der Fall dann werden die enthaltenen Daten geladen und angezeigt.  
-[[https://github.com/EliDeh/SignaturenDruck/blob/master/docu/imgs/erfolgreicherStart.png|alt=Erfolgreiches laden der Daten]]  
+Ist dies der Fall dann werden die enthaltenen Daten geladen und angezeigt.
+![Erfolgreiches laden der Daten](docu/imgs/erfolgreicherStart.png)  
 Sollte dies nicht der Fall sein so wird dies in der Oberfläche angezeigt.
-![Keine DefaultDatei vorhanden](https://github.com/EliDeh/SignaturenDruck/blob/master/docu/imgs/startOhneDefaultDatei.png)  
+![Keine DefaultDatei vorhanden](docu/imgs/startOhneDefaultDatei.png)  
 
 ### Andere Datei auswählen
 
@@ -93,7 +93,7 @@ Der Druck der ausgewählten Signaturen erfolgt dann mit einem Klick auf die Scha
 ### Manuelles Anlegen
 
 Der SignaturenDruck ermöglicht nicht nur den Druck von Signaturen aus einer Datei, sondern auch das erstellen von manuellen Signaturen. Mit einem Klick auf die Schaltfläche `Manuelles Anlegen` öffnet sich folgendes Fenster zur Eingabe:  
-![Oberfläche manuelles Anlegen](https://github.com/EliDeh/SignaturenDruck/blob/master/docu/imgs/oberflaecheManuellesAnlegen.png)
+![Oberfläche manuelles Anlegen](docu/imgs/oberflaecheManuellesAnlegen.png)
 
 Auf der linken Seite befinden sich die Eingabefelder der jeweiligen Zeilen und die Schaltflächen.  
 Auf der rechten Seite befinden sich die Übersicht um welche manuelle Signatur es sich handelt, die Vorschau der Signatur, die Auswahl des Formats und die Option den Einzug zu entfernen.  
@@ -102,7 +102,7 @@ Nachdem eine Signatur eingetragen wurde, kann mit der Schaltfläche `Nächste` e
 
 Es besteht aber auch die Möglichkeit alle bisher eingetragenen manuellen Signaturen mit der Schaltfläche `Verwerfen und Beenden` gesammelt zu löschen.  
 
-Das löschen einer einzelnen Signatur ist mit der Schaltfläche `löschen` möglich. Diese löscht immer die aktuell angezeigte Signatur.
+Das löschen einer ein Signatur ist mit der Schaltfläche `löschen` möglich. Diese löscht immer die aktuell angezeigte Signatur.
 
 Mit den Schaltflächen `Vorherige` und `Nächste` kann zwischen den bereits eingetragenen Signaturen navigiert werden. Ist man bei der ersten Signatur angelangt so ist die Schaltfläche `Vorherige` deaktiviert.
 
