@@ -71,8 +71,8 @@ Dabei handelt es sich um:
     - `./thulb_klein_1.css`
 
 Sind diese Ordner/Dateien vorhanden so wird die geprüft ob die Datei die in der `config.json` unter `defaultPath` angegeben ist existiert.  
-Ist dies der Fall dann werden die enthaltenen Daten geladen und angezeigt.
-![Erfolgreiches laden der Daten](https://github.com/EliDeh/SignaturenDruck/blob/master/docu/imgs/erfolgreicherStart.png)  
+Ist dies der Fall dann werden die enthaltenen Daten geladen und angezeigt.  
+[[https://github.com/EliDeh/SignaturenDruck/blob/master/docu/imgs/erfolgreicherStart.png|alt=Erfolgreiches laden der Daten]]  
 Sollte dies nicht der Fall sein so wird dies in der Oberfläche angezeigt.
 ![Keine DefaultDatei vorhanden](https://github.com/EliDeh/SignaturenDruck/blob/master/docu/imgs/startOhneDefaultDatei.png)  
 
