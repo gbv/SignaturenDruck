@@ -206,16 +206,13 @@ function checkConfig () {
   }
   let defaultConfigs = ['thulb_gross', 'thulb_klein', 'thulb_klein_1']
   defaultConfigs.forEach(fileName => {
-    checkAndCreate(fileName)
+    checkAndCreate(fileName, '.json')
+    checkAndCreate(fileName, '.css')
   })
-  function checkAndCreate (fileName) {
-    if (!fs.existsSync('C:\\Export\\SignaturenDruck\\Formate\\' + fileName + '.json')) {
-      let file = fs.readFileSync(path.join(__dirname, 'defaultFiles/' + fileName + '.json'), 'utf8')
-      fs.writeFileSync('C:\\Export\\SignaturenDruck\\Formate\\' + fileName + '.json', file, 'utf8')
-    }
-    if (!fs.existsSync('C:\\Export\\SignaturenDruck\\FormateCSS\\' + fileName + '.css')) {
-      let file = fs.readFileSync(path.join(__dirname, 'defaultFiles/' + fileName + '.css'), 'utf8')
-      fs.writeFileSync('C:\\Export\\SignaturenDruck\\FormateCSS\\' + fileName + '.css', file, 'utf8')
+  function checkAndCreate (fileName, ending) {
+    if (!fs.existsSync('C:\\Export\\SignaturenDruck\\Formate\\' + fileName + ending)) {
+      let file = fs.readFileSync(path.join(__dirname, 'defaultFiles/' + fileName + ending), 'utf8')
+      fs.writeFileSync('C:\\Export\\SignaturenDruck\\Formate\\' + fileName + ending, file, 'utf8')
     }
   }
 }
