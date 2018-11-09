@@ -5,12 +5,7 @@ This is a Electron application to print shelfmarks read from a `.dnl`-file. It d
 The printing process creates `.pdf`-files (each per selectet format) and proceeds to print them via powershell and Adobe Acrobat Reader DC.  
 The Acrobat Reader gets opened for a short time (~4 seconds) to print the files. It will close by itself except it was already open before.
 
-
-
-To use this application you'll need to download the [PDFtoPrinter.exe](http://www.columbia.edu/~em36/pdftoprinter.html) and copy it to
-```bash
-C:\Program Files\PDFtoPrinter\
-```
+To use this application you'll need to have the [Adobe Acrobat Reader DC](https://get.adobe.com/reader/) installed and set as default pdf-viewer.
 
 To clone and run this repository you'll need [Git](https://git-scm.com) and [Node.js](https://nodejs.org/en/download/) (which comes with [npm](http://npmjs.com)) installed on your computer. From your command line:
 
