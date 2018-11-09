@@ -2,7 +2,8 @@
 
 This is a Electron application to print shelfmarks read from a `.dnl`-file. It displays shelfmarks from the file in a table like structure. You can then select and print the shelfmarks you like.
 
-The printing process creates two `.pdf`-files (each for one size) and proceeds to print them silently via Foxit Reader.
+The printing process creates `.pdf`-files (each per selectet format) and proceeds to print them via powershell and Adobe Acrobat Reader DC.  
+The Acrobat Reader gets opened for a short time (~4 seconds) to print the files. It will close by itself except it was already open before.
 
 
 
@@ -80,7 +81,7 @@ Sollte dies nicht der Fall sein so wird dies in der Oberfläche angezeigt.
 
 Mit einem Klick auf `Dateiauswahl` kann eine andere Datei auswählen aus der dann die Signaturen ausgelesen werden.
 
-### Druckauswahl
+### Signaturauswahl
 
 Jede Signatur kann in ihrer Zeile mit einem Klick auf die Checkbox in der Spalte `Drucken` zum Druck ausgewählt werden. Die Auswahl kann einzeln erfolgen oder durch einen Klick auf den Splatenkopf `Drucken`. Dies kehrt die bisher getroffene Auswahl um, sollte also noch keine Signatur zum Druck ausgewählt worden sein, so werden durch einen Klick alle Signaturen der Tabelle zum Druck ausgewählt.  
 
@@ -105,6 +106,69 @@ Es besteht aber auch die Möglichkeit alle bisher eingetragenen manuellen Signat
 Das löschen einer ein Signatur ist mit der Schaltfläche `löschen` möglich. Diese löscht immer die aktuell angezeigte Signatur.
 
 Mit den Schaltflächen `Vorherige` und `Nächste` kann zwischen den bereits eingetragenen Signaturen navigiert werden. Ist man bei der ersten Signatur angelangt so ist die Schaltfläche `Vorherige` deaktiviert.
+
+### Format erstellen/bearbeiten
+
+Mit der Tastenkombination  
+<kbd>strg</kbd> + <kbd>alt</kbd> + <kbd>E</kbd>  
+kann das Fenster zum erstellen/bearbeiten von Formaten geöffnet werden.  
+
+![Oberflaeche zum erstellen/bearbeiten von Formaten](docu/imgs/oberflaecheFormatErstellenBearbeiten.PNG?token=Ah-Pd8hfOUr5CkVgwkFtZeTPo35Oahf7ks5b7sV3wA%3D%3D)
+
+#### Format
+
+Mit der Auswahl `Format` ist es möglich die Einstellungen eines bereits erstellen Formats in die Oberfläche zu laden.  
+
+Im Feld `Formatname` kann der Name unter dem das Format abgespeichert werden soll eingetragen werden. Beim speichern des Formates wird geprüft ob bereits ein Format mit dem Namen existiert. Sollte dies der Fall sein so wird ein Dialog angezeigt, der das Überschreiben bzw. ein abbrechen ermöglicht.  
+
+Mit der Auswahl `Druckername` kann der Drucker ausgewählt werden, an dem Signaturen mit dem Format gedruckt werden sollen. Es sind nur Drucker aufgeführt die gerade auf dem jeweiligen Rechner installiert sind bzw. zur Verfügung stehen.  
+
+#### Signatur
+
+Im Feld `Trennzeichen` kann ein Zeichen eingegeben werden welches in der Signatur einen Zeilenumbruch bedeutet.  
+
+Im Feld `Beispiel` ist eine Signatur eingetragen die in der Vorschau zur Veranschaulichung der gewählten Einstellungen dient. Der Feldinhalt kann verändert werden.
+
+*Bei den Formaten __thulb_gross__, __thulb_klein__ und __thulb_klein_1__ findet das eingetragene Trennzeichen keine Verwendung. Bei diesen Formaten ist in der entsprechenden Konfigurationsdatei der Zeilenumbruch durch reguläre Ausdrücke geregelt*  
+
+#### Papier
+
+Es müssen die Maße des verwendeten Papiers angebeben werden, damit das erstellte PDF passgenau erstellt werden kann. Somit können Unschärfen und ähnliche Effekte die durch Skalierung entstehen verhindert werden.  
+*Das Label (Etikett) wird auf dem Papier zentriert*  
+
+Im Feld `Höhe` wird die Höhe des Papiers in μm angegeben.  
+Im Feld `Breite` wird die Breite des Papiers angegeben.  
+
+#### Label (Etikett)
+
+Es werden unterschiedliche Eigentschaften des Label erfasst.
+
+Im Feld `Höhe` wird die Höhe des Labels in mm angegeben.  
+Im Feld `Breite` wird die Breite des Labels in mm angegeben.  
+Im Feld `Zeilen` wird die Anzahl der Zeilen des Labels erfasst.  
+Im Feld `Zeilenstand` wird der Abstand zwischen den Zeilen des Labels erfasst.  
+Mit der Checkbox `Horizontal zentrieren` können alle Zeilen horizontal zentriert werden.  
+Mit der Checkbox `Vertikal zentrieren` können alle Zeilen vertikal zentriert werden.  
+Im Feld `Korrekturabstand oben` kann der Abstand beim Drucken der jeweils ersten Zeile eines Labels zum oberen Rand relativ verändert werden. Positive Werte vergrößern den Abstand, negative Werte verringern den Abstand.  
+
+#### Tabelle
+
+In der Tabelle werden für jede Zeile einige Einstellungsmöglichkeiten angezeigt.  
+
+In der Spalte `Zeile` wird die Nummer der jeweiligen Zeile des Labels angezeigt.  
+In der Spalte `Schriftart` befindet sich eine Auswahlmöglichkeit welche Schrift für die betreffende Zeile verwendet werden soll. Es stehen alle auf dem Rechner installierten Schriften zur Verfügung.  
+In der Spalte `Schriftgröße` kann die Schriftgröße der jeweiligen Zeile eingetragen werden.  
+In der Spalte `Fett` kann mit einem Klick auf die jeweilige Checkbox die Zeile als **fett** dargestellt werden.  
+In der Spalte `Kursiv` kann mit einem Klick auf die jeweilige Checkbox die Zeile als _kursiv_ dargestellt werden.  
+In der Spalte `Einzug` kann der Einzug der jeweiligen Zeile in Prozent eingetragen werden.  
+  
+#### Speichern / Schließen
+
+Mit einem Klick auf `Speichern` kann das Format abgespeichert werden. Zum Abspeichern ist es notwendig das ein `Formatname` vergeben wurde und das ein `Druckername` ausgewählt wurde. Sollte eine der beiden Eingaben fehlen so erscheint ein Hinweis.  
+Sollte der Formatname bereits vorhanden sein erscheint ein Dialog, dieser ermöglicht das bereits vorhandene Format mit dem neuen zu überschreiben oder den Vorgang abzubrechen um den Formatnamen zu ändern.  
+
+Mit einem Klick auf `Schließen` wird das Fenster geschlossen. Wurde das Format davor nicht abgespeichert so werden die Veränderungen verworfen.  
+
 
 ## License
 

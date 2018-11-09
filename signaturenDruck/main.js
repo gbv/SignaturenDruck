@@ -288,7 +288,7 @@ function createManualWindow (objMan) {
 
 // creates the winConfig
 function createConfigWindow () {
-  winConfig = new BrowserWindow({width: 800, height: 890, show: false})
+  winConfig = new BrowserWindow({width: 800, height: 950, show: false})
   winConfig.loadURL(url.format({
     pathname: path.join(__dirname, 'html/config.html'),
     protocol: 'file',
