@@ -72,9 +72,9 @@ Dabei handelt es sich um:
 
 Sind diese Ordner/Dateien vorhanden so wird die geprüft ob die Datei die in der `config.json` unter `defaultPath` angegeben ist existiert.  
 Ist dies der Fall dann werden die enthaltenen Daten geladen und angezeigt.
-![Erfolgreiches laden der Daten](docu/imgs/erfolgreicherStart.png)  
+![Erfolgreiches laden der Daten](docu/imgs/erfolgreicherStart.PNG?token=Ah-Pd0EhXe4Z_8PPoWR73aePoL9yasF8ks5b7mafwA%3D%3D)  
 Sollte dies nicht der Fall sein so wird dies in der Oberfläche angezeigt.
-![Keine DefaultDatei vorhanden](docu/imgs/startOhneDefaultDatei.png)  
+![Keine DefaultDatei vorhanden](docu/imgs/startOhneDefaultDatei.PNG?token=Ah-Pd-fUR3dlUm7_nQwvMt6fs4N3tUliks5b7mblwA%3D%3D)  
 
 ### Andere Datei auswählen
 
@@ -93,7 +93,7 @@ Der Druck der ausgewählten Signaturen erfolgt dann mit einem Klick auf die Scha
 ### Manuelles Anlegen
 
 Der SignaturenDruck ermöglicht nicht nur den Druck von Signaturen aus einer Datei, sondern auch das erstellen von manuellen Signaturen. Mit einem Klick auf die Schaltfläche `Manuelles Anlegen` öffnet sich folgendes Fenster zur Eingabe:  
-![Oberfläche manuelles Anlegen](/docu/imgs/oberflaecheManuellesAnlegen.png?raw=true)
+![Oberfläche manuelles Anlegen](docu/imgs/oberflaecheManuellesAnlegen.PNG?token=Ah-Pd2agTmCO831eG9Wf4YkxX88dS7mFks5b7mYwwA%3D%3D)
 
 Auf der linken Seite befinden sich die Eingabefelder der jeweiligen Zeilen und die Schaltflächen.  
 Auf der rechten Seite befinden sich die Übersicht um welche manuelle Signatur es sich handelt, die Vorschau der Signatur, die Auswahl des Formats und die Option den Einzug zu entfernen.  
