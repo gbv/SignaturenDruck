@@ -26,25 +26,7 @@ body {
 
 /* delimBox */
 #input_delimiter {
-  width: 35px;
-}
-#label_example {
-  margin-right: 66px !important;
-}
-#input_example {
-  width: 210px;
-}
-#topRow {
-  margin-left: 5px !important;
-  margin-right: 5px !important;
-}
-#topRow > .columns {
-  margin-bottom: 0px !important;
-}
-
-/* formatSelect */
-#label_selectFormat {
-  margin-right: 71px !important;
+  width: 35px !important;
 }
 
 /* configInputs */
@@ -57,46 +39,9 @@ body {
   margin-bottom: 5px !important;
 }
 
-/* nameBox */
-#input_fileName, #selectPrinter {
-  width: 187px !important;
-}
-#fileNameLabel {
-  margin-right: 29px !important;
-}
-
 /* paperBox styles */
 #input_paperHeight, #input_paperWidth {
   width: 100px !important;
-}
-#paperBox > .field > .field-label {
-  margin-right: 80px !important;
-}
-#paperBox > .field > .field-label > label {
-  width: 45px !important;
-}
-
-/* labelBox */
-#input_labelLines {
-  width: 170px !important;
-}
-#label_height, #label_width, #label_rows {
-  margin-right: 50px !important;
-}
-#label_rowSpace {
-  margin-right: 36px !important;
-}
-#label_centerHor {
-  margin-right: 26px !important;
-}
-#label_centerVer {
-  margin-right: 29px !important;
-}
-#centerHor, #centerVer {
-  margin-top: 20px !important;
-}
-#label_marginTop {
-  margin-right: 18px !important;
 }
 
 /* tableBox styles */
@@ -115,4 +60,14 @@ tbody > tr > td:nth-child(4) {
 tbody > tr > td:nth-child(5) {
   padding-top: 11px !important;
   padding-left: 25px !important;
+}
+
+.oneLabelSize {
+  margin-right: 0px !important;
+}
+.oneLabelSize > label.label {
+  width: 125px !important;
+}
+.fullwidth {
+  width: 100% !important;
 }
