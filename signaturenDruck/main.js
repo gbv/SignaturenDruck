@@ -95,11 +95,6 @@ ipc.on('close', function (event) {
   app.quit()
 })
 
-// listens on printed, invokes then printMsg via ipc
-ipc.on('printed', function (event) {
-  mainWindow.webContents.send('printMsg', true)
-})
-
 // listens on openManually, invokes the opening process
 ipc.on('openManually', function (event, objMan) {
   createManualWindow(objMan)
@@ -254,11 +249,17 @@ function printData (format, data, dataMan) {
           ps.addCommand('Start-Process "' + path.join(__dirname, '.\\tmp\\' + fileName) + '" -Verb PrintTo "' + formats[format].printer + '" -PassThru | %{sleep 4;$_} | kill')
           ps.invoke().then(output => {
             fs.unlinkSync(path.join(__dirname, '.\\tmp\\' + fileName))
+            mainWindow.webContents.send('printMsg', true)
+          }).catch(err => {
+            electron.dialog.showErrorBox('Es ist ein Fehler aufgetreten.', err)
+            mainWindow.webContents.send('printMsg', false)
+            ps.dispose()
           })
         } else {
           ps.addCommand('Start-Process "' + path.join(__dirname, '.\\tmp\\' + fileName) + '"')
-          ps.invoke().then(output => { ps.dispose() }).catch(err => {
-            console.log(err)
+          ps.invoke().then(output => { mainWindow.webContents.send('printMsg', true); ps.dispose() }).catch(err => {
+            electron.dialog.showErrorBox('Es ist ein Fehler aufgetreten.', err)
+            mainWindow.webContents.send('printMsg', false)
             ps.dispose()
           })
         }

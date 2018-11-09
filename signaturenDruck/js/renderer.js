@@ -29,6 +29,7 @@ let objSRU = {
 let formats = []
 let selectOptions = []
 let printerFound = []
+let displayModalOnSuccess = true
 
 // function on window load
 window.onload = function () {
@@ -76,8 +77,13 @@ window.onload = function () {
 }
 
 // listens on printMsg, invokes the modal
-ipc.on('printMsg', function (event) {
-  document.getElementById('myModal').style.display = 'block'
+ipc.on('printMsg', function (event, successfull) {
+  if (successfull && displayModalOnSuccess) {
+    document.getElementById('myModal').style.display = 'block'
+  } else {
+    document.getElementById('myModal').style.display = 'none'
+    displayModalOnSuccess = false
+  }
 })
 
 // ipc listener to add new manual data to the table

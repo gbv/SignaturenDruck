@@ -37,7 +37,6 @@ window.onload = function () {
 
 ipc.on('toPrint', function (event, format, data, dataMan) {
   main(format, data, dataMan)
-  ipc.send('printed', true)
 })
 
 function main (format, data, dataMan) {
