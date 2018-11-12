@@ -124,7 +124,7 @@ Im Feld `Trennzeichen` kann ein Zeichen eingegeben werden welches in der Signatu
 
 Im Feld `Beispiel` ist eine Signatur eingetragen die in der Vorschau zur Veranschaulichung der gewählten Einstellungen dient. Der Feldinhalt kann verändert werden.
 
-*Bei den Formaten __thulb_gross__, __thulb_klein__ und __thulb_klein_1__ findet das eingetragene Trennzeichen keine Verwendung. Bei diesen Formaten ist in der entsprechenden Konfigurationsdatei der Zeilenumbruch durch reguläre Ausdrücke geregelt*  
+*Bei den Formaten __thulb_gross__, __thulb_klein__ und __thulb_klein_1__ erscheint eine Checkbox welche die Möglichkeit bietet den im Format eingetragenen regulären Ausdruck zum festlegen der Zeilen zu übernehmen.*  
 
 #### Papier
 
