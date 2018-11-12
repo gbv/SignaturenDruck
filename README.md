@@ -188,6 +188,32 @@ Die `config.json` unter `C:\Export\SignaturenDruck\` bietet folgende Optionen.
 | `thulbMode` | dient zur automatischen Formaterkennung | `true` |  
 | `devMode` | dient zur Fehlersuche, zeigt die Fenster der jeweiligen Formate an, die im Formalfall nicht zu sehen sind. Die PDFs werden erstellt aber weder gelöscht noch gedruckt. | `false` |  
 
+### Zeilenfestlegung mit RegEx
+
+Um bei einem Format die Zeilen mittels RegEx festzulegen muss im entsprechenden Format unter `C:\Export\SignaturenDruck\Formate\` ein neuer Schlüssel `splitByRegEx` angelegt werden. Als Beispiele dienen die Einträge von den Formaten `thulb_gross` `thulb_klein`  
+___
+`thulb_gross`
+```json
+"splitByRegEx": [
+    "^([^:]*) :?",
+    "([^:]*) :?",
+    "([^:]*) :?",
+    "([^:]*) :?",
+    "([^:]*) :?",
+    "(.*)"
+  ]
+```
+___
+`thulb_klein`
+```json
+"splitByRegEx": [
+  "(^.*?\\s[^\\s]+) \\s?",
+  "([^(\\s:)]+) \\s?:?",
+  "(.*)"
+]
+```
+
+Die regulären Ausdrücke werden mit der JavaScript Bibliothek [XRegExp](http://xregexp.com/) verarbeitet.
 
 ## License
 
