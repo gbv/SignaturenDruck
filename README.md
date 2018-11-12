@@ -164,6 +164,28 @@ Sollte der Formatname bereits vorhanden sein erscheint ein Dialog, dieser ermög
 
 Mit einem Klick auf `Schließen` wird das Fenster geschlossen. Wurde das Format davor nicht abgespeichert so werden die Veränderungen verworfen.  
 
+## Konfig-Optionen
+
+Die `config.json` unter `C:\Export\SignaturenDruck\` bietet folgende Optionen.  
+
+`defaultPath` - damit kann der Pfad zur Datei verändert werden, welche beim starten des Programms automatisch ausgelesen werden soll. (Der Standardwert ist `"C://Export/download.dnl"`)  
+
+`defaultFormat` - bietet die Möglichkeit das Standardformat festzulegen.  
+
+`modalTxt` - bietet die Möglichkeit den Text der Druckerfolgsmeldung anzupassen.  
+
+`sortByPPN` - ermöglicht die ausgelesenen Daten per PPN sortiert darzustellen (Standardwert: `false`)  
+
+`newLineAfter` - dient zur Ermittlung der automatischen Formatauswahl (Standardwert `":"`), _spielt nur eine Rolle wenn der thulbMode aktiviert ist_  
+
+`useSRU` - ermöglicht die Daten per SRU zu laden (Standardwert: `false`)  
+
+`SRUaddress` - enthält die URL des SRU-Servers über den die Daten geladen werden, sofern `useSRU: true` (Standardwert: `"http://sru.gbc.de/opac-de-27"`)  
+
+`thulbMode` - dient zur automatischen Formaterkennung (Standardwert: `true`)  
+
+`devMode` - dient zur Fehlersuche, zeigt die Fenster der jeweiligen Formate an, die im Formalfall nicht zu sehen sind. Die PDFs werden erstellt aber weder gelöscht noch gedruckt. (Standardwert: `false`)
+
 
 ## License
 
