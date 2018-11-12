@@ -22,13 +22,11 @@ const _ = require('lodash')
 
 // default main config settings
 const configNew = {
-  'testKey': "Don't panic, this is just a test",
   'defaultPath': 'C://Export/download.dnl',
   'defaultFormat': 'thulb_gross',
   'modalTxt': 'Die ausgewählten Signaturen wurden gedruckt.',
   'sortByPPN': false,
   'newLineAfter': ':',
-  'showDelimiter': true,
   'useSRU': false,
   'SRUaddress': 'http://sru.gbv.de/opac-de-27',
   'thulbMode': true,
