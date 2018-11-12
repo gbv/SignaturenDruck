@@ -84,6 +84,9 @@ function setFormatsSelect () {
       addText()
     } else {
       currentFormat = ''
+      document.getElementById('useRegExBox').style.display = 'none'
+      document.getElementById('input_delimiter').disabled = false
+      document.getElementById('input_example').disabled = false
     }
   }
 }
@@ -91,6 +94,15 @@ function setFormatsSelect () {
 function loadDataFromFormat (formatName) {
   let format = formats[formatName]
   currentFormat = format
+  if (currentFormat.splitByRegEx) {
+    document.getElementById('useRegExBox').style.display = 'flex'
+    document.getElementById('input_delimiter').disabled = true
+    document.getElementById('input_example').disabled = true
+  } else {
+    document.getElementById('useRegExBox').style.display = 'none'
+    document.getElementById('input_delimiter').disabled = false
+    document.getElementById('input_example').disabled = false
+  }
   document.getElementById('input_fileName').value = format.name
   document.getElementById('selectPrinter').value = format.printer
   document.getElementById('input_paperHeight').value = Number(format.paper.height)
@@ -229,7 +241,7 @@ function setObjct () {
     'marginTop': document.getElementById('marginTop').value
   }
 
-  if (currentFormat.splitByRegEx) {
+  if (currentFormat.splitByRegEx && document.getElementById('chkbx_regEx').checked) {
     newConfig.splitByRegEx = currentFormat.splitByRegEx
   }
 

@@ -71,3 +71,12 @@ tbody > tr > td:nth-child(5) {
 .fullwidth {
   width: 100% !important;
 }
+#useRegExBox {
+  display: none;
+}
+#useRegExBox > #label_checkboxRegEx > label.label{
+  width: max-content;
+}
+#chkbx_regEx {
+  margin-top: 10px;
+}
