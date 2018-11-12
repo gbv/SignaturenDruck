@@ -131,31 +131,39 @@ Im Feld `Beispiel` ist eine Signatur eingetragen die in der Vorschau zur Veransc
 Es müssen die Maße des verwendeten Papiers angebeben werden, damit das erstellte PDF passgenau erstellt werden kann. Somit können Unschärfen und ähnliche Effekte die durch Skalierung entstehen verhindert werden.  
 *Das Label (Etikett) wird auf dem Papier zentriert*  
 
-Im Feld `Höhe` wird die Höhe des Papiers in μm angegeben.  
-Im Feld `Breite` wird die Breite des Papiers angegeben.  
+| Eigenschaft | Beschreibung |  
+| :----------: | ------------ |  
+| `Höhe` | die Höhe des Papiers in μm |  
+| `Breite` | die Breite des Papiers in μm |  
 
 #### Label (Etikett)
 
-Es werden unterschiedliche Eigentschaften des Label erfasst.
+Es werden unterschiedliche Eigenschaften des Label erfasst.
 
-Im Feld `Höhe` wird die Höhe des Labels in mm angegeben.  
-Im Feld `Breite` wird die Breite des Labels in mm angegeben.  
-Im Feld `Zeilen` wird die Anzahl der Zeilen des Labels erfasst.  
-Im Feld `Zeilenstand` wird der Abstand zwischen den Zeilen des Labels erfasst.  
-Mit der Checkbox `Horizontal zentrieren` können alle Zeilen horizontal zentriert werden.  
-Mit der Checkbox `Vertikal zentrieren` können alle Zeilen vertikal zentriert werden.  
-Im Feld `Korrekturabstand oben` kann der Abstand beim Drucken der jeweils ersten Zeile eines Labels zum oberen Rand relativ verändert werden. Positive Werte vergrößern den Abstand, negative Werte verringern den Abstand.  
+| Eigenschaft | Beschreibung |  
+| :----------: | ------------ |  
+| `Höhe` | ist die Höhe des Labels in mm |  
+| `Breite` | ist die Breite des Labels in mm |  
+| `Zeilen` | erfasst die Anzahl der Zeilen des Labels |  
+| `Zeilenstand` | erfasst den Abstand zwischen den Zeilen des Labels |  
+| `Horizontal zentrieren` | ermöglicht das horizontale zentrieren aller Zeilen |  
+| `Vertikal zentrieren` | ermöglicht das vertikale zentrieren aller Zeilen |  
+| `Korrekturabstand oben` | ermöglicht eine Veränderung des Abstands beim Drucken von der jeweils ersten Zeile eines Labels zum Rand. Positive Werte vergrößern den Abstand, negative Werte verringern den Abstand. |  
+
 
 #### Tabelle
 
 In der Tabelle werden für jede Zeile einige Einstellungsmöglichkeiten angezeigt.  
 
-In der Spalte `Zeile` wird die Nummer der jeweiligen Zeile des Labels angezeigt.  
-In der Spalte `Schriftart` befindet sich eine Auswahlmöglichkeit welche Schrift für die betreffende Zeile verwendet werden soll. Es stehen alle auf dem Rechner installierten Schriften zur Verfügung.  
-In der Spalte `Schriftgröße` kann die Schriftgröße der jeweiligen Zeile eingetragen werden.  
-In der Spalte `Fett` kann mit einem Klick auf die jeweilige Checkbox die Zeile als **fett** dargestellt werden.  
-In der Spalte `Kursiv` kann mit einem Klick auf die jeweilige Checkbox die Zeile als _kursiv_ dargestellt werden.  
-In der Spalte `Einzug` kann der Einzug der jeweiligen Zeile in Prozent eingetragen werden.  
+| Spalte | Beschreibung |
+| :----: | ------------ |
+| `Zeile` | gibt die Nummder der jeweiligen Zeile des Labels an |  
+| `Schriftart` | enthält eine Auswahlmöglichkeit der Schrift welche für die betreffende Zeile verwendet werden soll. Es stehen alle auf dem Rechner installierten Schriften zur Verfügung. |  
+| `Schriftgröße` | hier kann die Schriftgröße der jeweiligen Zeile eingetragen werden |  
+| `Fett` | mit einem Klick auf die jeweilige Checkbox kann die Zeile als **fett** dargestellt werden |  
+| `Kursiv` | mit einem Klick auf die jeweilige Checkbox kann die Zeile als _kursiv_ dargestellt werden |  
+| `Einzug` | hier kann der Einzug der jeweiligen Zeile in Prozent eingetragen werden |  
+
   
 #### Speichern / Schließen
 
@@ -168,23 +176,17 @@ Mit einem Klick auf `Schließen` wird das Fenster geschlossen. Wurde das Format 
 
 Die `config.json` unter `C:\Export\SignaturenDruck\` bietet folgende Optionen.  
 
-`defaultPath` - damit kann der Pfad zur Datei verändert werden, welche beim starten des Programms automatisch ausgelesen werden soll. (Der Standardwert ist `"C://Export/download.dnl"`)  
-
-`defaultFormat` - bietet die Möglichkeit das Standardformat festzulegen.  
-
-`modalTxt` - bietet die Möglichkeit den Text der Druckerfolgsmeldung anzupassen.  
-
-`sortByPPN` - ermöglicht die ausgelesenen Daten per PPN sortiert darzustellen (Standardwert: `false`)  
-
-`newLineAfter` - dient zur Ermittlung der automatischen Formatauswahl (Standardwert `":"`), _spielt nur eine Rolle wenn der thulbMode aktiviert ist_  
-
-`useSRU` - ermöglicht die Daten per SRU zu laden (Standardwert: `false`)  
-
-`SRUaddress` - enthält die URL des SRU-Servers über den die Daten geladen werden, sofern `useSRU: true` (Standardwert: `"http://sru.gbc.de/opac-de-27"`)  
-
-`thulbMode` - dient zur automatischen Formaterkennung (Standardwert: `true`)  
-
-`devMode` - dient zur Fehlersuche, zeigt die Fenster der jeweiligen Formate an, die im Formalfall nicht zu sehen sind. Die PDFs werden erstellt aber weder gelöscht noch gedruckt. (Standardwert: `false`)
+| key | Beschreibung | Standardwert |
+| :---: | --- | ---|
+| `defaultPath` | damit kann der Pfad zur Datei verändert werden, welche beim starten des Programms automatisch ausgelesen werden soll. | `"C://Export/download.dnl"` |  
+| `defaultFormat` | bietet die Möglichkeit das Standardformat festzulegen. | `"thulb_gross"` |  
+| `modalTxt` | bietet die Möglichkeit den Text der Druckerfolgsmeldung anzupassen. | `"Die ausgewählten Signaturen wurden gedruckt."` |  
+| `sortByPPN` | ermöglicht die ausgelesenen Daten per PPN sortiert darzustellen. | `false` |  
+| `newLineAfter` | dient zur Ermittlung der automatischen Formatauswahl. _spielt nur eine Rolle wenn der thulbMode aktiviert ist_ | `":"` |  
+| `useSRU` | ermöglicht die Daten per SRU zu laden | `false` |  
+| `SRUaddress` | enthält die URL des SRU-Servers über den die Daten geladen werden, sofern `useSRU: true` | `"http://sru.gbc.de/opac-de-27"` |  
+| `thulbMode` | dient zur automatischen Formaterkennung | `true` |  
+| `devMode` | dient zur Fehlersuche, zeigt die Fenster der jeweiligen Formate an, die im Formalfall nicht zu sehen sind. Die PDFs werden erstellt aber weder gelöscht noch gedruckt. | `false` |  
 
 
 ## License
