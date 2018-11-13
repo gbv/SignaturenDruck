@@ -13,8 +13,13 @@ const config = new Store({cwd: 'C:\\Export\\SignaturenDruck'})
 const Shell = require('node-powershell')
 require('electron-context-menu')({
   prepend: (params, BrowserWindow) => [{
-    // label: ''
-  }]
+    visible: false,
+  }],
+  labels: {
+    cut: 'Ausschneiden',
+    copy: 'Kopieren',
+    paste: 'Einfügen'
+  }
 })
 
 // requires lodash
