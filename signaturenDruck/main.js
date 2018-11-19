@@ -242,16 +242,16 @@ function printData (format, data, dataMan) {
     winPrint.webContents.printToPDF({marginsType: 1, landscape: true, pageSize: { width: formats[format].paper.height, height: formats[format].paper.width }}, (error, data) => {
       if (error) throw error
       let fileName = formats[format].name + '_' + new Date().getTime() + '.pdf'
-      fs.writeFile('./tmp/' + fileName, data, (error) => {
+      fs.writeFile('C:\\Export\\SignaturenDruck\\' + fileName, data, (error) => {
         if (error) throw error
         let ps = new Shell({
           executionPolicy: 'Bypass',
           noProfile: true
         })
         if (!config.store.devMode) {
-          ps.addCommand('Start-Process "' + path.join(__dirname, '.\\tmp\\' + fileName) + '" -Verb PrintTo "' + formats[format].printer + '" -PassThru | %{sleep 4;$_} | kill')
+          ps.addCommand('Start-Process -file "' + 'C:\\Export\\SignaturenDruck\\' + fileName + '" -Verb PrintTo "' + formats[format].printer + '" -PassThru | %{sleep 4;$_} | kill')
           ps.invoke().then(output => {
-            fs.unlinkSync(path.join(__dirname, '.\\tmp\\' + fileName))
+            fs.unlinkSync('C:\\Export\\SignaturenDruck\\' + fileName)
             mainWindow.webContents.send('printMsg', true)
           }).catch(err => {
             electron.dialog.showErrorBox('Es ist ein Fehler aufgetreten.', err)
@@ -259,7 +259,7 @@ function printData (format, data, dataMan) {
             ps.dispose()
           })
         } else {
-          ps.addCommand('Start-Process "' + path.join(__dirname, '.\\tmp\\' + fileName) + '"')
+          ps.addCommand('Start-Process -file "' + 'C:\\Export\\SignaturenDruck\\' + fileName + '"')
           ps.invoke().then(output => { mainWindow.webContents.send('printMsg', true); ps.dispose() }).catch(err => {
             electron.dialog.showErrorBox('Es ist ein Fehler aufgetreten.', err)
             mainWindow.webContents.send('printMsg', false)
