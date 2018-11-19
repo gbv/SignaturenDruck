@@ -16,6 +16,10 @@ const ipc = require('electron').ipcRenderer
 
 const XRegExp = require('xregexp')
 
+// requires the electron-store module and initializes it
+const Store = require('electron-store')
+const config = new Store({cwd: 'C:\\Export\\SignaturenDruck'})
+
 let formats = []
 
 window.onload = function () {
@@ -66,7 +70,11 @@ function createPage (format, data, dataMan, file) {
       if (Number(formats[format].lines) === 1) {
         let p = document.createElement('p')
         p.className = 'line_1'
-        p.innerHTML = linesData[0]
+        if (config.get('thulbMode')) {
+          p.innerHTML = linesData[0].split(config.get('newLineAfter')).join(' ')
+        } else {
+          p.innerHTML = linesData[0]
+        }
         div.appendChild(p)
         document.getElementById('toPrint').appendChild(div)
       } else {
@@ -83,7 +91,11 @@ function createPage (format, data, dataMan, file) {
           })
         } else {
           let line = document.getElementById(value.id + '_line_' + i)
-          line.innerHTML = linesData
+          if (config.get('thulbMode')) {
+            line.innerHTML = linesData.split(config.get('newLineAfter')).join(' ')
+          } else {
+            line.innerHTML = linesData
+          }
         }
       }
     }

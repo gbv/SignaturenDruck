@@ -804,7 +804,11 @@ function showData (shelfmark, formatLines) {
     })
   } else {
     line = document.getElementById('line_' + i)
-    line.innerHTML = shelfmark
+    if (config.get('thulbMode')) {
+      line.innerHTML = shelfmark.split(config.get('newLineAfter')).join(' ')
+    } else {
+      line.innerHTML = shelfmark
+    }
   }
 
   function createLines (innerBox, formatLines) {
