@@ -60,7 +60,7 @@ function createPage (format, data, dataMan, file) {
     for (let count = 0; count < value.count; count++) {
       let div = document.createElement('div')
       div.className = 'innerBox'
-      div.id = value.id
+      div.id = value.id + '.' + count
       let linesData = getData(value.id, formats[format])
       if (String(value.id).includes('m_')) {
         if (dataMan[value.id.split('m_')[1]].removeIndent) {
@@ -79,18 +79,18 @@ function createPage (format, data, dataMan, file) {
         document.getElementById('toPrint').appendChild(div)
       } else {
         let i = 1
-        createLines(div, formats[format].lines, value.id)
+        createLines(div, formats[format].lines, value.id, count)
         document.getElementById('toPrint').appendChild(div)
         if (Array.isArray(linesData)) {
           linesData.forEach(lineTxt => {
-            let line = document.getElementById(value.id + '_line_' + i)
+            let line = document.getElementById(value.id + '.' + count + '_line_' + i)
             if (lineTxt !== '') {
               line.innerHTML = lineTxt
             }
             i++
           })
         } else {
-          let line = document.getElementById(value.id + '_line_' + i)
+          let line = document.getElementById(value.id + '.' + count + '_line_' + i)
           if (config.get('thulbMode')) {
             line.innerHTML = linesData.split(config.get('newLineAfter')).join(' ')
           } else {
@@ -101,10 +101,10 @@ function createPage (format, data, dataMan, file) {
     }
   })
 
-  function createLines (innerBox, formatLines, id) {
+  function createLines (innerBox, formatLines, id, count) {
     for (let i = 1; i <= formatLines; i++) {
       let line = document.createElement('p')
-      line.id = id + '_line_' + i
+      line.id = id + '.' + count + '_line_' + i
       line.className = 'line_' + i
       let emptyLine = document.createElement('br')
       line.appendChild(emptyLine)
