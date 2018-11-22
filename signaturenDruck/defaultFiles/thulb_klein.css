@@ -23,21 +23,21 @@ font-family: "Arial Narrow";
 font-size: 15pt;
 font-weight: bold;
 font-style: normal;
-margin-left: 45%;
+margin-left: 40%;
 }
 .format_thulb_klein > .innerBox > .line_2 {
 font-family: "Arial Narrow";
 font-size: 15pt;
 font-weight: bold;
 font-style: normal;
-margin-left: 45%;
+margin-left: 40%;
 }
 .format_thulb_klein > .innerBox > .line_3 {
 font-family: "Arial Narrow";
 font-size: 15pt;
 font-weight: bold;
 font-style: normal;
-margin-left: 45%;
+margin-left: 40%;
 }
 @media print {
 #toPrint.format_thulb_klein > .innerBox {
