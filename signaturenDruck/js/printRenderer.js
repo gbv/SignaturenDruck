@@ -70,10 +70,14 @@ function createPage (format, data, dataMan, file) {
       if (Number(formats[format].lines) === 1) {
         let p = document.createElement('p')
         p.className = 'line_1'
-        if (config.get('thulbMode')) {
-          p.innerHTML = linesData[0].split(config.get('newLineAfter')).join(' ')
+        if (Array.isArray(linesData)) {
+          if (config.get('thulbMode')) {
+            p.innerHTML = linesData[0].split(config.get('newLineAfter')).join(' ')
+          } else {
+            p.innerHTML = linesData[0]
+          }
         } else {
-          p.innerHTML = linesData[0]
+          p.innerHTML = linesData
         }
         div.appendChild(p)
         document.getElementById('toPrint').appendChild(div)
