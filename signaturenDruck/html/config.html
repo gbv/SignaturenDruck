@@ -4,7 +4,7 @@
 <head>
   <meta charset="UTF-8">
   <meta http-equiv="Content-Security-Policy" content="default-src 'self' 'unsafe-inline'">
-  <title>Signaturendruck - Format erstellen/bearbeiten</title>
+  <title>Signaturendruck - CONFIG - Konfigurationsdatei erstellen/bearbeiten</title>
   <link rel="stylesheet" type="text/css" href="./../css/bulma.css">
   <link rel="stylesheet" type="text/css" href="./../css/preview.css">
   <link rel="stylesheet" type="text/css" href="./../css/config.css">
@@ -17,260 +17,14 @@
   <div id="configInputs">
     <div class="columns">
       <div class="column is-half">
-        <div class="box">
-          <h2 class="subtitle is-4">Format</h2>
-          <div class="field is-horizontal">
-            <div class="field-label is-normal oneLabelSize" id="label_selectFormat">
-              <label class="label">Format</label>
-            </div>
-            <div class="field-body">
-              <div class="field">
-                <p class="control">
-                  <div class="select oneLabelSize fullwidth" id="selectFormatDiv">
-                    <select id="selectFormat" class="fullwidth">
-                      <option value=''>---neues Format---</option>
-                    </select>
-                  </div>
-                </p>
-              </div>
-            </div>
-          </div>
-          <div class="field is-horizontal">
-            <div class="field-label is-normal oneLabelSize" id="label_fileName">
-              <label class="label">Formatname</label>
-            </div>
-            <div class="field-body">
-              <div class="field">
-                <p class="control">
-                  <input id="input_fileName" class="input fullwidth" type="text" placeholder="z.B. thulb_gross"/>
-                </p>
-              </div>
-            </div>
-          </div>
-          <div class="field is-horizontal">
-            <div class="field-label is-normal oneLabelSize" id="label_printerName">
-              <label class="label">Druckername</label>
-            </div>
-            <div class="field-body">
-              <div class="field">
-                <p class="control">
-                  <div class="select fullwidth" id="selectPrinterDiv">
-                    <select id="selectPrinter" class="fullwidth"></select>
-                  </div>
-                </p>
-              </div>
-            </div>
-          </div>
-        </div>
-        <div class="box" id="delimBox">
-          <h2 class="subtitle is-4">Signatur</h2>
-          <div class="field is-horizontal" id="useRegExBox">
-            <div class="field-body">
-              <div class="field">
-                <p class="control has-text-centered">
-                  <input id="chkbx_regEx" type="checkbox" checked/>
-                </p>
-              </div>
-            </div>
-            <div class="field-label is-normal" id="label_checkboxRegEx">
-              <label class="label">Regulären Ausdruck übernehmen</label>
-            </div>
-          </div>
-          <div class="field is-horizontal">
-            <div class="field-label is-normal oneLabelSize" id="label_delimiter">
-              <label class="label">Trennzeichen</label>
-            </div>
-            <div class="field-body">
-              <div class="field">
-                <p class="control">
-                  <input id="input_delimiter" class="input has-text-centered" type="text" maxlength="1" value=":" />
-                </p>
-              </div>
-            </div>
-          </div>
-          <div class="field is-horizontal">
-            <div class="field-label is-normal oneLabelSize" id="label_example">
-              <label class="label">Beispiel</label>
-            </div>
-            <div class="field-body">
-              <div class="field">
-                <p class="control">
-                  <input id="input_example" class="input fullwidth" type="text" value="PÄD:TG:1420:Dan::2017" />
-                </p>
-              </div>
-            </div>
-          </div>
-        </div>
-        <div class="box">
-          <h2 class="subtitle is-4">Vorschau</h2>
-          <div id="previewBox">
-            <div id="innerBox">
-              <p id="line_1"></p>
-            </div>
-          </div>
-        </div>
+
       </div>
       <div class="column is-half">
-        <div id="paperBox" class="box">
-          <h2 class="subtitle is-4">Papier</h2>
-          <div class="field is-horizontal">
-            <div class="field-label is-normal oneLabelSize" id="label_paperHeight">
-              <label class="label">Höhe</label>
-            </div>
-            <div class="field-body">
-              <div class="field has-addons">
-                <p class="control">
-                  <input id="input_paperHeight" class="input" type="number" value="48920" />
-                </p>
-                <p class="control">
-                  <a class="button is-static">μm</a>
-                </p>
-              </div>
-            </div>
-          </div>
-          <div class="field is-horizontal">
-            <div class="field-label is-normal oneLabelSize" id="label_paperWidth">
-              <label class="label">Breite</label>
-            </div>
-            <div class="field-body">
-              <div class="field has-addons">
-                <p class="control">
-                  <input id="input_paperWidth" class="input" type="number" value="99970" />
-                </p>
-                <p class="control">
-                  <a class="button is-static">μm</a>
-                </p>
-              </div>
-            </div>
-          </div>
-        </div>
-        <div id="labelBox" class="box">
-            <h2 class="subtitle is-4">Label</h2>
-            <div class="field is-horizontal">
-              <div class="field-label is-normal oneLabelSize" id="label_height">
-                <label class="label">Höhe</label>
-              </div>
-              <div class="field-body">
-                <div class="field has-addons">
-                  <p class="control fullwidth">
-                    <input id="input_labelHeight" class="input fullwidth" type="number" value="43" />
-                  </p>
-                  <p class="control">
-                    <a class="button is-static">
-                      mm
-                    </a>
-                  </p>
-                </div>
-              </div>
-            </div>
-            <div class="field is-horizontal">
-              <div class="field-label is-normal oneLabelSize" id="label_width">
-                <label class="label">Breite</label>
-              </div>
-              <div class="field-body">
-                <div class="field has-addons">
-                  <p class="control fullwidth">
-                    <input id="input_labelWidth" class="input fullwidth" type="number" value="80" />
-                  </p>
-                  <p class="control">
-                    <a class="button is-static">
-                      mm
-                    </a>
-                  </p>
-                </div>
-              </div>
-            </div>
-            <div class="field is-horizontal">
-              <div class="field-label is-normal oneLabelSize" id="label_rows">
-                <label class="label">Zeilen</label>
-              </div>
-              <div class="field-body">
-                <div class="field has-addons">
-                  <p class="control fullwidth">
-                    <input id="input_labelLines" class="input fullwidth" value="1" readonly />
-                  </p>
-                  <p class="control">
-                    <a id="btn_removeLine" class="button">-</a>
-                  </p>
-                  <p class="control">
-                    <a id="btn_addLine" class="button">+</a>
-                  </p>
-                </div>
-              </div>
-            </div>
-            <div class="field is-horizontal">
-              <div class="field-label is-normal oneLabelSize" id="label_rowSpace">
-                <label class="label">Zeilen&shy;abstand</label>
-              </div>
-              <div class="field-body">
-                <div class="field">
-                  <p class="control fullwidth">
-                    <input id="lineSpace" class="input fullwidth" type="number" value="5" />
-                  </p>
-                </div>
-              </div>
-            </div>
-            <div class="field is-horizontal">
-              <div class="field-label is-normal oneLabelSize" id="label_centerHor">
-                <label class="label">Horizontal zentrieren</label>
-              </div>
-              <div class="field-body">
-                <div class="field">
-                  <p class="control">
-                    <input id="centerHor" type="checkbox" />
-                  </p>
-                </div>
-              </div>
-            </div>
-            <div class="field is-horizontal">
-              <div class="field-label is-normal oneLabelSize" id="label_centerVer">
-                <label class="label">Vertikal zentrieren</label>
-              </div>
-              <div class="field-body">
-                <div class="field">
-                  <p class="control">
-                    <input id="centerVer" type="checkbox" />
-                  </p>
-                </div>
-              </div>
-            </div>
-            <div class="field is-horizontal">
-              <div class="field-label is-normal oneLabelSize" id="label_marginTop">
-                <label class="label">Korrektur&shy;abstand oben</label>
-              </div>
-              <div class="field-body">
-                <div class="field has-addons">
-                  <p class="control fullwidth">
-                    <input id="marginTop" class="input fullwidth" type="number" value="0" />
-                  </p>
-                  <p class="control">
-                    <a class="button is-static">
-                      mm
-                    </a>
-                  </p>
-                </div>
-              </div>
-            </div>
-        </div>
+
       </div>
     </div>
   </div>
-  <div id="tableBox" class="box">
-    <table id="tableLines" class="table is-narrow">
-      <thead>
-        <tr>
-          <th>Zeile</th>
-          <th>Schriftart</th>
-          <th>Schriftgröße</th>
-          <th>Fett</th>
-          <th>Kursiv</th>
-          <th>Einzug</th>
-        </tr>
-      </thead>
-      <tbody id="tableLinesBody"></tbody>
-    </table>
-  </div>
-  </div>
+
   <div id="buttonBox" class="box level">
     <div class="level-left">
       <button id="btn_save" class="button is-success">Speichern</button>
@@ -279,35 +33,9 @@
       <button id="btn_close" class="button is-danger">Schließen</button>
     </div>
   </div>
-  <!-- The Modal -->
-  <div id="myModal" class="modal">
-    <!-- Modal content -->
-    <div class="modal-content">
-      <span class="close">&times;</span>
-      <p id="modalTxt"></p>
-    </div>
-  </div>
-  
+
   <script>
     require('./../js/configRenderer.js')
   </script>
-  <script>
-    let modal = document.getElementById('myModal')
-    // Get the <span> element that closes the modal
-    let span = document.getElementsByClassName('close')[0]
-
-    // When the user clicks on <span> (x), close the modal
-    span.onclick = function () {
-      modal.style.display = 'none'
-    }
-
-    // When the user clicks anywhere outside of the modal, close it
-    window.onclick = function (event) {
-      if (event.target == modal) {
-        modal.style.display = 'none'
-      }
-    }
-  </script>
 </body>
-
 </html>

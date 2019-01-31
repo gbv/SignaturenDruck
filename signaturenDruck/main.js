@@ -47,7 +47,8 @@ const loadFromSRU = require('./js/loadDataFromSRU.js')
 // be closed automatically when the JavaScript object is garbage collected.
 let mainWindow
 let winManual
-let winConfig
+let configWindow
+let editorWindow
 
 let formats = []
 
@@ -86,8 +87,10 @@ app.on('close', () => {
   mainWindow = null
   winManual.close()
   winManual = null
-  winConfig.close()
-  winConfig = null
+  configWindow.close()
+  configWindow = null
+  editorWindow.close()
+  editorWindow = null
   app.quit()
 })
 
@@ -136,13 +139,28 @@ ipc.on('openConfigWindow', function (event) {
 })
 
 // listens on closeWinConfig, invokes the closeWinConfig function
-ipc.on('closeWinConfig', function (event) {
-  closeWinConfig()
+ipc.on('closeConfigWindow', function (event) {
+  closeConfigWindow()
 })
 
-function closeWinConfig () {
-  winConfig.close()
-  winConfig = null
+function closeConfigWindow () {
+  configWindow.close()
+  configWindow = null
+}
+
+// listens on openConfigWindow, invokes the createEditorWindow function
+ipc.on('openEditorWindow', function (event) {
+  createEditorWindow()
+})
+
+// listens on closeEditorWindow, invokes the closeEditorWindow function
+ipc.on('closeEditorWindow', function (event) {
+  closeEditorWindow()
+})
+
+function closeEditorWindow () {
+  editorWindow.close()
+  editorWindow = null
 }
 
 function loadFormats () {
@@ -177,7 +195,8 @@ function createWindow () {
   mainWindow.on('closed', function () {
     mainWindow = null
     winManual = null
-    winConfig = null
+    configWindow = null
+    editorWindow = null
     deleteJSON()
   })
 }
@@ -289,16 +308,29 @@ function createManualWindow (objMan) {
   })
 }
 
-// creates the winConfig
+// creates the configWindow
 function createConfigWindow () {
-  winConfig = new BrowserWindow({width: 800, height: 950, show: false})
-  winConfig.loadURL(url.format({
+  configWindow = new BrowserWindow({width: 800, height: 950, show: false})
+  configWindow.loadURL(url.format({
     pathname: path.join(__dirname, 'html/config.html'),
     protocol: 'file',
     slashes: true
   }))
-  winConfig.once('ready-to-show', () => {
-    winConfig.show()
+  configWindow.once('ready-to-show', () => {
+    configWindow.show()
+  })
+}
+
+// creates the editorConfig
+function createEditorWindow () {
+  editorWindow = new BrowserWindow({width: 800, height: 950, show: false})
+  editorWindow.loadURL(url.format({
+    pathname: path.join(__dirname, 'html/editor.html'),
+    protocol: 'file',
+    slashes: true
+  }))
+  editorWindow.once('ready-to-show', () => {
+    editorWindow.show()
   })
 }
 

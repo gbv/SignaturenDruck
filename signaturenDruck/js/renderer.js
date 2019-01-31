@@ -690,8 +690,14 @@ function sendWithEnter (event) {
 }
 
 function openConfigWindow (event) {
-  if (event.altKey && event.ctrlKey && event.keyCode === 69) {
+  if (event.altKey && event.ctrlKey && event.keyCode === 67) {
     ipc.send('openConfigWindow')
+  }
+}
+
+function openEditorWindow (event) {
+  if (event.altKey && event.ctrlKey && event.keyCode === 69) {
+    ipc.send('openEditorWindow')
   }
 }
 
@@ -863,3 +869,4 @@ document.getElementById('btn_barcode').addEventListener('click', submitBarcode)
 document.getElementById('input_barcode').addEventListener('keyup', sendWithEnter)
 // adds event listener to the window to open config window
 document.addEventListener('keydown', openConfigWindow)
+document.addEventListener('keydown', openEditorWindow)
