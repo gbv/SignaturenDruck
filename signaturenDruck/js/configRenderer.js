@@ -9,13 +9,13 @@ const fs = require('fs')
 const _ = require('lodash')
 
 // required for ipc calls to the main process
-const ipc = require('electron').ipcRenderer
+const { ipcRenderer } = require('electron')
 
 
 window.onload = function () {}
 
 function close () {
-  ipc.send('closeConfigWindow')
+  ipcRenderer.send('closeConfigWindow')
 }
 
 // adds event listener to the close button

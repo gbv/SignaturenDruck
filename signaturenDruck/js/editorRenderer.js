@@ -9,11 +9,12 @@ const fs = require('fs')
 const _ = require('lodash')
 
 // required for ipc calls to the main process
-const ipc = require('electron').ipcRenderer
+const { ipcRenderer, remote }  = require('electron')
 
 const fontManager = require('font-manager')
 
-const printerList = require('electron').remote.getCurrentWindow().webContents.getPrinters()
+const printerList = remote.getCurrentWindow().webContents.getPrinters()
+const defaultProgramPath = remote.getGlobal('defaultProgramPath')
 
 let lineCounter = 1
 
@@ -61,12 +62,13 @@ function setPrinterSelect () {
   })
 }
 
+//TODO that's not good it's hard coded
 function getFormats () {
-  let files = fs.readdirSync('C:\\Export\\SignaturenDruck\\Formate')
+  let files = fs.readdirSync(defaultProgramPath + '\\Formate')
   for (let file of files) {
     let fileName = file.split('.json')[0]
     selectOptions.push(fileName)
-    formats[fileName] = JSON.parse(fs.readFileSync('C:\\Export\\SignaturenDruck\\Formate\\' + file, 'utf8'))
+    formats[fileName] = JSON.parse(fs.readFileSync(defaultProgramPath + '\\Formate\\' + file, 'utf8'))
   }
 }
 
@@ -190,7 +192,7 @@ function changeLabelWidth (event) {
 function saveConfig () {
   if (document.getElementById('input_fileName').value !== '') {
     if (document.getElementById('selectPrinter').value !== '') {
-      if (!fs.existsSync('C:\\Export\\SignaturenDruck\\Formate\\' + document.getElementById('input_fileName').value + '.json')) {
+      if (!fs.existsSync(defaultProgramPath + '\\Formate\\' + document.getElementById('input_fileName').value + '.json')) {
         writeToFiles()
         alert('Das Format wurde hinzugefügt.')
       } else {
@@ -213,9 +215,9 @@ function saveConfig () {
 
   function writeToFiles () {
     let objct = setObjct()
-    fs.writeFileSync('C:\\Export\\SignaturenDruck\\FormateCSS\\' + document.getElementById('input_fileName').value + '.css', createCSS(objct), 'utf8')
-    fs.writeFileSync('C:\\Export\\SignaturenDruck\\Formate\\' + document.getElementById('input_fileName').value + '.json', JSON.stringify(objct), 'utf8')
-    ipc.send('newConfig')
+    fs.writeFileSync(defaultProgramPath +' \\FormateCSS\\' + document.getElementById('input_fileName').value + '.css', createCSS(objct), 'utf8')
+    fs.writeFileSync(defaultProgramPath + '\\Formate\\' + document.getElementById('input_fileName').value + '.json', JSON.stringify(objct), 'utf8')
+    ipcRenderer.send('newConfig')
   }
 }
 
@@ -265,6 +267,7 @@ function setObjct () {
   return newConfig
 }
 
+//TODO perhaps in an extra class? - it's too much for this file - maybe there is a library?
 function createCSS (obj) {
   let contentCSS = ''
   contentCSS = label(contentCSS)
@@ -351,7 +354,7 @@ function createCSS (obj) {
 }
 
 function close () {
-  ipc.send('closeConfigWindow')
+  ipcRenderer.send('closeEditorWindow')
 }
 
 function addLine () {

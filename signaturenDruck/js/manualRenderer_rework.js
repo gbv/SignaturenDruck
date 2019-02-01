@@ -1,10 +1,10 @@
 // required for ipc calls to the main process
-const ipc = require('electron').ipcRenderer
+const { ipcRenderer, remote } = require('electron')
 
 const fs = require('fs')
 
-const Store = require('electron-store')
-const config = new Store({cwd: 'C:\\Export\\SignaturenDruck'})
+const config = remote.getGlobal('config')
+const defaultProgramPath = remote.getGlobal('defaultProgramPath')
 
 let objct = {
   manual: []
@@ -23,7 +23,7 @@ window.onload = function () {
   createByFormat(getFormatSelected().lines)
 }
 
-ipc.on('objMan', function (event, objMan) {
+ipcRenderer.on('objMan', function (event, objMan) {
   if (objMan !== null) {
     objct.manual = objMan
     id = objMan.length
@@ -33,12 +33,13 @@ ipc.on('objMan', function (event, objMan) {
   }
 })
 
+//TODO Thats's not good it's hard coded path
 function loadFormats () {
-  let files = fs.readdirSync('C:\\Export\\SignaturenDruck\\Formate')
+  let files = fs.readdirSync(defaultProgramPath + '\\Formate')
   for (let file of files) {
     let fileName = file.split('.json')[0]
     selectOptions.push(fileName)
-    formats[fileName] = JSON.parse(fs.readFileSync('C:\\Export\\SignaturenDruck\\Formate\\' + file, 'utf8'))
+    formats[fileName] = JSON.parse(fs.readFileSync(defaultProgramPath + '\\Formate\\' + file, 'utf8'))
     addStyleFile(fileName)
   }
 
@@ -46,7 +47,7 @@ function loadFormats () {
     let cssLink = document.createElement('link')
     cssLink.rel = 'stylesheet'
     cssLink.type = 'text/css'
-    cssLink.href = 'C:/Export/SignaturenDruck/FormateCSS/' + format + '.css'
+    cssLink.href = defaultProgramPath + '/FormateCSS/' + format + '.css'
     document.head.appendChild(cssLink)
   }
 }
@@ -269,7 +270,7 @@ function deleteData () {
 
 function deleteAndExit () {
   objct.manual = null
-  ipc.send('closeManualSignaturesWindow')
+  ipcRenderer.send('closeManualSignaturesWindow')
 }
 
 function saveAndExit () {
@@ -287,7 +288,7 @@ function saveAndExit () {
   if (isEmpty) {
     delete objct.manual[objct.manual.length - 1]
   }
-  ipc.send('saveManualSignatures', objct.manual)
+  ipcRenderer.send('saveManualSignatures', objct.manual)
 }
 
 function toggleIndent () {

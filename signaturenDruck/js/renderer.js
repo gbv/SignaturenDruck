@@ -9,18 +9,18 @@ const _ = require('lodash')
 const fs = require('fs')
 
 // required for ipc calls to the main process
-const ipc = require('electron').ipcRenderer
+const {ipcRenderer, remote} = require('electron')
 
-// requires the electron-store module and initializes it
-const Store = require('electron-store')
-const config = new Store({cwd: 'C:\\Export\\SignaturenDruck'})
+//xregexp for regex
+const XRegExp = require('xregexp')
+
+const config = remote.getGlobal('config')
+const defaultProgramPath = remote.getGlobal('defaultProgramPath')
 
 const getLabelSize = require('./getLabelSize.js')
 const loadDataFromFile = require('./loadDataFromFile')
 
-const XRegExp = require('xregexp')
-
-const printerList = require('electron').remote.getCurrentWindow().webContents.getPrinters()
+const printerList = remote.getCurrentWindow().webContents.getPrinters()
 
 let objMan = null
 let objSRU = {
@@ -40,19 +40,19 @@ window.onload = function () {
   }
   checkPrinters()
 
-  document.getElementById('modalTxt').innerHTML = config.get('modalTxt')
+  document.getElementById('modalTxt').innerHTML = config.get('modal.modalTxt')
   let fileSelected = document.getElementById('fileToRead')
   let fileTobeRead
-  if (config.get('useSRU') === false) {
-    if (fs.existsSync(config.get('defaultPath'))) {
-      let file = fs.readFileSync(config.get('defaultPath'), 'utf-8')
+  if (config.get('SRU.useSRU') === false) {
+    if (fs.existsSync(config.get('defaultDownloadPath'))) {
+      let file = fs.readFileSync(config.get('defaultDownloadPath'), 'utf-8')
       let allLines = file.split(/\r\n|\n/)
       writeShelfmarksToFile(JSON.stringify(setIds(getUnique(loadDataFromFile(allLines)))))
       displayData()
-      document.getElementById('defaultPath').innerHTML = config.get('defaultPath')
+      document.getElementById('defaultPath').innerHTML = config.get('defaultDownloadPath')
     } else {
       document.getElementById('defaultPath').innerHTML = 'nicht vorhanden'
-      alert('Die Datei ' + config.get('defaultPath') + ' ist nicht vorhanden.')
+      alert('Die Datei ' + config.get('defaultDownloadPath') + ' ist nicht vorhanden.')
     }
   } else {
     document.getElementById('dnl').style.display = 'none'
@@ -77,7 +77,7 @@ window.onload = function () {
 }
 
 // listens on printMsg, invokes the modal
-ipc.on('printMsg', function (event, successfull) {
+ipcRenderer.on('printMsg', function (event, successfull) {
   if (successfull && displayModalOnSuccess) {
     document.getElementById('myModal').style.display = 'block'
   } else {
@@ -87,7 +87,7 @@ ipc.on('printMsg', function (event, successfull) {
 })
 
 // ipc listener to add new manual data to the table
-ipc.on('addManualSignatures', function (event, data) {
+ipcRenderer.on('addManualSignatures', function (event, data) {
   objMan = data
   deleteOldManualSignatures()
   if (objMan !== undefined && objMan !== null && objMan.length !== 0) {
@@ -96,13 +96,13 @@ ipc.on('addManualSignatures', function (event, data) {
 })
 
 // ipc listener to remove the manual data
-ipc.on('removeManualSignatures', function (event) {
+ipcRenderer.on('removeManualSignatures', function (event) {
   objMan = null
   deleteOldManualSignatures()
 })
 
 // ipc listener to add provided data to the SRU obj
-ipc.on('addSRUdata', function (event, data) {
+ipcRenderer.on('addSRUdata', function (event, data) {
   if (data.error !== '') {
     alert(data.error)
   } else {
@@ -121,7 +121,7 @@ ipc.on('addSRUdata', function (event, data) {
 // function getBarcodesFromFile (allLines) {
 //   allLines.map((line) => {
 //     if (line.substr(0, 4) === '8200') {
-//       ipc.send('loadFromSRU', line.substr(5))
+//       ipcRenderer.send('loadFromSRU', line.substr(5))
 //     }
 //   })
 // }
@@ -315,29 +315,34 @@ function createExnrCell (row, cellNr, id, exNr = '-') {
 function createShortShelfmarkCell (row, cellNr, id, size) {
   let shortShelfmarkCell = row.insertCell(cellNr)
   shortShelfmarkCell.className = 'shortShelfmarkCell'
-  if (config.get('thulbMode')) {
-    if (!size) {
-      if (!String(id).includes('m_')) {
-        let input = document.createElement('input')
-        input.id = 'short_' + id
-        input.type = 'checkbox'
-        input.name = 'shortShelfmark'
-        input.value = id
-        input.onclick = function () {
-          changeFormat(id)
-          pre(id)
+  if (config.get('mode.useMode')) {
+    if(config.get('mode.defaultMode') === 'thulbMode') {
+      if (!size) {
+        if (!String(id).includes('m_')) {
+          let input = document.createElement('input')
+          input.id = 'short_' + id
+          input.type = 'checkbox'
+          input.name = 'shortShelfmark'
+          input.value = id
+          input.onclick = function () {
+            changeFormat(id)
+            pre(id)
+          }
+          shortShelfmarkCell.appendChild(input)
+        } else {
+          shortShelfmarkCell.onclick = function () {
+            pre(id)
+          }
         }
-        shortShelfmarkCell.appendChild(input)
       } else {
         shortShelfmarkCell.onclick = function () {
           pre(id)
         }
       }
     } else {
-      shortShelfmarkCell.onclick = function () {
-        pre(id)
-      }
+      //TODO USE MODE CLASS TO GENERATE UR OWN MODE - HAS TO BE ALWAYS OWN MODE THAT WAS MADE BY THIS CLASS
     }
+
   } else {
     shortShelfmarkCell.onclick = function () {
       pre(id)
@@ -401,21 +406,22 @@ function createLabelSizeCell (row, cellNr, id, lines, format = '') {
   if (format !== '') {
     select.value = format
   } else {
-    if (config.get('thulbMode')) {
-      if (Number(lines) <= 2) {
-        if (printerFound['thulb_klein_1']) {
-          select.value = 'thulb_klein_1'
+    if (config.get('mode.useMode') && config.get('mode.defaultMode') === 'thulbMode') {
+        if (Number(lines) <= 2) {
+          if (printerFound['thulb_klein_1']) {
+            select.value = 'thulb_klein_1'
+          }
+        } else if (Number(lines) === 3) {
+          if (printerFound['thulb_klein']) {
+            select.value = 'thulb_klein'
+          }
+        } else if (Number(lines) <= 6) {
+          if (printerFound['thulb_gross']) {
+            select.value = 'thulb_gross'
+          }
         }
-      } else if (Number(lines) === 3) {
-        if (printerFound['thulb_klein']) {
-          select.value = 'thulb_klein'
-        }
-      } else if (Number(lines) <= 6) {
-        if (printerFound['thulb_gross']) {
-          select.value = 'thulb_gross'
-        }
-      }
     } else {
+      //TODO SHOULD BE DONE BY MODE CLASS TO CREATE UR OWN MODE BASED ON YOUR FORMATS
       select.value = config.get('defaultFormat')
     }
   }
@@ -424,11 +430,11 @@ function createLabelSizeCell (row, cellNr, id, lines, format = '') {
 }
 
 function loadFormats () {
-  let files = fs.readdirSync('C:\\Export\\SignaturenDruck\\Formate')
+  let files = fs.readdirSync(defaultProgramPath + '\\Formate')
   for (let file of files) {
     let fileName = file.split('.json')[0]
     selectOptions.push(fileName)
-    formats[fileName] = JSON.parse(fs.readFileSync('C:\\Export\\SignaturenDruck\\Formate\\' + file, 'utf8'))
+    formats[fileName] = JSON.parse(fs.readFileSync(defaultProgramPath + '\\Formate\\' + file, 'utf8'))
   }
 }
 
@@ -487,7 +493,7 @@ function deleteFromPath (path) {
 
 // invokes to close the app via ipc
 function closeButton () {
-  ipc.send('close')
+  ipcRenderer.send('close')
 }
 
 // gathers the data to print and invokes printing via ipc
@@ -510,7 +516,7 @@ function printButton () {
       dataAll.all.push(setData(data, i))
     }
   }
-  ipc.send('print', _.groupBy(dataAll.all, 'format'), objMan)
+  ipcRenderer.send('print', _.groupBy(dataAll.all, 'format'), objMan)
 
   function setData (data, i) {
     setIdAndManual()
@@ -570,15 +576,15 @@ function clearTable () {
 
 // function to send objMan to the manual window
 function openManualSignaturesWindow () {
-  ipc.send('openManualSignaturesWindow', objMan)
+  ipcRenderer.send('openManualSignaturesWindow', objMan)
 }
 
 // function to refresh the table
 function refresh () {
   let currentFile = document.getElementById('defaultPath').innerHTML
   if (!readThisFile(currentFile)) {
-    if (readThisFile(config.get('defaultPath'))) {
-      document.getElementById('defaultPath').innerHTML = config.get('defaultPath')
+    if (readThisFile(config.get('defaultDownloadPath'))) {
+      document.getElementById('defaultPath').innerHTML = config.get('defaultDownloadPath')
     } else {
       document.getElementById('defaultPath').innerHTML = 'nicht vorhanden'
     }
@@ -672,13 +678,13 @@ function checkPrinters () {
       str = str.substr(0, str.length - 2)
       str += '"'
     }
-    document.getElementById('btn_print').innerHTML = '<div class="tooltip">Drucken<span class="tooltiptext tooltip-right">' + str + '</span></div>'
+    document.getElementById('infoBox').insertAdjacentHTML('afterbegin','<div class="notification is-warning">' + str + '</div>')
   }
 }
 
 // function to submit the barcode
 function submitBarcode () {
-  ipc.send('loadFromSRU', document.getElementById('input_barcode').value)
+  ipcRenderer.send('loadFromSRU', document.getElementById('input_barcode').value)
   document.getElementById('input_barcode').value = ''
 }
 
@@ -691,13 +697,13 @@ function sendWithEnter (event) {
 
 function openConfigWindow (event) {
   if (event.altKey && event.ctrlKey && event.keyCode === 67) {
-    ipc.send('openConfigWindow')
+    ipcRenderer.send('openConfigWindow')
   }
 }
 
 function openEditorWindow (event) {
   if (event.altKey && event.ctrlKey && event.keyCode === 69) {
-    ipc.send('openEditorWindow')
+    ipcRenderer.send('openEditorWindow')
   }
 }
 
@@ -748,7 +754,7 @@ function pre (id) {
     let id = found.id
     let oneLine = found.txtOneLine
     if (found !== undefined) {
-      if (lines <= 2 && config.get('thulbMode')) {
+      if (lines <= 2 && config.get('mode.useMode') && config.get('mode.defaultMode') === 'thulbMode' ) {
         if (document.getElementById('short_' + id).checked) {
           showData(found.txt, formatLines)
         } else {
@@ -810,7 +816,7 @@ function showData (shelfmark, formatLines) {
     })
   } else {
     line = document.getElementById('line_' + i)
-    if (config.get('thulbMode')) {
+    if (config.get('mode.useMode') && config.get('mode.defaultMode') === 'thulbMode') {
       line.innerHTML = shelfmark.split(config.get('newLineAfter')).join(' ')
     } else {
       line.innerHTML = shelfmark
@@ -836,13 +842,13 @@ function changePreview (id) {
 }
 
 function addStyleFiles () {
-  let files = fs.readdirSync('C:\\Export\\SignaturenDruck\\FormateCSS')
+  let files = fs.readdirSync(defaultProgramPath + '\\FormateCSS')
   for (let file of files) {
     let fileName = file.split('.css')[0]
     let cssLink = document.createElement('link')
     cssLink.rel = 'stylesheet'
     cssLink.type = 'text/css'
-    cssLink.href = 'C:/Export/SignaturenDruck/FormateCSS/' + fileName + '.css'
+    cssLink.href = defaultProgramPath + '/FormateCSS/' + fileName + '.css'
     document.head.appendChild(cssLink)
   }
 }

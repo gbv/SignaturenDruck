@@ -1,15 +1,14 @@
-const electron = require('electron')
-// Module to control application life.
-const app = electron.app
-// Module to create native browser window.
-const BrowserWindow = electron.BrowserWindow
-
-const ipc = require('electron').ipcMain
+const { BrowserWindow , app, ipcMain } = require('electron')
 const path = require('path')
 const url = require('url')
 const fs = require('fs')
+const _ = require('lodash')
 const Store = require('electron-store')
-const config = new Store({cwd: 'C:\\Export\\SignaturenDruck'})
+
+const defaultProgramPath = 'C:\\SignaturenDruck'
+//Use a default path
+const config = new Store({cwd: defaultProgramPath})
+
 const Shell = require('node-powershell')
 require('electron-context-menu')({
   prepend: (params, BrowserWindow) => [{
@@ -22,19 +21,39 @@ require('electron-context-menu')({
   }
 })
 
-// requires lodash
-const _ = require('lodash')
-
 // default main config settings
 const configNew = {
-  'defaultPath': 'C:/Export/download.dnl',
-  'defaultFormat': 'thulb_gross',
-  'modalTxt': 'Die ausgewählten Signaturen wurden gedruckt.',
-  'sortByPPN': false,
-  'newLineAfter': ':',
-  'useSRU': false,
-  'SRUaddress': 'http://sru.gbv.de/opac-de-27',
-  'thulbMode': true,
+  defaultDownloadPath: 'C:/Export/download.dnl',
+  defaultFormat: 'thulb_gross',
+  sortByPPN: false,
+  newLineAfter: ':',
+  modal: {
+    showModal: true,
+    modalTxt: 'Die ausgewählten Signaturen wurden gedruckt.'
+  },
+  file: {
+    signatureCategory: '7100',
+    subfieldLocation: '$f',
+    subfieldSignature: '$a',
+    subfieldLoanIndication: '$d'
+  },
+  SRU: {
+    useSRU: false,
+    SRUAddress: 'http://sru.gbv.de/opac-de-27',
+    signatureCategory: '209A',
+    subfieldLocation: 'f',
+    subfieldSignature: 'a',
+    subfieldLoanIndication: 'd'
+  },
+  print: {
+    printImmediately: false
+  },
+  mode: {
+    useMode: true,
+    defaultMode: 'thulbMode',
+    showLocation: false,
+    showLoanIndication: false
+  },
   'devMode': false
 }
 
@@ -45,12 +64,7 @@ const loadFromSRU = require('./js/loadDataFromSRU.js')
 
 // Keep a global reference of the window object, if you don't, the window will
 // be closed automatically when the JavaScript object is garbage collected.
-let mainWindow
-let manualSignaturesWindow
-let configWindow
-let editorWindow
-
-let formats = []
+let mainWindow, manualSignaturesWindow, configWindow, editorWindow, formats = []
 
 // This method will be called when Electron has finished
 // initialization and is ready to create browser windows.
@@ -71,7 +85,7 @@ app.on('activate', function () {
 })
 
 // starts the printing process
-ipc.on('print', function (event, data, dataMan) {
+ipcMain.on('print', function (event, data, dataMan) {
   loadFormats()
   let usedFormats = []
   _.forEach(data, function (key, value) {
@@ -95,33 +109,33 @@ app.on('close', () => {
 })
 
 // closes the application
-ipc.on('close', function (event) {
+ipcMain.on('close', function (event) {
   mainWindow.close()
   mainWindow = null
   app.quit()
 })
 
 // listens on openManualSignaturesWindow, invokes the opening process
-ipc.on('openManualSignaturesWindow', function (event, objMan) {
+ipcMain.on('openManualSignaturesWindow', function (event, objMan) {
   createManualSignaturesWindow(objMan)
 })
 
 // listens on closeManual, closes the manualSignaturesWindow and invokes the removeManual process
-ipc.on('closeManualSignaturesWindow', function (event) {
+ipcMain.on('closeManualSignaturesWindow', function (event) {
   manualSignaturesWindow.close()
   manualSignaturesWindow = null
   mainWindow.webContents.send('removeManualSignatures')
 })
 
 // listens on saveManualSignatures, closes the manualSignaturesWindow and passes the data along
-ipc.on('saveManualSignatures', function (event, data) {
+ipcMain.on('saveManualSignatures', function (event, data) {
   manualSignaturesWindow.close()
   manualSignaturesWindow = null
   mainWindow.webContents.send('addManualSignatures', data)
 })
 
 // listens on loadFromSRU, invokes the loadAndAddFromSRU function with the provided barcode
-ipc.on('loadFromSRU', function (event, barcode) {
+ipcMain.on('loadFromSRU', function (event, barcode) {
   if (barcode !== '') {
     loadFromSRU(barcode).then(function (objSRU) {
       mainWindow.webContents.send('addSRUdata', objSRU)
@@ -129,17 +143,17 @@ ipc.on('loadFromSRU', function (event, barcode) {
   }
 })
 
-ipc.on('newConfig', function (event) {
+ipcMain.on('newConfig', function (event) {
   mainWindow.reload()
 })
 
 // listens on openConfigWindow, invokes the createConfigWindow function
-ipc.on('openConfigWindow', function (event) {
+ipcMain.on('openConfigWindow', function (event) {
   createConfigWindow()
 })
 
 // listens on closeWinConfig, invokes the closeWinConfig function
-ipc.on('closeConfigWindow', function (event) {
+ipcMain.on('closeConfigWindow', function (event) {
   closeConfigWindow()
 })
 
@@ -149,12 +163,12 @@ function closeConfigWindow () {
 }
 
 // listens on openConfigWindow, invokes the createEditorWindow function
-ipc.on('openEditorWindow', function (event) {
+ipcMain.on('openEditorWindow', function (event) {
   createEditorWindow()
 })
 
 // listens on closeEditorWindow, invokes the closeEditorWindow function
-ipc.on('closeEditorWindow', function (event) {
+ipcMain.on('closeEditorWindow', function (event) {
   closeEditorWindow()
 })
 
@@ -164,19 +178,26 @@ function closeEditorWindow () {
 }
 
 function loadFormats () {
-  let files = fs.readdirSync('C:\\Export\\SignaturenDruck\\Formate')
+  let files = fs.readdirSync(defaultProgramPath + '\\Formate')
   for (let file of files) {
     let fileName = file.split('.json')[0]
-    formats[fileName] = JSON.parse(fs.readFileSync('C:\\Export\\SignaturenDruck\\Formate\\' + file, 'utf8'))
+    formats[fileName] = JSON.parse(fs.readFileSync(defaultProgramPath + '\\Formate\\' + file, 'utf8'))
   }
 }
 
 // creates the mainWindow
 function createWindow () {
+
+  /*
+  Pass config STORE as global variable to all other js files
+   */
+  global.config = config
+  global.defaultProgramPath = defaultProgramPath
+
   checkDir('./tmp')
-  checkDir('C:\\Export\\SignaturenDruck')
-  checkDir('C:\\Export\\SignaturenDruck\\Formate')
-  checkDir('C:\\Export\\SignaturenDruck\\FormateCSS')
+  checkDir(defaultProgramPath)
+  checkDir(defaultProgramPath + '\\Formate')
+  checkDir(defaultProgramPath +'\\FormateCSS')
   checkConfig()
   // Create the browser window.
   if (!config.store.devMode) {
@@ -212,19 +233,21 @@ function deleteJSON () {
   }
 }
 
+//TODO redefine that function - that's to complex
 // checks if config file exists, else creates one
 function checkConfig () {
-  if (fs.existsSync('C:\\Export\\SignaturenDruck\\config.json')) {
-    if (!config.has('defaultPath')) {
+  if (fs.existsSync(defaultProgramPath + '\\config.json')) {
+    if (!config.has('defaultDownloadPath')) {
       createConfig()
     }
   } else {
     createConfig()
   }
+  //TODO should that be really the default formats
   let defaultConfigs = ['thulb_gross', 'thulb_klein', 'thulb_klein_1']
   defaultConfigs.forEach(fileName => {
-    checkAndCreate('C:\\Export\\SignaturenDruck\\Formate\\', fileName, '.json')
-    checkAndCreate('C:\\Export\\SignaturenDruck\\FormateCSS\\', fileName, '.css')
+    checkAndCreate(defaultProgramPath + '\\Formate\\', fileName, '.json')
+    checkAndCreate(defaultProgramPath + '\\FormateCSS\\', fileName, '.css')
   })
   function checkAndCreate (pathName, fileName, ending) {
     if (!fs.existsSync(pathName + fileName + ending)) {

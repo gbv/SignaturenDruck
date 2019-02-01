@@ -1,12 +1,8 @@
-const {net} = require('electron')
 
-// requires the electron-store module and initializes it
-const Store = require('electron-store')
-const config = new Store({cwd: 'C:\\Export\\SignaturenDruck'})
 const createMultipleLines = require('./createMultipleLines.js')
 
 module.exports = function (barcode) {
-  let url = config.get('SRUaddress') + '?version=1.1&operation=searchRetrieve&query=pica.bar=' + barcode + '&maximumRecords=1&recordSchema=picaxml'
+  let url = config.get('SRU.SRUAddress') + '?version=1.1&operation=searchRetrieve&query=pica.bar=' + barcode + '&maximumRecords=1&recordSchema=picaxml'
   let request = net.request(url)
   let allData = ''
   let field209A = false

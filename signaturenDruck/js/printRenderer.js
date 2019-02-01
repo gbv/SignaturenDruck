@@ -12,13 +12,12 @@ const _ = require('lodash')
 const username = require('username')
 
 // required for ipc calls to the main process
-const ipc = require('electron').ipcRenderer
+const { ipcRenderer, remote } = require('electron')
 
 const XRegExp = require('xregexp')
 
-// requires the electron-store module and initializes it
-const Store = require('electron-store')
-const config = new Store({cwd: 'C:\\Export\\SignaturenDruck'})
+const config = remote.getGlobal('config')
+const defaultProgramPath = remote.getGlobal('defaultProgramPath')
 
 let formats = []
 
@@ -27,19 +26,19 @@ window.onload = function () {
   loadFormats()
 
   function addStyleLinks () {
-    let files = fs.readdirSync('C:\\Export\\SignaturenDruck\\FormateCSS')
+    let files = fs.readdirSync(defaultProgramPath + '\\FormateCSS')
     for (let file of files) {
       let fileName = file.split('.css')[0]
       let cssLink = document.createElement('link')
       cssLink.rel = 'stylesheet'
       cssLink.type = 'text/css'
-      cssLink.href = 'C:/Export/SignaturenDruck/FormateCSS/' + fileName + '.css'
+      cssLink.href = defaultProgramPath+ '/FormateCSS/' + fileName + '.css'
       document.head.appendChild(cssLink)
     }
   }
 }
 
-ipc.on('toPrint', function (event, format, data, dataMan) {
+ipcRenderer.on('toPrint', function (event, format, data, dataMan) {
   main(format, data, dataMan)
 })
 

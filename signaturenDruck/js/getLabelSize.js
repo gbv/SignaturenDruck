@@ -1,6 +1,6 @@
-// requires the electron-store module and initializes it
-const Store = require('electron-store')
-const config = new Store({cwd: 'C:\\Export\\SignaturenDruck'})
+// requires remote from electron to retrieve global var
+const { remote } = require('electron')
+const config = remote.getGlobal('config')
 
 module.exports = function labelSize (txt) {
   let numberOfSeperators = getCountOfSeparators(txt, config.get('newLineAfter'))
