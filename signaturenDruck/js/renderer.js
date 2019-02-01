@@ -87,18 +87,18 @@ ipc.on('printMsg', function (event, successfull) {
 })
 
 // ipc listener to add new manual data to the table
-ipc.on('manual', function (event, data) {
+ipc.on('addManualSignatures', function (event, data) {
   objMan = data
-  deleteOldManual()
+  deleteOldManualSignatures()
   if (objMan !== undefined && objMan !== null && objMan.length !== 0) {
     addToTable(objMan)
   }
 })
 
 // ipc listener to remove the manual data
-ipc.on('removeManual', function (event) {
+ipc.on('removeManualSignatures', function (event) {
   objMan = null
-  deleteOldManual()
+  deleteOldManualSignatures()
 })
 
 // ipc listener to add provided data to the SRU obj
@@ -553,7 +553,7 @@ function printButton () {
 }
 
 // funtion to delete all manual entries
-function deleteOldManual () {
+function deleteOldManualSignatures () {
   let elements = document.getElementsByClassName('manual')
   while (elements.length > 0) {
     elements[0].parentNode.removeChild(elements[0])
@@ -569,8 +569,8 @@ function clearTable () {
 }
 
 // function to send objMan to the manual window
-function openManually () {
-  ipc.send('openManually', objMan)
+function openManualSignaturesWindow () {
+  ipc.send('openManualSignaturesWindow', objMan)
 }
 
 // function to refresh the table
@@ -848,7 +848,7 @@ function addStyleFiles () {
 }
 
 // adds event listener to the create manually button
-document.getElementById('btn_create_manually').addEventListener('click', openManually)
+document.getElementById('btn_createManualSignatures').addEventListener('click', openManualSignaturesWindow)
 // adds event listener to the deleteList button
 document.getElementById('btn_deleteList').addEventListener('click', deleteList)
 // adds event listener to the deleteFile button

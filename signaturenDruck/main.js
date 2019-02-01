@@ -27,7 +27,7 @@ const _ = require('lodash')
 
 // default main config settings
 const configNew = {
-  'defaultPath': 'C://Export/download.dnl',
+  'defaultPath': 'C:/Export/download.dnl',
   'defaultFormat': 'thulb_gross',
   'modalTxt': 'Die ausgewählten Signaturen wurden gedruckt.',
   'sortByPPN': false,
@@ -46,7 +46,7 @@ const loadFromSRU = require('./js/loadDataFromSRU.js')
 // Keep a global reference of the window object, if you don't, the window will
 // be closed automatically when the JavaScript object is garbage collected.
 let mainWindow
-let winManual
+let manualSignaturesWindow
 let configWindow
 let editorWindow
 
@@ -85,8 +85,8 @@ ipc.on('print', function (event, data, dataMan) {
 app.on('close', () => {
   mainWindow.close()
   mainWindow = null
-  winManual.close()
-  winManual = null
+  manualSignaturesWindow.close()
+  manualSignaturesWindow = null
   configWindow.close()
   configWindow = null
   editorWindow.close()
@@ -101,23 +101,23 @@ ipc.on('close', function (event) {
   app.quit()
 })
 
-// listens on openManually, invokes the opening process
-ipc.on('openManually', function (event, objMan) {
-  createManualWindow(objMan)
+// listens on openManualSignaturesWindow, invokes the opening process
+ipc.on('openManualSignaturesWindow', function (event, objMan) {
+  createManualSignaturesWindow(objMan)
 })
 
-// listens on closeManual, closes the winManual and invokes the removeManual process
-ipc.on('closeManual', function (event) {
-  winManual.close()
-  winManual = null
-  mainWindow.webContents.send('removeManual')
+// listens on closeManual, closes the manualSignaturesWindow and invokes the removeManual process
+ipc.on('closeManualSignaturesWindow', function (event) {
+  manualSignaturesWindow.close()
+  manualSignaturesWindow = null
+  mainWindow.webContents.send('removeManualSignatures')
 })
 
-// listens on saveManual, closes the winManual and passes the data along
-ipc.on('saveManual', function (event, data) {
-  winManual.close()
-  winManual = null
-  mainWindow.webContents.send('manual', data)
+// listens on saveManualSignatures, closes the manualSignaturesWindow and passes the data along
+ipc.on('saveManualSignatures', function (event, data) {
+  manualSignaturesWindow.close()
+  manualSignaturesWindow = null
+  mainWindow.webContents.send('addManualSignatures', data)
 })
 
 // listens on loadFromSRU, invokes the loadAndAddFromSRU function with the provided barcode
@@ -194,7 +194,7 @@ function createWindow () {
   // Emitted when the window is closed.
   mainWindow.on('closed', function () {
     mainWindow = null
-    winManual = null
+    manualSignaturesWindow = null
     configWindow = null
     editorWindow = null
     deleteJSON()
@@ -294,17 +294,17 @@ function printData (format, data, dataMan) {
   })
 }
 
-// creates the winManual
-function createManualWindow (objMan) {
-  winManual = new BrowserWindow({width: 650, height: 420, show: false})
-  winManual.loadURL(url.format({
+// creates the manualSignaturesWindow
+function createManualSignaturesWindow (objMan) {
+  manualSignaturesWindow = new BrowserWindow({width: 650, height: 420, show: false})
+  manualSignaturesWindow.loadURL(url.format({
     pathname: path.join(__dirname, 'html/manual_rework.html'),
     protocol: 'file',
     slashes: true
   }))
-  winManual.once('ready-to-show', () => {
-    winManual.show()
-    winManual.webContents.send('objMan', objMan)
+  manualSignaturesWindow.once('ready-to-show', () => {
+    manualSignaturesWindow.show()
+    manualSignaturesWindow.webContents.send('objMan', objMan)
   })
 }
 

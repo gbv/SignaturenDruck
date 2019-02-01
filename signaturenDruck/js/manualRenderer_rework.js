@@ -269,7 +269,7 @@ function deleteData () {
 
 function deleteAndExit () {
   objct.manual = null
-  ipc.send('closeManual')
+  ipc.send('closeManualSignaturesWindow')
 }
 
 function saveAndExit () {
@@ -287,7 +287,7 @@ function saveAndExit () {
   if (isEmpty) {
     delete objct.manual[objct.manual.length - 1]
   }
-  ipc.send('saveManual', objct.manual)
+  ipc.send('saveManualSignatures', objct.manual)
 }
 
 function toggleIndent () {

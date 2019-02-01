@@ -4,7 +4,7 @@
 	<head>
     <meta charset="UTF-8">
     <meta http-equiv="Content-Security-Policy" content="default-src 'self' 'unsafe-inline'">
-    <title>Signaturendruck / manuelles erstellen</title>
+    <title>Signaturendruck / Signatur manuell erstellen</title>
     <link rel="stylesheet" type="text/css" href="./../css/bulma.css">
     <link rel="stylesheet" type="text/css" href="./../css/preview.css">
     <link rel="stylesheet" type="text/css" href="./../css/manual_rework.css">
@@ -99,7 +99,7 @@
 
       // When the user clicks anywhere outside of the modal, close it
       window.onclick = function(event) {
-        if (event.target == modal) {
+        if (event.target === modal) {
           modal.style.display = 'none'
         }
       }
