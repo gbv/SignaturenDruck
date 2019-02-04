@@ -31,7 +31,7 @@ module.exports = function (allLines) {
       }
       let txt = plainTxt.split(config.get('newLineAfter'))
       sig.txtLength = txt.length
-      if (config.get('thulbMode')) {
+      if (config.get('mode.useMode') && config.get('mode.defaultMode') === 'thulbMode') {
         if (txt.length === 6) {
           sig.txt = txt
           sig.txtOneLine = plainTxt
@@ -47,7 +47,7 @@ module.exports = function (allLines) {
       sig.date = extract.date(line)
     }
     if (sig.allSet()) {
-      if (config.get('thulbMode')) {
+      if (config.get('mode.useMode') && config.get('mode.defaultMode') === 'thulbMode') {
         if (sig.txtLength < 3) {
           sig.txt = createMultipleLines(plainTxt)
         }

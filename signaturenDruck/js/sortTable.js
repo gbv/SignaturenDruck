@@ -1,17 +1,11 @@
 function sortTable (n) {
-  let table = 0
-  let rows = 0
-  let switching = 0
-  let i = 0
-  let x = 0
-  let y = 0
-  let shouldSwitch = 0
-  let dir = 0
-  let switchcount = 0
-  table = document.getElementById('signaturTable')
-  switching = true
+  let table = document.getElementById('signaturTable')
+  let rows,i,x,y
+  let switching = true
+  let shouldSwitch = false
+  let dir = 'asc'
+  let switchCount = 0
   // Set the sorting direction to ascending:
-  dir = 'asc'
   /* Make a loop that will continue until
     no switching has been done: */
   while (switching) {
@@ -49,11 +43,11 @@ function sortTable (n) {
       rows[i].parentNode.insertBefore(rows[i + 1], rows[i])
       switching = true
       // Each time a switch is done, increase this count by 1:
-      switchcount++
+      switchCount++
     } else {
       /* If no switching has been done AND the direction is "asc",
             set the direction to "desc" and run the while loop again. */
-      if (switchcount === 0 && dir === 'asc') {
+      if (switchCount === 0 && dir === 'asc') {
         dir = 'desc'
         switching = true
       }

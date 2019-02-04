@@ -70,7 +70,7 @@ function createPage (format, data, dataMan, file) {
         let p = document.createElement('p')
         p.className = 'line_1'
         if (Array.isArray(linesData)) {
-          if (config.get('thulbMode')) {
+          if (config.get('mode.useMode') && config.get('mode.defaultMode') === 'thulbMode') {
             p.innerHTML = linesData[0].split(config.get('newLineAfter')).join(' ')
           } else {
             p.innerHTML = linesData[0]
@@ -94,7 +94,7 @@ function createPage (format, data, dataMan, file) {
           })
         } else {
           let line = document.getElementById(value.id + '.' + count + '_line_' + i)
-          if (config.get('thulbMode')) {
+          if (config.get('mode.useMode') && config.get('mode.defaultMode') === 'thulbMode') {
             line.innerHTML = linesData.split(config.get('newLineAfter')).join(' ')
           } else {
             line.innerHTML = linesData

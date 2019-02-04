@@ -453,6 +453,7 @@ function deleteList () {
         objSRU = {
           all: []
         }
+        removeOld()
         alert('Die Liste wurde gelöscht.')
       }
     })
