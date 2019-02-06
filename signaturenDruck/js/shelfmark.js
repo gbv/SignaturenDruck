@@ -67,11 +67,7 @@ class shelfmark {
 
   // Method
   allSet () {
-    if ((this._ppn !== '') && (this._exNr !== '') && (this._txt !== '') && (this._date !== '') && (this._txtLength !== '')) {
-      return true
-    } else {
-      return false
-    }
+    return (this._ppn !== '') && (this._exNr !== '') && (this._txt !== '') && (this._date !== '') && (this._txtLength !== '')
   }
 }
 

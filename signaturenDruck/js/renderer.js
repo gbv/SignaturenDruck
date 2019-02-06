@@ -11,34 +11,31 @@ const fs = require('fs')
 // required for ipc calls to the main process
 const {ipcRenderer, remote} = require('electron')
 
-//xregexp for regex
-const XRegExp = require('xregexp')
-
 const config = remote.getGlobal('config')
-const defaultProgramPath = remote.getGlobal('defaultProgramPath')
+const sigJSONFile = remote.getGlobal('sigJSONFile')
 
 const getLabelSize = require('./getLabelSize.js')
-const loadDataFromFile = require('./loadDataFromFile')
 
-const printerList = remote.getCurrentWindow().webContents.getPrinters()
+const preview = require('./preview')
 
 let objMan = null
 let objSRU = {
   all: []
 }
-let formats = []
-let selectOptions = []
-let printerFound = []
+
 let displayModalOnSuccess = true
+let previewSwitch = new preview(sigJSONFile, objMan)
 
 // function on window load
 window.onload = function () {
-  addStyleFiles()
-  loadFormats()
+
+  preview.addStyleFiles()
+  previewSwitch.loadFormats()
+  previewSwitch.checkPrinters()
+
   if (config.get('devMode')) {
     document.getElementById('devMode').style.display = 'block'
   }
-  checkPrinters()
 
   document.getElementById('modalTxt').innerHTML = config.get('modal.modalTxt')
   let fileSelected = document.getElementById('fileToRead')
@@ -46,9 +43,8 @@ window.onload = function () {
   if (config.get('SRU.useSRU') === false) {
     if (fs.existsSync(config.get('defaultDownloadPath'))) {
       let file = fs.readFileSync(config.get('defaultDownloadPath'), 'utf-8')
-      let allLines = file.split(/\r\n|\n/)
-      writeShelfmarksToFile(JSON.stringify(setIds(getUnique(loadDataFromFile(allLines)))))
-      displayData()
+      previewSwitch.writeToFile(file)
+      previewSwitch.displayData()
       document.getElementById('defaultPath').innerHTML = config.get('defaultDownloadPath')
     } else {
       document.getElementById('defaultPath').innerHTML = 'nicht vorhanden'
@@ -66,10 +62,8 @@ window.onload = function () {
       fileTobeRead = fileSelected.files[0].path
       document.getElementById('defaultPath').innerHTML = fileTobeRead
       let file = fs.readFileSync(fileTobeRead, 'utf-8')
-      let allLines = file.split(/\r\n|\n/)
-      // getBarcodesFromFile(allLines)
-      writeShelfmarksToFile(JSON.stringify(setIds(getUnique(loadDataFromFile(allLines)))))
-      displayData()
+      previewSwitch.writeToFile(file)
+      previewSwitch.displayData()
     }, false)
   } else {
     alert('Files are not supported')
@@ -91,7 +85,7 @@ ipcRenderer.on('addManualSignatures', function (event, data) {
   objMan = data
   deleteOldManualSignatures()
   if (objMan !== undefined && objMan !== null && objMan.length !== 0) {
-    addToTable(objMan)
+    previewSwitch.addToTable(objMan)
   }
 })
 
@@ -110,338 +104,21 @@ ipcRenderer.on('addSRUdata', function (event, data) {
     objSRU.all[indx] = data
     objSRU.all[indx].id = indx + 1
     objSRU.all[indx].bigLabel = getLabelSize(data.plainTxt)
-    fs.writeFileSync('signaturen.json', JSON.stringify(objSRU.all), 'utf8')
-    clearTable()
-    createTable(objSRU.all)
+    previewSwitch.writeFile(JSON.stringify(objSRU.all))
+    preview.clearTable()
+    previewSwitch.createTable(objSRU.all)
   }
 })
 
-// // function to get all lines from the .dnl file via SRU
-// // not enabled atm because it messes up the order
-// function getBarcodesFromFile (allLines) {
-//   allLines.map((line) => {
-//     if (line.substr(0, 4) === '8200') {
-//       ipcRenderer.send('loadFromSRU', line.substr(5))
-//     }
-//   })
-// }
-
-// removes duplicates
-function getUnique (obj) {
-  return _.map(
-    _.uniq(
-      _.map(obj.all, function (obj) {
-        return JSON.stringify(obj)
-      })
-    ), function (obj) {
-      return JSON.parse(obj)
-    }
-  )
+function refresh () {
+  previewSwitch.refresh()
 }
 
-// groups shelfmarks by PPN
-function groupByPPN (obj) {
-  return _.groupBy(obj, 'PPN')
-}
-
-// sets shelfmark ids
-function setIds (obj) {
-  let i = 1
-  return _.forEach(obj, function (value) {
-    value.id = i
-    i++
-  })
-}
-
-// creates the signaturen.json file
-function writeShelfmarksToFile (json) {
-  fs.writeFileSync('signaturen.json', json, 'utf8')
-}
-
-// reads data from the signaturen.json file and displays it via createTable
-function displayData () {
-  let file = fs.readFileSync('signaturen.json', 'utf8')
-  if (document.getElementById('shelfmarkTable')) {
-    let myNode = document.getElementById('shelfmarkTableBody')
-    while (myNode.firstChild) {
-      myNode.removeChild(myNode.firstChild)
-    }
-  }
-  if (config.get('sortByPPN')) {
-    createTable(groupByPPN(JSON.parse(file)))
-  } else {
-    createTable(JSON.parse(file))
-  }
-}
-
-// creates the displayed table with the provided data
-function createTable (obj) {
-  let table = document.getElementById('shelfmarkTable').getElementsByTagName('tbody')[0]
-  let i = 0
-  if (config.store.sortByPPN) {
-    _.forEach(obj, function (key, value) {
-      let row = table.insertRow(i)
-      row.className = 'ppnRow'
-      createPpnRow(row, value)
-      _.forEach(key, function (objct) {
-        i++
-        row = table.insertRow(i)
-        row.id = objct.PPN + '-0'
-        createTxtCell(row, 0, objct.id, objct.txtOneLine)
-        createDateCell(row, 1, objct.id, objct.date)
-        createExnrCell(row, 2, objct.id, objct.exNr)
-        createShortShelfmarkCell(row, 3, objct.id, objct.bigLabel)
-        createPrintCell(row, 4, objct.id)
-        createPrintCountCell(row, 5, objct.id)
-        createLabelSizeCell(row, 6, objct.id, objct.txtLength)
-      })
-      i++
-    })
-  } else {
-    let i = 0
-    _.forEach(obj, function (key) {
-      let current = document.getElementById(key.PPN)
-      let row
-      if (current) {
-        let i = 0
-        while (document.getElementById(key.PPN + '-' + i)) {
-          i++
-        }
-        row = document.createElement('tr')
-        row.id = key.PPN + '-' + i
-        if (i === 0) {
-          current = document.getElementById(key.PPN)
-        } else {
-          current = document.getElementById(key.PPN + '-' + (i - 1))
-        }
-
-        current.parentNode.insertBefore(row, current.nextSibling)
-      } else {
-        row = table.insertRow(i)
-        row.className = 'ppnRow'
-        createPpnRow(row, key.PPN)
-        i++
-        row = table.insertRow(i)
-        row.id = key.PPN + '-0'
-      }
-      createTxtCell(row, 0, key.id, key.txtOneLine)
-      createDateCell(row, 1, key.id, key.date)
-      createExnrCell(row, 2, key.id, key.exNr)
-      createShortShelfmarkCell(row, 3, key.id, key.bigLabel)
-      createPrintCell(row, 4, key.id)
-      createPrintCountCell(row, 5, key.id)
-      createLabelSizeCell(row, 6, key.id, key.txtLength)
-      i++
-    })
-  }
-}
-
-// function to add all entries from the obj to the table
-function addToTable (obj) {
-  let table = document.getElementById('shelfmarkTable').getElementsByTagName('tbody')[0]
-  let row = table.insertRow(0)
-  row.className = 'ppnRow manual'
-  createPpnRow(row, 'manuell')
-  let i = 0
-  while (obj[i] !== undefined) {
-    row = table.insertRow(i + 1)
-    row.className = 'manual'
-    createTxtCell(row, 0, ('m_' + obj[i].id), obj[i].oneLineTxt)
-    createDateCell(row, 1, ('m_' + obj[i].id))
-    createExnrCell(row, 2, ('m_' + obj[i].id))
-    createShortShelfmarkCell(row, 3, ('m_' + obj[i].id), obj[i].size)
-    createPrintCell(row, 4, ('m_' + obj[i].id))
-    createPrintCountCell(row, 5, ('m_' + obj[i].id))
-    createLabelSizeCell(row, 6, ('m_' + obj[i].id), obj[i].lines, obj[i].format)
-    i++
-  }
-}
-
-// creates the PPN row
-function createPpnRow (row, value) {
-  let i = 0
-  row.id = value
-  createCell(row, i, 'ppnCell', value)
-  i++
-  createCell(row, i, 'dateCell')
-  i++
-  createCell(row, i, 'isNrCell')
-  i++
-  createCell(row, i, 'shortShelfmarkCell')
-  i++
-  createCell(row, i, 'printCell')
-  i++
-  createCell(row, i, 'printCountCell')
-  i++
-  createCell(row, i, 'labelSizeCell')
-
-  function createCell (row, i, className, value) {
-    let cell = row.insertCell(i)
-    if (i === 0) {
-      cell.innerHTML = value
-    } else {
-      cell.innerHTML = '<hr>'
-      cell.className = className
-    }
-  }
-}
-
-// creates the shelfmark text cell
-function createTxtCell (row, cellNr, id, txt) {
-  let txtCell = row.insertCell(cellNr)
-  txtCell.onclick = function () { pre(id) }
-  txtCell.innerHTML = txt
-  txtCell.className = 'txtCell'
-}
-
-// creates the date cell
-function createDateCell (row, cellNr, id, date = '-') {
-  let dateCell = row.insertCell(cellNr)
-  dateCell.onclick = function () { pre(id) }
-  dateCell.className = 'dateCell'
-  dateCell.id = 'dateCell_' + id
-  dateCell.innerHTML = date
-}
-
-// create the ex. nr. cell
-function createExnrCell (row, cellNr, id, exNr = '-') {
-  let isNrCell = row.insertCell(cellNr)
-  isNrCell.onclick = function () { pre(id) }
-  isNrCell.className = 'isNrCell'
-  isNrCell.innerHTML = exNr
-}
-
-// creates the short shelfmark cell
-function createShortShelfmarkCell (row, cellNr, id, size) {
-  let shortShelfmarkCell = row.insertCell(cellNr)
-  shortShelfmarkCell.className = 'shortShelfmarkCell'
-  if (config.get('mode.useMode')) {
-    if(config.get('mode.defaultMode') === 'thulbMode') {
-      if (!size) {
-        if (!String(id).includes('m_')) {
-          let input = document.createElement('input')
-          input.id = 'short_' + id
-          input.type = 'checkbox'
-          input.name = 'shortShelfmark'
-          input.value = id
-          input.onclick = function () {
-            changeFormat(id)
-            pre(id)
-          }
-          shortShelfmarkCell.appendChild(input)
-        } else {
-          shortShelfmarkCell.onclick = function () {
-            pre(id)
-          }
-        }
-      } else {
-        shortShelfmarkCell.onclick = function () {
-          pre(id)
-        }
-      }
-    } else {
-      //TODO USE MODE CLASS TO GENERATE UR OWN MODE - HAS TO BE ALWAYS OWN MODE THAT WAS MADE BY THIS CLASS
-    }
-
-  } else {
-    shortShelfmarkCell.onclick = function () {
-      pre(id)
-    }
-  }
-
-  function changeFormat (id) {
-    if (document.getElementById('short_' + id).checked) {
-      document.getElementById('templateSelect_' + id).value = 'thulb_klein'
-    } else {
-      document.getElementById('templateSelect_' + id).value = 'thulb_klein_1'
-    }
-  }
-}
-
-// creates the print cell
-function createPrintCell (row, cellNr, id) {
-  let printCell = row.insertCell(cellNr)
-  let input = document.createElement('input')
-  printCell.className = 'printCell'
-  input.id = 'print_' + id
-  input.type = 'checkbox'
-  input.name = 'toPrint'
-  input.value = id
-  input.onclick = function () { pre(id) }
-  printCell.appendChild(input)
-}
-
-// creates the print count cell
-function createPrintCountCell (row, cellNr, id) {
-  let printCountCell = row.insertCell(cellNr)
-  let input = document.createElement('input')
-  printCountCell.className = 'printCountCell'
-  input.id = 'count_' + id
-  input.className = 'input'
-  input.type = 'number'
-  input.max = 99
-  input.min = 1
-  input.name = 'printCount'
-  input.value = 1
-  printCountCell.appendChild(input)
-}
-
-// creates the label size cell
-function createLabelSizeCell (row, cellNr, id, lines, format = '') {
-  let cell = row.insertCell(cellNr)
-  let div = document.createElement('div')
-  div.className = 'select'
-  let select = document.createElement('select')
-  select.id = 'templateSelect_' + id
-  selectOptions.forEach(element => {
-    let size = document.createElement('option')
-    size.value = element
-    size.innerHTML = element
-    if (!printerFound[element]) {
-      size.disabled = true
-    }
-    select.appendChild(size)
-  })
-  select.onchange = function () { pre(id) }
-  if (format !== '') {
-    select.value = format
-  } else {
-    if (config.get('mode.useMode') && config.get('mode.defaultMode') === 'thulbMode') {
-        if (Number(lines) <= 2) {
-          if (printerFound['thulb_klein_1']) {
-            select.value = 'thulb_klein_1'
-          }
-        } else if (Number(lines) === 3) {
-          if (printerFound['thulb_klein']) {
-            select.value = 'thulb_klein'
-          }
-        } else if (Number(lines) <= 6) {
-          if (printerFound['thulb_gross']) {
-            select.value = 'thulb_gross'
-          }
-        }
-    } else {
-      //TODO SHOULD BE DONE BY MODE CLASS TO CREATE UR OWN MODE BASED ON YOUR FORMATS
-      select.value = config.get('defaultFormat')
-    }
-  }
-  div.appendChild(select)
-  cell.appendChild(div)
-}
-
-function loadFormats () {
-  let files = fs.readdirSync(defaultProgramPath + '\\Formate')
-  for (let file of files) {
-    let fileName = file.split('.json')[0]
-    selectOptions.push(fileName)
-    formats[fileName] = JSON.parse(fs.readFileSync(defaultProgramPath + '\\Formate\\' + file, 'utf8'))
-  }
-}
-
+//TODO Add to preview class
 // clears the display table
 function deleteList () {
-  if (fs.existsSync('signaturen.json')) {
-    fs.unlink('signaturen.json', function (err) {
+  if (fs.existsSync(sigJSONFile)) {
+    fs.unlink(sigJSONFile, function (err) {
       if (err) {
         throw err
       } else {
@@ -453,7 +130,7 @@ function deleteList () {
         objSRU = {
           all: []
         }
-        removeOld()
+        previewSwitch.removeOld()
         alert('Die Liste wurde gelöscht.')
       }
     })
@@ -462,6 +139,7 @@ function deleteList () {
     while (myNode.firstChild) {
       myNode.removeChild(myNode.firstChild)
     }
+    previewSwitch.removeOld()
     objMan = null
     objSRU = {
       all: []
@@ -567,52 +245,17 @@ function deleteOldManualSignatures () {
   }
 }
 
-// function to clear the table
-function clearTable () {
-  let myNode = document.getElementById('shelfmarkTableBody')
-  while (myNode.firstChild) {
-    myNode.removeChild(myNode.firstChild)
-  }
-}
 
 // function to send objMan to the manual window
 function openManualSignaturesWindow () {
   ipcRenderer.send('openManualSignaturesWindow', objMan)
 }
 
-// function to refresh the table
-function refresh () {
-  let currentFile = document.getElementById('defaultPath').innerHTML
-  if (!readThisFile(currentFile)) {
-    if (readThisFile(config.get('defaultDownloadPath'))) {
-      document.getElementById('defaultPath').innerHTML = config.get('defaultDownloadPath')
-    } else {
-      document.getElementById('defaultPath').innerHTML = 'nicht vorhanden'
-    }
-  }
-
-  function readThisFile (path) {
-    if (fs.existsSync(path)) {
-      objMan = null
-      let file = fs.readFileSync(path, 'utf-8')
-      let allLines = file.split(/\r\n|\n/)
-      loadDataFromFile(allLines)
-      displayData()
-      return true
-    }
-    return false
-  }
-}
-
 // function to invert the print-selection
 function invertPrintingSelection () {
   let elems = document.querySelectorAll('[name=toPrint]')
   for (let i = 0; i < elems.length; i++) {
-    if (elems[i].checked) {
-      elems[i].checked = false
-    } else {
-      elems[i].checked = true
-    }
+    elems[i].checked = !elems[i].checked;
   }
 }
 
@@ -626,62 +269,11 @@ function selectByDate () {
     for (let i = 0; i < elems.length; i++) {
       let elemValue = elems[i].value
       let date = document.getElementById('dateCell_' + elemValue).innerHTML
-      if (date === pickedDateFormated) {
-        document.getElementById('print_' + elemValue).checked = true
-      } else {
-        document.getElementById('print_' + elemValue).checked = false
-      }
+      document.getElementById('print_' + elemValue).checked = date === pickedDateFormated;
     }
   }
 }
 
-// function to get the printerList
-function getPrinterNameList () {
-  let nameList = []
-  let i = 0
-  _.forEach(printerList, function (key) {
-    nameList[i] = key.name
-    i++
-  })
-  return nameList
-}
-
-// function to check if printer is on the printerList
-function isIncluded (printer, printerList) {
-  if (_.indexOf(printerList, printer) !== -1) {
-    return true
-  } else {
-    return false
-  }
-}
-
-// function check if printers are available
-function checkPrinters () {
-  let printerList = getPrinterNameList()
-  for (let format in formats) {
-    printerFound[format] = isIncluded(formats[format].printer, printerList)
-  }
-  let printerNotFound = []
-  for (let printer in printerFound) {
-    if (!printerFound[printer]) {
-      printerNotFound.push(printer)
-    }
-  }
-  let str = ''
-  if (printerNotFound.length > 0) {
-    if (printerNotFound.length === 1) {
-      str = 'Der Drucker des Formats: "' + printerNotFound[0] + '" wurde nicht gefunden'
-    } else {
-      str = 'Die Drucker der folgenden Formate wurden nicht gefunden: "'
-      printerNotFound.forEach(element => {
-        str += element + ', '
-      })
-      str = str.substr(0, str.length - 2)
-      str += '"'
-    }
-    document.getElementById('infoBox').insertAdjacentHTML('afterbegin','<div class="notification is-warning">' + str + '</div>')
-  }
-}
 
 // function to submit the barcode
 function submitBarcode () {
@@ -705,152 +297,6 @@ function openConfigWindow (event) {
 function openEditorWindow (event) {
   if (event.altKey && event.ctrlKey && event.keyCode === 69) {
     ipcRenderer.send('openEditorWindow')
-  }
-}
-
-function pre (id) {
-  removeOld()
-  changePreview(id)
-  let formatName = document.getElementById('templateSelect_' + id).value
-  if (!String(id).includes('m_')) {
-    let file = fs.readFileSync('signaturen.json', 'utf8')
-    let found = _.find(JSON.parse(file), { 'id': Number(id) })
-    searchAndShow(found, formatName, getLinesByFormat(formatName, found.txtOneLine))
-    document.getElementsByClassName('innerBox')[0].className = 'innerBox'
-  } else {
-    let cleanId = id.split('m_')[1]
-    checkIfNoIndent(cleanId, formats[formatName].lines)
-  }
-
-  function getLinesByFormat (formatName, shelfmarkRAW) {
-    let format = formats[formatName]
-    let delimiter = format.lineDelimiter
-    if (format.splitByRegEx) {
-      let regExString = ''
-      format.splitByRegEx.forEach(element => {
-        regExString += element
-      })
-      let regEx = XRegExp(regExString, 'x')
-      let lines = XRegExp.exec(shelfmarkRAW, regEx)
-      if (lines === null) {
-        return shelfmarkRAW
-      } else {
-        if (lines.length > 1) {
-          lines.shift()
-        }
-        return lines
-      }
-    } else {
-      if (delimiter === '') {
-        return shelfmarkRAW
-      } else {
-        return shelfmarkRAW.split(delimiter)
-      }
-    }
-  }
-
-  function searchAndShow (found, formatName, linesArray) {
-    let lines = found.txtLength
-    let formatLines = formats[formatName].lines
-    let id = found.id
-    let oneLine = found.txtOneLine
-    if (found !== undefined) {
-      if (lines <= 2 && config.get('mode.useMode') && config.get('mode.defaultMode') === 'thulbMode' ) {
-        if (document.getElementById('short_' + id).checked) {
-          showData(found.txt, formatLines)
-        } else {
-          showData(oneLine, formatLines)
-        }
-      } else {
-        if (Number(formatLines) === 1) {
-          showData(oneLine, formatLines)
-        } else {
-          showData(linesArray, formatLines)
-        }
-      }
-    }
-  }
-
-  function checkIfNoIndent (cleanId, formatLines) {
-    showData(objMan[cleanId].lineTxts, formatLines)
-    if (objMan[cleanId].removeIndent) {
-      document.getElementsByClassName('innerBox')[0].className = 'innerBox noIndent'
-    } else {
-      document.getElementsByClassName('innerBox')[0].className = 'innerBox'
-    }
-  }
-
-  function removeOld () {
-    let myNode = document.getElementById('previewBox')
-    while (myNode.firstChild) {
-      myNode.removeChild(myNode.firstChild)
-    }
-  }
-}
-
-function showData (shelfmark, formatLines) {
-  let i = 1
-  let line
-  let innerBox = document.createElement('div')
-  innerBox.className = 'innerBox'
-  createLines(innerBox, formatLines)
-  document.getElementById('previewBox').appendChild(innerBox)
-  if (Array.isArray(shelfmark)) {
-    shelfmark.forEach(element => {
-      line = document.getElementById('line_' + i)
-      if (line !== null) {
-        if (element !== '') {
-          line.innerHTML = element
-        }
-        i++
-      } else {
-        innerBox = document.getElementsByClassName('innerBox')[0]
-        line = document.createElement('p')
-        line.id = 'line_' + i
-        line.className = 'line_' + i
-        if (element !== '') {
-          line.innerHTML = element
-        }
-        innerBox.appendChild(line)
-        i++
-      }
-    })
-  } else {
-    line = document.getElementById('line_' + i)
-    if (config.get('mode.useMode') && config.get('mode.defaultMode') === 'thulbMode') {
-      line.innerHTML = shelfmark.split(config.get('newLineAfter')).join(' ')
-    } else {
-      line.innerHTML = shelfmark
-    }
-  }
-
-  function createLines (innerBox, formatLines) {
-    for (let i = 1; i <= formatLines; i++) {
-      line = document.createElement('p')
-      line.id = 'line_' + i
-      line.className = 'line_' + i
-      let emptyLine = document.createElement('br')
-      line.appendChild(emptyLine)
-      innerBox.appendChild(line)
-    }
-  }
-}
-
-function changePreview (id) {
-  let format = document.getElementById('templateSelect_' + id).value
-  let previewBox = document.getElementById('previewBox')
-  previewBox.className = 'format_' + format
-}
-
-function addStyleFiles () {
-  let files = fs.readdirSync(defaultProgramPath + '\\FormateCSS')
-  for (let file of files) {
-    let fileName = file.split('.css')[0]
-    let cssLink = document.createElement('link')
-    cssLink.rel = 'stylesheet'
-    cssLink.type = 'text/css'
-    cssLink.href = defaultProgramPath + '/FormateCSS/' + fileName + '.css'
-    document.head.appendChild(cssLink)
   }
 }
 

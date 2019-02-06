@@ -58,7 +58,7 @@ const configNew = {
 }
 
 // name of signature storage json
-const sigJSON = 'signaturen.json'
+const sigJSONFile = 'signaturen.json'
 // requires the loadDataFromSRU-module
 const loadFromSRU = require('./js/loadDataFromSRU.js')
 
@@ -193,6 +193,7 @@ function createWindow () {
    */
   global.config = config
   global.defaultProgramPath = defaultProgramPath
+  global.sigJSONFile = sigJSONFile
 
   checkDir('./tmp')
   checkDir(defaultProgramPath)
@@ -224,8 +225,8 @@ function createWindow () {
 
 // deletes the signature storage json
 function deleteJSON () {
-  if (fs.existsSync(sigJSON)) {
-    fs.unlink(sigJSON, function (err) {
+  if (fs.existsSync(sigJSONFile)) {
+    fs.unlink(sigJSONFile, function (err) {
       if (err) {
         throw err
       }
