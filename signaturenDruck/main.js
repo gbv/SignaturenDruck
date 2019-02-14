@@ -116,8 +116,8 @@ ipcMain.on('close', function (event) {
 })
 
 // listens on openManualSignaturesWindow, invokes the opening process
-ipcMain.on('openManualSignaturesWindow', function (event, objMan) {
-  createManualSignaturesWindow(objMan)
+ipcMain.on('openManualSignaturesWindow', function (event, data) {
+  createManualSignaturesWindow(data)
 })
 
 // listens on closeManual, closes the manualSignaturesWindow and invokes the removeManual process

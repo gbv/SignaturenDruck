@@ -6,7 +6,7 @@ const fs = require('fs')
 const config = remote.getGlobal('config')
 const defaultProgramPath = remote.getGlobal('defaultProgramPath')
 
-let objct = {
+let object = {
   manual: []
 }
 
@@ -25,7 +25,7 @@ window.onload = function () {
 
 ipcRenderer.on('objMan', function (event, objMan) {
   if (objMan !== null) {
-    objct.manual = objMan
+    object.manual = objMan
     id = objMan.length
     max = objMan.length + 1
     setCounters()
@@ -33,7 +33,6 @@ ipcRenderer.on('objMan', function (event, objMan) {
   }
 })
 
-//TODO Thats's not good it's hard coded path
 function loadFormats () {
   let files = fs.readdirSync(defaultProgramPath + '\\Formate')
   for (let file of files) {
@@ -133,7 +132,7 @@ function getFormatSelected () {
 }
 
 function setFormatSelected () {
-  document.getElementById('formatSelect').value = objct.manual[id].format
+  document.getElementById('formatSelect').value = object.manual[id].format
 }
 
 function disableBtnPrevious () {
@@ -157,17 +156,13 @@ function loadData () {
   setFormatSelected()
   createByFormat(getFormatSelected().lines)
   let i = 1
-  while (i <= objct.manual[id].lines) {
-    let txt = objct.manual[id].lineTxts[i - 1]
+  while (i <= object.manual[id].lines) {
+    let txt = object.manual[id].lineTxts[i - 1]
     document.getElementById('inputLine_' + i).value = txt
     document.getElementById('line_' + i).innerHTML = txt
     i++
   }
-  if (objct.manual[id].removeIndent) {
-    document.getElementById('chkbx_removeIndent').checked = true
-  } else {
-    document.getElementById('chkbx_removeIndent').checked = false
-  }
+  document.getElementById('chkbx_removeIndent').checked = !!object.manual[id].removeIndent;
   toggleIndent()
 }
 
@@ -185,7 +180,7 @@ function saveCurrent () {
     oneLineTxt += document.getElementById('inputLine_' + i).value + ' '
     i++
   }
-  objct.manual[id] = {
+  object.manual[id] = {
     'id': id,
     'format': format.name,
     'lines': format.lines,
@@ -214,7 +209,7 @@ function next () {
     if (id === 1) {
       enableBtnPrevious()
     }
-    if (objct.manual[id] !== undefined) {
+    if (object.manual[id] !== undefined) {
       loadData()
     } else {
       selectDefaultFormat()
@@ -242,12 +237,12 @@ function deleteData () {
 
   function changeOrder () {
     let i = id + 1
-    while (objct.manual[i] !== undefined) {
-      objct.manual[i - 1] = objct.manual[i]
-      objct.manual[i].id = i - 1
+    while (object.manual[i] !== undefined) {
+      object.manual[i - 1] = object.manual[i]
+      object.manual[i].id = i - 1
       i++
     }
-    delete objct.manual[i - 1]
+    delete object.manual[i - 1]
     if (id > 0) {
       id--
       max--
@@ -256,7 +251,7 @@ function deleteData () {
     if (id === 0) {
       disableBtnPrevious()
     }
-    if (objct.manual[id] !== undefined) {
+    if (object.manual[id] !== undefined) {
       loadData()
     } else {
       selectDefaultFormat()
@@ -264,31 +259,31 @@ function deleteData () {
     }
   }
   function reset () {
-    objct.manual[id] = {}
+    object.manual[id] = {}
   }
 }
 
 function deleteAndExit () {
-  objct.manual = null
+  object.manual = null
   ipcRenderer.send('closeManualSignaturesWindow')
 }
 
 function saveAndExit () {
   saveCurrent()
   let isEmpty = true
-  if (objct.manual[objct.manual.length - 1] !== undefined) {
+  if (object.manual[object.manual.length - 1] !== undefined) {
     let i = 1
-    while (i <= objct.manual[objct.manual.length - 1].lines) {
-      if (objct.manual[objct.manual.length - 1].lineTxts[i - 1] !== '') {
+    while (i <= object.manual[object.manual.length - 1].lines) {
+      if (object.manual[object.manual.length - 1].lineTxts[i - 1] !== '') {
         isEmpty = false
       }
       i++
     }
   }
   if (isEmpty) {
-    delete objct.manual[objct.manual.length - 1]
+    delete object.manual[object.manual.length - 1]
   }
-  ipcRenderer.send('saveManualSignatures', objct.manual)
+  ipcRenderer.send('saveManualSignatures', object.manual)
 }
 
 function toggleIndent () {

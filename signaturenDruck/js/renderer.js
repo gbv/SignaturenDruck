@@ -16,22 +16,17 @@ const sigJSONFile = remote.getGlobal('sigJSONFile')
 
 const getLabelSize = require('./getLabelSize.js')
 
-const preview = require('./preview')
+const t = require('./classes/Table')
 
-let objMan = null
 let objSRU = {
   all: []
 }
 
 let displayModalOnSuccess = true
-let previewSwitch = new preview(sigJSONFile, objMan)
+let table = new t(sigJSONFile)
 
 // function on window load
 window.onload = function () {
-
-  preview.addStyleFiles()
-  previewSwitch.loadFormats()
-  previewSwitch.checkPrinters()
 
   if (config.get('devMode')) {
     document.getElementById('devMode').style.display = 'block'
@@ -39,12 +34,9 @@ window.onload = function () {
 
   document.getElementById('modalTxt').innerHTML = config.get('modal.modalTxt')
   let fileSelected = document.getElementById('fileToRead')
-  let fileTobeRead
   if (config.get('SRU.useSRU') === false) {
     if (fs.existsSync(config.get('defaultDownloadPath'))) {
-      let file = fs.readFileSync(config.get('defaultDownloadPath'), 'utf-8')
-      previewSwitch.writeToFile(file)
-      previewSwitch.displayData()
+      table.readDownloadFile(config.get('defaultDownloadPath'))
       document.getElementById('defaultPath').innerHTML = config.get('defaultDownloadPath')
     } else {
       document.getElementById('defaultPath').innerHTML = 'nicht vorhanden'
@@ -58,12 +50,8 @@ window.onload = function () {
   // Check the support for the File API support
   if (window.File && window.FileReader && window.FileList && window.Blob) {
     fileSelected.addEventListener('change', function () {
-      objMan = null
-      fileTobeRead = fileSelected.files[0].path
-      document.getElementById('defaultPath').innerHTML = fileTobeRead
-      let file = fs.readFileSync(fileTobeRead, 'utf-8')
-      previewSwitch.writeToFile(file)
-      previewSwitch.displayData()
+      table.readDownloadFile(fileSelected.files[0].path)
+      document.getElementById('defaultPath').innerHTML = fileSelected.files[0].path
     }, false)
   } else {
     alert('Files are not supported')
@@ -82,17 +70,16 @@ ipcRenderer.on('printMsg', function (event, successfull) {
 
 // ipc listener to add new manual data to the table
 ipcRenderer.on('addManualSignatures', function (event, data) {
-  objMan = data
-  deleteOldManualSignatures()
-  if (objMan !== undefined && objMan !== null && objMan.length !== 0) {
-    previewSwitch.addToTable(objMan)
+  table.manualSignature = data
+  if (data !== undefined && data !== null && data.length !== 0) {
+    table.addManualSignaturesToTable(data)
   }
 })
 
 // ipc listener to remove the manual data
 ipcRenderer.on('removeManualSignatures', function (event) {
-  objMan = null
-  deleteOldManualSignatures()
+  table.manualSignature = []
+  table.clearManualSignaturesTable()
 })
 
 // ipc listener to add provided data to the SRU obj
@@ -110,45 +97,18 @@ ipcRenderer.on('addSRUdata', function (event, data) {
   }
 })
 
+//refresh table by given file
 function refresh () {
-  previewSwitch.refresh()
+  table.refreshDownloadFile()
 }
 
-//TODO Add to preview class
-// clears the display table
+//clear written local signature - json file
 function deleteList () {
-  if (fs.existsSync(sigJSONFile)) {
-    fs.unlink(sigJSONFile, function (err) {
-      if (err) {
-        throw err
-      } else {
-        let myNode = document.getElementById('shelfmarkTableBody')
-        while (myNode.firstChild) {
-          myNode.removeChild(myNode.firstChild)
-        }
-        objMan = null
-        objSRU = {
-          all: []
-        }
-        previewSwitch.removeOld()
-        alert('Die Liste wurde gelöscht.')
-      }
-    })
-  } else {
-    let myNode = document.getElementById('shelfmarkTableBody')
-    while (myNode.firstChild) {
-      myNode.removeChild(myNode.firstChild)
-    }
-    previewSwitch.removeOld()
-    objMan = null
-    objSRU = {
-      all: []
-    }
-    alert('Die Liste wurde gelöscht.')
-  }
+  table.clearMainTable()
 }
 
-// deletes the shelfmark source file
+//TODO Refactor
+//remove download file
 function deleteFile () {
   if (document.getElementById('fileToRead').files[0]) {
     deleteFromPath(document.getElementById('fileToRead').files[0].path)
@@ -195,7 +155,7 @@ function printButton () {
       dataAll.all.push(setData(data, i))
     }
   }
-  ipcRenderer.send('print', _.groupBy(dataAll.all, 'format'), objMan)
+  ipcRenderer.send('print', _.groupBy(dataAll.all, 'format'), previewSwitch.manualSignature)
 
   function setData (data, i) {
     setIdAndManual()
@@ -237,18 +197,9 @@ function printButton () {
   }
 }
 
-// funtion to delete all manual entries
-function deleteOldManualSignatures () {
-  let elements = document.getElementsByClassName('manual')
-  while (elements.length > 0) {
-    elements[0].parentNode.removeChild(elements[0])
-  }
-}
-
-
 // function to send objMan to the manual window
 function openManualSignaturesWindow () {
-  ipcRenderer.send('openManualSignaturesWindow', objMan)
+  ipcRenderer.send('openManualSignaturesWindow', previewSwitch.manualSignature)
 }
 
 // function to invert the print-selection
