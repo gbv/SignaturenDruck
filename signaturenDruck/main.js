@@ -1,4 +1,4 @@
-const { BrowserWindow , app, ipcMain } = require('electron')
+const { BrowserWindow , app, ipcMain, dialog } = require('electron')
 const path = require('path')
 const url = require('url')
 const fs = require('fs')
@@ -10,6 +10,7 @@ const defaultProgramPath = 'C:\\SignaturenDruck'
 const config = new Store({cwd: defaultProgramPath})
 
 const Shell = require('node-powershell')
+
 require('electron-context-menu')({
   prepend: (params, BrowserWindow) => [{
     visible: false,
@@ -64,7 +65,7 @@ const loadFromSRU = require('./js/loadDataFromSRU.js')
 
 // Keep a global reference of the window object, if you don't, the window will
 // be closed automatically when the JavaScript object is garbage collected.
-let mainWindow, manualSignaturesWindow, configWindow, editorWindow, formats = []
+let mainWindow, manualSignaturesWindow, configWindow, editorWindow
 
 // This method will be called when Electron has finished
 // initialization and is ready to create browser windows.
@@ -85,15 +86,15 @@ app.on('activate', function () {
 })
 
 // starts the printing process
-ipcMain.on('print', function (event, data, dataMan) {
-  loadFormats()
+ipcMain.on('print', function (event, data, dataManualSignatures) {
   let usedFormats = []
   _.forEach(data, function (key, value) {
     usedFormats.push(value)
   })
-  usedFormats.forEach(element => {
-    printData(element, data[element], dataMan)
+  _.forEach(usedFormats, format => {
+    printData(format, data[format], dataManualSignatures)
   })
+  console.warn(usedFormats)
 })
 
 app.on('close', () => {
@@ -175,14 +176,6 @@ ipcMain.on('closeEditorWindow', function (event) {
 function closeEditorWindow () {
   editorWindow.close()
   editorWindow = null
-}
-
-function loadFormats () {
-  let files = fs.readdirSync(defaultProgramPath + '\\Formate')
-  for (let file of files) {
-    let fileName = file.split('.json')[0]
-    formats[fileName] = JSON.parse(fs.readFileSync(defaultProgramPath + '\\Formate\\' + file, 'utf8'))
-  }
 }
 
 // creates the mainWindow
@@ -282,29 +275,29 @@ function printData (format, data, dataMan) {
   }))
   winPrint.once('ready-to-show', () => {
     winPrint.webContents.send('toPrint', format, data, dataMan)
-    winPrint.webContents.printToPDF({marginsType: 1, landscape: true, pageSize: { width: formats[format].paper.height, height: formats[format].paper.width }}, (error, data) => {
+    winPrint.webContents.printToPDF({marginsType: 1, landscape: true, pageSize: { height: format.paper.height, width: format.paper.width }}, (error, data) => {
       if (error) throw error
-      let fileName = formats[format].name + '_' + new Date().getTime() + '.pdf'
-      fs.writeFile('C:\\Export\\SignaturenDruck\\' + fileName, data, (error) => {
+      let fileName = format.name + '_' + new Date().getTime() + '.pdf'
+      fs.writeFile(defaultProgramPath + fileName, data, (error) => {
         if (error) throw error
         let ps = new Shell({
           executionPolicy: 'Bypass',
           noProfile: true
         })
         if (!config.store.devMode) {
-          ps.addCommand('Start-Process -file "' + 'C:\\Export\\SignaturenDruck\\' + fileName + '" -Verb PrintTo "' + formats[format].printer + '" -PassThru | %{sleep 4;$_} | kill')
+          ps.addCommand('Start-Process -file "' + defaultProgramPath + '\\' + fileName + '" -Verb PrintTo "' + format.printer + '" -PassThru | %{sleep 4;$_} | kill')
           ps.invoke().then(output => {
-            fs.unlinkSync('C:\\Export\\SignaturenDruck\\' + fileName)
+            fs.unlinkSync(defaultProgramPath + '\\' + fileName)
             mainWindow.webContents.send('printMsg', true)
           }).catch(err => {
-            electron.dialog.showErrorBox('Es ist ein Fehler aufgetreten.', err)
+            dialog.showErrorBox('Es ist ein Fehler aufgetreten.', err)
             mainWindow.webContents.send('printMsg', false)
             ps.dispose()
           })
         } else {
-          ps.addCommand('Start-Process -file "' + 'C:\\Export\\SignaturenDruck\\' + fileName + '"')
+          ps.addCommand('Start-Process -file "' + defaultProgramPath + '\\' + fileName + '"')
           ps.invoke().then(output => { mainWindow.webContents.send('printMsg', true); ps.dispose() }).catch(err => {
-            electron.dialog.showErrorBox('Es ist ein Fehler aufgetreten.', err)
+            dialog.showErrorBox('Es ist ein Fehler aufgetreten.', err)
             mainWindow.webContents.send('printMsg', false)
             ps.dispose()
           })

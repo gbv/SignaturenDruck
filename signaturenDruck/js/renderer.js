@@ -14,9 +14,12 @@ const {ipcRenderer, remote} = require('electron')
 const config = remote.getGlobal('config')
 const sigJSONFile = remote.getGlobal('sigJSONFile')
 
+const swal = require('sweetalert2')
+
 const getLabelSize = require('./getLabelSize.js')
 
 const t = require('./classes/Table')
+const p = require('./classes/Print')
 
 let objSRU = {
   all: []
@@ -68,10 +71,17 @@ ipcRenderer.on('printMsg', function (event, successfull) {
   }
 })
 
+// function to send objMan to the manual window
+function openManualSignaturesWindow () {
+  (table.manualSignature.length === 0) ? table.manualSignature = [] : null
+  ipcRenderer.send('openManualSignaturesWindow', table.manualSignature)
+}
+
 // ipc listener to add new manual data to the table
 ipcRenderer.on('addManualSignatures', function (event, data) {
-  table.manualSignature = data
+  table.clearManualSignaturesTable()
   if (data !== undefined && data !== null && data.length !== 0) {
+    table.manualSignature = data
     table.addManualSignaturesToTable(data)
   }
 })
@@ -85,26 +95,26 @@ ipcRenderer.on('removeManualSignatures', function (event) {
 // ipc listener to add provided data to the SRU obj
 ipcRenderer.on('addSRUdata', function (event, data) {
   if (data.error !== '') {
-    alert(data.error)
+    swal.fire('Achtung', data.error, 'error')
+      .then(() => {})
   } else {
-    let indx = objSRU.all.length
-    objSRU.all[indx] = data
-    objSRU.all[indx].id = indx + 1
-    objSRU.all[indx].bigLabel = getLabelSize(data.plainTxt)
-    previewSwitch.writeFile(JSON.stringify(objSRU.all))
-    preview.clearTable()
-    previewSwitch.createTable(objSRU.all)
+    let index = objSRU.all.length
+    objSRU.all[index] = data
+    objSRU.all[index].id = index + 1
+    objSRU.all[index].bigLabel = getLabelSize(data.plainTxt)
+    table.readSRUData(objSRU.all)
   }
 })
 
 //refresh table by given file
-function refresh () {
+function refreshDownloadFile () {
   table.refreshDownloadFile()
 }
 
 //clear written local signature - json file
-function deleteList () {
-  table.clearMainTable()
+function clearDownloadFileTable () {
+  objSRU.all = []
+  table.clearDownloadFile()
 }
 
 //TODO Refactor
@@ -137,69 +147,31 @@ function closeButton () {
 
 // gathers the data to print and invokes printing via ipc
 function printButton () {
-  let dataAll = {
-    all: []
-  }
+  const print = new p(sigJSONFile, table.formats, table.manualSignature)
+print.getSelectedElementsToPrint()
+  // let dataAll = {
+  //   all: []
+  // }
+  //
+  // let elems = document.querySelectorAll('[name=toPrint]')
+  // for (let i = 0; i < elems.length; i++) {
+  //   if (elems[i].checked) {
+  //
+  //
+  //
+  //     let data = {
+  //       'manual': false,
+  //       'id': '',
+  //       'count': '1',
+  //       'removeIndent': false,
+  //       'format': '',
+  //       'isShort': false
+  //     }
+  //     dataAll.all.push(setData(data, i))
+  //   }
+  // }
 
-  let elems = document.querySelectorAll('[name=toPrint]')
-  for (let i = 0; i < elems.length; i++) {
-    if (elems[i].checked) {
-      let data = {
-        'manual': false,
-        'id': '',
-        'count': '1',
-        'removeIndent': false,
-        'format': '',
-        'isShort': false
-      }
-      dataAll.all.push(setData(data, i))
-    }
-  }
-  ipcRenderer.send('print', _.groupBy(dataAll.all, 'format'), previewSwitch.manualSignature)
-
-  function setData (data, i) {
-    setIdAndManual()
-    setFormat()
-    setCount()
-    checkIfShort()
-
-    return data
-
-    function checkIfShort () {
-      let shortCkbx = document.getElementById('short_' + data.id)
-      if (shortCkbx) {
-        if (shortCkbx.checked) {
-          data.isShort = true
-        }
-      }
-    }
-    function setCount () {
-      let count = document.getElementById('count_' + data.id).value
-      if ((count <= 99) && (count >= 1)) {
-        data.count = count
-      } else if (count > 99) {
-        data.count = 99
-      } else if (count < 1) {
-        data.count = 1
-      }
-    }
-    function setFormat () {
-      data.format = document.getElementById('templateSelect_' + data.id).value
-    }
-    function setIdAndManual () {
-      if (elems[i].id.includes('print_m_')) {
-        data.id = elems[i].id.split('print_')[1]
-        data.manual = true
-      } else {
-        data.id = elems[i].value
-      }
-    }
-  }
-}
-
-// function to send objMan to the manual window
-function openManualSignaturesWindow () {
-  ipcRenderer.send('openManualSignaturesWindow', previewSwitch.manualSignature)
+  // ipcRenderer.send('print', _.groupBy(dataAll.all, 'format'), table.manualSignature)
 }
 
 // function to invert the print-selection
@@ -254,7 +226,7 @@ function openEditorWindow (event) {
 // adds event listener to the create manually button
 document.getElementById('btn_createManualSignatures').addEventListener('click', openManualSignaturesWindow)
 // adds event listener to the deleteList button
-document.getElementById('btn_deleteList').addEventListener('click', deleteList)
+document.getElementById('btn_deleteList').addEventListener('click', clearDownloadFileTable)
 // adds event listener to the deleteFile button
 document.getElementById('btn_deleteFile').addEventListener('click', deleteFile)
 // adds event listener to the print button
@@ -262,7 +234,7 @@ document.getElementById('btn_print').addEventListener('click', printButton)
 // adds event listener to the close button
 document.getElementById('btn_close').addEventListener('click', closeButton)
 // adds event listener to the refresh button
-document.getElementById('btn_refresh').addEventListener('click', refresh)
+document.getElementById('btn_refresh').addEventListener('click', refreshDownloadFile)
 // adds event listener to the print column
 document.getElementById('columnPrint').addEventListener('click', invertPrintingSelection)
 // adds event listener to the datepicker

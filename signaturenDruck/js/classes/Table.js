@@ -8,17 +8,25 @@ const preview = require('./Preview')
 const manualSignature = require('./ManualSignatures')
 const jsonfile = require('./JsonFile')
 const downloadfile = require('./DownloadFile')
+const swal = require('sweetalert2')
 
 class Table {
   /*
  ----- Class getter and setter -----
   */
   get manualSignature () {
-    return this._manualSignature
+    return this._manualSignature.signatures
   }
 
   set manualSignature (value) {
-    this._manualSignature = value
+    this._manualSignature.signatures = value
+  }
+  get formats () {
+    return this._formats
+  }
+
+  set formats (value) {
+    this._formats = value
   }
   /*
  ----- End Class getter and setter -----
@@ -33,8 +41,8 @@ class Table {
     this.tableHtmlManual = document.getElementsByClassName('manual')
     this.format = new formats()
     this.selectOptions = this.format.selectOptions
-    this.formats = this.format.formats
-    this.printers = new printers(this.formats)
+    this._formats = this.format.formats
+    this.printers = new printers(this._formats)
     this.preview = new preview()
     this.file = new jsonfile(file)
     this._manualSignature = new manualSignature()
@@ -138,14 +146,14 @@ class Table {
 
   createTxtCell (row, cellNr, id, txt) {
     let txtCell = row.insertCell(cellNr)
-    txtCell.onclick = () => { this.preview.changePreview(id, this.file.file, this.formats) }
+    txtCell.onclick = () => this.preview.changePreview(id, this.file.file, this._formats, this.manualSignature)
     txtCell.innerHTML = txt
     txtCell.className = 'txtCell'
   }
 
   createDateCell (row, cellNr, id, date = '-') {
     let dateCell = row.insertCell(cellNr)
-    dateCell.onclick = () =>  this.preview.changePreview(id, this.file.file, this.formats)
+    dateCell.onclick = () =>   this.preview.changePreview(id, this.file.file, this._formats, this.manualSignature)
     dateCell.className = 'dateCell'
     dateCell.id = 'dateCell_' + id
     dateCell.innerHTML = date
@@ -153,7 +161,7 @@ class Table {
 
   createExnrCell (row, cellNr, id, exNr = '-') {
     let isNrCell = row.insertCell(cellNr)
-    isNrCell.onclick = () =>  this.preview.changePreview(id, this.file.file, this.formats)
+    isNrCell.onclick = () =>   this.preview.changePreview(id, this.file.file, this._formats, this.manualSignature)
     isNrCell.className = 'isNrCell'
     isNrCell.innerHTML = exNr
   }
@@ -172,21 +180,21 @@ class Table {
             input.value = id
             input.onclick = () => {
               Table.changeDropdownFormat(id)
-              this.preview.changePreview(id, this.file.file, this.formats)
+               this.preview.changePreview(id, this.file.file, this._formats, this.manualSignature)
             }
             shortShelfmarkCell.appendChild(input)
           } else {
-            shortShelfmarkCell.onclick = () =>  this.preview.changePreview(id, this.file.file, this.formats)
+            shortShelfmarkCell.onclick = () =>   this.preview.changePreview(id, this.file.file, this._formats, this.manualSignature)
           }
         } else {
-          shortShelfmarkCell.onclick = () =>  this.preview.changePreview(id, this.file.file, this.formats)
+          shortShelfmarkCell.onclick = () =>   this.preview.changePreview(id, this.file.file, this._formats, this.manualSignature)
         }
       } else {
         //TODO USE MODE CLASS TO GENERATE UR OWN MODE - HAS TO BE ALWAYS OWN MODE THAT WAS MADE BY THIS CLASS
       }
 
     } else {
-      shortShelfmarkCell.onclick =  () =>  this.preview.changePreview(id, this.file.file, this.formats)
+      shortShelfmarkCell.onclick =  () =>   this.preview.changePreview(id, this.file.file, this._formats, this.manualSignature)
     }
   }
 
@@ -198,7 +206,7 @@ class Table {
     input.type = 'checkbox'
     input.name = 'toPrint'
     input.value = id
-    input.onclick =  () =>  this.preview.changePreview(id, this.file.file, this.formats)
+    input.onclick =  () =>   this.preview.changePreview(id, this.file.file, this._formats, this.manualSignature)
     printCell.appendChild(input)
   }
 
@@ -232,7 +240,7 @@ class Table {
       }
       select.appendChild(size)
     })
-    select.onchange = () =>  this.preview.changePreview(id, this.file.file, this.formats)
+    select.onchange = () =>   this.preview.changePreview(id, this.file.file, this._formats, this.manualSignature)
     if (format !== '') {
       select.value = format
     } else {
@@ -294,10 +302,24 @@ class Table {
   /*
   ----- File Part -----
    */
+  readSRUData (object) {
+    if (!fs.existsSync(this.file.file)) {
+      jsonfile.createJsonFile(this.file.file)
+      this.file.writeToJsonFile(object, true)
+      this.displayMainTable()
+      return true
+    } else {
+      this.file.writeToJsonFile(object, true)
+      this.displayMainTable()
+      return true
+    }
+  }
+
+
   readDownloadFile (path) {
     if (fs.existsSync(path)) {
       if (!fs.existsSync(this.file.file)) {
-        this.file.createJsonFile(this.file.file)
+        jsonfile.createJsonFile(this.file.file)
         this.file.writeToJsonFile(fs.readFileSync(path, 'utf-8'))
         this.displayMainTable()
         return true
@@ -324,17 +346,16 @@ class Table {
   }
 
   clearDownloadFile () {
-    if (fs.existsSync(this.file)) {
-      fs.unlink(this.file, (err) => {
+    if (fs.existsSync(this.file.file)) {
+      fs.unlink(this.file.file, (err) => {
         if (err) {
           throw err
         } else {
           this.clearMainTable()
           this.preview.removeSignaturePreview()
-          this._manualSignature.object = []
-          //TODO NEW MODAL
-          //TODO NEW SRU OBJECT
-          alert('Die Liste wurde gelöscht.')
+          this._manualSignature.signatures = []
+          swal.fire('Achtung', 'Liste wurde gelöscht', 'info')
+            .then(() => {})
         }
       })
     }
@@ -357,6 +378,7 @@ class Table {
     while (obj[i] !== undefined) {
       row = body.insertRow(i + 1)
       row.className = 'manual'
+      row.id = 'manual-' + obj[i].id
       this.createTxtCell(row, 0, ('m_' + obj[i].id), obj[i].oneLineTxt)
       this.createDateCell(row, 1, ('m_' + obj[i].id))
       this.createExnrCell(row, 2, ('m_' + obj[i].id))

@@ -10,16 +10,8 @@ class Formats {
     return this._selectOptions
   }
 
-  set selectOptions (value) {
-    this._selectOptions = value
-  }
-
   get formats () {
     return this._formats
-  }
-
-  set formats (value) {
-    this._formats = value
   }
   /*
   ----- End Class getter and setter -----

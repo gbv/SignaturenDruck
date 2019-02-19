@@ -22,7 +22,6 @@ class JsonFile {
    */
   constructor (file) {
     this._file = file
-    this.createJsonFile(file)
   }
   /*
   ----- End Constructor -----
@@ -32,12 +31,13 @@ class JsonFile {
     return fs.readFileSync(file)
   }
 
-  createJsonFile (file) {
+  static createJsonFile (file) {
     fs.writeFileSync(file, '', 'utf8')
   }
 
-  writeToJsonFile (source) {
-    fs.writeFileSync(this.file, JSON.stringify(setIds(getUnique(loadDataFromFile(source.split(/\r\n|\n/))))), 'utf8')
+  writeToJsonFile (source, sru = false) {
+    if(sru) fs.writeFileSync(this.file, JSON.stringify(source), 'utf8')
+    else fs.writeFileSync(this.file, JSON.stringify(setIds(getUnique(loadDataFromFile(source.split(/\r\n|\n/))))), 'utf8')
   }
 
 }

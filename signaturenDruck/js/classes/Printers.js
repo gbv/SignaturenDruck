@@ -8,10 +8,6 @@ class Printers {
   get printers () {
     return this._printers
   }
-
-  set printers (value) {
-    this._printers = value
-  }
   /*
   ----- End Class getter and setter -----
    */
@@ -47,9 +43,11 @@ class Printers {
       }
     }
     let printerNotFound = []
-    for (let printer in this._printers) {
-      if (!this._printers[printer]) {
-        printerNotFound.push(printer)
+    for (let printer in this.printers) {
+      if (this.printers.hasOwnProperty(printer)) {
+        if (!this.printers[printer]) {
+          printerNotFound.push(printer)
+        }
       }
     }
     let str = ''

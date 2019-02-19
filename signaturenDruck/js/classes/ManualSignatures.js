@@ -6,6 +6,7 @@ class ManualSignatures {
   set signatures (value) {
     this._signatures = value
   }
+
   constructor () {
     this._signatures = []
   }

@@ -17,26 +17,11 @@ const { ipcRenderer, remote } = require('electron')
 const XRegExp = require('xregexp')
 
 const config = remote.getGlobal('config')
-const defaultProgramPath = remote.getGlobal('defaultProgramPath')
 
-let formats = []
+const moment = require('moment')
 
-window.onload = function () {
-  addStyleLinks()
-  loadFormats()
-
-  function addStyleLinks () {
-    let files = fs.readdirSync(defaultProgramPath + '\\FormateCSS')
-    for (let file of files) {
-      let fileName = file.split('.css')[0]
-      let cssLink = document.createElement('link')
-      cssLink.rel = 'stylesheet'
-      cssLink.type = 'text/css'
-      cssLink.href = defaultProgramPath+ '/FormateCSS/' + fileName + '.css'
-      document.head.appendChild(cssLink)
-    }
-  }
-}
+const formats = require('./classes/Formats')
+let format = new formats()
 
 ipcRenderer.on('toPrint', function (event, format, data, dataMan) {
   main(format, data, dataMan)
@@ -161,27 +146,5 @@ function addUsername () {
 }
 
 function addDate () {
-  let today = new Date()
-  let dd = today.getDate()
-  let mm = today.getMonth() + 1
-  let yyyy = today.getFullYear()
-
-  if (dd < 10) {
-    dd = '0' + dd
-  }
-
-  if (mm < 10) {
-    mm = '0' + mm
-  }
-
-  today = dd + '.' + mm + '.' + yyyy
-  document.getElementById('currentDate').innerHTML = today
-}
-
-function loadFormats () {
-  let files = fs.readdirSync('C:\\Export\\SignaturenDruck\\Formate')
-  for (let file of files) {
-    let fileName = file.split('.json')[0]
-    formats[fileName] = JSON.parse(fs.readFileSync('C:\\Export\\SignaturenDruck\\Formate\\' + file, 'utf8'))
-  }
+  document.getElementById('currentDate').innerHTML = moment().now().format('DD.MM.YYYY')
 }

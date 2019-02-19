@@ -1,3 +1,4 @@
+const {net} = require('electron')
 
 const createMultipleLines = require('./createMultipleLines.js')
 

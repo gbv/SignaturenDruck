@@ -19,7 +19,7 @@ class Preview {
     return fs.readFileSync(file)
   }
 
-  changePreview (id, file, formats) {
+  changePreview (id, file, formats, manualSignatures) {
     this.removeSignaturePreview()
 
     let format = document.getElementById('templateSelect_' + id).value
@@ -32,7 +32,7 @@ class Preview {
       document.getElementsByClassName('innerBox')[0].className = 'innerBox'
     } else {
       let cleanId = id.split('m_')[1]
-      this.checkIfNoIndent(cleanId, formats[formatName].lines)
+      this.checkIfNoIndent(cleanId, manualSignatures, formats[formatName].lines)
     }
   }
 
@@ -88,9 +88,9 @@ class Preview {
     }
   }
 
-  checkIfNoIndent (cleanId, formatLines) {
-    this.showData(this._manualSignature[cleanId].lineTxts, formatLines)
-    if (this._manualSignature[cleanId].removeIndent) {
+  checkIfNoIndent (cleanId, manualSignatures, formatLines) {
+    this.showData(manualSignatures[cleanId].lineTxts, formatLines)
+    if (manualSignatures[cleanId].removeIndent) {
       document.getElementsByClassName('innerBox')[0].className = 'innerBox noIndent'
     } else {
       document.getElementsByClassName('innerBox')[0].className = 'innerBox'
