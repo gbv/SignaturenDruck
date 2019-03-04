@@ -14,131 +14,41 @@ const username = require('username')
 // required for ipc calls to the main process
 const { ipcRenderer, remote } = require('electron')
 
-const XRegExp = require('xregexp')
-
-const config = remote.getGlobal('config')
-
 const moment = require('moment')
 
 const formats = require('./classes/Formats')
-let format = new formats()
 
-ipcRenderer.on('toPrint', function (event, format, data, dataMan) {
-  main(format, data, dataMan)
-})
-
-function main (format, data, dataMan) {
-  let file = ''
-  if (fs.existsSync('signaturen.json')) {
-    file = fs.readFileSync('signaturen.json', 'utf8')
-  }
+ipcRenderer.on('toPrint', function (event, formatInformation, printInformation) {
   addUsername()
   addDate()
+  formats.addStyleFiles()
+  createPage(formatInformation, printInformation)
+})
 
-  createPage(format, data, dataMan, file)
-}
-
-function createPage (format, data, dataMan, file) {
-  addStyle(format)
-  _.forEach(data, function (value) {
-    for (let count = 0; count < value.count; count++) {
+function createPage (formatInformation, printInformation) {
+  document.getElementById('toPrint').className = 'format_' + formatInformation.name
+  let emptyLine = document.createElement('br')
+  _.each(printInformation, data => {
+    for(let i = 1; i <= data.count; i++ ) {
       let div = document.createElement('div')
-      div.className = 'innerBox'
-      div.id = value.id + '.' + count
-      let linesData = getData(value.id, formats[format])
-      if (String(value.id).includes('m_')) {
-        if (dataMan[value.id.split('m_')[1]].removeIndent) {
-          div.className = 'innerBox noIndent'
-        }
-      }
-      if (Number(formats[format].lines) === 1) {
+      data.removeIndent !== undefined ? div.className = 'innerBox noIndent' : div.className = 'innerBox'
+      div.id = data.id + '_' + i
+      if(data.data.txtLength > 1) {
+        _.each(data.data.txt, (line, i) => {
+          let p = document.createElement('p')
+          p.className = 'line_' + (parseInt(i) + 1)
+          line === '' ? p.appendChild(emptyLine) : p.innerHTML = line
+          div.appendChild(p)
+        })
+      } else {
         let p = document.createElement('p')
         p.className = 'line_1'
-        if (Array.isArray(linesData)) {
-          if (config.get('mode.useMode') && config.get('mode.defaultMode') === 'thulbMode') {
-            p.innerHTML = linesData[0].split(config.get('newLineAfter')).join(' ')
-          } else {
-            p.innerHTML = linesData[0]
-          }
-        } else {
-          p.innerHTML = linesData
-        }
+        p.innerHTML = data.data.txtOneLine
         div.appendChild(p)
-        document.getElementById('toPrint').appendChild(div)
-      } else {
-        let i = 1
-        createLines(div, formats[format].lines, value.id, count)
-        document.getElementById('toPrint').appendChild(div)
-        if (Array.isArray(linesData)) {
-          linesData.forEach(lineTxt => {
-            let line = document.getElementById(value.id + '.' + count + '_line_' + i)
-            if (lineTxt !== '') {
-              line.innerHTML = lineTxt
-            }
-            i++
-          })
-        } else {
-          let line = document.getElementById(value.id + '.' + count + '_line_' + i)
-          if (config.get('mode.useMode') && config.get('mode.defaultMode') === 'thulbMode') {
-            line.innerHTML = linesData.split(config.get('newLineAfter')).join(' ')
-          } else {
-            line.innerHTML = linesData
-          }
-        }
       }
+      document.getElementById('toPrint').appendChild(div)
     }
   })
-
-  function createLines (innerBox, formatLines, id, count) {
-    for (let i = 1; i <= formatLines; i++) {
-      let line = document.createElement('p')
-      line.id = id + '.' + count + '_line_' + i
-      line.className = 'line_' + i
-      let emptyLine = document.createElement('br')
-      line.appendChild(emptyLine)
-      innerBox.appendChild(line)
-    }
-  }
-
-  function getData (id, format) {
-    let lines = format.lines
-    if (id.includes('m_')) {
-      if (Number(lines) === 1) {
-        return dataMan[id.split('m_')[1]].lineTxts.join(' ')
-      } else {
-        return dataMan[id.split('m_')[1]].lineTxts
-      }
-    } else {
-      let oneLine = _.find(JSON.parse(file), { 'id': Number(id) }).txtOneLine
-      let delimiter = format.lineDelimiter
-      if (format.splitByRegEx) {
-        let regExString = ''
-        format.splitByRegEx.forEach(element => {
-          regExString += element
-        })
-        let regEx = XRegExp(regExString, 'x')
-        let lines = XRegExp.exec(oneLine, regEx)
-        if (lines !== null) {
-          if (lines.length > 1) {
-            lines.shift()
-          }
-          return lines
-        } else {
-          return oneLine
-        }
-      } else {
-        if (delimiter === '') {
-          return oneLine
-        } else {
-          return oneLine.split(delimiter)
-        }
-      }
-    }
-  }
-
-  function addStyle (fileName) {
-    document.getElementById('toPrint').className = 'format_' + fileName
-  }
 }
 
 function addUsername () {
@@ -146,5 +56,5 @@ function addUsername () {
 }
 
 function addDate () {
-  document.getElementById('currentDate').innerHTML = moment().now().format('DD.MM.YYYY')
+  document.getElementById('currentDate').innerHTML = moment().format('DD.MM.YYYY')
 }

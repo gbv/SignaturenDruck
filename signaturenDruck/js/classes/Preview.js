@@ -89,7 +89,7 @@ class Preview {
   }
 
   checkIfNoIndent (cleanId, manualSignatures, formatLines) {
-    this.showData(manualSignatures[cleanId].lineTxts, formatLines)
+    this.showData(manualSignatures[cleanId].txt, formatLines)
     if (manualSignatures[cleanId].removeIndent) {
       document.getElementsByClassName('innerBox')[0].className = 'innerBox noIndent'
     } else {

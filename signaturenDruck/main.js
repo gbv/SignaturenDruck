@@ -86,15 +86,12 @@ app.on('activate', function () {
 })
 
 // starts the printing process
-ipcMain.on('print', function (event, data, dataManualSignatures) {
-  let usedFormats = []
-  _.forEach(data, function (key, value) {
-    usedFormats.push(value)
+ipcMain.on('print', (event, dataAll) => {
+  _.each(dataAll, (data) => {
+    // console.warn(data.formatInformation)
+    // console.warn(data.printInformation)
+    printData(data.formatInformation, data.printInformation)
   })
-  _.forEach(usedFormats, format => {
-    printData(format, data[format], dataManualSignatures)
-  })
-  console.warn(usedFormats)
 })
 
 app.on('close', () => {
@@ -130,6 +127,7 @@ ipcMain.on('closeManualSignaturesWindow', function (event) {
 
 // listens on saveManualSignatures, closes the manualSignaturesWindow and passes the data along
 ipcMain.on('saveManualSignatures', function (event, data) {
+  console.warn(data)
   manualSignaturesWindow.close()
   manualSignaturesWindow = null
   mainWindow.webContents.send('addManualSignatures', data)
@@ -265,7 +263,7 @@ function createConfig () {
   config.set(configNew)
 }
 
-function printData (format, data, dataMan) {
+function printData (formatInformation, printInformation) {
   let winPrint = null
   winPrint = new BrowserWindow({width: 899, height: 900, show: false})
   winPrint.loadURL(url.format({
@@ -274,40 +272,42 @@ function printData (format, data, dataMan) {
     slashes: true
   }))
   winPrint.once('ready-to-show', () => {
-    winPrint.webContents.send('toPrint', format, data, dataMan)
-    winPrint.webContents.printToPDF({marginsType: 1, landscape: true, pageSize: { height: format.paper.height, width: format.paper.width }}, (error, data) => {
-      if (error) throw error
-      let fileName = format.name + '_' + new Date().getTime() + '.pdf'
-      fs.writeFile(defaultProgramPath + fileName, data, (error) => {
-        if (error) throw error
-        let ps = new Shell({
-          executionPolicy: 'Bypass',
-          noProfile: true
-        })
-        if (!config.store.devMode) {
-          ps.addCommand('Start-Process -file "' + defaultProgramPath + '\\' + fileName + '" -Verb PrintTo "' + format.printer + '" -PassThru | %{sleep 4;$_} | kill')
-          ps.invoke().then(output => {
-            fs.unlinkSync(defaultProgramPath + '\\' + fileName)
-            mainWindow.webContents.send('printMsg', true)
-          }).catch(err => {
-            dialog.showErrorBox('Es ist ein Fehler aufgetreten.', err)
-            mainWindow.webContents.send('printMsg', false)
-            ps.dispose()
-          })
-        } else {
-          ps.addCommand('Start-Process -file "' + defaultProgramPath + '\\' + fileName + '"')
-          ps.invoke().then(output => { mainWindow.webContents.send('printMsg', true); ps.dispose() }).catch(err => {
-            dialog.showErrorBox('Es ist ein Fehler aufgetreten.', err)
-            mainWindow.webContents.send('printMsg', false)
-            ps.dispose()
-          })
-        }
-      })
-    })
-    if (config.store.devMode) {
-      winPrint.show()
-    }
-    winPrint = null
+    winPrint.show()
+    winPrint.webContents.send('toPrint', formatInformation, printInformation)
+    //TODO - why ist height and width vise versa?
+    // winPrint.webContents.printToPDF({marginsType: 1, landscape: true, pageSize: { height: formatInformation.paper.width, width: formatInformation.paper.height }}, (error, data) => {
+    //   if (error) throw error
+    //   let fileName = formatInformation.name + '_' + new Date().getTime() + '.pdf'
+    //   fs.writeFile(defaultProgramPath + '\\' + fileName, data, (error) => {
+    //     if (error) throw error
+    //     let ps = new Shell({
+    //       executionPolicy: 'Bypass',
+    //       noProfile: true
+    //     })
+    //     if (!config.store.devMode) {
+    //       ps.addCommand('Start-Process -file "' + defaultProgramPath + '\\' + fileName + '" -Verb PrintTo "' + formatInformation.printer + '" -PassThru | %{sleep 4;$_} | kill')
+    //       ps.invoke().then(output => {
+    //         fs.unlinkSync(defaultProgramPath + '\\' + fileName)
+    //         mainWindow.webContents.send('printMsg', true)
+    //       }).catch(err => {
+    //         dialog.showErrorBox('Es ist ein Fehler aufgetreten.', err)
+    //         mainWindow.webContents.send('printMsg', false)
+    //         ps.dispose()
+    //       })
+    //     } else {
+    //       ps.addCommand('Start-Process -file "' + defaultProgramPath + '\\' + fileName + '"')
+    //       ps.invoke().then(output => { mainWindow.webContents.send('printMsg', true); ps.dispose() }).catch(err => {
+    //         dialog.showErrorBox('Es ist ein Fehler aufgetreten.', err)
+    //         mainWindow.webContents.send('printMsg', false)
+    //         ps.dispose()
+    //       })
+    //     }
+    //   })
+    // })
+    // if (config.store.devMode) {
+    //   winPrint.show()
+    // }
+    // winPrint = null
   })
 }
 

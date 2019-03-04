@@ -3,7 +3,7 @@ const jsonfile = require('./JsonFile')
 
 class Print {
   get dataAll () {
-    return this._dataAll
+    return this._dataAll.all
   }
   constructor (file, formats, manuelSignature) {
     this.formats = formats
@@ -13,14 +13,15 @@ class Print {
       all: []
     }
     this.elements = document.querySelectorAll('[name=toPrint]')
+    this.getSelectedElementsToPrint()
   }
 
   getSelectedElementsToPrint () {
+    let wak = []
     _.each(this.elements, (k, v) => {
       let dataStructure = {
         id: '',
         count: '1',
-        removeIndent: false,
         format: '',
         isShort: false,
         data: ''
@@ -28,13 +29,14 @@ class Print {
       if (k.checked) {
         let parentRow = k.parentNode.parentNode
         dataStructure.id = v
-        dataStructure.isShort = setShort(parentRow)
         dataStructure.count = setCount(parentRow)
         dataStructure.format = setFormat.bind(this,parentRow)()
+        dataStructure.isShort = setShort(parentRow)
         dataStructure.data = setData.bind(this, parentRow)()
-        console.warn(dataStructure)
+        wak.push(dataStructure)
       }
     })
+    this._dataAll.all = setFormatInformation.bind(this,_.groupBy(wak, 'format.name'))()
   }
 }
 
@@ -43,11 +45,25 @@ function setShort (parentRow) {
   else return false
 }
 function setCount (parentRow) {
-  return parentRow.getElementsByClassName('printCountCell')[0].firstChild.value
+  return parseInt(parentRow.getElementsByClassName('printCountCell')[0].firstChild.value)
 }
 
 function setFormat (parentRow) {
   return this.formats[parentRow.getElementsByClassName('select')[0].firstChild.value.toString()]
+}
+
+function setFormatInformation (arr) {
+  let b = []
+  _.each(arr, (v,k) => {
+    let structure = {
+      formatInformation : '',
+      printInformation: ''
+    }
+    structure.formatInformation = this.formats[k]
+    structure.printInformation = v
+    b.push(structure)
+  })
+  return b
 }
 
 function setData (parentRow) {

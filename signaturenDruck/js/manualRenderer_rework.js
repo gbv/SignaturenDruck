@@ -1,10 +1,10 @@
 // required for ipc calls to the main process
 const { ipcRenderer, remote } = require('electron')
 
-const fs = require('fs')
-
 const config = remote.getGlobal('config')
-const defaultProgramPath = remote.getGlobal('defaultProgramPath')
+
+const f = require('./classes/Formats')
+let formats = new f()
 
 let object = {
   manual: []
@@ -13,11 +13,8 @@ let object = {
 // currentID
 let id = 0
 let max = 1
-let formats = []
-let selectOptions = []
 
 window.onload = function () {
-  loadFormats()
   pushFormatsToSelect()
   selectDefaultFormat()
   createByFormat(getFormatSelected().lines)
@@ -33,27 +30,9 @@ ipcRenderer.on('objMan', function (event, objMan) {
   }
 })
 
-function loadFormats () {
-  let files = fs.readdirSync(defaultProgramPath + '\\Formate')
-  for (let file of files) {
-    let fileName = file.split('.json')[0]
-    selectOptions.push(fileName)
-    formats[fileName] = JSON.parse(fs.readFileSync(defaultProgramPath + '\\Formate\\' + file, 'utf8'))
-    addStyleFile(fileName)
-  }
-
-  function addStyleFile (format) {
-    let cssLink = document.createElement('link')
-    cssLink.rel = 'stylesheet'
-    cssLink.type = 'text/css'
-    cssLink.href = defaultProgramPath + '/FormateCSS/' + format + '.css'
-    document.head.appendChild(cssLink)
-  }
-}
-
 function pushFormatsToSelect () {
   let select = document.getElementById('formatSelect')
-  selectOptions.forEach(format => {
+  formats.selectOptions.forEach(format => {
     let option = document.createElement('option')
     option.value = format
     option.innerHTML = format
@@ -128,7 +107,7 @@ function removeChildsOf (parent) {
 }
 
 function getFormatSelected () {
-  return formats[document.getElementById('formatSelect').value]
+  return formats.formats[document.getElementById('formatSelect').value]
 }
 
 function setFormatSelected () {
@@ -156,8 +135,8 @@ function loadData () {
   setFormatSelected()
   createByFormat(getFormatSelected().lines)
   let i = 1
-  while (i <= object.manual[id].lines) {
-    let txt = object.manual[id].lineTxts[i - 1]
+  while (i <= object.manual[id].txtLength) {
+    let txt = object.manual[id].txt[i - 1]
     document.getElementById('inputLine_' + i).value = txt
     document.getElementById('line_' + i).innerHTML = txt
     i++
@@ -183,9 +162,9 @@ function saveCurrent () {
   object.manual[id] = {
     'id': id,
     'format': format.name,
-    'lines': format.lines,
-    'lineTxts': lineTxts,
-    'oneLineTxt': oneLineTxt,
+    'txtLength': parseInt(format.lines),
+    'txt': lineTxts,
+    'txtOneLine': oneLineTxt,
     'removeIndent': removeIndent
   }
 }
@@ -270,11 +249,12 @@ function deleteAndExit () {
 
 function saveAndExit () {
   saveCurrent()
+
   let isEmpty = true
   if (object.manual[object.manual.length - 1] !== undefined) {
     let i = 1
-    while (i <= object.manual[object.manual.length - 1].lines) {
-      if (object.manual[object.manual.length - 1].lineTxts[i - 1] !== '') {
+    while (i <= object.manual[object.manual.length - 1].txtLength) {
+      if (object.manual[object.manual.length - 1].txt[i - 1] !== '') {
         isEmpty = false
       }
       i++

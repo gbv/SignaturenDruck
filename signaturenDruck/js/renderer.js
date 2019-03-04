@@ -9,7 +9,7 @@ const _ = require('lodash')
 const fs = require('fs')
 
 // required for ipc calls to the main process
-const {ipcRenderer, remote} = require('electron')
+const {ipcMain, ipcRenderer, remote} = require('electron')
 
 const config = remote.getGlobal('config')
 const sigJSONFile = remote.getGlobal('sigJSONFile')
@@ -148,30 +148,8 @@ function closeButton () {
 // gathers the data to print and invokes printing via ipc
 function printButton () {
   const print = new p(sigJSONFile, table.formats, table.manualSignature)
-print.getSelectedElementsToPrint()
-  // let dataAll = {
-  //   all: []
-  // }
-  //
-  // let elems = document.querySelectorAll('[name=toPrint]')
-  // for (let i = 0; i < elems.length; i++) {
-  //   if (elems[i].checked) {
-  //
-  //
-  //
-  //     let data = {
-  //       'manual': false,
-  //       'id': '',
-  //       'count': '1',
-  //       'removeIndent': false,
-  //       'format': '',
-  //       'isShort': false
-  //     }
-  //     dataAll.all.push(setData(data, i))
-  //   }
-  // }
-
-  // ipcRenderer.send('print', _.groupBy(dataAll.all, 'format'), table.manualSignature)
+  console.warn(print.dataAll)
+  ipcRenderer.send('print', print.dataAll)
 }
 
 // function to invert the print-selection

@@ -379,13 +379,13 @@ class Table {
       row = body.insertRow(i + 1)
       row.className = 'manual'
       row.id = 'manual-' + obj[i].id
-      this.createTxtCell(row, 0, ('m_' + obj[i].id), obj[i].oneLineTxt)
+      this.createTxtCell(row, 0, ('m_' + obj[i].id), obj[i].txtOneLine)
       this.createDateCell(row, 1, ('m_' + obj[i].id))
       this.createExnrCell(row, 2, ('m_' + obj[i].id))
       this.createShortShelfmarkCell(row, 3, ('m_' + obj[i].id), obj[i].size)
       this.createPrintCell(row, 4, ('m_' + obj[i].id))
       Table.createPrintCountCell(row, 5, ('m_' + obj[i].id))
-      this.createLabelSizeCell(row, 6, ('m_' + obj[i].id), obj[i].lines, obj[i].format)
+      this.createLabelSizeCell(row, 6, ('m_' + obj[i].id), obj[i].txtLength, obj[i].format)
       i++
     }
   }
