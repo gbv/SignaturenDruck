@@ -8,7 +8,8 @@
     <link rel="stylesheet" type="text/css" href="./../css/bulma.css">
     <link rel="stylesheet" type="text/css" href="./../css/index.css">
     <link rel="stylesheet" type="text/css" href="./../css/preview.css">
-    <link rel="stylesheet" type="text/css" href="C:/Export/SignaturenDruck/user.css">
+    <!-- Whats that for ??? -->
+    <!-- link rel="stylesheet" type="text/css" href="C:/Export/SignaturenDruck/user.css" -->
     <link rel="stylesheet" type="text/css" href="./../css/modal.css">
     <link rel="stylesheet" type="text/css" href="./../css/all.css">
   </head>
@@ -54,9 +55,10 @@
         </tbody>
       </table>
     </div>
+    <div id="infoBox"></div>
     <div id="container">
       <div id="buttonBox">
-        <button id="btn_create_manually" class="button">Manuelles Anlegen</button>
+        <button id="btn_createManualSignatures" class="button">Manuelles Anlegen</button>
         <br>
         <button id="btn_deleteFile" class="button">Lösche Download Datei</button>
         <br>
@@ -96,7 +98,7 @@
 
       // When the user clicks anywhere outside of the modal, close it
       window.onclick = function(event) {
-        if (event.target == modal) {
+        if (event.target === modal) {
           modal.style.display = 'none'
         }
       }

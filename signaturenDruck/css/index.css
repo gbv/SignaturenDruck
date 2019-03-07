@@ -41,6 +41,9 @@ html, body {
   margin-top: 3px;
 }
 
+#infoBox {
+    margin: 5px;
+}
 th,
 td {
   text-align: center !important;

@@ -62,16 +62,12 @@ class shelfmark {
     return this._txtOneLine
   }
   get shelfmark () {
-    return {'PPN': this._ppn, 'id': this._id, 'bigLabel': this._bigLabel, 'txtOneLine': this._txtOneLine, 'txt': this._txt, 'txtLength': this._txtLength, 'date': this._date, 'exNr': this._exNr}
+    return { 'PPN': this._ppn, 'id': this._id, 'bigLabel': this._bigLabel, 'txtOneLine': this._txtOneLine, 'txt': this._txt, 'txtLength': this._txtLength, 'date': this._date, 'exNr': this._exNr }
   }
 
   // Method
   allSet () {
-    if ((this._ppn !== '') && (this._exNr !== '') && (this._txt !== '') && (this._date !== '') && (this._txtLength !== '')) {
-      return true
-    } else {
-      return false
-    }
+    return (this._ppn !== '') && (this._exNr !== '') && (this._txt !== '') && (this._date !== '') && (this._txtLength !== '')
   }
 }
 

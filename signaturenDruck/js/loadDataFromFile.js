@@ -1,6 +1,6 @@
-// requires the electron-store module and initializes it
-const Store = require('electron-store')
-const config = new Store({cwd: 'C:\\Export\\SignaturenDruck'})
+// requires remote from electron to retrieve global var
+const { remote } = require('electron')
+const config = remote.getGlobal('config')
 // requires the dataExtract-module
 const DataExtract = require('./dataExtract.js')
 // requires the shelfmark class
@@ -31,7 +31,7 @@ module.exports = function (allLines) {
       }
       let txt = plainTxt.split(config.get('newLineAfter'))
       sig.txtLength = txt.length
-      if (config.get('thulbMode')) {
+      if (config.get('mode.useMode') && config.get('mode.defaultMode') === 'thulbMode') {
         if (txt.length === 6) {
           sig.txt = txt
           sig.txtOneLine = plainTxt
@@ -47,9 +47,10 @@ module.exports = function (allLines) {
       sig.date = extract.date(line)
     }
     if (sig.allSet()) {
-      if (config.get('thulbMode')) {
+      if (config.get('mode.useMode') && config.get('mode.defaultMode') === 'thulbMode') {
         if (sig.txtLength < 3) {
           sig.txt = createMultipleLines(plainTxt)
+          sig.txtLength = sig.txt.length
         }
       }
       obj.all.push(sig.shelfmark)

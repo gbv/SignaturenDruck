@@ -1,5 +1,5 @@
 // required for ipc calls to the main process
-const ipc = require('electron').ipcRenderer
+const { ipcRenderer } = require('electron')
 
 let objct = {
   manual: []
@@ -30,7 +30,7 @@ window.onload = function () {
   focusFirst()
 }
 
-ipc.on('objMan', function (event, objMan) {
+ipcRenderer.on('objMan', function (event, objMan) {
   if (objMan !== null) {
     objct.manual = objMan
     id = objMan.length
@@ -192,7 +192,7 @@ function deleteData () {
 
 function deleteAndExit () {
   objct.manual = null
-  ipc.send('closeManual')
+  ipcRenderer.send('closeManual')
 }
 
 function saveAndExit () {
@@ -216,7 +216,7 @@ function saveAndExit () {
   if (isEmpty) {
     delete objct.manual[indx]
   }
-  ipc.send('saveManual', objct.manual)
+  ipcRenderer.send('saveManual', objct.manual)
 }
 
 function getData () {

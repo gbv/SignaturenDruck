@@ -1,12 +1,9 @@
-const {net} = require('electron')
+const { net } = require('electron')
 
-// requires the electron-store module and initializes it
-const Store = require('electron-store')
-const config = new Store({cwd: 'C:\\Export\\SignaturenDruck'})
 const createMultipleLines = require('./createMultipleLines.js')
 
 module.exports = function (barcode) {
-  let url = config.get('SRUaddress') + '?version=1.1&operation=searchRetrieve&query=pica.bar=' + barcode + '&maximumRecords=1&recordSchema=picaxml'
+  let url = config.get('SRU.SRUAddress') + '?version=1.1&operation=searchRetrieve&query=pica.bar=' + barcode + '&maximumRecords=1&recordSchema=picaxml'
   let request = net.request(url)
   let allData = ''
   let field209A = false
@@ -112,7 +109,7 @@ module.exports = function (barcode) {
     objSRU.date = dateFromLine
     objSRU.exNr = exNr
     objSRU.plainTxt = shelfmark
-    if (config.get('thulbMode')) {
+    if (config.get('mode.useMode') && config.get('mode.defaultMode') === 'thulbMode') {
       if (objSRU.txtLength < 3) {
         objSRU.txt = createMultipleLines(shelfmark)
       }
