@@ -18,10 +18,13 @@ const moment = require('moment')
 
 const formats = require('./classes/Formats')
 
+window.onload = function () {
+  formats.addStyleFiles()
+}
+
 ipcRenderer.on('toPrint', function (event, formatInformation, printInformation) {
   addUsername()
   addDate()
-  formats.addStyleFiles()
   createPage(formatInformation, printInformation)
 })
 
@@ -33,7 +36,7 @@ function createPage (formatInformation, printInformation) {
       let div = document.createElement('div')
       data.removeIndent !== undefined ? div.className = 'innerBox noIndent' : div.className = 'innerBox'
       div.id = data.id + '_' + i
-      if (data.data.txtLength > 1) {
+      if (formatInformation.lines > 1) {
         _.each(data.data.txt, (line, i) => {
           let p = document.createElement('p')
           p.className = 'line_' + (parseInt(i) + 1)
