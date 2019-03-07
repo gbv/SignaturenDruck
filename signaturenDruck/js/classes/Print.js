@@ -69,7 +69,7 @@ function setFormatInformation (arr) {
 function setData (current, parentRow) {
   let ppn = parentRow.id.split('-')
   let id = current.id.split('_')
-  if (id[0] === 'manual') return this.manualSignature[id[1]]
+  if (ppn[0] === 'manual') return this.manualSignature[id[2]]
   else return _.find(this.jsonFile, { id: parseInt(id[1]), PPN: ppn[0] })
 }
 
