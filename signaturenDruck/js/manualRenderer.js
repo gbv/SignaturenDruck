@@ -1,113 +1,125 @@
 // required for ipc calls to the main process
-const { ipcRenderer } = require('electron')
+const { ipcRenderer, remote } = require('electron')
 
-let objct = {
+const config = remote.getGlobal('config')
+
+const f = require('./classes/Formats')
+let formats = new f()
+
+let object = {
   manual: []
 }
 
+// currentID
 let id = 0
 let max = 1
 
 window.onload = function () {
-  let radioButtons = document.getElementsByName('numberOfLines')
-  for (let i = 0; radioButtons[ i ]; i++) {
-    radioButtons[ i ].onclick = f
-  }
-
-  for (let i = 1; i <= 6; i++) {
-    f()
-    document.getElementById('line_' + i).addEventListener('keyup', function (event) {
-      if (document.getElementById('line_' + i).value !== '') {
-        document.getElementById('line' + i).innerHTML = document.getElementById('line_' + i).value
-      } else {
-        document.getElementById('line' + i).innerHTML = ' '
-      }
-    })
-  }
-
-  document.getElementById('countCurrent').innerHTML = 1
-  document.getElementById('countMax').innerHTML = 1
-  focusFirst()
+  pushFormatsToSelect()
+  selectDefaultFormat()
+  createByFormat(getFormatSelected().lines)
 }
 
 ipcRenderer.on('objMan', function (event, objMan) {
   if (objMan !== null) {
-    objct.manual = objMan
+    object.manual = objMan
     id = objMan.length
     max = objMan.length + 1
     setCounters()
-    document.getElementById('btn_previous').disabled = false
+    enableBtnPrevious()
   }
 })
 
-function f () {
-  let radioButtons = document.getElementsByName('numberOfLines')
-  for (let i = 0, length = radioButtons.length; i < length; i++) {
-    if (radioButtons[i].checked) {
-      showInputs(radioButtons[i].value)
-      document.getElementById('previewBox').classList = ''
-      if (radioButtons[i].value === 1) {
-        document.getElementById('previewBox').className = 'small center'
-      } else if (radioButtons[i].value === 3) {
-        document.getElementById('previewBox').className = 'small indent'
-      } else {
-        document.getElementById('previewBox').className = 'big indent'
+function pushFormatsToSelect () {
+  let select = document.getElementById('formatSelect')
+  formats.selectOptions.forEach(format => {
+    let option = document.createElement('option')
+    option.value = format
+    option.innerHTML = format
+    select.appendChild(option)
+  })
+  select.onchange = function () { createByFormat(getFormatSelected().lines) }
+}
+
+function createByFormat (numberOfLines) {
+  removeInputLines()
+  removePreviewLines()
+  createInputLines(numberOfLines)
+  createPreviewLines(numberOfLines)
+  applyFormatStyle()
+  addEventListener(numberOfLines)
+
+  function addEventListener (numberOfLines) {
+    for (let i = 1; i <= numberOfLines; i++) {
+      let input = document.getElementById('inputLine_' + i)
+      let line = document.getElementById('line_' + i)
+      input.addEventListener('keyup', function (event) {
+        line.innerHTML = input.value
+      })
+    }
+  }
+  function applyFormatStyle () {
+    let format = getFormatSelected()
+    document.getElementById('previewBox').className = 'format_' + format.name
+  }
+  function createPreviewLines (numberOfLines) {
+    let innerPreviewBox = document.getElementById('innerPreviewBox')
+    let i = 1
+    while (i <= numberOfLines) {
+      let line = document.createElement('p')
+      line.id = 'line_' + i
+      line.className = 'line_' + i
+      innerPreviewBox.appendChild(line)
+      i++
+    }
+  }
+  function createInputLines (numberOfLines) {
+    let box = document.getElementById('editorBox')
+    let i = 1
+    while (i <= numberOfLines) {
+      let input = document.createElement('input')
+      input.id = 'inputLine_' + i
+      input.className = 'input'
+      input.placeholder = 'Zeile ' + i
+      input.type = 'text'
+      box.appendChild(input)
+      if (i !== numberOfLines) {
+        box.appendChild(document.createElement('br'))
       }
-      toggleChkbx()
-      break
+      i++
     }
   }
 }
 
-function focusFirst () {
-  document.getElementById('line_1').focus()
+function removePreviewLines () {
+  removeChildsOf('innerPreviewBox')
 }
 
-function showInputs (i) {
-  removeLines()
-  clearInput()
-  show(i)
+function removeInputLines () {
+  removeChildsOf('editorBox')
 }
 
-function show (i) {
-  let j = 1
-  let prevBox = document.getElementById('previewBox')
-  let line
-  while (j <= i) {
-    line = document.createElement('p')
-    line.id = 'line' + j
-    line.className = 'previewLine'
-    line.innerHTML = ' '
-    prevBox.appendChild(line)
-    document.getElementById('line_' + j).style.display = 'inline-block'
-    j++
-  }
-  i++
-  while (i <= 6) {
-    document.getElementById('line_' + i).style.display = 'none'
-    i++
+function removeChildsOf (parent) {
+  let myNode = document.getElementById(parent)
+  while (myNode.firstChild) {
+    myNode.removeChild(myNode.firstChild)
   }
 }
 
-function clearInput () {
-  let i = 1
-  while (i <= 6) {
-    if (document.getElementById('line_' + i)) {
-      document.getElementById('line_' + i).value = ''
-      document.getElementById('line_' + i).placeholder = 'Zeile ' + i
-    }
-    i++
-  }
+function getFormatSelected () {
+  return formats.formats[document.getElementById('formatSelect').value]
 }
 
-function removeLines () {
-  let i = 1
-  while (i <= 6) {
-    if (document.getElementById('line' + i)) {
-      document.getElementById('line' + i).outerHTML = ' '
-    }
-    i++
-  }
+function setFormatSelected () {
+  document.getElementById('formatSelect').value = object.manual[id].format
+}
+
+function disableBtnPrevious () {
+  document.getElementById('btn_previous').disabled = true
+}
+
+function enableBtnPrevious () {
+  document.getElementById('btn_previous').disabled = false
 }
 
 function setCounters () {
@@ -115,11 +127,57 @@ function setCounters () {
   document.getElementById('countMax').innerHTML = max
 }
 
+function focusFirst () {
+  document.getElementById('line_1').focus()
+}
+
+function loadData () {
+  setFormatSelected()
+  createByFormat(getFormatSelected().lines)
+  let i = 1
+  while (i <= object.manual[id].txtLength) {
+    let txt = object.manual[id].txt[i - 1]
+    document.getElementById('inputLine_' + i).value = txt
+    document.getElementById('line_' + i).innerHTML = txt
+    i++
+  }
+  document.getElementById('chkbx_removeIndent').checked = !!object.manual[id].removeIndent
+  toggleIndent()
+}
+
+function saveCurrent () {
+  let lineTxts = []
+  let i = 1
+  let oneLineTxt = ''
+  let removeIndent = false
+  let format = getFormatSelected()
+  if (document.getElementById('chkbx_removeIndent').checked) {
+    removeIndent = true
+  }
+  while (i <= format.lines) {
+    lineTxts.push(document.getElementById('inputLine_' + i).value)
+    oneLineTxt += document.getElementById('inputLine_' + i).value + ' '
+    i++
+  }
+  object.manual[id] = {
+    'id': id,
+    'format': format.name,
+    'txtLength': parseInt(format.lines),
+    'txt': lineTxts,
+    'txtOneLine': oneLineTxt,
+    'removeIndent': removeIndent
+  }
+}
+
+function selectDefaultFormat () {
+  document.getElementById('formatSelect').value = config.get('defaultFormat')
+}
+
 function next () {
-  let i = 0
+  let i = 1
   let isEmpty = true
-  while (i < getNumberOfLines()) {
-    if (document.getElementById('line_' + (i + 1)).value !== '') {
+  while (i <= getFormatSelected().lines) {
+    if (document.getElementById('inputLine_' + i).value !== '') {
       isEmpty = false
     }
     i++
@@ -128,15 +186,13 @@ function next () {
     saveCurrent()
     id++
     if (id === 1) {
-      document.getElementById('btn_previous').disabled = false
+      enableBtnPrevious()
     }
-    if (objct.manual[id] !== undefined) {
-      getData()
+    if (object.manual[id] !== undefined) {
+      loadData()
     } else {
-      removeLines()
-      show(getNumberOfLines())
-      toggleChkbx()
-      clearInput()
+      selectDefaultFormat()
+      createByFormat(getFormatSelected().lines)
       max++
       focusFirst()
     }
@@ -147,10 +203,10 @@ function next () {
 function previous () {
   saveCurrent()
   if (id === 1) {
-    document.getElementById('btn_previous').disabled = true
+    disableBtnPrevious()
   }
   id--
-  getData()
+  loadData()
   setCounters()
 }
 
@@ -158,161 +214,64 @@ function deleteData () {
   reset()
   changeOrder()
 
-  function reset () {
-    objct.manual[id] = {}
-    removeLines()
-    show(getNumberOfLines())
-    clearInput()
-  }
   function changeOrder () {
     let i = id + 1
-    while (objct.manual[i] !== undefined) {
-      objct.manual[i - 1] = objct.manual[i]
-      objct.manual[i].id = i - 1
+    while (object.manual[i] !== undefined) {
+      object.manual[i - 1] = object.manual[i]
+      object.manual[i].id = i - 1
       i++
     }
-    delete objct.manual[i - 1]
+    delete object.manual[i - 1]
     if (id > 0) {
       id--
       max--
     }
     setCounters()
     if (id === 0) {
-      document.getElementById('btn_previous').disabled = true
+      disableBtnPrevious()
     }
-    if (objct.manual[id] !== undefined) {
-      getData()
+    if (object.manual[id] !== undefined) {
+      loadData()
     } else {
-      removeLines()
-      show(getNumberOfLines())
-      clearInput()
+      selectDefaultFormat()
+      createByFormat(getFormatSelected().lines)
     }
+  }
+  function reset () {
+    object.manual[id] = {}
   }
 }
 
 function deleteAndExit () {
-  objct.manual = null
-  ipcRenderer.send('closeManual')
+  object.manual = null
+  ipcRenderer.send('closeManualSignaturesWindow')
 }
 
 function saveAndExit () {
   saveCurrent()
-  let indx = objct.manual.length - 1
-  let lastLength
+
   let isEmpty = true
-  let i = 0
-  if (objct.manual[indx] === undefined) {
-    while ((objct.manual[indx] === undefined) && (indx > 0)) {
-      indx--
+  if (object.manual[object.manual.length - 1] !== undefined) {
+    let i = 1
+    while (i <= object.manual[object.manual.length - 1].txtLength) {
+      if (object.manual[object.manual.length - 1].txt[i - 1] !== '') {
+        isEmpty = false
+      }
+      i++
     }
-  }
-  lastLength = objct.manual[indx].lineTxts.length
-  while (i < lastLength) {
-    if ((objct.manual[indx].lineTxts[i] !== '') && (objct.manual[indx].lineTxts !== undefined)) {
-      isEmpty = false
-    }
-    i++
   }
   if (isEmpty) {
-    delete objct.manual[indx]
+    delete object.manual[object.manual.length - 1]
   }
-  ipcRenderer.send('saveManual', objct.manual)
-}
-
-function getData () {
-  clearInput()
-  removeLines()
-  setLines()
-  toggleChkbx()
-  show(getNumberOfLines())
-  f()
-  loadData()
-  toggleIndent()
-}
-
-function loadData () {
-  let i = 1
-  while (i <= objct.manual[id].lines) {
-    let txt = objct.manual[id].lineTxts[i - 1]
-    document.getElementById('line_' + i).value = txt
-    if (txt === '' || txt === ' ') {
-      document.getElementById('line' + i).innerHTML = ' '
-    } else {
-      document.getElementById('line' + i).innerHTML = txt
-    }
-    i++
-  }
-  if (objct.manual[id].removeIndent) {
-    document.getElementById('chkbx_removeIndent').checked = true
-  }
-}
-
-function setLines () {
-  let radioButtons = document.getElementsByName('numberOfLines')
-  for (let i = 0, length = radioButtons.length; i < length; i++) {
-    if (radioButtons[i].value === objct.manual[id].lines) {
-      radioButtons[i].checked = true
-    }
-  }
-}
-
-function getNumberOfLines () {
-  let numberOfLines = document.getElementsByName('numberOfLines')
-  let numberOfLinesValue = 1
-  for (let i = 0; i < numberOfLines.length; i++) {
-    if (numberOfLines[i].checked) {
-      numberOfLinesValue = numberOfLines[i].value
-    }
-  }
-  return numberOfLinesValue
-}
-
-function toggleChkbx () {
-  let chkbx = document.getElementById('chkbx_removeIndent')
-  chkbx.disabled = false
-  chkbx.checked = false
-}
-
-function saveCurrent () {
-  let lineTxts = []
-  let numberOfLinesValue = getNumberOfLines()
-  let i = 0
-  let oneLineTxt = ''
-  let removeIndent = false
-  if (document.getElementById('chkbx_removeIndent').checked) {
-    removeIndent = true
-  }
-  while (i < (numberOfLinesValue)) {
-    let k = i + 1
-    lineTxts[i] = document.getElementById('line_' + k).value
-    oneLineTxt += document.getElementById('line_' + k).value + ' '
-    i++
-  }
-  objct.manual[id] = {
-    'id': id,
-    'size': document.getElementById('previewBox').className.split(' ')[0],
-    'lines': numberOfLinesValue,
-    'lineTxts': lineTxts,
-    'oneLineTxt': oneLineTxt,
-    'removeIndent': removeIndent
-  }
+  ipcRenderer.send('saveManualSignatures', object.manual)
 }
 
 function toggleIndent () {
   let chkbx = document.getElementById('chkbx_removeIndent')
-  let previewClassList = document.getElementById('previewBox').classList
-  if (Number(getNumberOfLines()) !== 1) {
-    if (chkbx.checked) {
-      previewClassList.remove('indent')
-    } else {
-      previewClassList.add('indent')
-    }
+  if (chkbx.checked) {
+    document.getElementById('innerPreviewBox').className = 'innerBox noIndent'
   } else {
-    if (chkbx.checked) {
-      document.getElementById('line1').style.textAlign = 'left'
-    } else {
-      document.getElementById('line1').style.textAlign = 'center'
-    }
+    document.getElementById('innerPreviewBox').className = 'innerBox'
   }
 }
 

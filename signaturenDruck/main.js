@@ -314,7 +314,7 @@ function printData (formatInformation, printInformation) {
 function createManualSignaturesWindow (objMan) {
   manualSignaturesWindow = new BrowserWindow({ width: 650, height: 420, show: false })
   manualSignaturesWindow.loadURL(url.format({
-    pathname: path.join(__dirname, 'html/manual_rework.html'),
+    pathname: path.join(__dirname, 'html/manual.html'),
     protocol: 'file',
     slashes: true
   }))
