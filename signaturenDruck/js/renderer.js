@@ -9,7 +9,7 @@ const _ = require('lodash')
 const fs = require('fs')
 
 // required for ipc calls to the main process
-const {ipcMain, ipcRenderer, remote} = require('electron')
+const { ipcMain, ipcRenderer, remote } = require('electron')
 
 const config = remote.getGlobal('config')
 const sigJSONFile = remote.getGlobal('sigJSONFile')
@@ -147,7 +147,7 @@ function closeButton () {
 // gathers the data to print and invokes printing via ipc
 function printButton () {
   const print = new p(sigJSONFile, table.formats, table.manualSignature)
-  console.warn(print.dataAll)
+  // console.warn(print.dataAll)
   ipcRenderer.send('print', print.dataAll)
 }
 
