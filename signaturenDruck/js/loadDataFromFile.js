@@ -50,6 +50,7 @@ module.exports = function (allLines) {
       if (config.get('mode.useMode') && config.get('mode.defaultMode') === 'thulbMode') {
         if (sig.txtLength < 3) {
           sig.txt = createMultipleLines(plainTxt)
+          sig.txtLength = sig.txt.length
         }
       }
       obj.all.push(sig.shelfmark)
