@@ -30,13 +30,13 @@ class Print {
         let parentRow = k.parentNode.parentNode
         dataStructure.id = v
         dataStructure.count = setCount(parentRow)
-        dataStructure.format = setFormat.bind(this,parentRow)()
+        dataStructure.format = setFormat.bind(this, parentRow)()
         dataStructure.isShort = setShort(parentRow)
         dataStructure.data = setData.bind(this, k, parentRow)()
         wak.push(dataStructure)
       }
     })
-    this._dataAll.all = setFormatInformation.bind(this,_.groupBy(wak, 'format.name'))()
+    this._dataAll.all = setFormatInformation.bind(this, _.groupBy(wak, 'format.name'))()
   }
 }
 
