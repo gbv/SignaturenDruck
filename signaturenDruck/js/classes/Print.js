@@ -32,7 +32,7 @@ class Print {
         dataStructure.count = setCount(parentRow)
         dataStructure.format = setFormat.bind(this,parentRow)()
         dataStructure.isShort = setShort(parentRow)
-        dataStructure.data = setData.bind(this, parentRow)()
+        dataStructure.data = setData.bind(this, k, parentRow)()
         wak.push(dataStructure)
       }
     })
@@ -66,10 +66,11 @@ function setFormatInformation (arr) {
   return b
 }
 
-function setData (parentRow) {
-  let id = parentRow.id.split('-')
+function setData (current, parentRow) {
+  let ppn = parentRow.id.split('-')
+  let id = current.id.split('_')
   if(id[0] === 'manual') return this.manualSignature[id[1]]
-  else return _.find(this.jsonFile, {id: parseInt(id[1]) + 1, PPN: id[0]})
+  else return _.find(this.jsonFile, {id: parseInt(id[1]), PPN: ppn[0]})
 }
 
 module.exports = Print
