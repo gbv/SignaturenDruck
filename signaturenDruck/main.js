@@ -1,4 +1,4 @@
-const { BrowserWindow , app, ipcMain, dialog } = require('electron')
+const { BrowserWindow, app, ipcMain, dialog } = require('electron')
 const path = require('path')
 const url = require('url')
 const fs = require('fs')
@@ -272,42 +272,41 @@ function printData (formatInformation, printInformation) {
     slashes: true
   }))
   winPrint.once('ready-to-show', () => {
-    winPrint.show()
     winPrint.webContents.send('toPrint', formatInformation, printInformation)
     // TODO - why ist height and width vise versa?
-    // winPrint.webContents.printToPDF({marginsType: 1, landscape: true, pageSize: { height: formatInformation.paper.width, width: formatInformation.paper.height }}, (error, data) => {
-    //   if (error) throw error
-    //   let fileName = formatInformation.name + '_' + new Date().getTime() + '.pdf'
-    //   fs.writeFile(defaultProgramPath + '\\' + fileName, data, (error) => {
-    //     if (error) throw error
-    //     let ps = new Shell({
-    //       executionPolicy: 'Bypass',
-    //       noProfile: true
-    //     })
-    //     if (!config.store.devMode) {
-    //       ps.addCommand('Start-Process -file "' + defaultProgramPath + '\\' + fileName + '" -Verb PrintTo "' + formatInformation.printer + '" -PassThru | %{sleep 4;$_} | kill')
-    //       ps.invoke().then(output => {
-    //         fs.unlinkSync(defaultProgramPath + '\\' + fileName)
-    //         mainWindow.webContents.send('printMsg', true)
-    //       }).catch(err => {
-    //         dialog.showErrorBox('Es ist ein Fehler aufgetreten.', err)
-    //         mainWindow.webContents.send('printMsg', false)
-    //         ps.dispose()
-    //       })
-    //     } else {
-    //       ps.addCommand('Start-Process -file "' + defaultProgramPath + '\\' + fileName + '"')
-    //       ps.invoke().then(output => { mainWindow.webContents.send('printMsg', true); ps.dispose() }).catch(err => {
-    //         dialog.showErrorBox('Es ist ein Fehler aufgetreten.', err)
-    //         mainWindow.webContents.send('printMsg', false)
-    //         ps.dispose()
-    //       })
-    //     }
-    //   })
-    // })
-    // if (config.store.devMode) {
-    //   winPrint.show()
-    // }
-    // winPrint = null
+    winPrint.webContents.printToPDF({ marginsType: 1, landscape: true, pageSize: { height: formatInformation.paper.width, width: formatInformation.paper.height } }, (error, data) => {
+      if (error) throw error
+      let fileName = formatInformation.name + '_' + new Date().getTime() + '.pdf'
+      fs.writeFile(defaultProgramPath + '\\' + fileName, data, (error) => {
+        if (error) throw error
+        let ps = new Shell({
+          executionPolicy: 'Bypass',
+          noProfile: true
+        })
+        if (!config.store.devMode) {
+          ps.addCommand('Start-Process -file "' + defaultProgramPath + '\\' + fileName + '" -Verb PrintTo "' + formatInformation.printer + '" -PassThru | %{sleep 4;$_} | kill')
+          ps.invoke().then(output => {
+            fs.unlinkSync(defaultProgramPath + '\\' + fileName)
+            mainWindow.webContents.send('printMsg', true)
+          }).catch(err => {
+            dialog.showErrorBox('Es ist ein Fehler aufgetreten.', err)
+            mainWindow.webContents.send('printMsg', false)
+            ps.dispose()
+          })
+        } else {
+          ps.addCommand('Start-Process -file "' + defaultProgramPath + '\\' + fileName + '"')
+          ps.invoke().then(output => { mainWindow.webContents.send('printMsg', true); ps.dispose() }).catch(err => {
+            dialog.showErrorBox('Es ist ein Fehler aufgetreten.', err)
+            mainWindow.webContents.send('printMsg', false)
+            ps.dispose()
+          })
+        }
+      })
+    })
+    if (config.store.devMode) {
+      winPrint.show()
+    }
+    winPrint = null
   })
 }
 
