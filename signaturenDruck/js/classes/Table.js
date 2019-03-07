@@ -244,13 +244,9 @@ class Table {
       select.value = format
     } else {
       if (config.get('mode.useMode') && config.get('mode.defaultMode') === 'thulbMode') {
-        if (Number(lines) <= 2) {
+        if (Number(lines) <= 3) {
           if (this.printers.printers['thulb_klein_1']) {
             select.value = 'thulb_klein_1'
-          }
-        } else if (Number(lines) === 3) {
-          if (this.printers.printers['thulb_klein']) {
-            select.value = 'thulb_klein'
           }
         } else if (Number(lines) <= 6) {
           if (this.printers.printers['thulb_gross']) {
