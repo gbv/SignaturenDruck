@@ -30,7 +30,6 @@ let table = new t(sigJSONFile)
 
 // function on window load
 window.onload = function () {
-
   if (config.get('devMode')) {
     document.getElementById('devMode').style.display = 'block'
   }
@@ -106,19 +105,19 @@ ipcRenderer.on('addSRUdata', function (event, data) {
   }
 })
 
-//refresh table by given file
+// refresh table by given file
 function refreshDownloadFile () {
   table.refreshDownloadFile()
 }
 
-//clear written local signature - json file
+// clear written local signature - json file
 function clearDownloadFileTable () {
   objSRU.all = []
   table.clearDownloadFile()
 }
 
-//TODO Refactor
-//remove download file
+// TODO Refactor
+// remove download file
 function deleteFile () {
   if (document.getElementById('fileToRead').files[0]) {
     deleteFromPath(document.getElementById('fileToRead').files[0].path)
@@ -156,7 +155,7 @@ function printButton () {
 function invertPrintingSelection () {
   let elems = document.querySelectorAll('[name=toPrint]')
   for (let i = 0; i < elems.length; i++) {
-    elems[i].checked = !elems[i].checked;
+    elems[i].checked = !elems[i].checked
   }
 }
 
@@ -170,11 +169,10 @@ function selectByDate () {
     for (let i = 0; i < elems.length; i++) {
       let elemValue = elems[i].value
       let date = document.getElementById('dateCell_' + elemValue).innerHTML
-      document.getElementById('print_' + elemValue).checked = date === pickedDateFormated;
+      document.getElementById('print_' + elemValue).checked = date === pickedDateFormated
     }
   }
 }
-
 
 // function to submit the barcode
 function submitBarcode () {

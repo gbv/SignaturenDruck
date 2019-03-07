@@ -1,6 +1,6 @@
 function sortTable (n) {
   let table = document.getElementById('signaturTable')
-  let rows,i,x,y
+  let rows, i, x, y
   let switching = true
   let shouldSwitch = false
   let dir = 'asc'

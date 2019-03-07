@@ -41,7 +41,7 @@ class Print {
 }
 
 function setShort (parentRow) {
-  if (parentRow.getElementsByClassName('shortShelfmarkCell')[0].firstChild !== null)  return parentRow.getElementsByClassName('shortShelfmarkCell')[0].firstChild.checked
+  if (parentRow.getElementsByClassName('shortShelfmarkCell')[0].firstChild !== null) return parentRow.getElementsByClassName('shortShelfmarkCell')[0].firstChild.checked
   else return false
 }
 function setCount (parentRow) {
@@ -54,9 +54,9 @@ function setFormat (parentRow) {
 
 function setFormatInformation (arr) {
   let b = []
-  _.each(arr, (v,k) => {
+  _.each(arr, (v, k) => {
     let structure = {
-      formatInformation : '',
+      formatInformation: '',
       printInformation: ''
     }
     structure.formatInformation = this.formats[k]
@@ -69,8 +69,8 @@ function setFormatInformation (arr) {
 function setData (current, parentRow) {
   let ppn = parentRow.id.split('-')
   let id = current.id.split('_')
-  if(id[0] === 'manual') return this.manualSignature[id[1]]
-  else return _.find(this.jsonFile, {id: parseInt(id[1]), PPN: ppn[0]})
+  if (id[0] === 'manual') return this.manualSignature[id[1]]
+  else return _.find(this.jsonFile, { id: parseInt(id[1]), PPN: ppn[0] })
 }
 
 module.exports = Print

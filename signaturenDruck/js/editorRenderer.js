@@ -9,7 +9,7 @@ const fs = require('fs')
 const _ = require('lodash')
 
 // required for ipc calls to the main process
-const { ipcRenderer, remote }  = require('electron')
+const { ipcRenderer, remote } = require('electron')
 
 const fontManager = require('font-manager')
 
@@ -62,7 +62,7 @@ function setPrinterSelect () {
   })
 }
 
-//TODO that's not good it's hard coded
+// TODO that's not good it's hard coded
 function getFormats () {
   let files = fs.readdirSync(defaultProgramPath + '\\Formate')
   for (let file of files) {
@@ -151,7 +151,7 @@ function loadDataFromFormat (formatName) {
   for (let i = 1; i <= format.lines; i++) {
     let k = i - 1
     document.getElementById('fontLine_' + i).value = format.linesData[k].font
-    let evt = {'target': {'id': ''}}
+    let evt = { 'target': { 'id': '' } }
     evt.target.id = '_' + i
     changeLineFont(evt)
     document.getElementById('fontSizeLine_' + i).value = format.linesData[k].fontSize
@@ -215,7 +215,7 @@ function saveConfig () {
 
   function writeToFiles () {
     let objct = setObjct()
-    fs.writeFileSync(defaultProgramPath +' \\FormateCSS\\' + document.getElementById('input_fileName').value + '.css', createCSS(objct), 'utf8')
+    fs.writeFileSync(defaultProgramPath + ' \\FormateCSS\\' + document.getElementById('input_fileName').value + '.css', createCSS(objct), 'utf8')
     fs.writeFileSync(defaultProgramPath + '\\Formate\\' + document.getElementById('input_fileName').value + '.json', JSON.stringify(objct), 'utf8')
     ipcRenderer.send('newConfig')
   }
@@ -267,7 +267,7 @@ function setObjct () {
   return newConfig
 }
 
-//TODO perhaps in an extra class? - it's too much for this file - maybe there is a library?
+// TODO perhaps in an extra class? - it's too much for this file - maybe there is a library?
 function createCSS (obj) {
   let contentCSS = ''
   contentCSS = label(contentCSS)

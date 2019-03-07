@@ -141,7 +141,7 @@ function loadData () {
     document.getElementById('line_' + i).innerHTML = txt
     i++
   }
-  document.getElementById('chkbx_removeIndent').checked = !!object.manual[id].removeIndent;
+  document.getElementById('chkbx_removeIndent').checked = !!object.manual[id].removeIndent
   toggleIndent()
 }
 

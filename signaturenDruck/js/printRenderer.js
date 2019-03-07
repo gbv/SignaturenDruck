@@ -29,11 +29,11 @@ function createPage (formatInformation, printInformation) {
   document.getElementById('toPrint').className = 'format_' + formatInformation.name
   let emptyLine = document.createElement('br')
   _.each(printInformation, data => {
-    for(let i = 1; i <= data.count; i++ ) {
+    for (let i = 1; i <= data.count; i++) {
       let div = document.createElement('div')
       data.removeIndent !== undefined ? div.className = 'innerBox noIndent' : div.className = 'innerBox'
       div.id = data.id + '_' + i
-      if(data.data.txtLength > 1) {
+      if (data.data.txtLength > 1) {
         _.each(data.data.txt, (line, i) => {
           let p = document.createElement('p')
           p.className = 'line_' + (parseInt(i) + 1)

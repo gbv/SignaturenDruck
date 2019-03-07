@@ -62,12 +62,12 @@ class Printers {
         str = str.substr(0, str.length - 2)
         str += '"'
       }
-      document.getElementById('infoBox').insertAdjacentHTML('afterbegin','<div class="notification is-warning">' + str + '</div>')
+      document.getElementById('infoBox').insertAdjacentHTML('afterbegin', '<div class="notification is-warning">' + str + '</div>')
     }
   }
 
   static isIncluded (printer, printerList) {
-    return _.indexOf(printerList, printer) !== -1;
+    return _.indexOf(printerList, printer) !== -1
   }
 }
 

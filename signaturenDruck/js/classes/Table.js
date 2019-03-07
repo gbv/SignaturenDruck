@@ -153,7 +153,7 @@ class Table {
 
   createDateCell (row, cellNr, id, date = '-') {
     let dateCell = row.insertCell(cellNr)
-    dateCell.onclick = () =>   this.preview.changePreview(id, this.file.file, this._formats, this.manualSignature)
+    dateCell.onclick = () => this.preview.changePreview(id, this.file.file, this._formats, this.manualSignature)
     dateCell.className = 'dateCell'
     dateCell.id = 'dateCell_' + id
     dateCell.innerHTML = date
@@ -161,7 +161,7 @@ class Table {
 
   createExnrCell (row, cellNr, id, exNr = '-') {
     let isNrCell = row.insertCell(cellNr)
-    isNrCell.onclick = () =>   this.preview.changePreview(id, this.file.file, this._formats, this.manualSignature)
+    isNrCell.onclick = () => this.preview.changePreview(id, this.file.file, this._formats, this.manualSignature)
     isNrCell.className = 'isNrCell'
     isNrCell.innerHTML = exNr
   }
@@ -170,7 +170,7 @@ class Table {
     let shortShelfmarkCell = row.insertCell(cellNr)
     shortShelfmarkCell.className = 'shortShelfmarkCell'
     if (config.get('mode.useMode')) {
-      if(config.get('mode.defaultMode') === 'thulbMode') {
+      if (config.get('mode.defaultMode') === 'thulbMode') {
         if (!size) {
           if (!String(id).includes('m_')) {
             let input = document.createElement('input')
@@ -180,21 +180,20 @@ class Table {
             input.value = id
             input.onclick = () => {
               Table.changeDropdownFormat(id)
-               this.preview.changePreview(id, this.file.file, this._formats, this.manualSignature)
+              this.preview.changePreview(id, this.file.file, this._formats, this.manualSignature)
             }
             shortShelfmarkCell.appendChild(input)
           } else {
-            shortShelfmarkCell.onclick = () =>   this.preview.changePreview(id, this.file.file, this._formats, this.manualSignature)
+            shortShelfmarkCell.onclick = () => this.preview.changePreview(id, this.file.file, this._formats, this.manualSignature)
           }
         } else {
-          shortShelfmarkCell.onclick = () =>   this.preview.changePreview(id, this.file.file, this._formats, this.manualSignature)
+          shortShelfmarkCell.onclick = () => this.preview.changePreview(id, this.file.file, this._formats, this.manualSignature)
         }
       } else {
-        //TODO USE MODE CLASS TO GENERATE UR OWN MODE - HAS TO BE ALWAYS OWN MODE THAT WAS MADE BY THIS CLASS
+        // TODO USE MODE CLASS TO GENERATE UR OWN MODE - HAS TO BE ALWAYS OWN MODE THAT WAS MADE BY THIS CLASS
       }
-
     } else {
-      shortShelfmarkCell.onclick =  () =>   this.preview.changePreview(id, this.file.file, this._formats, this.manualSignature)
+      shortShelfmarkCell.onclick = () => this.preview.changePreview(id, this.file.file, this._formats, this.manualSignature)
     }
   }
 
@@ -206,7 +205,7 @@ class Table {
     input.type = 'checkbox'
     input.name = 'toPrint'
     input.value = id
-    input.onclick =  () =>   this.preview.changePreview(id, this.file.file, this._formats, this.manualSignature)
+    input.onclick =  () => this.preview.changePreview(id, this.file.file, this._formats, this.manualSignature)
     printCell.appendChild(input)
   }
 
@@ -240,7 +239,7 @@ class Table {
       }
       select.appendChild(size)
     })
-    select.onchange = () =>   this.preview.changePreview(id, this.file.file, this._formats, this.manualSignature)
+    select.onchange = () => this.preview.changePreview(id, this.file.file, this._formats, this.manualSignature)
     if (format !== '') {
       select.value = format
     } else {
@@ -259,7 +258,7 @@ class Table {
           }
         }
       } else {
-        //TODO SHOULD BE DONE BY MODE CLASS TO CREATE UR OWN MODE BASED ON YOUR FORMATS
+        // TODO SHOULD BE DONE BY MODE CLASS TO CREATE UR OWN MODE BASED ON YOUR FORMATS
         select.value = config.get('defaultFormat')
       }
     }
@@ -315,7 +314,6 @@ class Table {
     }
   }
 
-
   readDownloadFile (path) {
     if (fs.existsSync(path)) {
       if (!fs.existsSync(this.file.file)) {
@@ -342,7 +340,7 @@ class Table {
         document.getElementById('defaultPath').innerHTML = 'nicht vorhanden'
       }
     }
-    if(this._manualSignature.checkManualSignatures()) this.addManualSignaturesToTable(this._manualSignature.signatures)
+    if (this._manualSignature.checkManualSignatures()) this.addManualSignaturesToTable(this._manualSignature.signatures)
   }
 
   clearDownloadFile () {

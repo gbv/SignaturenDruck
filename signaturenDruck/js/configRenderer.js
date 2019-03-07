@@ -11,7 +11,6 @@ const _ = require('lodash')
 // required for ipc calls to the main process
 const { ipcRenderer } = require('electron')
 
-
 window.onload = function () {}
 
 function close () {

@@ -27,7 +27,7 @@ class Preview {
     this.myNode.className = 'format_' + format
 
     if (!String(id).includes('m_')) {
-      let found = _.find(JSON.parse(Preview.readFile(file)), {'id': Number(id)})
+      let found = _.find(JSON.parse(Preview.readFile(file)), { 'id': Number(id) })
       this.searchAndShow(found, formats[formatName].lines, this.getLinesByFormat(formats[formatName], found.txtOneLine))
       document.getElementsByClassName('innerBox')[0].className = 'innerBox'
     } else {
@@ -133,20 +133,18 @@ class Preview {
       }
     }
   }
-
 }
 
 /*
 Private Area
  */
-function removeOld(node) {
+function removeOld (node) {
   while (node.firstChild) {
     node.removeChild(node.firstChild)
   }
 }
 
-function createPreviewLines(innerBox, formatLines)
-{
+function createPreviewLines (innerBox, formatLines) {
   for (let i = 1; i <= formatLines; i++) {
     let line = document.createElement('p')
     line.id = 'line_' + i

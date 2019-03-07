@@ -6,14 +6,14 @@ const _ = require('lodash')
 const Store = require('electron-store')
 
 const defaultProgramPath = 'C:\\SignaturenDruck'
-//Use a default path
-const config = new Store({cwd: defaultProgramPath})
+// Use a default path
+const config = new Store({ cwd: defaultProgramPath })
 
 const Shell = require('node-powershell')
 
 require('electron-context-menu')({
   prepend: (params, BrowserWindow) => [{
-    visible: false,
+    visible: false
   }],
   labels: {
     cut: 'Ausschneiden',
@@ -189,13 +189,13 @@ function createWindow () {
   checkDir('./tmp')
   checkDir(defaultProgramPath)
   checkDir(defaultProgramPath + '\\Formate')
-  checkDir(defaultProgramPath +'\\FormateCSS')
+  checkDir(defaultProgramPath + '\\FormateCSS')
   checkConfig()
   // Create the browser window.
   if (!config.store.devMode) {
-    mainWindow = new BrowserWindow({width: 800, height: 520, backgroundColor: '#f0f0f0'})
+    mainWindow = new BrowserWindow({ width: 800, height: 520, backgroundColor: '#f0f0f0' })
   } else {
-    mainWindow = new BrowserWindow({width: 800, height: 550, backgroundColor: '#f0f0f0'})
+    mainWindow = new BrowserWindow({ width: 800, height: 550, backgroundColor: '#f0f0f0' })
   }
 
   // and load the index.html of the app.
@@ -225,7 +225,7 @@ function deleteJSON () {
   }
 }
 
-//TODO redefine that function - that's to complex
+// TODO redefine that function - that's to complex
 // checks if config file exists, else creates one
 function checkConfig () {
   if (fs.existsSync(defaultProgramPath + '\\config.json')) {
@@ -235,7 +235,7 @@ function checkConfig () {
   } else {
     createConfig()
   }
-  //TODO should that be really the default formats
+  // TODO should that be really the default formats
   let defaultConfigs = ['thulb_gross', 'thulb_klein', 'thulb_klein_1']
   defaultConfigs.forEach(fileName => {
     checkAndCreate(defaultProgramPath + '\\Formate\\', fileName, '.json')
@@ -265,7 +265,7 @@ function createConfig () {
 
 function printData (formatInformation, printInformation) {
   let winPrint = null
-  winPrint = new BrowserWindow({width: 899, height: 900, show: false})
+  winPrint = new BrowserWindow({ width: 899, height: 900, show: false })
   winPrint.loadURL(url.format({
     pathname: path.join(__dirname, 'html/print.html'),
     protocol: 'file:',
@@ -274,7 +274,7 @@ function printData (formatInformation, printInformation) {
   winPrint.once('ready-to-show', () => {
     winPrint.show()
     winPrint.webContents.send('toPrint', formatInformation, printInformation)
-    //TODO - why ist height and width vise versa?
+    // TODO - why ist height and width vise versa?
     // winPrint.webContents.printToPDF({marginsType: 1, landscape: true, pageSize: { height: formatInformation.paper.width, width: formatInformation.paper.height }}, (error, data) => {
     //   if (error) throw error
     //   let fileName = formatInformation.name + '_' + new Date().getTime() + '.pdf'
@@ -313,7 +313,7 @@ function printData (formatInformation, printInformation) {
 
 // creates the manualSignaturesWindow
 function createManualSignaturesWindow (objMan) {
-  manualSignaturesWindow = new BrowserWindow({width: 650, height: 420, show: false})
+  manualSignaturesWindow = new BrowserWindow({ width: 650, height: 420, show: false })
   manualSignaturesWindow.loadURL(url.format({
     pathname: path.join(__dirname, 'html/manual_rework.html'),
     protocol: 'file',
@@ -327,7 +327,7 @@ function createManualSignaturesWindow (objMan) {
 
 // creates the configWindow
 function createConfigWindow () {
-  configWindow = new BrowserWindow({width: 800, height: 950, show: false})
+  configWindow = new BrowserWindow({ width: 800, height: 950, show: false })
   configWindow.loadURL(url.format({
     pathname: path.join(__dirname, 'html/config.html'),
     protocol: 'file',
@@ -340,7 +340,7 @@ function createConfigWindow () {
 
 // creates the editorConfig
 function createEditorWindow () {
-  editorWindow = new BrowserWindow({width: 800, height: 950, show: false})
+  editorWindow = new BrowserWindow({ width: 800, height: 950, show: false })
   editorWindow.loadURL(url.format({
     pathname: path.join(__dirname, 'html/editor.html'),
     protocol: 'file',
