@@ -21,7 +21,7 @@ module.exports = function (allLines) {
     let first4 = extract.firstFour(line)
     if (first4 === '0100') {
       sig.ppn = ppnAktuell = extract.ppn(line)
-    } else if (first4 >= 7001 && first4 <= 7099) {
+    } else if (first4.substring(0, 1) === 'E' && first4.substring(1, 4) >= 1 && first4.substring(1, 4) <= 999) {
       sig.exNr = extract.exNr(line)
     } else if (first4 === '7100') {
       plainTxt = extract.txt(line)
@@ -43,7 +43,7 @@ module.exports = function (allLines) {
         sig.txt = txt
         sig.txtOneLine = plainTxt
       }
-    } else if (first4 === '7901') {
+    } else if (first4 === '7903') {
       sig.date = extract.date(line)
     }
     if (sig.allSet()) {

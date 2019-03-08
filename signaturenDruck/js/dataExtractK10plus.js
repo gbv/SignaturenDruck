@@ -15,52 +15,19 @@ class dataExtractK10plus {
 
   // extracts the exNr
   exNr (str) {
-    // regex defines 2 groups
-    let regex = /^(\d{4})(.*)$/
-
-    // returns the  first regex group
-    return str.replace(regex, '$1')
+    // the string is something like E001, so we only need char 1-3
+    return str.substring(1, 4)
   }
 
   // extracts the signature text
   txt (str) {
-    // removes the first 4 numbers and following spaces
-    let regex = /^(\d{4}\s\s*)(.*)(\s*)$/
+    // group $1 - everything till $a ($a included)
+    // group $2 - everything till $ ($excluded), that's what we are after, the shelfmarktxt
+    // group $3 - everything else
+    let regex = /^(\d{4}\s.*\$a)(.[^$]*)(.*)$/
     str = str.replace(regex, '$2')
-
-    // removes @ and everything that follows
-    regex = /^(.[^@]*)(.*)$/
-    str = str.replace(regex, '$1')
-
     // removes leading and following whitespaces
     str = str.trim()
-
-    let foundAt = str.indexOf('/')
-    if (foundAt !== -1) {
-      let controlIndex = str.indexOf('!')
-      if ((controlIndex !== -1) && (controlIndex > foundAt)) {
-        str = str.substr(foundAt + 1)
-      }
-    }
-
-    foundAt = str.indexOf('#')
-    if (foundAt !== -1) {
-      str = str.substr(foundAt + 1)
-    }
-
-    if (str.startsWith('$')) {
-      foundAt = str.indexOf('$', 1)
-      if (foundAt !== -1) {
-        str = str.substr(foundAt + 1)
-      }
-    }
-
-    if (str.startsWith('!')) {
-      foundAt = str.indexOf('!', 1)
-      if (foundAt !== -1) {
-        str = str.substr(foundAt + 1)
-      }
-    }
 
     return str
   }
