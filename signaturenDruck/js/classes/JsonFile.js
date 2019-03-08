@@ -1,6 +1,14 @@
 const fs = require('fs')
 const _ = require('lodash')
-const loadDataFromFile = require('../loadDataFromFile')
+const { remote } = require('electron')
+const config = remote.getGlobal('config')
+let loadDataFromFile
+
+if (config.get('useK10plus')) {
+  loadDataFromFile = require('../loadDataFromFileK10plus')
+} else {
+  loadDataFromFile = require('../loadDataFromFileOld')
+}
 
 class JsonFile {
   /*

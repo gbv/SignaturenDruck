@@ -28,6 +28,7 @@ const configNew = {
   defaultFormat: 'thulb_gross',
   sortByPPN: false,
   newLineAfter: ':',
+  useK10plus: false,
   modal: {
     showModal: true,
     modalTxt: 'Die ausgewählten Signaturen wurden gedruckt.'
@@ -55,7 +56,7 @@ const configNew = {
     showLocation: false,
     showLoanIndication: false
   },
-  'devMode': false
+  devMode: false
 }
 
 // name of signature storage json
