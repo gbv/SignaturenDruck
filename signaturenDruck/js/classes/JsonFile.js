@@ -5,9 +5,9 @@ const config = remote.getGlobal('config')
 let loadDataFromFile
 
 if (config.get('useK10plus')) {
-  loadDataFromFile = require('../loadDataFromFileK10plus')
+  loadDataFromFile = require('../K10plus/loadDataFromFileK10plus')
 } else {
-  loadDataFromFile = require('../loadDataFromFileOld')
+  loadDataFromFile = require('../preK10plus/loadDataFromFileOld')
 }
 
 class JsonFile {

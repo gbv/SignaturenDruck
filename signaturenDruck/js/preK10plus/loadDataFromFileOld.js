@@ -2,11 +2,11 @@
 const { remote } = require('electron')
 const config = remote.getGlobal('config')
 // requires the dataExtractOld-module
-const DataExtractOld = require('./dataExtractOld.js')
+const DataExtractOld = require('./preK10plus/dataExtractOld.js/index.js')
 // requires the shelfmark class
-const Shelfmark = require('./shelfmark.js')
-const getLabelSize = require('./getLabelSize.js')
-const createMultipleLines = require('./createMultipleLines.js')
+const Shelfmark = require('../shelfmark.js')
+const getLabelSize = require('../getLabelSize.js')
+const createMultipleLines = require('../createMultipleLines.js')
 
 module.exports = function (allLines) {
   let obj = {
