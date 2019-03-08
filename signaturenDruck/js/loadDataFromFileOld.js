@@ -1,8 +1,8 @@
 // requires remote from electron to retrieve global var
 const { remote } = require('electron')
 const config = remote.getGlobal('config')
-// requires the dataExtract-module
-const DataExtract = require('./dataExtract.js')
+// requires the dataExtractOld-module
+const DataExtractOld = require('./dataExtractOld.js')
 // requires the shelfmark class
 const Shelfmark = require('./shelfmark.js')
 const getLabelSize = require('./getLabelSize.js')
@@ -13,7 +13,7 @@ module.exports = function (allLines) {
     all: []
   }
   let sig = new Shelfmark()
-  let extract = new DataExtract()
+  let extract = new DataExtractOld()
   let ppnAktuell = ''
   let plainTxt = ''
 
