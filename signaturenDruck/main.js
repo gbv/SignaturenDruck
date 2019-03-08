@@ -33,19 +33,9 @@ const configNew = {
     showModal: true,
     modalTxt: 'Die ausgewählten Signaturen wurden gedruckt.'
   },
-  file: {
-    signatureCategory: '7100',
-    subfieldLocation: '$f',
-    subfieldSignature: '$a',
-    subfieldLoanIndication: '$d'
-  },
   SRU: {
     useSRU: false,
-    SRUAddress: 'http://sru.gbv.de/opac-de-27',
-    signatureCategory: '209A',
-    subfieldLocation: 'f',
-    subfieldSignature: 'a',
-    subfieldLoanIndication: 'd'
+    SRUAddress: 'http://sru.gbv.de/opac-de-27'
   },
   print: {
     printImmediately: false
