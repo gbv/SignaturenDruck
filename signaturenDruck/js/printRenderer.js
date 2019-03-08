@@ -40,7 +40,7 @@ function createPage (formatInformation, printInformation) {
         let lines = data.data.txt
         for (let j = 0; j < formatInformation.lines && j < lines.length; j++) {
           let p = document.createElement('p')
-          p.className = 'line_' + (parseInt(i) + 1)
+          p.className = 'line_' + (j + 1)
           lines[j] === '' ? p.appendChild(emptyLine) : p.innerHTML = lines[j]
           div.appendChild(p)
         }
