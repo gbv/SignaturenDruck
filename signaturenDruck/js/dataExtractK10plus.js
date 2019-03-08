@@ -1,4 +1,4 @@
-class dataExtract {
+class dataExtractK10plus {
   // returns the first 4 chars
   firstFour (str) {
     return str.substring(0, 4)
@@ -75,4 +75,4 @@ class dataExtract {
   }
 }
 
-module.exports = dataExtract
+module.exports = dataExtractK10plus
