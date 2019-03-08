@@ -37,12 +37,13 @@ function createPage (formatInformation, printInformation) {
       data.removeIndent !== undefined ? div.className = 'innerBox noIndent' : div.className = 'innerBox'
       div.id = data.id + '_' + i
       if (formatInformation.lines > 1) {
-        _.each(data.data.txt, (line, i) => {
+        let lines = data.data.txt
+        for (let j = 0; j < formatInformation.lines && j < lines.length; j++) {
           let p = document.createElement('p')
           p.className = 'line_' + (parseInt(i) + 1)
-          line === '' ? p.appendChild(emptyLine) : p.innerHTML = line
+          lines[j] === '' ? p.appendChild(emptyLine) : p.innerHTML = lines[j]
           div.appendChild(p)
-        })
+        }
       } else {
         let p = document.createElement('p')
         p.className = 'line_1'

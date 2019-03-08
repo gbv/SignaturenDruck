@@ -28,23 +28,14 @@ const configNew = {
   defaultFormat: 'thulb_gross',
   sortByPPN: false,
   newLineAfter: ':',
+  useK10plus: false,
   modal: {
     showModal: true,
     modalTxt: 'Die ausgewählten Signaturen wurden gedruckt.'
   },
-  file: {
-    signatureCategory: '7100',
-    subfieldLocation: '$f',
-    subfieldSignature: '$a',
-    subfieldLoanIndication: '$d'
-  },
   SRU: {
     useSRU: false,
-    SRUAddress: 'http://sru.gbv.de/opac-de-27',
-    signatureCategory: '209A',
-    subfieldLocation: 'f',
-    subfieldSignature: 'a',
-    subfieldLoanIndication: 'd'
+    SRUAddress: 'http://sru.gbv.de/opac-de-27'
   },
   print: {
     printImmediately: false
@@ -55,7 +46,7 @@ const configNew = {
     showLocation: false,
     showLoanIndication: false
   },
-  'devMode': false
+  devMode: false
 }
 
 // name of signature storage json
