@@ -30,7 +30,6 @@ ipcRenderer.on('toPrint', function (event, formatInformation, printInformation) 
 
 function createPage (formatInformation, printInformation) {
   document.getElementById('toPrint').className = 'format_' + formatInformation.name
-  let emptyLine = document.createElement('br')
   _.each(printInformation, data => {
     for (let i = 1; i <= data.count; i++) {
       let div = document.createElement('div')
@@ -41,7 +40,7 @@ function createPage (formatInformation, printInformation) {
         for (let j = 0; j < formatInformation.lines && j < lines.length; j++) {
           let p = document.createElement('p')
           p.className = 'line_' + (j + 1)
-          lines[j] === '' ? p.appendChild(emptyLine) : p.innerHTML = lines[j]
+          lines[j] === '' ? p.appendChild(document.createElement('br')) : p.innerHTML = lines[j]
           div.appendChild(p)
         }
       } else {
