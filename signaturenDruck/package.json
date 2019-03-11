@@ -17,7 +17,7 @@
   "author": "Elias Dehler",
   "license": "CC BY",
   "devDependencies": {
-    "electron": "^2.0.13",
+    "electron": "^2.0.17",
     "electron-builder": "^20.28.4",
     "electron-rebuild": "^1.8.2"
   },
@@ -31,6 +31,7 @@
     "node-powershell": "^3.3.1",
     "sweetalert2": "^8.0.7",
     "username": "^4.0.0",
+    "xml2json": "^0.11.2",
     "xregexp": "^4.2.0"
   }
 }
