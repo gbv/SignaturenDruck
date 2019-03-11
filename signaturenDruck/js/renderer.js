@@ -100,7 +100,7 @@ ipcRenderer.on('addSRUdata', function (event, data) {
     let index = objSRU.all.length
     objSRU.all[index] = data
     objSRU.all[index].id = index + 1
-    objSRU.all[index].bigLabel = getLabelSize(data.plainTxt)
+    objSRU.all[index].bigLabel = getLabelSize(data.txtOneLine)
     table.readSRUData(objSRU.all)
   }
 })

@@ -35,7 +35,9 @@ const configNew = {
   },
   SRU: {
     useSRU: false,
-    SRUAddress: 'http://sru.gbv.de/opac-de-27'
+    SRUAddress: 'http://sru.gbv.de/opac-de-27',
+    QueryPart1: '?version=1.1&operation=searchRetrieve&query=pica.bar=',
+    QueryPart2: '&maximumRecords=1&recordSchema=picaxml'
   },
   print: {
     printImmediately: false
@@ -51,8 +53,9 @@ const configNew = {
 
 // name of signature storage json
 const sigJSONFile = 'signaturen.json'
-// requires the loadDataFromSRU-module
-const loadFromSRU = require('./js/loadDataFromSRU.js')
+
+const DataFromSRU = require('./js/classes/DataFromSRU.js')
+let sruData = new DataFromSRU()
 
 // Keep a global reference of the window object, if you don't, the window will
 // be closed automatically when the JavaScript object is garbage collected.
@@ -127,8 +130,8 @@ ipcMain.on('saveManualSignatures', function (event, data) {
 // listens on loadFromSRU, invokes the loadAndAddFromSRU function with the provided barcode
 ipcMain.on('loadFromSRU', function (event, barcode) {
   if (barcode !== '') {
-    loadFromSRU(barcode).then(function (objSRU) {
-      mainWindow.webContents.send('addSRUdata', objSRU)
+    sruData.loadData(barcode).then(function (data) {
+      mainWindow.webContents.send('addSRUdata', data)
     })
   }
 })
@@ -169,7 +172,6 @@ function closeEditorWindow () {
 
 // creates the mainWindow
 function createWindow () {
-
   /*
   Pass config STORE as global variable to all other js files
    */
