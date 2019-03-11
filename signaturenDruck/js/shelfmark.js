@@ -36,6 +36,9 @@ class shelfmark {
   set txtOneLine (str) {
     this._txtOneLine = str
   }
+  set error (str) {
+    this._error = str
+  }
 
   // Getter
   get ppn () {
@@ -61,6 +64,9 @@ class shelfmark {
   }
   get txtOneLine () {
     return this._txtOneLine
+  }
+  get error () {
+    return this._error
   }
   get shelfmark () {
     return { 'PPN': this._ppn, 'id': this._id, 'bigLabel': this._bigLabel, 'txtOneLine': this._txtOneLine, 'txt': this._txt, 'txtLength': this._txtLength, 'date': this._date, 'exNr': this._exNr, 'error': this._error }
