@@ -13,6 +13,7 @@ const username = require('username')
 
 // required for ipc calls to the main process
 const { ipcRenderer, remote } = require('electron')
+const config = remote.getGlobal('config')
 
 const moment = require('moment')
 
@@ -23,13 +24,16 @@ window.onload = function () {
 }
 
 ipcRenderer.on('toPrint', function (event, formatInformation, printInformation) {
-  addUsername()
-  addDate()
   createPage(formatInformation, printInformation)
 })
 
 function createPage (formatInformation, printInformation) {
   document.getElementById('toPrint').className = 'format_' + formatInformation.name
+  if (config.get('print.printCoverLabel')) {
+    fillCoverLabel()
+  } else {
+    removeCoverLabel()
+  }
   _.each(printInformation, data => {
     for (let i = 1; i <= data.count; i++) {
       let div = document.createElement('div')
@@ -52,6 +56,16 @@ function createPage (formatInformation, printInformation) {
       document.getElementById('toPrint').appendChild(div)
     }
   })
+}
+
+function removeCoverLabel () {
+  let coverLabel = document.getElementById('coverLabel')
+  coverLabel.parentNode.removeChild(coverLabel)
+}
+
+function fillCoverLabel () {
+  addUsername()
+  addDate()
 }
 
 function addUsername () {

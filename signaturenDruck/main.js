@@ -40,7 +40,8 @@ const configNew = {
     QueryPart2: '&maximumRecords=1&recordSchema=picaxml'
   },
   print: {
-    printImmediately: false
+    printImmediately: false,
+    printCoverLabel: true
   },
   mode: {
     useMode: true,

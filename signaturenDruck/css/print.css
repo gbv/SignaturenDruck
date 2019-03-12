@@ -1,15 +1,15 @@
 @media print {
-  #toPrint > #userCard.innerBox {
+  #toPrint > #coverLabel.innerBox {
     margin-top: -2mm;
     margin-bottom: -2mm;
   }
-  #userCard {
+  #coverLabel {
     text-align: center;
     font-family: "Arial Narrow";
     font-size: 15pt;
     font-weight: bold;
   }
-  #userCard > p {
+  #coverLabel > p {
     width: 100%
   }
   .innerBox {
