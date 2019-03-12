@@ -93,7 +93,7 @@ class shelfmark {
       'date': this._date,
       'exNr': this._exNr,
       'location': this._location,
-      'loanInd': this._loanIndication,
+      'loanIndication': this._loanIndication,
       'error': this._error
     }
   }

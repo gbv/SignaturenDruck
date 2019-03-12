@@ -49,7 +49,7 @@ class dataExtractK10plus {
   }
 
   // extracts the loanIndication
-  loanInd (str) {
+  loanIndication (str) {
     // group 2 is the loanIndication
     let regex = /^(.*\$d)(.[^$]*)(.*)$/
     return str.replace(regex, '$2').trim()

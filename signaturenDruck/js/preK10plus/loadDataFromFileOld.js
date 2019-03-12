@@ -26,7 +26,7 @@ module.exports = function (allLines) {
     } else if (first4 === '7100') {
       plainTxt = extract.txt(line)
       sig.location = extract.location(line)
-      sig.loanIndication = extract.loanInd(line)
+      sig.loanIndication = extract.loanIndication(line)
       let big = getLabelSize(plainTxt)
       if (big === false) {
         sig.bigLabel = false

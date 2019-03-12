@@ -82,7 +82,7 @@ class dataExtractOld {
   }
 
   // extracts the loanIndication
-  loanInd (str) {
+  loanIndication (str) {
     // group 2 is the loanIndication
     let regex = /^(.[^@]*)@(.*)$/
     return str.replace(regex, '$2').trim()

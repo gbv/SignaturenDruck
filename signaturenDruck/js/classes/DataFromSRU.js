@@ -51,7 +51,7 @@ class DataFromSRU {
             sig.txtLength = sig.txt.length
             sig.exNr = getExNr(data)
             sig.location = getLocation(data)
-            sig.loanIndication = getLoanInd(data)
+            sig.loanIndication = getLoanIndication(data)
           }
 
           resolve(sig.shelfmark)
@@ -85,7 +85,7 @@ function getLocation (object) {
   return _.find(parent['subfield'], { 'code': 'f' })['$t']
 }
 
-function getLoanInd (object) {
+function getLoanIndication (object) {
   let parent = _.find(object['zs:searchRetrieveResponse']['zs:records']['zs:record']['zs:recordData']['record']['datafield'], { 'tag': '209A' })
   return _.find(parent['subfield'], { 'code': 'd' })['$t']
 }
