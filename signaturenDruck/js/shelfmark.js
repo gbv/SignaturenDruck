@@ -9,6 +9,8 @@ class shelfmark {
     this._bigLabel = true
     this._txtOneLine = ''
     this._error = ''
+    this._location = ''
+    this._loanIndication = ''
   }
 
   // Setter
@@ -39,6 +41,12 @@ class shelfmark {
   set error (str) {
     this._error = str
   }
+  set location (str) {
+    this._location = str
+  }
+  set loanIndication (str) {
+    this._loanIndication = str
+  }
 
   // Getter
   get ppn () {
@@ -68,8 +76,26 @@ class shelfmark {
   get error () {
     return this._error
   }
+  get location () {
+    return this._location
+  }
+  get loanIndication () {
+    return this._loanIndication
+  }
   get shelfmark () {
-    return { 'PPN': this._ppn, 'id': this._id, 'bigLabel': this._bigLabel, 'txtOneLine': this._txtOneLine, 'txt': this._txt, 'txtLength': this._txtLength, 'date': this._date, 'exNr': this._exNr, 'error': this._error }
+    return {
+      'PPN': this._ppn,
+      'id': this._id,
+      'bigLabel': this._bigLabel,
+      'txtOneLine': this._txtOneLine,
+      'txt': this._txt,
+      'txtLength': this._txtLength,
+      'date': this._date,
+      'exNr': this._exNr,
+      'location': this._location,
+      'loanInd': this._loanIndication,
+      'error': this._error
+    }
   }
 
   // Method

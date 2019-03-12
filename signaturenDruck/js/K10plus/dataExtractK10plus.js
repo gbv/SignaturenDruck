@@ -40,6 +40,20 @@ class dataExtractK10plus {
     // returns the second regex group
     return str.replace(regex, '$2')
   }
+
+  // extracts the location
+  location (str) {
+    // group 2 is the location
+    let regex = /^(.*\$f)(.[^$]*)(.*)$/
+    return str.replace(regex, '$2').trim()
+  }
+
+  // extracts the loanIndication
+  loanInd (str) {
+    // group 2 is the loanIndication
+    let regex = /^(.*\$d)(.[^$]*)(.*)$/
+    return str.replace(regex, '$2').trim()
+  }
 }
 
 module.exports = dataExtractK10plus

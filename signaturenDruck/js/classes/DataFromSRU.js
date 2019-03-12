@@ -50,6 +50,8 @@ class DataFromSRU {
             sig.txt = sig.txtOneLine.split(config.get('newLineAfter'))
             sig.txtLength = sig.txt.length
             sig.exNr = getExNr(data)
+            sig.location = getLocation(data)
+            sig.loanIndication = getLoanInd(data)
           }
 
           resolve(sig.shelfmark)
@@ -76,6 +78,16 @@ function getTxt (object) {
 
 function getExNr (object) {
   return _.find(object['zs:searchRetrieveResponse']['zs:records']['zs:record']['zs:recordData']['record']['datafield'], { 'tag': '209A' })['occurrence']
+}
+
+function getLocation (object) {
+  let parent = _.find(object['zs:searchRetrieveResponse']['zs:records']['zs:record']['zs:recordData']['record']['datafield'], { 'tag': '209A' })
+  return _.find(parent['subfield'], { 'code': 'f' })['$t']
+}
+
+function getLoanInd (object) {
+  let parent = _.find(object['zs:searchRetrieveResponse']['zs:records']['zs:record']['zs:recordData']['record']['datafield'], { 'tag': '209A' })
+  return _.find(parent['subfield'], { 'code': 'd' })['$t']
 }
 
 function getError (object) {
