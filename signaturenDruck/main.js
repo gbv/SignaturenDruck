@@ -280,8 +280,8 @@ function printData (formatInformation, printInformation) {
         if (!config.store.devMode) {
           ps.addCommand('Start-Process -file "' + defaultProgramPath + '\\' + fileName + '" -Verb PrintTo "' + formatInformation.printer + '" -PassThru | %{sleep 4;$_} | kill')
           ps.invoke().then(output => {
-            fs.unlinkSync(defaultProgramPath + '\\' + fileName)
             mainWindow.webContents.send('printMsg', true)
+            fs.unlinkSync(defaultProgramPath + '\\' + fileName)
           }).catch(err => {
             dialog.showErrorBox('Es ist ein Fehler aufgetreten.', err)
             mainWindow.webContents.send('printMsg', false)
