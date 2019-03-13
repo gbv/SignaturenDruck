@@ -184,6 +184,7 @@ function createWindow () {
   checkDir(defaultProgramPath)
   checkDir(defaultProgramPath + '\\Formate')
   checkDir(defaultProgramPath + '\\FormateCSS')
+  checkDir(defaultProgramPath + '\\Modi')
   checkConfig()
   // Create the browser window.
   if (!config.store.devMode) {
