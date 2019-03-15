@@ -225,14 +225,21 @@ function checkConfig () {
   } else {
     createConfig()
   }
-  // TODO should that be really the default formats
-  let defaultConfigs = ['thulb_gross', 'thulb_klein', 'thulb_klein_1']
-  defaultConfigs.forEach(fileName => {
-    checkAndCreate(defaultProgramPath + '\\Formate\\', fileName, '.json')
-    checkAndCreate(defaultProgramPath + '\\FormateCSS\\', fileName, '.css')
-  })
-  // change to the defaultMode
-  checkAndCreate(defaultProgramPath + '\\Modi\\', 'thulbMode', '.json')
+  if (config.get('mode.defaultMode') === 'thulbMode') {
+    checkAndCreate(defaultProgramPath + '\\Modi\\', 'thulbMode', '.json')
+    let thulbConfigs = ['thulb_gross', 'thulb_klein', 'thulb_klein_1']
+    thulbConfigs.forEach(fileName => {
+      checkAndCreate(defaultProgramPath + '\\Formate\\', fileName, '.json')
+      checkAndCreate(defaultProgramPath + '\\FormateCSS\\', fileName, '.css')
+    })
+  } else if (config.get('mode.defaultMode') === 'defaultMode') {
+    checkAndCreate(defaultProgramPath + '\\Modi\\', 'defaultMode', '.json')
+    let defaultConfigs = ['default_klein', 'default_gross']
+    defaultConfigs.forEach(fileName => {
+      checkAndCreate(defaultProgramPath + '\\Formate\\', fileName, '.json')
+      checkAndCreate(defaultProgramPath + '\\FormateCSS\\', fileName, '.css')
+    })
+  }
   function checkAndCreate (pathName, fileName, ending) {
     if (!fs.existsSync(pathName + fileName + ending)) {
       let file = fs.readFileSync(path.join(__dirname, 'defaultFiles/' + fileName + ending), 'utf8')
