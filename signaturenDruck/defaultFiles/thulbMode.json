@@ -1,0 +1,26 @@
+{
+  "modeName": "thulbModus",
+  "subModes": [
+    {
+      "id": 0,
+      "name": "gross",
+      "format": "thulb_gross",
+      "regEx": "/^(.*):(.*):(.*):(.*):(.*):(.*)$/",
+      "result": ["$1", "$2", "$3", "$4", "$5", "$6"]
+    },
+    {
+      "id": 1,
+      "name": "klein",
+      "format": "thulb_klein",
+      "regEx": "/^(.[^\\s]?)\\s?([^\\:\\/\\s]*)\\:?\\/?\\s?(.*)$/",
+      "result": ["$1", "$2", "$3"]
+    },
+    {
+      "id": 2,
+      "name": "klein_1",
+      "format": "thulb_klein_1",
+      "regEx": "/^(.*)$/",
+      "result": ["$1"]
+    }
+  ]
+}
