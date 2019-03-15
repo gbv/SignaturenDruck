@@ -55,7 +55,7 @@ Es wird bei jedem Start des Programms geprüft ob die notwendigen Konfigurations
 Dabei handelt es sich um:  
 
 - `C:\Users\USERNAME\AppData\Local\Programs\SignaturenDruck_neu\tmp\`
-- `C:\Export\SignaturenDruck\`
+- `C:\SignaturenDruck\`
   - `./config.json`
   - `./Formate\`
     - `./thulb_gross.json`
@@ -174,7 +174,7 @@ Mit einem Klick auf `Schließen` wird das Fenster geschlossen. Wurde das Format 
 
 ## Konfig-Optionen
 
-Die `config.json` unter `C:\Export\SignaturenDruck\` bietet folgende Optionen.  
+Die `config.json` unter `C:\SignaturenDruck\` bietet folgende Optionen.  
 
 | key | Beschreibung | Standardwert |
 | :---: | --- | ---|
@@ -190,7 +190,7 @@ Die `config.json` unter `C:\Export\SignaturenDruck\` bietet folgende Optionen.
 
 ### Zeilenfestlegung mit RegEx
 
-Um bei einem Format die Zeilen mittels RegEx festzulegen muss im entsprechenden Format unter `C:\Export\SignaturenDruck\Formate\` ein neuer Schlüssel `splitByRegEx` angelegt werden. Als Beispiele dienen die Einträge von den Formaten `thulb_gross` `thulb_klein`  
+Um bei einem Format die Zeilen mittels RegEx festzulegen muss im entsprechenden Format unter `C:\SignaturenDruck\Formate\` ein neuer Schlüssel `splitByRegEx` angelegt werden. Als Beispiele dienen die Einträge von den Formaten `thulb_gross` `thulb_klein`  
 ___
 `thulb_gross`
 ```json
