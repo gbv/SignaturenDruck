@@ -118,7 +118,6 @@ ipcMain.on('closeManualSignaturesWindow', function (event) {
 
 // listens on saveManualSignatures, closes the manualSignaturesWindow and passes the data along
 ipcMain.on('saveManualSignatures', function (event, data) {
-  console.warn(data)
   manualSignaturesWindow.close()
   manualSignaturesWindow = null
   mainWindow.webContents.send('addManualSignatures', data)

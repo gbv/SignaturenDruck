@@ -20,6 +20,7 @@ const getLabelSize = require('./getLabelSize.js')
 
 const t = require('./classes/Table')
 const p = require('./classes/Print')
+const ShelfmarksFromSRUData = require('./classes/ShelfmarksFromSRUData')
 
 let objSRU = {
   all: []
@@ -92,15 +93,16 @@ ipcRenderer.on('removeManualSignatures', function (event) {
 })
 
 // ipc listener to add provided data to the SRU obj
-ipcRenderer.on('addSRUdata', function (event, data) {
-  if (data.error !== '') {
-    swal.fire('Achtung', data.error, 'error')
+ipcRenderer.on('addSRUdata', function (event, xml) {
+  let data = new ShelfmarksFromSRUData()
+  let shelfmark = data.getShelfmark(xml)
+  if (shelfmark.error !== '') {
+    swal.fire('Achtung', shelfmark.error, 'error')
       .then(() => {})
   } else {
     let index = objSRU.all.length
-    objSRU.all[index] = data
+    objSRU.all[index] = shelfmark
     objSRU.all[index].id = index + 1
-    objSRU.all[index].bigLabel = getLabelSize(data.txtOneLine)
     table.readSRUData(objSRU.all)
   }
 })

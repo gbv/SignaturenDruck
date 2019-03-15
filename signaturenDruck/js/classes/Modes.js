@@ -1,14 +1,6 @@
 const fs = require('fs')
 const { remote } = require('electron')
 const defaultProgramPath = remote.getGlobal('defaultProgramPath')
-// if (config === undefined) {
-//   const config = remote.getGlobal('config')
-// }
-// if (!config.get('SRU.useSRU')) {
-//   const defaultProgramPath = remote.getGlobal('defaultProgramPath')
-// } else {
-//   defaultProgramPath = global.defaultProgramPath
-// }
 
 class Modes {
   /*
