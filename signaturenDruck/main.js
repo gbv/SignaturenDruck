@@ -1,4 +1,4 @@
-const { BrowserWindow, app, ipcMain, dialog } = require('electron')
+const { BrowserWindow, app, ipcMain, dialog, Menu } = require('electron')
 const path = require('path')
 const url = require('url')
 const fs = require('fs')
@@ -51,6 +51,40 @@ const configNew = {
   },
   devMode: false
 }
+
+const template = [
+  {
+    label: 'Datei',
+    submenu: [
+      {
+        label: 'Schließen',
+        role: 'close'
+      }
+    ]
+  },
+  {
+    label: 'Bearbeiten',
+    submenu: [
+      {
+        label: 'Konfiguration',
+        accelerator: 'Control+Shift+C',
+        click () {
+          createConfigWindow()
+        }
+      },
+      {
+        label: 'Modus',
+        accelerator: 'Control+Shift+E',
+        click () {
+          createEditorWindow()
+        }
+      }
+    ]
+  }
+]
+
+const menu = Menu.buildFromTemplate(template)
+Menu.setApplicationMenu(menu)
 
 // name of signature storage json
 const sigJSONFile = 'signaturen.json'
