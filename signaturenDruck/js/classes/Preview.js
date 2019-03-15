@@ -1,8 +1,6 @@
 const _ = require('lodash')
 const fs = require('fs')
 const XRegExp = require('xregexp')
-const { remote } = require('electron')
-const config = remote.getGlobal('config')
 
 class Preview {
   /*
@@ -28,11 +26,11 @@ class Preview {
 
     if (!String(id).includes('m_')) {
       let found = _.find(JSON.parse(Preview.readFile(file)), { 'id': Number(id) })
-      this.searchAndShow(found, formats[formatName].lines, this.getLinesByFormat(formats[formatName], found.txtOneLine))
+      this.searchAndShow(found, formats[formatName].lines, formatName)
       document.getElementsByClassName('innerBox')[0].className = 'innerBox'
     } else {
       let cleanId = id.split('m_')[1]
-      this.checkIfNoIndent(cleanId, manualSignatures, formats[formatName].lines)
+      this.checkIfNoIndent(cleanId, manualSignatures, formats[formatName].lines, formatName)
     }
   }
 
@@ -41,55 +39,16 @@ class Preview {
     removeOld(this.myNode)
   }
 
-  getLinesByFormat (format, shelfmarkRAW) {
-    let delimiter = format.lineDelimiter
-    if (format.splitByRegEx) {
-      let regExString = ''
-      format.splitByRegEx.forEach(element => {
-        regExString += element
-      })
-      let regEx = XRegExp(regExString, 'x')
-      let lines = XRegExp.exec(shelfmarkRAW, regEx)
-      if (lines === null) {
-        return shelfmarkRAW
-      } else {
-        if (lines.length > 1) {
-          lines.shift()
-        }
-        return lines
-      }
-    } else {
-      if (delimiter === '') {
-        return shelfmarkRAW
-      } else {
-        return shelfmarkRAW.split(delimiter)
-      }
-    }
-  }
-
-  searchAndShow (found, formatLines, linesArray) {
-    let lines = found.txtLength
-    let id = found.id
-    let oneLine = found.txtOneLine
+  searchAndShow (found, formatLines, formatName) {
+    let lines = _.find(found.modes, { 'name': formatName }).lines
     if (found !== undefined) {
-      if (lines <= 2 && config.get('mode.useMode') && config.get('mode.defaultMode') === 'thulbMode') {
-        if (document.getElementById('short_' + id).checked) {
-          this.showData(found.txt, formatLines)
-        } else {
-          this.showData(oneLine, formatLines)
-        }
-      } else {
-        if (Number(formatLines) === 1) {
-          this.showData(oneLine, formatLines)
-        } else {
-          this.showData(linesArray, formatLines)
-        }
-      }
+      this.showData(lines, formatLines)
     }
   }
 
-  checkIfNoIndent (cleanId, manualSignatures, formatLines) {
-    this.showData(manualSignatures[cleanId].txt, formatLines)
+  checkIfNoIndent (cleanId, manualSignatures, formatLines, formatName) {
+    let lines = _.find(manualSignatures[cleanId].modes, { 'name': formatName }).lines
+    this.showData(lines, formatLines)
     if (manualSignatures[cleanId].removeIndent) {
       document.getElementsByClassName('innerBox')[0].className = 'innerBox noIndent'
     } else {
@@ -97,41 +56,32 @@ class Preview {
     }
   }
 
-  showData (shelfmark, formatLines) {
+  showData (lines, formatLines) {
     let i = 1
     let line
     let innerBox = document.createElement('div')
     innerBox.className = 'innerBox'
     createPreviewLines(innerBox, formatLines)
     this.myNode.appendChild(innerBox)
-    if (Array.isArray(shelfmark)) {
-      shelfmark.forEach(element => {
-        line = document.getElementById('line_' + i)
-        if (line !== null) {
-          if (element !== '') {
-            line.innerHTML = element
-          }
-          i++
-        } else {
-          innerBox = document.getElementsByClassName('innerBox')[0]
-          line = document.createElement('p')
-          line.id = 'line_' + i
-          line.className = 'line_' + i
-          if (element !== '') {
-            line.innerHTML = element
-          }
-          innerBox.appendChild(line)
-          i++
-        }
-      })
-    } else {
+    lines.forEach(element => {
       line = document.getElementById('line_' + i)
-      if (config.get('mode.useMode') && config.get('mode.defaultMode') === 'thulbMode') {
-        line.innerHTML = shelfmark.split(config.get('newLineAfter')).join(' ')
+      if (line !== null) {
+        if (element !== '') {
+          line.innerHTML = element
+        }
+        i++
       } else {
-        line.innerHTML = shelfmark
+        innerBox = document.getElementsByClassName('innerBox')[0]
+        line = document.createElement('p')
+        line.id = 'line_' + i
+        line.className = 'line_' + i
+        if (element !== '') {
+          line.innerHTML = element
+        }
+        innerBox.appendChild(line)
+        i++
       }
-    }
+    })
   }
 }
 

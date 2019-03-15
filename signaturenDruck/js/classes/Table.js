@@ -3,6 +3,7 @@ const fs = require('fs')
 const { remote } = require('electron')
 const config = remote.getGlobal('config')
 const formats = require('./Formats')
+const modes = require('./Modes')
 const printers = require('./Printers')
 const preview = require('./Preview')
 const manualSignature = require('./ManualSignatures')
@@ -40,8 +41,10 @@ class Table {
     this.tableHtmlBody = document.getElementById('shelfmarkTableBody')
     this.tableHtmlManual = document.getElementsByClassName('manual')
     this.format = new formats()
+    this.mode = new modes()
     this.selectOptions = this.format.selectOptions
     this._formats = this.format.formats
+    this._modes = this.mode.modes
     this.printers = new printers(this._formats)
     this.preview = new preview()
     this.file = new jsonfile(file)
@@ -70,10 +73,10 @@ class Table {
           this.createTxtCell(row, 0, object.id, object.txtOneLine)
           this.createDateCell(row, 1, object.id, object.date)
           this.createExnrCell(row, 2, object.id, object.exNr)
-          this.createShortShelfmarkCell(row, 3, object.id, object.bigLabel)
+          this.createShortShelfmarkCell(row, 3, object.id, object.defaultSubMode)
           this.createPrintCell(row, 4, object.id)
           Table.createPrintCountCell(row, 5, object.id)
-          this.createLabelSizeCell(row, 6, object.id, object.txtLength)
+          this.createLabelSizeCell(row, 6, object.id, this._modes[config.get('mode.defaultMode')].subModes[object.defaultSubMode].format, object.modes)
         })
         i++
       })
@@ -107,12 +110,13 @@ class Table {
         this.createTxtCell(row, 0, key.id, key.txtOneLine)
         this.createDateCell(row, 1, key.id, key.date)
         this.createExnrCell(row, 2, key.id, key.exNr)
-        this.createShortShelfmarkCell(row, 3, key.id, key.bigLabel)
+        this.createShortShelfmarkCell(row, 3, key.id, key.defaultSubMode)
         this.createPrintCell(row, 4, key.id)
         Table.createPrintCountCell(row, 5, key.id)
-        this.createLabelSizeCell(row, 6, key.id, key.txtLength)
+        this.createLabelSizeCell(row, 6, key.id, this._modes[config.get('mode.defaultMode')].subModes[key.defaultSubMode].format, key.modes)
         i++
       })
+      // console.log(this._modes)
     }
   }
 
@@ -166,33 +170,30 @@ class Table {
     isNrCell.innerHTML = exNr
   }
 
-  createShortShelfmarkCell (row, cellNr, id, size) {
+  createShortShelfmarkCell (row, cellNr, id, subMode) {
     let shortShelfmarkCell = row.insertCell(cellNr)
     shortShelfmarkCell.className = 'shortShelfmarkCell'
-    if (config.get('mode.useMode')) {
-      if (config.get('mode.defaultMode') === 'thulbMode') {
-        if (!size) {
-          if (!String(id).includes('m_')) {
-            let input = document.createElement('input')
-            input.id = 'short_' + id
-            input.type = 'checkbox'
-            input.name = 'shortShelfmark'
-            input.value = id
-            input.onclick = () => {
-              Table.changeDropdownFormat(id)
-              this.preview.changePreview(id, this.file.file, this._formats, this.manualSignature)
-            }
-            shortShelfmarkCell.appendChild(input)
-          } else {
-            shortShelfmarkCell.onclick = () => this.preview.changePreview(id, this.file.file, this._formats, this.manualSignature)
+    if (config.get('mode.defaultMode') === 'thulbMode') {
+      if (subMode !== 0) {
+        if (!String(id).includes('m_')) {
+          let input = document.createElement('input')
+          input.id = 'short_' + id
+          input.type = 'checkbox'
+          input.name = 'shortShelfmark'
+          input.value = id
+          input.onclick = () => {
+            Table.changeDropdownFormat(id)
+            this.preview.changePreview(id, this.file.file, this._formats, this.manualSignature)
           }
+          shortShelfmarkCell.appendChild(input)
         } else {
           shortShelfmarkCell.onclick = () => this.preview.changePreview(id, this.file.file, this._formats, this.manualSignature)
         }
       } else {
-        // TODO USE MODE CLASS TO GENERATE UR OWN MODE - HAS TO BE ALWAYS OWN MODE THAT WAS MADE BY THIS CLASS
+        shortShelfmarkCell.onclick = () => this.preview.changePreview(id, this.file.file, this._formats, this.manualSignature)
       }
     } else {
+      // TODO USE MODE CLASS TO GENERATE UR OWN MODE - HAS TO BE ALWAYS OWN MODE THAT WAS MADE BY THIS CLASS
       shortShelfmarkCell.onclick = () => this.preview.changePreview(id, this.file.file, this._formats, this.manualSignature)
     }
   }
@@ -205,7 +206,7 @@ class Table {
     input.type = 'checkbox'
     input.name = 'toPrint'
     input.value = id
-    input.onclick =  () => this.preview.changePreview(id, this.file.file, this._formats, this.manualSignature)
+    input.onclick = () => this.preview.changePreview(id, this.file.file, this._formats, this.manualSignature)
     printCell.appendChild(input)
   }
 
@@ -223,18 +224,18 @@ class Table {
     printCountCell.appendChild(input)
   }
 
-  createLabelSizeCell (row, cellNr, id, lines, format = '') {
+  createLabelSizeCell (row, cellNr, id, format, modes) {
     let cell = row.insertCell(cellNr)
     let div = document.createElement('div')
     div.className = 'select'
     let select = document.createElement('select')
     select.id = 'templateSelect_' + id
-
     this.selectOptions.forEach(element => {
       let size = document.createElement('option')
       size.value = element
       size.innerHTML = element
-      if (!this.printers.printers[element]) {
+      let data = _.find(modes, { 'name': element })
+      if (!this.printers.printers[element] || data === undefined || (data.lines === null)) {
         size.disabled = true
       }
       select.appendChild(size)
@@ -242,21 +243,6 @@ class Table {
     select.onchange = () => this.preview.changePreview(id, this.file.file, this._formats, this.manualSignature)
     if (format !== '') {
       select.value = format
-    } else {
-      if (config.get('mode.useMode') && config.get('mode.defaultMode') === 'thulbMode') {
-        if (Number(lines) <= 3) {
-          if (this.printers.printers['thulb_klein_1']) {
-            select.value = 'thulb_klein_1'
-          }
-        } else if (Number(lines) <= 6) {
-          if (this.printers.printers['thulb_gross']) {
-            select.value = 'thulb_gross'
-          }
-        }
-      } else {
-        // TODO SHOULD BE DONE BY MODE CLASS TO CREATE UR OWN MODE BASED ON YOUR FORMATS
-        select.value = config.get('defaultFormat')
-      }
     }
     div.appendChild(select)
     cell.appendChild(div)
@@ -379,7 +365,7 @@ class Table {
       this.createShortShelfmarkCell(row, 3, ('m_' + obj[i].id), obj[i].size)
       this.createPrintCell(row, 4, ('m_' + obj[i].id))
       Table.createPrintCountCell(row, 5, ('m_' + obj[i].id))
-      this.createLabelSizeCell(row, 6, ('m_' + obj[i].id), obj[i].txtLength, obj[i].format)
+      this.createLabelSizeCell(row, 6, ('m_' + obj[i].id), this._modes[config.get('mode.defaultMode')].subModes[obj[i].defaultSubMode].format, obj[i].modes)
       i++
     }
   }

@@ -37,10 +37,10 @@ function createPage (formatInformation, printInformation) {
   _.each(printInformation, data => {
     for (let i = 1; i <= data.count; i++) {
       let div = document.createElement('div')
-      data.removeIndent !== undefined ? div.className = 'innerBox noIndent' : div.className = 'innerBox'
+      data.data.removeIndent !== undefined ? div.className = 'innerBox noIndent' : div.className = 'innerBox'
       div.id = data.id + '_' + i
       if (formatInformation.lines > 1) {
-        let lines = data.data.txt
+        let lines = _.find(data.data.modes, { 'name': formatInformation.name }).lines
         for (let j = 0; j < formatInformation.lines && j < lines.length; j++) {
           let p = document.createElement('p')
           p.className = 'line_' + (j + 1)

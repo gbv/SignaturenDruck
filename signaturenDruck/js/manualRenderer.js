@@ -162,11 +162,19 @@ function saveCurrent () {
   object.manual[id] = {
     'id': id,
     'format': format.name,
+    'defaultSubMode': 0,
     'txtLength': parseInt(format.lines),
-    'txt': lineTxts,
+    'modes': [],
     'txtOneLine': oneLineTxt,
     'removeIndent': removeIndent
   }
+  let data = {
+    'name': '',
+    'lines': ''
+  }
+  data.name = format.name
+  data.lines = lineTxts
+  object.manual[id].modes.push(data)
 }
 
 function selectDefaultFormat () {
@@ -254,7 +262,7 @@ function saveAndExit () {
   if (object.manual[object.manual.length - 1] !== undefined) {
     let i = 1
     while (i <= object.manual[object.manual.length - 1].txtLength) {
-      if (object.manual[object.manual.length - 1].txt[i - 1] !== '') {
+      if (object.manual[object.manual.length - 1].modes[0][i - 1] !== '') {
         isEmpty = false
       }
       i++
