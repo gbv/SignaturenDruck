@@ -40,11 +40,5 @@
       "indent": "45"
     }
   ],
-  "lineDelimiter": ":",
-  "marginTop": "",
-  "splitByRegEx": [
-    "(^.*?\\s[^\\s]+) \\s?",
-    "([^(\\s:)]+) \\s?:?",
-    "(.*)"
-  ]
+  "marginTop": -1
 }

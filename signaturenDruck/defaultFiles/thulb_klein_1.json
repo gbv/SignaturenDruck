@@ -24,9 +24,5 @@
       "indent": "0"
     }
   ],
-  "lineDelimiter": ":",
-  "marginTop": "",
-  "splitByRegEx": [
-    "(.*)"
-  ]
+  "marginTop": -1
 }
