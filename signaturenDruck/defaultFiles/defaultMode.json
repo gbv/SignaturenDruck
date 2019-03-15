@@ -1,0 +1,21 @@
+{
+  "modeName": "defaultMode",
+  "subModes": [
+    {
+      "id": 0,
+      "format": "default_gross",
+      "useRegEx": true,
+      "regEx": "(.*):(.*):(.*):(.*):(.*):(.*)",
+      "delimiter": ":",
+      "result": ["Standort: $LOC", "$1 $2", "$3", "$4", "$5", "$6"]
+    },
+    {
+      "id": 1,
+      "format": "default_klein",
+      "useRegEx": true,
+      "regEx": "^(\\w+\\s[\\w\\.\\,]+)([\\s\\/]?)([^\\/\\:]*)([\\/\\:]?)(.*)$",
+      "delimiter": ":",
+      "result": ["$1$2", "$3$4", "$5$6"]
+    }
+  ]
+}

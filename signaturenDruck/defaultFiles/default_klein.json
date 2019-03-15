@@ -1,0 +1,44 @@
+{
+  "name": "default_klein",
+  "printer": "\\\\ulbw2k812\\ulbps124",
+  "label": {
+    "width": "74mm",
+    "height": "23mm"
+  },
+  "pdfName": "default_klein.pdf",
+  "paper": {
+    "width": "79500",
+    "height": "27500"
+  },
+  "lines": "3",
+  "centerHor": false,
+  "centerVer": true,
+  "lineSpace": "0",
+  "linesData": [
+    {
+      "id": 1,
+      "font": "Arial Narrow",
+      "fontSize": "15",
+      "bold": true,
+      "italic": false,
+      "indent": "45"
+    },
+    {
+      "id": 2,
+      "font": "Arial Narrow",
+      "fontSize": "15",
+      "bold": true,
+      "italic": false,
+      "indent": "45"
+    },
+    {
+      "id": 3,
+      "font": "Arial Narrow",
+      "fontSize": "15",
+      "bold": true,
+      "italic": false,
+      "indent": "45"
+    }
+  ],
+  "marginTop": -1
+}

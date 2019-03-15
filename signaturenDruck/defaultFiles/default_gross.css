@@ -1,0 +1,72 @@
+#previewBox.default {
+width: 80mm;
+height: 43mm;
+}
+.default {
+text-align: initial;
+white-space: nowrap;
+overflow: hidden;
+}
+.default {
+align-items: center;
+}
+#toPrint.default> .innerBox {
+height: 43mm;
+width: 80mm;
+display: flex;
+justify-content: center;
+flex-direction: column;
+}
+.default > .innerBox > p {
+margin: 0px 0px 0px 0px;
+}
+.default > .innerBox > .line_1 {
+font-family: "Arial Narrow";
+font-size: 16pt;
+font-weight: bold;
+font-style: normal;
+margin-left: 45%;
+}
+.default > .innerBox > .line_2 {
+font-family: "Arial Narrow";
+font-size: 16pt;
+font-weight: bold;
+font-style: normal;
+margin-left: 45%;
+}
+.default > .innerBox > .line_3 {
+font-family: "Arial Narrow";
+font-size: 16pt;
+font-weight: bold;
+font-style: normal;
+margin-left: 45%;
+}
+.default > .innerBox > .line_4 {
+font-family: "Arial Narrow";
+font-size: 16pt;
+font-weight: normal;
+font-style: normal;
+margin-left: 45%;
+}
+.default > .innerBox > .line_5 {
+font-family: "Arial Narrow";
+font-size: 16pt;
+font-weight: normal;
+font-style: normal;
+margin-left: 45%;
+}
+.default > .innerBox > .line_6 {
+font-family: "Arial Narrow";
+font-size: 16pt;
+font-weight: bold;
+font-style: normal;
+margin-left: 45%;
+}
+@media print {
+#toPrint.default > .innerBox {
+margin: 2.96mm 0mm 0mm 7.984999999999999mm;
+}
+#toPrint.default > .innerBox > .line_1 {
+margin-top: -3mm;
+}
+}
