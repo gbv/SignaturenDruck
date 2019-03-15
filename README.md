@@ -20,7 +20,7 @@ npm install
 npm start
 ```
 
-The app creates the directory `C:\\Export\\SignaturenDruck` and stores the `config.json` in it.
+The app creates the directory `C:\\SignaturenDruck\` and stores the `config.json` in it.
 
 In the `config.json` you can change the printers, pdf-filenames and the labelsizes.
 
