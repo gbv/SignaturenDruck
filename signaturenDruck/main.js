@@ -232,6 +232,8 @@ function checkConfig () {
     checkAndCreate(defaultProgramPath + '\\Formate\\', fileName, '.json')
     checkAndCreate(defaultProgramPath + '\\FormateCSS\\', fileName, '.css')
   })
+  // change to the defaultMode
+  checkAndCreate(defaultProgramPath + '\\Modi\\', 'thulbMode', '.json')
   function checkAndCreate (pathName, fileName, ending) {
     if (!fs.existsSync(pathName + fileName + ending)) {
       let file = fs.readFileSync(path.join(__dirname, 'defaultFiles/' + fileName + ending), 'utf8')
