@@ -27,7 +27,6 @@ const configNew = {
   defaultDownloadPath: 'C:/Export/download.dnl',
   defaultFormat: 'thulb_gross',
   sortByPPN: false,
-  newLineAfter: ':',
   useK10plus: false,
   modal: {
     showModal: true,
@@ -44,10 +43,7 @@ const configNew = {
     printCoverLabel: true
   },
   mode: {
-    useMode: true,
-    defaultMode: 'thulbMode',
-    showLocation: false,
-    showLoanIndication: false
+    defaultMode: 'thulbMode'
   },
   devMode: false
 }
