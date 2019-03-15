@@ -2,15 +2,14 @@ class shelfmark {
   constructor () {
     this._ppn = ''
     this._exNr = ''
-    this._txt = ''
-    this._txtLength = ''
     this._date = ''
     this._id = ''
-    this._bigLabel = true
     this._txtOneLine = ''
     this._error = ''
     this._location = ''
     this._loanIndication = ''
+    this._defaultSubMode = ''
+    this._subModes = []
   }
 
   // Setter
@@ -20,20 +19,11 @@ class shelfmark {
   set exNr (str) {
     this._exNr = str
   }
-  set txt (str) {
-    this._txt = str
-  }
-  set txtLength (str) {
-    this._txtLength = str
-  }
   set date (str) {
     this._date = str
   }
   set id (int) {
     this._id = int
-  }
-  set bigLabel (bool) {
-    this._bigLabel = bool
   }
   set txtOneLine (str) {
     this._txtOneLine = str
@@ -47,6 +37,12 @@ class shelfmark {
   set loanIndication (str) {
     this._loanIndication = str
   }
+  set defaultSubMode (str) {
+    this._defaultSubMode = str
+  }
+  set subModes (object) {
+    this._subModes.push(object)
+  }
 
   // Getter
   get ppn () {
@@ -55,20 +51,11 @@ class shelfmark {
   get exNr () {
     return this._exNr
   }
-  get txt () {
-    return this._txt
-  }
-  get txtLength () {
-    return this._txtLength
-  }
   get date () {
     return this._date
   }
   get id () {
     return this._id
-  }
-  get bigLabel () {
-    return this._bigLabel
   }
   get txtOneLine () {
     return this._txtOneLine
@@ -82,25 +69,31 @@ class shelfmark {
   get loanIndication () {
     return this._loanIndication
   }
+  get defaultSubMode () {
+    return this._defaultSubMode
+  }
+  get subModes () {
+    return this._subModes
+  }
   get shelfmark () {
     return {
       'PPN': this._ppn,
       'id': this._id,
       'bigLabel': this._bigLabel,
       'txtOneLine': this._txtOneLine,
-      'txt': this._txt,
-      'txtLength': this._txtLength,
       'date': this._date,
       'exNr': this._exNr,
       'location': this._location,
       'loanIndication': this._loanIndication,
-      'error': this._error
+      'error': this._error,
+      'defaultSubMode': this._defaultSubMode,
+      'modes': this._subModes
     }
   }
 
   // Method
   allSet () {
-    return (this._ppn !== '') && (this._exNr !== '') && (this._txt !== '') && (this._date !== '') && (this._txtLength !== '')
+    return (this._ppn !== '') && (this._exNr !== '') && (this._subModes[0] !== undefined) && (this._date !== '') && (this._txtLength !== '')
   }
 }
 
