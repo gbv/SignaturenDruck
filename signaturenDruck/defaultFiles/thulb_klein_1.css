@@ -4,6 +4,8 @@ height: 23mm;
 }
 .format_thulb_klein_1 {
 text-align: center;
+white-space: nowrap;
+overflow: hidden;
 }
 .format_thulb_klein_1 {
 align-items: center;
@@ -30,6 +32,6 @@ margin-left: 0%;
 margin: 2.25mm 0mm 0mm 0.75mm;
 }
 #toPrint.format_thulb_klein_1 > .innerBox > .line_1 {
-margin-top: 0mm;
+margin-top: -1mm;
 }
 }

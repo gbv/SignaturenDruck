@@ -3,24 +3,27 @@
   "subModes": [
     {
       "id": 0,
-      "name": "gross",
       "format": "thulb_gross",
-      "regEx": "/^(.*):(.*):(.*):(.*):(.*):(.*)$/",
+      "useRegEx": true,
+      "regEx": "(.*):(.*):(.*):(.*):(.*):(.*)",
+      "delimiter": "",
       "result": ["$1", "$2", "$3", "$4", "$5", "$6"]
     },
     {
       "id": 1,
-      "name": "klein",
-      "format": "thulb_klein",
-      "regEx": "/^(.[^\\s]?)\\s?([^\\:\\/\\s]*)\\:?\\/?\\s?(.*)$/",
-      "result": ["$1", "$2", "$3"]
+      "format": "thulb_klein_1",
+      "useRegEx": true,
+      "regEx": "^(.*)$",
+      "delimiter": "",
+      "result": ["$1"]
     },
     {
       "id": 2,
-      "name": "klein_1",
-      "format": "thulb_klein_1",
-      "regEx": "/^(.*)$/",
-      "result": ["$1"]
+      "format": "thulb_klein",
+      "useRegEx": true,
+      "regEx": "^(\\w+\\s[\\w\\.\\,]+)([\\s\\/]?)([^\\/\\:]*)([\\/\\:]?)(.*)$",
+      "delimiter": "",
+      "result": ["$1$2", "$3$4", "$5"]
     }
   ]
 }

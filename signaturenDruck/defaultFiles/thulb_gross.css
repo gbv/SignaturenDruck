@@ -4,6 +4,8 @@ height: 43mm;
 }
 .format_thulb_gross {
 text-align: initial;
+white-space: nowrap;
+overflow: hidden;
 }
 .format_thulb_gross {
 align-items: center;
