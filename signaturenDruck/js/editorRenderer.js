@@ -341,10 +341,11 @@ function createCSS (obj) {
   }
   function centerHor (str) {
     if (obj.centerHor) {
-      str += '.format_' + obj.name + ' {\ntext-align: center;\n}\n'
+      str += '.format_' + obj.name + ' {\ntext-align: center;\n'
     } else {
-      str += '.format_' + obj.name + ' {\ntext-align: initial;\n}\n'
+      str += '.format_' + obj.name + ' {\ntext-align: initial;\n'
     }
+    str += 'white-space: nowrap;\noverflow: hidden;\n}\n'
     return str
   }
   function label (str) {
@@ -373,6 +374,7 @@ function addLine () {
 function addText () {
   let numberOfLines = document.getElementById('innerBox').childElementCount
   let example = document.getElementById('input_example').value
+  // TODO remove delimiter
   let delimiter = document.getElementById('input_delimiter').value
   if (numberOfLines === 1) {
     document.getElementById('line_1').innerHTML = example
