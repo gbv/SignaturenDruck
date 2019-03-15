@@ -11,7 +11,7 @@ To clone and run this repository you'll need [Git](https://git-scm.com) and [Nod
 
 ```bash
 # Clone this repository
-git clone https://github.com/EliDeh/SignaturenDruck
+git clone https://github.com/gbv/SignaturenDruck
 # Go into the repository
 cd SignaturenDruck/signaturenDruck
 # Install dependencies
