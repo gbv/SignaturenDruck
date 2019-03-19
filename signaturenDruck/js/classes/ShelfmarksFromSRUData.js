@@ -46,10 +46,10 @@ class ShelfmarksFromSRUData {
       let allSubModeData = mode.modes[config.get('mode.defaultMode')].subModes
       _.forEach(allSubModeData, function (value) {
         let data = {
-          'name': '',
+          'format': '',
           'lines': ''
         }
-        data.name = value.format
+        data.format = value.format
         if (value.useRegEx) {
           let regex = new RegExp(value.regEx)
           if (regex.test(sig.txtOneLine) && sig.defaultSubMode === '') {

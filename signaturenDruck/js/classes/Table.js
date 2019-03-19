@@ -70,13 +70,13 @@ class Table {
           i++
           row = body.insertRow(i)
           row.id = object.PPN + '-0'
-          this.createTxtCell(row, 0, object.id, object.txtOneLine)
-          this.createDateCell(row, 1, object.id, object.date)
-          this.createExnrCell(row, 2, object.id, object.exNr)
+          this.createTxtCell(row, 0, object.id, object.txtOneLine, object.defaultSubMode)
+          this.createDateCell(row, 1, object.id, object.date, object.defaultSubMode)
+          this.createExnrCell(row, 2, object.id, object.exNr, object.defaultSubMode)
           this.createShortShelfmarkCell(row, 3, object.id, object.defaultSubMode)
-          this.createPrintCell(row, 4, object.id)
-          Table.createPrintCountCell(row, 5, object.id)
-          this.createLabelSizeCell(row, 6, object.id, this._modes[config.get('mode.defaultMode')].subModes[object.defaultSubMode].format, object.modes)
+          this.createPrintCell(row, 4, object.id, object.defaultSubMode)
+          Table.createPrintCountCell(row, 5, object.id, object.defaultSubMode)
+          this.createLabelSizeCell(row, 6, object.id, object.defaultSubMode, this._modes[config.get('mode.defaultMode')].subModes, object.modes)
         })
         i++
       })
@@ -107,16 +107,15 @@ class Table {
           row = body.insertRow(i)
           row.id = key.PPN + '-0'
         }
-        this.createTxtCell(row, 0, key.id, key.txtOneLine)
-        this.createDateCell(row, 1, key.id, key.date)
-        this.createExnrCell(row, 2, key.id, key.exNr)
+        this.createTxtCell(row, 0, key.id, key.txtOneLine, key.defaultSubMode)
+        this.createDateCell(row, 1, key.id, key.date, key.defaultSubMode)
+        this.createExnrCell(row, 2, key.id, key.exNr, key.defaultSubMode)
         this.createShortShelfmarkCell(row, 3, key.id, key.defaultSubMode)
-        this.createPrintCell(row, 4, key.id)
-        Table.createPrintCountCell(row, 5, key.id)
-        this.createLabelSizeCell(row, 6, key.id, this._modes[config.get('mode.defaultMode')].subModes[key.defaultSubMode].format, key.modes)
+        this.createPrintCell(row, 4, key.id, key.defaultSubMode)
+        Table.createPrintCountCell(row, 5, key.id, key.defaultSubMode)
+        this.createLabelSizeCell(row, 6, key.id, key.defaultSubMode, this._modes[config.get('mode.defaultMode')].subModes, key.modes)
         i++
       })
-      // console.log(this._modes)
     }
   }
 
@@ -148,24 +147,30 @@ class Table {
     }
   }
 
-  createTxtCell (row, cellNr, id, txt) {
+  createTxtCell (row, cellNr, id, txt, defaultSubMode) {
     let txtCell = row.insertCell(cellNr)
-    txtCell.onclick = () => this.preview.changePreview(id, this.file.file, this._formats, this.manualSignature)
+    if (defaultSubMode !== '') {
+      txtCell.onclick = () => this.preview.changePreview(id, this.file.file, this._formats, this.manualSignature)
+    }
     txtCell.innerHTML = txt
     txtCell.className = 'txtCell'
   }
 
-  createDateCell (row, cellNr, id, date = '-') {
+  createDateCell (row, cellNr, id, date = '-', defaultSubMode) {
     let dateCell = row.insertCell(cellNr)
-    dateCell.onclick = () => this.preview.changePreview(id, this.file.file, this._formats, this.manualSignature)
+    if (defaultSubMode !== '') {
+      dateCell.onclick = () => this.preview.changePreview(id, this.file.file, this._formats, this.manualSignature)
+    }
     dateCell.className = 'dateCell'
     dateCell.id = 'dateCell_' + id
     dateCell.innerHTML = date
   }
 
-  createExnrCell (row, cellNr, id, exNr = '-') {
+  createExnrCell (row, cellNr, id, exNr = '-', defaultSubMode) {
     let isNrCell = row.insertCell(cellNr)
-    isNrCell.onclick = () => this.preview.changePreview(id, this.file.file, this._formats, this.manualSignature)
+    if (defaultSubMode !== '') {
+      isNrCell.onclick = () => this.preview.changePreview(id, this.file.file, this._formats, this.manualSignature)
+    }
     isNrCell.className = 'isNrCell'
     isNrCell.innerHTML = exNr
   }
@@ -194,58 +199,73 @@ class Table {
       }
     } else {
       // TODO USE MODE CLASS TO GENERATE UR OWN MODE - HAS TO BE ALWAYS OWN MODE THAT WAS MADE BY THIS CLASS
-      shortShelfmarkCell.onclick = () => this.preview.changePreview(id, this.file.file, this._formats, this.manualSignature)
-    }
-  }
-
-  createPrintCell (row, cellNr, id) {
-    let printCell = row.insertCell(cellNr)
-    let input = document.createElement('input')
-    printCell.className = 'printCell'
-    input.id = 'print_' + id
-    input.type = 'checkbox'
-    input.name = 'toPrint'
-    input.value = id
-    input.onclick = () => this.preview.changePreview(id, this.file.file, this._formats, this.manualSignature)
-    printCell.appendChild(input)
-  }
-
-  static createPrintCountCell (row, cellNr, id) {
-    let printCountCell = row.insertCell(cellNr)
-    let input = document.createElement('input')
-    printCountCell.className = 'printCountCell'
-    input.id = 'count_' + id
-    input.className = 'input'
-    input.type = 'number'
-    input.max = 99
-    input.min = 1
-    input.name = 'printCount'
-    input.value = 1
-    printCountCell.appendChild(input)
-  }
-
-  createLabelSizeCell (row, cellNr, id, format, modes) {
-    let cell = row.insertCell(cellNr)
-    let div = document.createElement('div')
-    div.className = 'select'
-    let select = document.createElement('select')
-    select.id = 'templateSelect_' + id
-    this.selectOptions.forEach(element => {
-      let size = document.createElement('option')
-      size.value = element
-      size.innerHTML = element
-      let data = _.find(modes, { 'name': element })
-      if (!this.printers.printers[element] || data === undefined || (data.lines === null)) {
-        size.disabled = true
+      if (subMode !== '') {
+        shortShelfmarkCell.onclick = () => this.preview.changePreview(id, this.file.file, this._formats, this.manualSignature)
       }
-      select.appendChild(size)
-    })
-    select.onchange = () => this.preview.changePreview(id, this.file.file, this._formats, this.manualSignature)
-    if (format !== '') {
-      select.value = format
     }
-    div.appendChild(select)
-    cell.appendChild(div)
+  }
+
+  createPrintCell (row, cellNr, id, defaultSubMode) {
+    let printCell = row.insertCell(cellNr)
+    printCell.className = 'printCell'
+    if (defaultSubMode !== '') {
+      let input = document.createElement('input')
+      input.id = 'print_' + id
+      input.type = 'checkbox'
+      input.name = 'toPrint'
+      input.value = id
+      input.onclick = () => this.preview.changePreview(id, this.file.file, this._formats, this.manualSignature)
+      printCell.appendChild(input)
+    }
+  }
+
+  static createPrintCountCell (row, cellNr, id, defaultSubMode) {
+    let printCountCell = row.insertCell(cellNr)
+    printCountCell.className = 'printCountCell'
+    if (defaultSubMode !== '') {
+      let input = document.createElement('input')
+      input.id = 'count_' + id
+      input.className = 'input'
+      input.type = 'number'
+      input.max = 99
+      input.min = 1
+      input.name = 'printCount'
+      input.value = 1
+      printCountCell.appendChild(input)
+    }
+  }
+
+  createLabelSizeCell (row, cellNr, id, defaultSubMode, subModes, modes) {
+    if (defaultSubMode === '') {
+      let cell = row.insertCell(cellNr)
+      let div = document.createElement('div')
+      let p = document.createElement('p')
+      p.innerHTML = 'kein Format'
+      div.appendChild(p)
+      cell.appendChild(div)
+    } else {
+      let cell = row.insertCell(cellNr)
+      let div = document.createElement('div')
+      div.className = 'select'
+      let select = document.createElement('select')
+      select.id = 'templateSelect_' + id
+      this.selectOptions.forEach(element => {
+        let size = document.createElement('option')
+        size.value = element
+        size.innerHTML = element
+        let data = _.find(modes, { 'format': element })
+        if (!this.printers.printers[element] || data === undefined || (data.lines === null)) {
+          size.disabled = true
+        }
+        select.appendChild(size)
+      })
+      select.onchange = () => this.preview.changePreview(id, this.file.file, this._formats, this.manualSignature)
+      if (subModes[defaultSubMode].format !== '') {
+        select.value = subModes[defaultSubMode].format
+      }
+      div.appendChild(select)
+      cell.appendChild(div)
+    }
   }
 
   clearMainTable () {
@@ -359,13 +379,13 @@ class Table {
       row = body.insertRow(i + 1)
       row.className = 'manual'
       row.id = 'manual-' + obj[i].id
-      this.createTxtCell(row, 0, ('m_' + obj[i].id), obj[i].txtOneLine)
-      this.createDateCell(row, 1, ('m_' + obj[i].id))
-      this.createExnrCell(row, 2, ('m_' + obj[i].id))
+      this.createTxtCell(row, 0, ('m_' + obj[i].id), obj[i].txtOneLine, obj[i].defaultSubMode)
+      this.createDateCell(row, 1, ('m_' + obj[i].id), obj[i].defaultSubMode)
+      this.createExnrCell(row, 2, ('m_' + obj[i].id), obj[i].defaultSubMode)
       this.createShortShelfmarkCell(row, 3, ('m_' + obj[i].id), obj[i].size)
-      this.createPrintCell(row, 4, ('m_' + obj[i].id))
-      Table.createPrintCountCell(row, 5, ('m_' + obj[i].id))
-      this.createLabelSizeCell(row, 6, ('m_' + obj[i].id), this._modes[config.get('mode.defaultMode')].subModes[obj[i].defaultSubMode].format, obj[i].modes)
+      this.createPrintCell(row, 4, ('m_' + obj[i].id), obj[i].defaultSubMode)
+      Table.createPrintCountCell(row, 5, ('m_' + obj[i].id), obj[i].defaultSubMode)
+      this.createLabelSizeCell(row, 6, ('m_' + obj[i].id), obj[i].defaultSubMode, obj[i].modes, obj[i].modes)
       i++
     }
   }

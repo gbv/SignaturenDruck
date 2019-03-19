@@ -28,6 +28,12 @@ const configNew = {
   defaultFormat: 'thulb_gross',
   sortByPPN: false,
   useK10plus: false,
+  example: {
+    shelfmark: 'PÄD:TG:1420:Dan::2017',
+    location: 'MAG',
+    regex: '^(.*):(.*):(.*):(.*):(.*):(.*)$',
+    delimiter: ':'
+  },
   modal: {
     showModal: true,
     modalTxt: 'Die ausgewählten Signaturen wurden gedruckt.'
@@ -144,6 +150,11 @@ ipcMain.on('openConfigWindow', function (event) {
 // listens on closeWinConfig, invokes the closeWinConfig function
 ipcMain.on('closeConfigWindow', function (event) {
   closeConfigWindow()
+})
+
+// listens on createNewModeFormat, invokes the createEditorWindows function
+ipcMain.on('createNewModeFormat', function (event, data) {
+  createEditorWindow(data)
 })
 
 function closeConfigWindow () {
@@ -341,7 +352,7 @@ function createConfigWindow () {
 }
 
 // creates the editorConfig
-function createEditorWindow () {
+function createEditorWindow (formatName = '', nrOfLines = '') {
   editorWindow = new BrowserWindow({ width: 800, height: 950, show: false })
   editorWindow.loadURL(url.format({
     pathname: path.join(__dirname, 'html/editor.html'),
@@ -350,6 +361,7 @@ function createEditorWindow () {
   }))
   editorWindow.once('ready-to-show', () => {
     editorWindow.show()
+    editorWindow.webContents.send('newModeFormat', formatName, nrOfLines)
   })
 }
 

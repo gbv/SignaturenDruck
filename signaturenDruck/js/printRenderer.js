@@ -40,7 +40,7 @@ function createPage (formatInformation, printInformation) {
       data.data.removeIndent !== undefined ? div.className = 'innerBox noIndent' : div.className = 'innerBox'
       div.id = data.id + '_' + i
       if (formatInformation.lines > 1) {
-        let lines = _.find(data.data.modes, { 'name': formatInformation.name }).lines
+        let lines = _.find(data.data.modes, { 'format': formatInformation.name }).lines
         for (let j = 0; j < formatInformation.lines && j < lines.length; j++) {
           let p = document.createElement('p')
           p.className = 'line_' + (j + 1)

@@ -136,7 +136,7 @@ function loadData () {
   createByFormat(getFormatSelected().lines)
   let i = 1
   while (i <= object.manual[id].txtLength) {
-    let txt = object.manual[id].txt[i - 1]
+    let txt = object.manual[id].modes[0].lines[i - 1]
     document.getElementById('inputLine_' + i).value = txt
     document.getElementById('line_' + i).innerHTML = txt
     i++
@@ -169,10 +169,10 @@ function saveCurrent () {
     'removeIndent': removeIndent
   }
   let data = {
-    'name': '',
+    'format': '',
     'lines': ''
   }
-  data.name = format.name
+  data.format = format.name
   data.lines = lineTxts
   object.manual[id].modes.push(data)
 }

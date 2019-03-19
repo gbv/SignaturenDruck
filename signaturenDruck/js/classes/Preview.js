@@ -40,14 +40,14 @@ class Preview {
   }
 
   searchAndShow (found, formatLines, formatName) {
-    let lines = _.find(found.modes, { 'name': formatName }).lines
+    let lines = _.find(found.modes, { 'format': formatName }).lines
     if (found !== undefined) {
       this.showData(lines, formatLines)
     }
   }
 
   checkIfNoIndent (cleanId, manualSignatures, formatLines, formatName) {
-    let lines = _.find(manualSignatures[cleanId].modes, { 'name': formatName }).lines
+    let lines = _.find(manualSignatures[cleanId].modes, { 'format': formatName }).lines
     this.showData(lines, formatLines)
     if (manualSignatures[cleanId].removeIndent) {
       document.getElementsByClassName('innerBox')[0].className = 'innerBox noIndent'
