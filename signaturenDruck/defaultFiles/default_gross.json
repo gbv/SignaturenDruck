@@ -11,6 +11,10 @@
     "height": "48920"
   },
   "lines": "6",
+  "example": {
+    "shelfmark": "PÄD:TG:1420:Dan::2017",
+    "parts": ["PÄD", "TG", "1420", "Dan", "", "2017"]
+  },
   "centerHor": false,
   "centerVer": true,
   "lineSpace": "0",

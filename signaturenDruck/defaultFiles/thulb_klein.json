@@ -11,6 +11,10 @@
     "height": "27500"
   },
   "lines": "3",
+  "example": {
+    "shelfmark": "2018 B 1024 :1",
+    "parts": ["2018 B", "1024 :", "1"]
+  },
   "centerHor": false,
   "centerVer": true,
   "lineSpace": "0",
