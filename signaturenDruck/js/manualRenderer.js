@@ -17,16 +17,20 @@ let max = 1
 window.onload = function () {
   pushFormatsToSelect()
   createByFormat(getFormatSelected().lines)
+  disableBtnPrevious()
 }
 
 ipcRenderer.on('objMan', function (event, objMan) {
   if (objMan !== null) {
-    object.manual = objMan
-    id = objMan.length
-    max = objMan.length + 1
-    setCounters()
-    enableBtnPrevious()
+    if (objMan.length > 0) {
+      object.manual = objMan
+      id = objMan.length
+      max = objMan.length + 1
+      setCounters()
+      enableBtnPrevious()
+    }
   }
+  setCounters()
 })
 
 function pushFormatsToSelect () {
