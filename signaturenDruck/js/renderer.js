@@ -2,24 +2,19 @@
 // be executed in the renderer process for that window.
 // All of the Node.js APIs are available in this process.
 
-// requires lodash
-const _ = require('lodash')
-
 // requires the fs-module
 const fs = require('fs')
 
 // required for ipc calls to the main process
-const { ipcMain, ipcRenderer, remote } = require('electron')
+const { ipcRenderer, remote } = require('electron')
 
 const config = remote.getGlobal('config')
 const sigJSONFile = remote.getGlobal('sigJSONFile')
 
 const swal = require('sweetalert2')
 
-const getLabelSize = require('./getLabelSize.js')
-
-const t = require('./classes/Table')
-const p = require('./classes/Print')
+const T = require('./classes/Table')
+const P = require('./classes/Print')
 const ShelfmarksFromSRUData = require('./classes/ShelfmarksFromSRUData')
 
 let objSRU = {
@@ -27,7 +22,7 @@ let objSRU = {
 }
 
 let displayModalOnSuccess = true
-let table = new t(sigJSONFile)
+let table = new T(sigJSONFile)
 
 // function on window load
 window.onload = function () {
@@ -148,7 +143,7 @@ function closeButton () {
 
 // gathers the data to print and invokes printing via ipc
 function printButton () {
-  const print = new p(sigJSONFile, table.formats, table.manualSignature)
+  const print = new P(sigJSONFile, table.formats, table.manualSignature)
   // console.warn(print.dataAll)
   ipcRenderer.send('print', print.dataAll)
 }
