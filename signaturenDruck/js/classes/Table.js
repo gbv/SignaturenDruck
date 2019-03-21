@@ -179,8 +179,8 @@ class Table {
     let shortShelfmarkCell = row.insertCell(cellNr)
     shortShelfmarkCell.className = 'shortShelfmarkCell'
     if (config.get('mode.defaultMode') === 'thulbMode') {
-      if (subMode !== 0 && object.modes[1].lines !== null && object.modes[2].lines !== null) {
-        if (!String(id).includes('m_')) {
+      if (!String(id).includes('m_')) {
+        if (subMode !== 0 && object.modes[1].lines !== null && object.modes[2].lines !== null) {        
           let input = document.createElement('input')
           input.id = 'short_' + id
           input.type = 'checkbox'
@@ -198,7 +198,6 @@ class Table {
         shortShelfmarkCell.onclick = () => this.preview.changePreview(id, this.file.file, this._formats, this.manualSignature)
       }
     } else {
-      // TODO USE MODE CLASS TO GENERATE UR OWN MODE - HAS TO BE ALWAYS OWN MODE THAT WAS MADE BY THIS CLASS
       if (subMode !== '') {
         shortShelfmarkCell.onclick = () => this.preview.changePreview(id, this.file.file, this._formats, this.manualSignature)
       }
