@@ -16,7 +16,6 @@ let max = 1
 
 window.onload = function () {
   pushFormatsToSelect()
-  selectDefaultFormat()
   createByFormat(getFormatSelected().lines)
 }
 
@@ -177,10 +176,6 @@ function saveCurrent () {
   object.manual[id].modes.push(data)
 }
 
-function selectDefaultFormat () {
-  document.getElementById('formatSelect').value = config.get('defaultFormat')
-}
-
 function next () {
   let i = 1
   let isEmpty = true
@@ -199,7 +194,6 @@ function next () {
     if (object.manual[id] !== undefined) {
       loadData()
     } else {
-      selectDefaultFormat()
       createByFormat(getFormatSelected().lines)
       max++
       focusFirst()
@@ -241,7 +235,6 @@ function deleteData () {
     if (object.manual[id] !== undefined) {
       loadData()
     } else {
-      selectDefaultFormat()
       createByFormat(getFormatSelected().lines)
     }
   }

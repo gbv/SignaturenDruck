@@ -25,7 +25,6 @@ require('electron-context-menu')({
 // default main config settings
 const configNew = {
   defaultDownloadPath: 'C:/Export/download.dnl',
-  defaultFormat: 'thulb_gross',
   sortByPPN: false,
   useK10plus: true,
   example: {
