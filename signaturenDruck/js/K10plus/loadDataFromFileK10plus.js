@@ -55,6 +55,7 @@ module.exports = function (allLines) {
           }
         } else {
           data.lines = plainTxt.split(value.delimiter)
+          sig.defaultSubMode = value.id
           if (data.lines !== null) {
             data.lines = FormatLinesByMode.formatLines(sig.location, data.lines, value.result, formatArray[value.format].lines)
           }
