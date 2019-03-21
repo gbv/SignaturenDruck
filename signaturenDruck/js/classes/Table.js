@@ -74,7 +74,7 @@ class Table {
           this.createDateCell(row, 1, object.id, object.date, object.defaultSubMode)
           this.createExnrCell(row, 2, object.id, object.exNr, object.defaultSubMode)
           this.createShortShelfmarkCell(row, 3, object.id, object.defaultSubMode)
-          this.createPrintCell(row, 4, object.id, object.defaultSubMode)
+          this.createPrintCell(row, 4, object.id, object.defaultSubMode, object)
           Table.createPrintCountCell(row, 5, object.id, object.defaultSubMode)
           this.createLabelSizeCell(row, 6, object.id, object.defaultSubMode, this._modes[config.get('mode.defaultMode')].subModes, object.modes)
         })
@@ -110,7 +110,7 @@ class Table {
         this.createTxtCell(row, 0, key.id, key.txtOneLine, key.defaultSubMode)
         this.createDateCell(row, 1, key.id, key.date, key.defaultSubMode)
         this.createExnrCell(row, 2, key.id, key.exNr, key.defaultSubMode)
-        this.createShortShelfmarkCell(row, 3, key.id, key.defaultSubMode)
+        this.createShortShelfmarkCell(row, 3, key.id, key.defaultSubMode, key)
         this.createPrintCell(row, 4, key.id, key.defaultSubMode)
         Table.createPrintCountCell(row, 5, key.id, key.defaultSubMode)
         this.createLabelSizeCell(row, 6, key.id, key.defaultSubMode, this._modes[config.get('mode.defaultMode')].subModes, key.modes)
@@ -175,11 +175,11 @@ class Table {
     isNrCell.innerHTML = exNr
   }
 
-  createShortShelfmarkCell (row, cellNr, id, subMode) {
+  createShortShelfmarkCell (row, cellNr, id, subMode, object) {
     let shortShelfmarkCell = row.insertCell(cellNr)
     shortShelfmarkCell.className = 'shortShelfmarkCell'
     if (config.get('mode.defaultMode') === 'thulbMode') {
-      if (subMode !== 0) {
+      if (subMode !== 0 && object.modes[1].lines !== null && object.modes[2].lines !== null) {
         if (!String(id).includes('m_')) {
           let input = document.createElement('input')
           input.id = 'short_' + id
@@ -382,7 +382,7 @@ class Table {
       this.createTxtCell(row, 0, ('m_' + obj[i].id), obj[i].txtOneLine, obj[i].defaultSubMode)
       this.createDateCell(row, 1, ('m_' + obj[i].id), obj[i].defaultSubMode)
       this.createExnrCell(row, 2, ('m_' + obj[i].id), obj[i].defaultSubMode)
-      this.createShortShelfmarkCell(row, 3, ('m_' + obj[i].id), obj[i].size)
+      this.createShortShelfmarkCell(row, 3, ('m_' + obj[i].id), obj[i].size, obj[i])
       this.createPrintCell(row, 4, ('m_' + obj[i].id), obj[i].defaultSubMode)
       Table.createPrintCountCell(row, 5, ('m_' + obj[i].id), obj[i].defaultSubMode)
       this.createLabelSizeCell(row, 6, ('m_' + obj[i].id), obj[i].defaultSubMode, obj[i].modes, obj[i].modes)
