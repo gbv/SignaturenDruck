@@ -83,13 +83,12 @@ app.on('activate', function () {
 
 // starts the printing process
 ipcMain.on('print', (event, dataAll) => {
-  let i = 1
+  let i = 0
   _.each(dataAll, (data) => {
     // console.warn(data.formatInformation)
     // console.warn(data.printInformation)
     setTimeout(function () {
       printData(data.formatInformation, data.printInformation)
-      console.log(new Date().getTime())
     }, i * 4000)
     i++
   })
