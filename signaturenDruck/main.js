@@ -197,9 +197,9 @@ function createWindow () {
   checkConfig()
   // Create the browser window.
   if (!config.store.devMode) {
-    mainWindow = new BrowserWindow({ width: 800, height: 520, backgroundColor: '#f0f0f0' })
+    mainWindow = new BrowserWindow({ width: 850, height: 570, backgroundColor: '#f0f0f0' })
   } else {
-    mainWindow = new BrowserWindow({ width: 800, height: 550, backgroundColor: '#f0f0f0' })
+    mainWindow = new BrowserWindow({ width: 850, height: 600, backgroundColor: '#f0f0f0' })
   }
 
   // and load the index.html of the app.
