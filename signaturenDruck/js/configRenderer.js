@@ -299,14 +299,14 @@ function saveAndContinue () {
       subModes: []
     }
     // set modeName
-    modeDataNew.modeName = getModeNameNew()
+    modeDataNew.modeName = getModeNameNew().replace(/[^a-zA-Z0-9]/g, '_').replace(/_{2,}/g, '_')
     // if modeNameOld != ''
     if (modesData[getModeNameOld()] !== undefined) {
       let subModesData = modesData[getModeNameOld()].subModes
       _.forEach(subModesData, function (value) {
         // if subMode gets updated
         if (value.format === getSubModeNameOld()) {
-          value.format = getSubModeNameNew()
+          value.format = getSubModeNameNew().replace(/[^a-zA-Z0-9]/g, '_').replace(/_{2,}/g, '_')
           value.useRegEx = !document.getElementById('input_regEx').disabled
           value.regEx = document.getElementById('input_regEx').value
           value.delimiter = document.getElementById('input_delimiter').value
@@ -322,7 +322,7 @@ function saveAndContinue () {
       if (getSubModeNameOld() === '') {
         let value = {}
         value.id = subModesData.length
-        value.format = getSubModeNameNew()
+        value.format = getSubModeNameNew().replace(/[^a-zA-Z0-9]/g, '_').replace(/_{2,}/g, '_')
         value.useRegEx = !document.getElementById('input_regEx').disabled
         value.regEx = document.getElementById('input_regEx').value
         value.delimiter = document.getElementById('input_delimiter').value
@@ -334,7 +334,7 @@ function saveAndContinue () {
       // if mode is new
       let value = {}
       value.id = 0
-      value.format = getSubModeNameNew()
+      value.format = getSubModeNameNew().replace(/[^a-zA-Z0-9]/g, '_').replace(/_{2,}/g, '_')
       value.useRegEx = !document.getElementById('input_regEx').disabled
       value.regEx = document.getElementById('input_regEx').value
       value.delimiter = document.getElementById('input_delimiter').value
@@ -347,7 +347,7 @@ function saveAndContinue () {
     }
     writeModeFile(modeDataNew)
     let data = {}
-    data.format = getSubModeNameNew()
+    data.format = getSubModeNameNew().replace(/[^a-zA-Z0-9]/g, '_').replace(/_{2,}/g, '_')
     data.nrOfLines = getLineCount()
     data.exampleShelfmark = document.getElementById('input_example').value
     data.lines = resultData
