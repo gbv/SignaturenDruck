@@ -1,4 +1,5 @@
 const _ = require('lodash')
+const fs = require('fs')
 const jsonfile = require('./JsonFile')
 
 class Print {
@@ -8,7 +9,10 @@ class Print {
   constructor (file, formats, manuelSignature) {
     this.formats = formats
     this.manualSignature = manuelSignature
-    this.jsonFile = JSON.parse(jsonfile.readFile(file))
+    this.jsonFile = ''
+    if (fs.existsSync(file)) {
+      this.jsonFile = JSON.parse(jsonfile.readFile(file))
+    }
     this._dataAll = {
       all: []
     }
