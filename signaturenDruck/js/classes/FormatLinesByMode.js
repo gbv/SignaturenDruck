@@ -1,4 +1,5 @@
 const _ = require('lodash')
+const moment = require('moment')
 
 class FormatLinesByMode {
   /*
@@ -28,6 +29,7 @@ class FormatLinesByMode {
     _.each(linesOrdered, function (value) {
       let regex1 = new RegExp(/\$\d{1,3}/)
       let regex2 = new RegExp(/\$LOC/)
+      let regex3 = new RegExp(/\$DATE/)
       while (regex1.test(value)) {
         let matches = value.match(regex1)
         _.each(matches, function (match) {
@@ -41,6 +43,9 @@ class FormatLinesByMode {
       }
       if (regex2.test(value)) {
         value = value.replace('$LOC', location)
+      }
+      if (regex3.test(value)) {
+        value = value.replace('$DATE', moment().format('DD.MM.YYYY'))
       }
       data[i] = value
       i++
