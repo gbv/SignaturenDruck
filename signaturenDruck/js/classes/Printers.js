@@ -58,7 +58,7 @@ class Printers {
     if (printerNotFound.length > 0 || printerNameError.length > 0) {
       if (printerNotFound.length === 1) {
         str = 'Der Drucker des Formats: "' + printerNotFound[0] + '" wurde nicht gefunden'
-      } else if (printerNotFound > 1) {
+      } else if (printerNotFound.length > 1) {
         str = 'Die Drucker der folgenden Formate wurden nicht gefunden: "'
         printerNotFound.forEach(element => {
           str += element + ', '
