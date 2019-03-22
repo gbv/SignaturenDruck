@@ -71,7 +71,7 @@ class Printers {
       }
       if (printerNameError.length === 1) {
         str += 'Der Druckername des Formats: "' + printerNameError[0] + '" enthält ein "-", dies kann zu einem Problem beim drucken führen.'
-      } else {
+      } else if (printerNameError.length > 1) {
         str += 'Die Druckernamen der folgenden Formate enthalten ein "-": <br/>"'
         printerNameError.forEach(element => {
           str += element + ', '
