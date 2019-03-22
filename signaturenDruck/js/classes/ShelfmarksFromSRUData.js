@@ -81,38 +81,72 @@ class ShelfmarksFromSRUData {
 }
 
 function getPPN (object) {
-  return _.find(object['zs:searchRetrieveResponse']['zs:records']['zs:record']['zs:recordData']['record']['datafield'], { 'tag': '003@' })['subfield']['$t']
+  let data = _.find(object['zs:searchRetrieveResponse']['zs:records']['zs:record']['zs:recordData']['record']['datafield'], { 'tag': '003@' })
+  if (data !== undefined) {
+    return data['subfield']['$t']
+  } else {
+    return ''
+  }
 }
 
 function getDate (object) {
   let parent = _.find(object['zs:searchRetrieveResponse']['zs:records']['zs:record']['zs:recordData']['record']['datafield'], { 'tag': '201B' })
-  return _.find(parent['subfield'], { 'code': '0' })['$t']
+  let data = _.find(parent['subfield'], { 'code': '0' })
+  if (data !== undefined) {
+    return data['$t']
+  } else {
+    return ''
+  }
 }
 
 function getTxt (object) {
   let parent = _.find(object['zs:searchRetrieveResponse']['zs:records']['zs:record']['zs:recordData']['record']['datafield'], { 'tag': '209A' })
-  return _.find(parent['subfield'], { 'code': 'a' })['$t']
+  let data = _.find(parent['subfield'], { 'code': 'a' })
+  if (data !== undefined) {
+    return data['$t']
+  } else {
+    return ''
+  }
 }
 
 function getExNr (object) {
-  return _.find(object['zs:searchRetrieveResponse']['zs:records']['zs:record']['zs:recordData']['record']['datafield'], { 'tag': '209A' })['occurrence']
+  let data = _.find(object['zs:searchRetrieveResponse']['zs:records']['zs:record']['zs:recordData']['record']['datafield'], { 'tag': '209A' })
+  if (data !== undefined) {
+    return data['occurrence']
+  } else {
+    return ''
+  }
 }
 
 function getLocation (object) {
   let parent = _.find(object['zs:searchRetrieveResponse']['zs:records']['zs:record']['zs:recordData']['record']['datafield'], { 'tag': '209A' })
-  return _.find(parent['subfield'], { 'code': 'f' })['$t']
+  let data = _.find(parent['subfield'], { 'code': 'f' })
+  if (data !== undefined) {
+    return data['$t']
+  } else {
+    return ''
+  }
 }
 
 function getLoanIndication (object) {
   let parent = _.find(object['zs:searchRetrieveResponse']['zs:records']['zs:record']['zs:recordData']['record']['datafield'], { 'tag': '209A' })
-  return _.find(parent['subfield'], { 'code': 'd' })['$t']
+  let data = _.find(parent['subfield'], { 'code': 'd' })
+  if (data !== undefined) {
+    return data['$t']
+  } else {
+    return ''
+  }
 }
 
 function getError (object) {
-  if (object['zs:searchRetrieveResponse']['zs:numberOfRecords'] > 0) {
-    return ''
-  } else {
-    return 'Barcode wurde nicht gefunden'
+  try {
+    if (object['zs:searchRetrieveResponses']['zs:numberOfRecords'] > 0) {
+      return ''
+    } else {
+      return 'Barcode wurde nicht gefunden'
+    }
+  } catch (e) {
+    return e.message
   }
 }
 
