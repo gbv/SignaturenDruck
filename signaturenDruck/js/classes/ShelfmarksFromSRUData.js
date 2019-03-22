@@ -140,7 +140,7 @@ function getLoanIndication (object) {
 
 function getError (object) {
   try {
-    if (object['zs:searchRetrieveResponses']['zs:numberOfRecords'] > 0) {
+    if (object['zs:searchRetrieveResponse']['zs:numberOfRecords'] > 0) {
       return ''
     } else {
       return 'Barcode wurde nicht gefunden'
