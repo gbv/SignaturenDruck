@@ -119,7 +119,7 @@ function deleteFile () {
   if (document.getElementById('fileToRead').files[0]) {
     deleteFromPath(document.getElementById('fileToRead').files[0].path)
   } else {
-    deleteFromPath(config.store.defaultPath)
+    deleteFromPath(config.get('defaultDownloadPath'))
   }
 }
 
