@@ -127,6 +127,7 @@ function loadDataFromFormat (formatName) {
   changeLabelHeight()
   document.getElementById('input_labelWidth').value = Number(format.label.width.split('mm')[0])
   changeLabelWidth()
+  document.getElementById('input_example').value = currentFormat.example.shelfmark
   let i = document.getElementById('input_labelLines').value
   while (i < format.lines) {
     addLine()
@@ -176,7 +177,6 @@ function loadDataFromFormat (formatName) {
   document.getElementById('marginTop').value = format.marginTop
   for (let i = 1; i <= format.lines; i++) {
     let k = i - 1
-    console.log(format)
     document.getElementById('fontLine_' + i).value = format.linesData[k].font
     let evt = { 'target': { 'id': '' } }
     evt.target.id = '_' + i
