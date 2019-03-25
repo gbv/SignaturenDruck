@@ -217,19 +217,20 @@ function changeLabelWidth (event) {
 }
 
 function saveConfig () {
-  if (document.getElementById('input_fileName').value !== '') {
+  if (document.getElementById('input_fileName').value !== '' && document.getElementById('selectFormat').value !== '') {
     if (document.getElementById('selectPrinter').value !== '') {
       if (!fs.existsSync(defaultProgramPath + '\\Formate\\' + document.getElementById('input_fileName').value + '.json')) {
         writeToFiles()
         alert('Das Format wurde hinzugefügt.')
+        close()
       } else {
-        let override = confirm('Ein Format mit diesem Namen ist bereits vorhanden.\nSoll dieses überschrieben werden?')
+        let override = confirm('Wollen Sie die Änderungen übernehmen?')
         if (override) {
           writeToFiles()
-          alert('Das Format wurde hinzugefügt.')
+          alert('Das Format wurde angepasst.')
           close()
         } else {
-          document.getElementById('input_fileName').focus()
+          document.getElementById('selectFormat').focus()
         }
       }
     } else {
@@ -237,8 +238,8 @@ function saveConfig () {
       document.getElementById('selectPrinter').focus()
     }
   } else {
-    alert('Es muss ein Formatname vergeben werden')
-    document.getElementById('input_fileName').focus()
+    alert('Es wurde kein Format ausgewählt!')
+    document.getElementById('selectFormat').focus()
   }
 
   function writeToFiles () {
