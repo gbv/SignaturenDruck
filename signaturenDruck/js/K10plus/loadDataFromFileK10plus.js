@@ -68,7 +68,6 @@ module.exports = function (allLines) {
       sig.date = extract.date(line)
     }
     if (sig.allSet()) {
-      console.log(sig)
       obj.all.push(sig.shelfmark)
       sig = new Shelfmark()
       sig.ppn = ppnAktuell
