@@ -156,6 +156,14 @@ function invertPrintingSelection () {
   }
 }
 
+// function to invert the short-selection
+function invertShortSelection () {
+  let elems = document.querySelectorAll('[name=shortShelfmark]')
+  for (let i = 0; i < elems.length; i++) {
+    elems[i].click()
+  }
+}
+
 // function to select shelfmarks per date
 function selectByDate () {
   let datepicker = document.getElementById('datepicker')
@@ -208,6 +216,8 @@ document.getElementById('btn_print').addEventListener('click', printButton)
 document.getElementById('btn_close').addEventListener('click', closeButton)
 // adds event listener to the refresh button
 document.getElementById('btn_refresh').addEventListener('click', refreshDownloadFile)
+// adds event listener to the short column
+document.getElementById('columnShort').addEventListener('click', invertShortSelection)
 // adds event listener to the print column
 document.getElementById('columnPrint').addEventListener('click', invertPrintingSelection)
 // adds event listener to the datepicker
