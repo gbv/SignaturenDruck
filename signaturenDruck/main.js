@@ -4,6 +4,9 @@ const url = require('url')
 const fs = require('fs')
 const _ = require('lodash')
 const Store = require('electron-store')
+// requires the username-module
+// const username = require('username')
+// const defaultProgramPath = 'C:/Users/' + username.sync() + '/SignaturenDruck/'
 
 const defaultProgramPath = 'C:\\SignaturenDruck'
 // Use a default path
@@ -189,7 +192,7 @@ function createWindow () {
   global.defaultProgramPath = defaultProgramPath
   global.sigJSONFile = sigJSONFile
 
-  checkDir('./tmp')
+  // checkDir('./tmp')
   checkDir(defaultProgramPath)
   checkDir(defaultProgramPath + '\\Formate')
   checkDir(defaultProgramPath + '\\FormateCSS')
@@ -304,7 +307,9 @@ function printData (formatInformation, printInformation) {
             } else {
               mainWindow.webContents.send('printMsg', false)
             }
-            fs.unlinkSync(defaultProgramPath + '\\' + fileName)
+            setTimeout(function () {
+              fs.unlinkSync(defaultProgramPath + '\\' + fileName)
+            }, 10000)
           }).catch(err => {
             dialog.showErrorBox('Es ist ein Fehler aufgetreten.', err)
             mainWindow.webContents.send('printMsg', false)
