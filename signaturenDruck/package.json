@@ -7,6 +7,7 @@
     "start": "electron .",
     "build:exe": "npx electron-builder --win --ia32",
     "build:exe64": "npx electron-builder --win --x64",
+    "build:portable": "npx electron-builder --win portable",
     "rebuild": "electron-rebuild -w keytar"
   },
   "keywords": [
