@@ -261,6 +261,20 @@ Mit <kbd>strg</kbd> + <kbd>alt</kbd> + <kbd>C</kbd> öffen Sie die "Modus erstel
 
 Der Adobe Acrobat Reader DC wird für den Druck benötigt. Ist dieser nicht das Standard PDF-Programm so schlägt der Druck fehl.
 
-## License
+# Changelog
+
+## v1.1.0-d
+
+- Platzhalter für das aktuelle Datum hinzugefügt ($DATE)
+- Warnung für fehlende Drucker angepasst
+- einige Meldungstexte angepasst
+- PDFs werden erst nach 10 Sekunden gelöscht
+- es kann nun eine portable exe erstellt werden (npm run build:portable)
+- Dokumentation angepasst
+- die ausgelesene Datei kann nun wieder gelöscht werden
+
+
+
+# License
 
 [CC0 1.0 (Public Domain)](LICENSE.md)
