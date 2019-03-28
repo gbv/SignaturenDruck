@@ -20,7 +20,9 @@ npm install
 npm start
 ```
 
+
 The app creates the directory `C:\SignaturenDruck` and stores the config files in it.
+
 
 In the `config.json` you can change the various switches, like `defaultMode` or `defaultDownloadPath`.
 
@@ -65,7 +67,6 @@ Hierbei handelt es sich um:
   - `./Formate\` - enhält die Konfigurationsdateien der eingerichteten Formate.
   - `./FormateCSS\` - enthält die CSS-Dateien der eingerichteten Formate.
   - `./Modi\` - enhält die Konfigurationsdateien der eingerichteten Modi.
-
 
 Sind diese Ordner/Dateien vorhanden so wird die geprüft ob die Datei die in der `config.json` unter `defaultPath` angegeben ist existiert.  
 Ist dies der Fall dann werden die enthaltenen Signaturen ausgelesen und angezeigt.
@@ -272,8 +273,6 @@ Der Adobe Acrobat Reader DC wird für den Druck benötigt. Ist dieser nicht das 
 - es kann nun eine portable exe erstellt werden (npm run build:portable)
 - Dokumentation angepasst
 - die ausgelesene Datei kann nun wieder gelöscht werden
-
-
 
 # License
 
