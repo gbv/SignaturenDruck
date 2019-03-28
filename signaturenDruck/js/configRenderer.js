@@ -8,6 +8,8 @@ const fs = require('fs')
 // requires the lodash-module
 const _ = require('lodash')
 
+const moment = require('moment')
+
 const FormatLinesByMode = require('./classes/FormatLinesByMode')
 
 // required for ipc calls to the main process
@@ -101,6 +103,9 @@ function displayPlaceholderInfo (lines = '') {
     })
     let p = document.createElement('p')
     p.innerHTML = '$LOC - "' + config.get('example.location') + '"'
+    document.getElementById('infoBox').appendChild(p)
+    p = document.createElement('p')
+    p.innerHTML = '$DATE - "' + moment().format('DD.MM.YYYY') + '"'
     document.getElementById('infoBox').appendChild(p)
   }
 }
@@ -351,7 +356,6 @@ function saveAndContinue () {
     data.nrOfLines = getLineCount()
     data.exampleShelfmark = document.getElementById('input_example').value
     data.lines = resultData
-    // console.log(modeDataNew, data, resultData)
     ipcRenderer.send('createNewModeFormat', data)
     close()
   } else {
