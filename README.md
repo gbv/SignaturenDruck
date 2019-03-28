@@ -49,6 +49,11 @@ npm run build:portable
 ```
 
 # Dokumentation
+## Kurzbeschreibung
+
+Der SignaturenDruck kann Signaturen aus einer Datei auslesen, sie via SRU laden oder auch manuell erstellen.
+Das Programm bietet eine Vielzahl an Einstellungsmöglichkeiten. So lassen sich sowohl er Aufbau der Signaturen als auch das Layout der Etiketten aus dem Programm heraus bearbeiten oder neu anlegen.
+Zum Druck werden PDF-Dateien erstellt, die mit Hilfe des Adobe Acrobar Reader DC gedruckt werden.  
 
 ## Installation
 Das Programm kann einfach mit der entsprechenden `.exe` (ia32 oder x64) installiert werden.  
