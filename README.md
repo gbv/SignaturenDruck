@@ -20,7 +20,7 @@ npm install
 npm start
 ```
 
-The app creates the directory `C:\\SignaturenDruck` and stores the config files in it.
+The app creates the directory `C:\SignaturenDruck` and stores the config files in it.
 
 In the `config.json` you can change the various switches, like `defaultMode` or `defaultDownloadPath`.
 
@@ -50,15 +50,14 @@ npm run build:portable
 
 ## Installation
 Das Programm kann einfach mit der entsprechenden `.exe` (ia32 oder x64) installiert werden.  
-Dazu genügt ein Doppelklick auf die `.exe`.  
 Das Programm wird dann unter `C:\Users\USERNAME\AppData\Local\Programs\SignaturenDruck_neu` installiert.  
 Auf dem Desktop des Nutzers wird eine Verknüpfung zum starten des SignaturenDrucks erzeugt.  
 Nach erfolgreicher Installation startet das Programm auch direkt.
 
 ## Arbeiten mit dem Programm
 ### Start des Programms
-Es wird bei jedem Start des Programms geprüft ob die notwendigen Konfigurationsdateien und Ordner vorhanden sind, ist dies nicht der Fall so werden sie neu erzeugt. 
-Dabei handelt es sich um:  
+Es wird bei jedem Start des Programms geprüft ob die notwendigen Konfigurationsdateien und Ordner vorhanden sind, ist dies nicht der Fall so werden diese neu erstellt.  
+Hierbei handelt es sich um:  
 
 - `C:\Export\`
 - `C:\SignaturenDruck\`
@@ -69,24 +68,25 @@ Dabei handelt es sich um:
 
 
 Sind diese Ordner/Dateien vorhanden so wird die geprüft ob die Datei die in der `config.json` unter `defaultPath` angegeben ist existiert.  
-Ist dies der Fall dann werden die enthaltenen Daten geladen und angezeigt.
+Ist dies der Fall dann werden die enthaltenen Signaturen ausgelesen und angezeigt.
 ![Erfolgreiches laden der Daten](docu/imgs/erfolgreicherStart.PNG?token=Ah-Pd0EhXe4Z_8PPoWR73aePoL9yasF8ks5b7mafwA%3D%3D)  
-Sollte dies nicht der Fall sein so wird dies in der Oberfläche angezeigt.
+Sollte die angegebene Datei nicht vorhanden sein, so wird eine entsprechende Meldung in der Oberfläche angezeigt.
 ![Keine DefaultDatei vorhanden](docu/imgs/startOhneDefaultDatei.PNG?token=Ah-Pd-fUR3dlUm7_nQwvMt6fs4N3tUliks5b7mblwA%3D%3D)  
 
 ### Andere Datei auswählen
 
-Mit einem Klick auf `Dateiauswahl` kann eine andere Datei auswählen aus der dann die Signaturen ausgelesen werden.
+Mit einem Klick auf `Dateiauswahl` kann man eine andere Datei auswählen, aus der dann die Signaturen ausgelesen werden.
 
 ### Signaturauswahl
 
-Jede Signatur kann in ihrer Zeile mit einem Klick auf die Checkbox in der Spalte `Drucken` zum Druck ausgewählt werden. Die Auswahl kann einzeln erfolgen oder durch einen Klick auf den Splatenkopf `Drucken`. Dies kehrt die bisher getroffene Auswahl um, sollte also noch keine Signatur zum Druck ausgewählt worden sein, so werden durch einen Klick alle Signaturen der Tabelle zum Druck ausgewählt.  
+Jede Signatur kann in ihrer Zeile mit einem Klick auf die Checkbox in der Spalte `Drucken` zum Druck ausgewählt werden. Die Auswahl kann einzeln erfolgen oder durch einen Klick auf den Splatenkopf `Drucken`. Dies kehrt die bisher getroffene Auswahl um, sollte also noch keine Signatur zum Druck ausgewählt worden sein, so werden durch alle Signaturen der Tabelle zum Druck ausgewählt.  
 
 In der Spalte `Anzahl` kann festegelegt werden wie oft die jeweilige Signatur gedruckt werden soll. Der Standardwert ist `1`.  
 
 In der Spalte `Format` kann, wie der Name schon sagt, das Format ausgewählt werden mit dem die Signatur gedruckt werden soll. Vom gewählten Format ist abhängig wie die Signatur dargestellt wird, wie groß das Etikett ist und an welchem Drucker gedruckt werden soll.  
 
 Der Druck der ausgewählten Signaturen erfolgt dann mit einem Klick auf die Schaltfläche `Drucken`. Anschließend wird eine Meldung über den erfolgreichen Druck ausgegeben.  
+Während des Drucks öffnet und schließt sich der Adobe Reader DC entsprechend der Anzahl der gewählten Formate. Sollten Sie den Adobe Reader DC bereits vor dem Druck geöffnet haben, sowird dieser nicht automatisch geschlossen.
 
 ### Manuelles Anlegen
 
@@ -100,7 +100,7 @@ Nachdem eine Signatur eingetragen wurde, kann mit der Schaltfläche `Nächste` e
 
 Es besteht aber auch die Möglichkeit alle bisher eingetragenen manuellen Signaturen mit der Schaltfläche `Verwerfen und Beenden` gesammelt zu löschen.  
 
-Das löschen einer ein Signatur ist mit der Schaltfläche `löschen` möglich. Diese löscht immer die aktuell angezeigte Signatur.
+Das löschen einer einzelnen Signatur ist mit der Schaltfläche `löschen` möglich. Diese löscht immer die aktuell angezeigte Signatur.  
 
 Mit den Schaltflächen `Vorherige` und `Nächste` kann zwischen den bereits eingetragenen Signaturen navigiert werden. Ist man bei der ersten Signatur angelangt so ist die Schaltfläche `Vorherige` deaktiviert.
 
@@ -139,16 +139,17 @@ Der Delimiter wird ebenfalls aus der `config.json` geladen. Er dient dazu die Si
 
 #### Funktion
 
-Die eingetragene Signatur kann entweder mit dem `RegEx` oder mit dem `Delimiter` zerlegt werden. Dies geschieht nach einem Klick auf `Testen`. Das Resultat wird in der Vorschau ersichtlich. Die einzelnen Gruppen werden oben rechts unter `Hinweise` aufgeschlüsselt.  
+Die eingetragene Signatur kann entweder mit dem `RegEx` oder mit dem `Delimiter` zerlegt werden. Dies geschieht nach einem Klick auf `Testen`. Das Resultat wird in der `Vorschau` ersichtlich. Die einzelnen Gruppen werden oben rechts unter `Hinweise` aufgeschlüsselt.  
 
 ### Ergebnis
 
-Hier kann die Anzahl der Zeilen und die Anordnung der Signaturenteile angepasst werden. Wurden Anpassungen vorgenommen, so werden diese nach einem Klick auf `Aktualisieren` in der Vorschau sichtbar.  
+Hier kann die Anzahl der Zeilen und die Anordnung der Signaturenteile angepasst werden. Wurden Anpassungen vorgenommen, so werden diese nach einem Klick auf `Aktualisieren` in der `Vorschau` sichtbar.  
 Die Signaturenteile werden mit Platzhaltern dargestellt. So entspricht der Signaturenteil 5 dem Platzhalter `$5`. Alle Platzhalter und ihr aktueller Inhalt sind unter `Hinweise` aufgeschlüsselt.  
-Es ist auch möglich, einen festen Text einzutragen, der dann immer mit diesem Format, in der entsprechenden Zeile Anwendung findet.  
-
+Es ist auch möglich, einen festen Text einzutragen der dann immer mit diesem Format, in der entsprechenden Zeile, Anwendung findet.  
 
 Sobald Sie mit der Anordnung der Signaturenteile zufrieden sind und auf `Weiter` geklickt haben, öffnet sich das Formatfenster. Dort können Sie die Gestaltung des Etiketts vornehmen.
+
+Nach dem erfolgreichen Anlegen muss das Programm neu gestartet werden. Soll ein anderer Modus verwendet werden, so muss in der `config.json` der `defaultMode` geändert werden.
 
 ## Format anpassen
 
@@ -172,7 +173,7 @@ Im Feld `Beispiel` wird die Signatur angezeigt die beim anlegen dieses Formates 
 
 ### Papier
 
-Es müssen die Maße des verwendeten Papiers angebeben werden, damit das erstellte PDF passgenau erstellt werden kann. Somit können Unschärfen und ähnliche Effekte die durch Skalierung entstehen verhindert werden.  
+Es müssen die Maße des verwendeten Papiers angegeben werden, damit das erstellte PDF passgenau erstellt werden kann. Somit können Unschärfen und ähnliche Effekte die durch Skalierung entstehen verhindert werden.  
 *Das Label (Etikett) wird auf dem Papier zentriert*  
 
 | Eigenschaft | Beschreibung |  
@@ -182,7 +183,7 @@ Es müssen die Maße des verwendeten Papiers angebeben werden, damit das erstell
 
 ### Label (Etikett)
 
-Es werden unterschiedliche Eigenschaften des Label erfasst.
+Es werden unterschiedliche Eigenschaften des Labels erfasst.
 
 | Eigenschaft | Beschreibung |  
 | :----------: | ------------ |  
@@ -253,6 +254,12 @@ Lösung: Tragen Sie in der `config.json` den Modus zu dem der Untermodus gehört
 Erklärung: Beim auslesen der Signaturen aus einer Datei oder via SRU wird geprüft welche Untermodi/Formate diese Signatur entsprechend Festlegung darstellen können.  
 Lösung: Wenn eine Signatur eigentlich einem Format entsprechen sollte, aber dieses nicht auswählbar ist, so sollten Sie den Untermodus kontrollieren.  
 Mit <kbd>strg</kbd> + <kbd>alt</kbd> + <kbd>C</kbd> öffen Sie die "Modus erstellen / anpassen"-Oberfläche. Nun wählen Sie den Modus und endsprechenden Untermodus aus und können die Konfiguration prüfen.
+
+### Sonstige
+
+#### Warum benötige ich den Adobe Acrobat Reader DC als Standard PDF-Programm?
+
+Der Adobe Acrobat Reader DC wird für den Druck benötigt. Ist dieser nicht das Standard PDF-Programm so schlägt der Druck fehl.
 
 ## License
 
