@@ -91,7 +91,7 @@ Während des Drucks öffnet und schließt sich der Adobe Reader DC entsprechend 
 ### Manuelles Anlegen
 
 Der SignaturenDruck ermöglicht nicht nur den Druck von Signaturen aus einer Datei oder via SRU, sondern auch das erstellen von manuellen Signaturen. Mit einem Klick auf die Schaltfläche `Manuelles Anlegen` öffnet sich folgendes Fenster zur Eingabe:  
-![Oberfläche manuelles Anlegen](docu/imgs/oberflaecheManuellesAnlegen.PNG?token=Ah-Pd2agTmCO831eG9Wf4YkxX88dS7mFks5b7mYwwA%3D%3D)
+![Oberfläche manuelles Anlegen](docu/imgs/oberflaecheManuellesAnlegen.PNG)
 
 Auf der linken Seite befinden sich die Eingabefelder der jeweiligen Zeilen und die Schaltflächen.  
 Rechts befinden sich die Übersicht um welche manuelle Signatur es sich handelt, die Vorschau der Signatur, die Auswahl des Formats und die Option den Einzug zu entfernen.  
@@ -157,7 +157,7 @@ Mit der Tastenkombination
 <kbd>strg</kbd> + <kbd>alt</kbd> + <kbd>E</kbd>  
 kann das Fenster zum anpassen von Formaten geöffnet werden.  
 
-![Oberflaeche zum anpassen von Formaten](docu/imgs/oberflaecheFormatErstellenBearbeiten.PNG?token=Ah-Pd8hfOUr5CkVgwkFtZeTPo35Oahf7ks5b7sV3wA%3D%3D)
+![Oberflaeche zum anpassen von Formaten](docu/imgs/oberflaecheFormatErstellenBearbeiten.PNG)
 
 ### Format
 
