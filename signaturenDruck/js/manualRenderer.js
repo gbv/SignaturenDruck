@@ -16,18 +16,21 @@ let max = 1
 
 window.onload = function () {
   pushFormatsToSelect()
-  selectDefaultFormat()
   createByFormat(getFormatSelected().lines)
+  disableBtnPrevious()
 }
 
 ipcRenderer.on('objMan', function (event, objMan) {
   if (objMan !== null) {
-    object.manual = objMan
-    id = objMan.length
-    max = objMan.length + 1
-    setCounters()
-    enableBtnPrevious()
+    if (objMan.length > 0) {
+      object.manual = objMan
+      id = objMan.length
+      max = objMan.length + 1
+      setCounters()
+      enableBtnPrevious()
+    }
   }
+  setCounters()
 })
 
 function pushFormatsToSelect () {
@@ -136,7 +139,7 @@ function loadData () {
   createByFormat(getFormatSelected().lines)
   let i = 1
   while (i <= object.manual[id].txtLength) {
-    let txt = object.manual[id].txt[i - 1]
+    let txt = object.manual[id].modes[0].lines[i - 1]
     document.getElementById('inputLine_' + i).value = txt
     document.getElementById('line_' + i).innerHTML = txt
     i++
@@ -162,15 +165,19 @@ function saveCurrent () {
   object.manual[id] = {
     'id': id,
     'format': format.name,
+    'defaultSubMode': 0,
     'txtLength': parseInt(format.lines),
-    'txt': lineTxts,
+    'modes': [],
     'txtOneLine': oneLineTxt,
     'removeIndent': removeIndent
   }
-}
-
-function selectDefaultFormat () {
-  document.getElementById('formatSelect').value = config.get('defaultFormat')
+  let data = {
+    'format': '',
+    'lines': ''
+  }
+  data.format = format.name
+  data.lines = lineTxts
+  object.manual[id].modes.push(data)
 }
 
 function next () {
@@ -191,7 +198,6 @@ function next () {
     if (object.manual[id] !== undefined) {
       loadData()
     } else {
-      selectDefaultFormat()
       createByFormat(getFormatSelected().lines)
       max++
       focusFirst()
@@ -233,7 +239,6 @@ function deleteData () {
     if (object.manual[id] !== undefined) {
       loadData()
     } else {
-      selectDefaultFormat()
       createByFormat(getFormatSelected().lines)
     }
   }
@@ -254,7 +259,7 @@ function saveAndExit () {
   if (object.manual[object.manual.length - 1] !== undefined) {
     let i = 1
     while (i <= object.manual[object.manual.length - 1].txtLength) {
-      if (object.manual[object.manual.length - 1].txt[i - 1] !== '') {
+      if (object.manual[object.manual.length - 1].modes[0][i - 1] !== '') {
         isEmpty = false
       }
       i++

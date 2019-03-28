@@ -15,6 +15,7 @@ const fontManager = require('font-manager')
 
 const printerList = remote.getCurrentWindow().webContents.getPrinters()
 const defaultProgramPath = remote.getGlobal('defaultProgramPath')
+const config = remote.getGlobal('config')
 
 let lineCounter = 1
 
@@ -22,6 +23,7 @@ let currentFormat = ''
 let fonts = []
 let formats = []
 let selectOptions = []
+let parts = []
 
 window.onload = function () {
   setFontsList()
@@ -30,9 +32,34 @@ window.onload = function () {
   setFormatsSelect()
   changeLineSpace()
   addTableLine()
-  addText()
   document.getElementById('line_1').style.fontFamily = document.getElementById('fontLine_1').value
 }
+
+ipcRenderer.on('newModeFormat', function (event, data) {
+  if (data === '') {
+    lineCounter = 1
+    document.getElementById('input_labelLines').value = 1
+    document.getElementById('input_fileName').value = ''
+    document.getElementById('input_example').value = config.get('example.shelfmark')
+  } else {
+    document.getElementById('input_fileName').value = data.format
+    document.getElementById('input_example').value = data.exampleShelfmark
+    while (document.getElementById('tableLinesBody').childNodes.length < data.nrOfLines) {
+      addLine()
+    }
+    let i = 0
+    while (i < data.nrOfLines) {
+      if (data.lines[i] !== '') {
+        document.getElementById('line_' + (i + 1)).innerHTML = data.lines[i]
+        parts.push(data.lines[i])
+      } else {
+        document.getElementById('line_' + (i + 1)).innerHTML = '<br/>'
+        parts.push('<br/>')
+      }
+      i++
+    }
+  }
+})
 
 function setFontsList () {
   let fontsList = []
@@ -83,12 +110,8 @@ function setFormatsSelect () {
   select.onchange = function () {
     if (select.value !== '') {
       loadDataFromFormat(select.value)
-      addText()
     } else {
       currentFormat = ''
-      document.getElementById('useRegExBox').style.display = 'none'
-      document.getElementById('input_delimiter').disabled = false
-      document.getElementById('input_example').disabled = false
     }
   }
 }
@@ -96,15 +119,6 @@ function setFormatsSelect () {
 function loadDataFromFormat (formatName) {
   let format = formats[formatName]
   currentFormat = format
-  if (currentFormat.splitByRegEx) {
-    document.getElementById('useRegExBox').style.display = 'flex'
-    document.getElementById('input_delimiter').disabled = true
-    document.getElementById('input_example').disabled = true
-  } else {
-    document.getElementById('useRegExBox').style.display = 'none'
-    document.getElementById('input_delimiter').disabled = false
-    document.getElementById('input_example').disabled = false
-  }
   document.getElementById('input_fileName').value = format.name
   document.getElementById('selectPrinter').value = format.printer
   document.getElementById('input_paperHeight').value = Number(format.paper.height)
@@ -113,14 +127,27 @@ function loadDataFromFormat (formatName) {
   changeLabelHeight()
   document.getElementById('input_labelWidth').value = Number(format.label.width.split('mm')[0])
   changeLabelWidth()
+  document.getElementById('input_example').value = currentFormat.example.shelfmark
   let i = document.getElementById('input_labelLines').value
   while (i < format.lines) {
-    document.getElementById('btn_addLine').click()
+    addLine()
     i++
   }
   while (i > format.lines) {
-    document.getElementById('btn_removeLine').click()
+    removeLine()
     i--
+  }
+  i = 0
+  parts = []
+  while (i < currentFormat.lines) {
+    if (currentFormat.example.parts[i] !== '') {
+      document.getElementById('line_' + (i + 1)).innerHTML = currentFormat.example.parts[i]
+      parts.push(currentFormat.example.parts[i])
+    } else {
+      document.getElementById('line_' + (i + 1)).innerHTML = '<br/>'
+      parts.push('<br/>')
+    }
+    i++
   }
   document.getElementById('input_labelLines').value = Number(format.lines)
   document.getElementById('lineSpace').value = Number(format.lineSpace)
@@ -190,18 +217,20 @@ function changeLabelWidth (event) {
 }
 
 function saveConfig () {
-  if (document.getElementById('input_fileName').value !== '') {
+  if (document.getElementById('input_fileName').value !== '' && document.getElementById('selectFormat').value !== '') {
     if (document.getElementById('selectPrinter').value !== '') {
       if (!fs.existsSync(defaultProgramPath + '\\Formate\\' + document.getElementById('input_fileName').value + '.json')) {
         writeToFiles()
         alert('Das Format wurde hinzugefügt.')
+        close()
       } else {
-        let override = confirm('Ein Format mit diesem Namen ist bereits vorhanden.\nSoll dieses überschrieben werden?')
+        let override = confirm('Wollen Sie die Änderungen übernehmen?')
         if (override) {
           writeToFiles()
-          alert('Das Format wurde hinzugefügt.')
+          alert('Das Format wurde angepasst.')
+          close()
         } else {
-          document.getElementById('input_fileName').focus()
+          document.getElementById('selectFormat').focus()
         }
       }
     } else {
@@ -209,8 +238,8 @@ function saveConfig () {
       document.getElementById('selectPrinter').focus()
     }
   } else {
-    alert('Es muss ein Formatname vergeben werden')
-    document.getElementById('input_fileName').focus()
+    alert('Es wurde kein Format ausgewählt!')
+    document.getElementById('selectFormat').focus()
   }
 
   function writeToFiles () {
@@ -235,11 +264,14 @@ function setObjct () {
       'height': document.getElementById('input_paperHeight').value
     },
     'lines': document.getElementById('input_labelLines').value,
+    'example': {
+      'shelfmark': document.getElementById('input_example').value,
+      'parts': parts
+    },
     'centerHor': document.getElementById('centerHor').checked,
     'centerVer': document.getElementById('centerVer').checked,
     'lineSpace': document.getElementById('lineSpace').value,
     'linesData': '',
-    'lineDelimiter': document.getElementById('input_delimiter').value,
     'marginTop': document.getElementById('marginTop').value
   }
 
@@ -341,10 +373,11 @@ function createCSS (obj) {
   }
   function centerHor (str) {
     if (obj.centerHor) {
-      str += '.format_' + obj.name + ' {\ntext-align: center;\n}\n'
+      str += '.format_' + obj.name + ' {\ntext-align: center;\n'
     } else {
-      str += '.format_' + obj.name + ' {\ntext-align: initial;\n}\n'
+      str += '.format_' + obj.name + ' {\ntext-align: initial;\n'
     }
+    str += 'white-space: nowrap;\noverflow: hidden;\n}\n'
     return str
   }
   function label (str) {
@@ -362,38 +395,10 @@ function addLine () {
   lineCounter++
   line.id = 'line_' + lineCounter
   line.class = ''
-  line.innerHTML = 'Zeile ' + lineCounter
   document.getElementById('innerBox').appendChild(line)
   document.getElementById('input_labelLines').value = lineCounter
   addTableLine(lineCounter)
   changeLineSpace()
-  addText()
-}
-
-function addText () {
-  let numberOfLines = document.getElementById('innerBox').childElementCount
-  let example = document.getElementById('input_example').value
-  let delimiter = document.getElementById('input_delimiter').value
-  if (numberOfLines === 1) {
-    document.getElementById('line_1').innerHTML = example
-  } else {
-    let parts = example.split(delimiter)
-    for (let i = 1; i <= numberOfLines; i++) {
-      if (parts[i - 1] === '') {
-        let emptyLine = document.createElement('br')
-        document.getElementById('line_' + i).innerHTML = ''
-        document.getElementById('line_' + i).appendChild(emptyLine)
-      } else {
-        document.getElementById('line_' + i).innerHTML = parts[i - 1]
-      }
-    }
-  }
-}
-
-function changeDelim () {
-  if (document.getElementById('input_delimiter').value !== '') {
-    addText()
-  }
 }
 
 function removeLine () {
@@ -404,7 +409,6 @@ function removeLine () {
     toDelete.parentNode.removeChild(toDelete)
     lineCounter--
     document.getElementById('input_labelLines').value = lineCounter
-    addText()
   }
 }
 
@@ -565,9 +569,6 @@ function getPrinterNameList () {
   return nameList
 }
 
-// adds event listener to the labelSize line add and remove buttons
-document.getElementById('btn_addLine').addEventListener('click', addLine)
-document.getElementById('btn_removeLine').addEventListener('click', removeLine)
 // adds event listener to the labelSize inputs
 document.getElementById('input_labelHeight').addEventListener('input', changeLabelHeight)
 document.getElementById('input_labelWidth').addEventListener('input', changeLabelWidth)
@@ -581,7 +582,3 @@ document.getElementById('lineSpace').addEventListener('input', changeLineSpace)
 document.getElementById('centerHor').addEventListener('click', centerHor)
 // adds event listener to the centerVer input
 document.getElementById('centerVer').addEventListener('click', centerVer)
-// adds event listener to the shelfmark example input
-document.getElementById('input_example').addEventListener('input', addText)
-// adds event listener to the delimiter input
-document.getElementById('input_delimiter').addEventListener('input', changeDelim)

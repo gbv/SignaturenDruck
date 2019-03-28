@@ -1,61 +1,61 @@
-#previewBox.format_thulb_gross {
+#previewBox.default {
 width: 80mm;
 height: 43mm;
 }
-.format_thulb_gross {
+.default {
 text-align: initial;
 white-space: nowrap;
 overflow: hidden;
 }
-.format_thulb_gross {
+.default {
 align-items: center;
 }
-#toPrint.format_thulb_gross> .innerBox {
+#toPrint.default> .innerBox {
 height: 43mm;
 width: 80mm;
 display: flex;
 justify-content: center;
 flex-direction: column;
 }
-.format_thulb_gross > .innerBox > p {
+.default > .innerBox > p {
 margin: 0px 0px 0px 0px;
 }
-.format_thulb_gross > .innerBox > .line_1 {
+.default > .innerBox > .line_1 {
 font-family: "Arial Narrow";
 font-size: 16pt;
 font-weight: bold;
 font-style: normal;
 margin-left: 45%;
 }
-.format_thulb_gross > .innerBox > .line_2 {
+.default > .innerBox > .line_2 {
 font-family: "Arial Narrow";
 font-size: 16pt;
 font-weight: bold;
 font-style: normal;
 margin-left: 45%;
 }
-.format_thulb_gross > .innerBox > .line_3 {
+.default > .innerBox > .line_3 {
 font-family: "Arial Narrow";
 font-size: 16pt;
 font-weight: bold;
 font-style: normal;
 margin-left: 45%;
 }
-.format_thulb_gross > .innerBox > .line_4 {
+.default > .innerBox > .line_4 {
 font-family: "Arial Narrow";
 font-size: 16pt;
 font-weight: normal;
 font-style: normal;
 margin-left: 45%;
 }
-.format_thulb_gross > .innerBox > .line_5 {
+.default > .innerBox > .line_5 {
 font-family: "Arial Narrow";
 font-size: 16pt;
 font-weight: normal;
 font-style: normal;
 margin-left: 45%;
 }
-.format_thulb_gross > .innerBox > .line_6 {
+.default > .innerBox > .line_6 {
 font-family: "Arial Narrow";
 font-size: 16pt;
 font-weight: bold;
@@ -63,10 +63,10 @@ font-style: normal;
 margin-left: 45%;
 }
 @media print {
-#toPrint.format_thulb_gross > .innerBox {
+#toPrint.default > .innerBox {
 margin: 2.96mm 0mm 0mm 7.984999999999999mm;
 }
-#toPrint.format_thulb_gross > .innerBox > .line_1 {
+#toPrint.default > .innerBox > .line_1 {
 margin-top: -3mm;
 }
 }

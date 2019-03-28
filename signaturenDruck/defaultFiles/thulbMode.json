@@ -1,0 +1,32 @@
+{
+  "modeName": "thulbMode",
+  "subModes": [
+    {
+      "id": 0,
+      "format": "thulb_gross",
+      "useRegEx": true,
+      "exampleShelfmark": "PÄD:TG:1420:Dan::2017",
+      "regEx": "(.*):(.*):(.*):(.*):(.*):(.*)",
+      "delimiter": "",
+      "result": ["$1", "$2", "$3", "$4", "$5", "$6"]
+    },
+    {
+      "id": 1,
+      "format": "thulb_klein_1",
+      "useRegEx": true,
+      "exampleShelfmark": "2018 SA 1454",
+      "regEx": "^(.*)$",
+      "delimiter": "",
+      "result": ["$1"]
+    },
+    {
+      "id": 2,
+      "format": "thulb_klein",
+      "useRegEx": true,
+      "exampleShelfmark": "2018 B 1024 :1",
+      "regEx": "^(\\w+\\s[\\w\\.\\,]+)([\\s\\/]?)([^\\/\\:]*)([\\/\\:]?)(.*)$",
+      "delimiter": "",
+      "result": ["$1$2", "$3$4", "$5"]
+    }
+  ]
+}

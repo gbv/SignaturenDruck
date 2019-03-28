@@ -125,7 +125,7 @@ tbody>tr:hover {
   width: 155px;
 }
 
-#columnPrint {
+#columnPrint, #columnShort {
   border: 0px;
   background-color: RGB(240, 240, 240);
   font-family: Arial;
@@ -204,5 +204,9 @@ td.txtCell {
 }
 
 #columnPrint.button:focus:not(:active) {
+  box-shadow: none !important;
+}
+
+#columnShort.button:focus:not(:active) {
   box-shadow: none !important;
 }

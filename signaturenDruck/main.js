@@ -4,6 +4,9 @@ const url = require('url')
 const fs = require('fs')
 const _ = require('lodash')
 const Store = require('electron-store')
+// requires the username-module
+// const username = require('username')
+// const defaultProgramPath = 'C:/Users/' + username.sync() + '/SignaturenDruck/'
 
 const defaultProgramPath = 'C:\\SignaturenDruck'
 // Use a default path
@@ -25,17 +28,21 @@ require('electron-context-menu')({
 // default main config settings
 const configNew = {
   defaultDownloadPath: 'C:/Export/download.dnl',
-  defaultFormat: 'thulb_gross',
   sortByPPN: false,
-  newLineAfter: ':',
-  useK10plus: false,
+  useK10plus: true,
+  example: {
+    shelfmark: 'PÄD:TG:1420:Dan::2017',
+    location: 'MAG',
+    regex: '^(.*):(.*):(.*):(.*):(.*):(.*)$',
+    delimiter: ':'
+  },
   modal: {
     showModal: true,
     modalTxt: 'Die ausgewählten Signaturen wurden gedruckt.'
   },
   SRU: {
     useSRU: false,
-    SRUAddress: 'http://sru.gbv.de/opac-de-27',
+    SRUAddress: 'http://sru.k10plus.de/opac-de-27',
     QueryPart1: '?version=1.1&operation=searchRetrieve&query=pica.bar=',
     QueryPart2: '&maximumRecords=1&recordSchema=picaxml'
   },
@@ -44,10 +51,7 @@ const configNew = {
     printCoverLabel: true
   },
   mode: {
-    useMode: true,
-    defaultMode: 'thulbMode',
-    showLocation: false,
-    showLoanIndication: false
+    defaultMode: 'thulbMode'
   },
   devMode: false
 }
@@ -82,10 +86,14 @@ app.on('activate', function () {
 
 // starts the printing process
 ipcMain.on('print', (event, dataAll) => {
+  let i = 0
   _.each(dataAll, (data) => {
     // console.warn(data.formatInformation)
     // console.warn(data.printInformation)
-    printData(data.formatInformation, data.printInformation)
+    setTimeout(function () {
+      printData(data.formatInformation, data.printInformation)
+    }, i * 4000)
+    i++
   })
 })
 
@@ -122,7 +130,6 @@ ipcMain.on('closeManualSignaturesWindow', function (event) {
 
 // listens on saveManualSignatures, closes the manualSignaturesWindow and passes the data along
 ipcMain.on('saveManualSignatures', function (event, data) {
-  console.warn(data)
   manualSignaturesWindow.close()
   manualSignaturesWindow = null
   mainWindow.webContents.send('addManualSignatures', data)
@@ -149,6 +156,11 @@ ipcMain.on('openConfigWindow', function (event) {
 // listens on closeWinConfig, invokes the closeWinConfig function
 ipcMain.on('closeConfigWindow', function (event) {
   closeConfigWindow()
+})
+
+// listens on createNewModeFormat, invokes the createEditorWindows function
+ipcMain.on('createNewModeFormat', function (event, data) {
+  createEditorWindow(data)
 })
 
 function closeConfigWindow () {
@@ -180,16 +192,17 @@ function createWindow () {
   global.defaultProgramPath = defaultProgramPath
   global.sigJSONFile = sigJSONFile
 
-  checkDir('./tmp')
+  // checkDir('./tmp')
   checkDir(defaultProgramPath)
   checkDir(defaultProgramPath + '\\Formate')
   checkDir(defaultProgramPath + '\\FormateCSS')
+  checkDir(defaultProgramPath + '\\Modi')
   checkConfig()
   // Create the browser window.
   if (!config.store.devMode) {
-    mainWindow = new BrowserWindow({ width: 800, height: 520, backgroundColor: '#f0f0f0' })
+    mainWindow = new BrowserWindow({ width: 850, height: 570, backgroundColor: '#f0f0f0' })
   } else {
-    mainWindow = new BrowserWindow({ width: 800, height: 550, backgroundColor: '#f0f0f0' })
+    mainWindow = new BrowserWindow({ width: 850, height: 600, backgroundColor: '#f0f0f0' })
   }
 
   // and load the index.html of the app.
@@ -229,12 +242,21 @@ function checkConfig () {
   } else {
     createConfig()
   }
-  // TODO should that be really the default formats
-  let defaultConfigs = ['thulb_gross', 'thulb_klein', 'thulb_klein_1']
-  defaultConfigs.forEach(fileName => {
-    checkAndCreate(defaultProgramPath + '\\Formate\\', fileName, '.json')
-    checkAndCreate(defaultProgramPath + '\\FormateCSS\\', fileName, '.css')
-  })
+  if (config.get('mode.defaultMode') === 'thulbMode') {
+    checkAndCreate(defaultProgramPath + '\\Modi\\', 'thulbMode', '.json')
+    let thulbConfigs = ['thulb_gross', 'thulb_klein', 'thulb_klein_1']
+    thulbConfigs.forEach(fileName => {
+      checkAndCreate(defaultProgramPath + '\\Formate\\', fileName, '.json')
+      checkAndCreate(defaultProgramPath + '\\FormateCSS\\', fileName, '.css')
+    })
+  } else if (config.get('mode.defaultMode') === 'defaultMode') {
+    checkAndCreate(defaultProgramPath + '\\Modi\\', 'defaultMode', '.json')
+    let defaultConfigs = ['default_klein', 'default_gross']
+    defaultConfigs.forEach(fileName => {
+      checkAndCreate(defaultProgramPath + '\\Formate\\', fileName, '.json')
+      checkAndCreate(defaultProgramPath + '\\FormateCSS\\', fileName, '.css')
+    })
+  }
   function checkAndCreate (pathName, fileName, ending) {
     if (!fs.existsSync(pathName + fileName + ending)) {
       let file = fs.readFileSync(path.join(__dirname, 'defaultFiles/' + fileName + ending), 'utf8')
@@ -280,8 +302,14 @@ function printData (formatInformation, printInformation) {
         if (!config.store.devMode) {
           ps.addCommand('Start-Process -file "' + defaultProgramPath + '\\' + fileName + '" -Verb PrintTo "' + formatInformation.printer + '" -PassThru | %{sleep 4;$_} | kill')
           ps.invoke().then(output => {
-            mainWindow.webContents.send('printMsg', true)
-            fs.unlinkSync(defaultProgramPath + '\\' + fileName)
+            if (config.get('modal.showModal')) {
+              mainWindow.webContents.send('printMsg', true)
+            } else {
+              mainWindow.webContents.send('printMsg', false)
+            }
+            setTimeout(function () {
+              fs.unlinkSync(defaultProgramPath + '\\' + fileName)
+            }, 10000)
           }).catch(err => {
             dialog.showErrorBox('Es ist ein Fehler aufgetreten.', err)
             mainWindow.webContents.send('printMsg', false)
@@ -332,7 +360,7 @@ function createConfigWindow () {
 }
 
 // creates the editorConfig
-function createEditorWindow () {
+function createEditorWindow (formatName = '', nrOfLines = '') {
   editorWindow = new BrowserWindow({ width: 800, height: 950, show: false })
   editorWindow.loadURL(url.format({
     pathname: path.join(__dirname, 'html/editor.html'),
@@ -341,6 +369,7 @@ function createEditorWindow () {
   }))
   editorWindow.once('ready-to-show', () => {
     editorWindow.show()
+    editorWindow.webContents.send('newModeFormat', formatName, nrOfLines)
   })
 }
 
