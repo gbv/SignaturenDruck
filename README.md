@@ -112,7 +112,7 @@ Mit der Tastenkombination
 <kbd>strg</kbd> + <kbd>alt</kbd> + <kbd>C</kbd>  
 kann das Fenster zum erstellen / bearbeiten eines Modus geöffnet werden.  
 
-![Oberflaeche zum erstellen / bearbeiten eines Modus](docu/imgs)
+![Oberflaeche zum erstellen / bearbeiten eines Modus](docu/imgs/oberflaecheModusErstellenBearbeiten.PNG)
 ### Modus
 #### Modus
 
