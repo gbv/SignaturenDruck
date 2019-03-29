@@ -217,7 +217,7 @@ function changeLabelWidth (event) {
 }
 
 function saveConfig () {
-  if (document.getElementById('input_fileName').value !== '' && document.getElementById('selectFormat').value !== '') {
+  if (document.getElementById('input_fileName').value !== '') {
     if (document.getElementById('selectPrinter').value !== '') {
       if (!fs.existsSync(defaultProgramPath + '\\Formate\\' + document.getElementById('input_fileName').value + '.json')) {
         writeToFiles()
