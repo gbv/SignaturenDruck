@@ -269,6 +269,10 @@ Der Adobe Acrobat Reader DC wird für den Druck benötigt. Ist dieser nicht das 
 
 # Changelog
 
+## v1.1.1-a
+
+- fehler beim erzeugen eines neuen Modus/Untermodus behoben
+
 ## v1.1.0-d
 
 - Platzhalter für das aktuelle Datum hinzugefügt ($DATE)
