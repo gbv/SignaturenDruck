@@ -83,8 +83,7 @@ ipcRenderer.on('addManualSignatures', function (event, data) {
 
 // ipc listener to remove the manual data
 ipcRenderer.on('removeManualSignatures', function (event) {
-  table.manualSignature = []
-  table.clearManualSignaturesTable()
+  clearManualShelfmarks()
 })
 
 // ipc listener to add provided data to the SRU obj
@@ -99,6 +98,10 @@ ipcRenderer.on('addSRUdata', function (event, xml, barcode) {
     objSRU.all[index] = shelfmark
     objSRU.all[index].id = index + 1
     table.readSRUData(objSRU.all)
+    table.clearManualSignaturesTable()
+    if (table.manualSignature !== undefined && table.manualSignature !== null && table.manualSignature.length !== 0) {
+      table.addManualSignaturesToTable(table.manualSignature)
+    }
   }
 })
 
@@ -107,9 +110,15 @@ function refreshDownloadFile () {
   table.refreshDownloadFile()
 }
 
+function clearManualShelfmarks () {
+  table.manualSignature = []
+  table.clearManualSignaturesTable()
+}
+
 // clear written local signature - json file
 function clearDownloadFileTable () {
   objSRU.all = []
+  clearManualShelfmarks()
   table.clearDownloadFile()
 }
 
