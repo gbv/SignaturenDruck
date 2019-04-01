@@ -329,6 +329,7 @@ function createCSS (obj) {
       marginTopAdjustmentValue = 0
     }
     str += '@media print {\n#toPrint.format_' + obj.name + ' > .innerBox {\nmargin: ' + marginTopValue + 'mm 0mm 0mm ' + marginLeftValue + 'mm;\n}\n'
+    str += 'body {\nmargin: 0px;\n}\n'
     str += '#toPrint.format_' + obj.name + ' > .innerBox > .line_1 {\nmargin-top: ' + marginTopAdjustmentValue + 'mm;\n}\n'
     str += '}'
     return str

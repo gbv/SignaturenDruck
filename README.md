@@ -274,6 +274,7 @@ Der Adobe Acrobat Reader DC wird für den Druck benötigt. Ist dieser nicht das 
 - SRU liefert jetzt die Daten des eingegebenen Barcodes (nicht des ersten Exemplars)
 - Manuelle Signaturen werden nun bei einem Klick auf 'Liste löschen' ebenfalls gelöscht
 - Manuelle Signaturen bleiben sichtbar nach dem hinzufügen einer Signatur via SRU
+- Pdf-erzeugung optimiert
 
 ## v1.1.1-a
 
