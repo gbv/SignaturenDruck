@@ -275,6 +275,7 @@ Der Adobe Acrobat Reader DC wird für den Druck benötigt. Ist dieser nicht das 
 - Manuelle Signaturen werden nun bei einem Klick auf 'Liste löschen' ebenfalls gelöscht
 - Manuelle Signaturen bleiben sichtbar nach dem hinzufügen einer Signatur via SRU
 - Pdf-erzeugung optimiert
+- Problem mit einzeiligen Signaturen behoben
 
 ## v1.1.1-a
 

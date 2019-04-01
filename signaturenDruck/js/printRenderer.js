@@ -39,18 +39,11 @@ function createPage (formatInformation, printInformation) {
       let div = document.createElement('div')
       data.data.removeIndent ? div.className = 'innerBox noIndent' : div.className = 'innerBox'
       div.id = data.id + '_' + i
-      if (formatInformation.lines > 1) {
-        let lines = _.find(data.data.modes, { 'format': formatInformation.name }).lines
-        for (let j = 0; j < formatInformation.lines && j < lines.length; j++) {
-          let p = document.createElement('p')
-          p.className = 'line_' + (j + 1)
-          lines[j] === '' ? p.appendChild(document.createElement('br')) : p.innerHTML = lines[j]
-          div.appendChild(p)
-        }
-      } else {
+      let lines = _.find(data.data.modes, { 'format': formatInformation.name }).lines
+      for (let j = 0; j < formatInformation.lines && j < lines.length; j++) {
         let p = document.createElement('p')
-        p.className = 'line_1'
-        p.innerHTML = data.data.txtOneLine
+        p.className = 'line_' + (j + 1)
+        lines[j] === '' ? p.appendChild(document.createElement('br')) : p.innerHTML = lines[j]
         div.appendChild(p)
       }
       document.getElementById('toPrint').appendChild(div)
