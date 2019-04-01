@@ -198,9 +198,7 @@ function next () {
     if (object.manual[id] !== undefined) {
       loadData()
     } else {
-      createByFormat(getFormatSelected().lines)
       max++
-      focusFirst()
     }
     setCounters()
   }
