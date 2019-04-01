@@ -139,7 +139,7 @@ ipcMain.on('saveManualSignatures', function (event, data) {
 ipcMain.on('loadFromSRU', function (event, barcode) {
   if (barcode !== '') {
     sruData.loadData(barcode).then(function (data) {
-      mainWindow.webContents.send('addSRUdata', data)
+      mainWindow.webContents.send('addSRUdata', data, barcode)
     })
   }
 })

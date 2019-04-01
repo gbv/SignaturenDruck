@@ -88,9 +88,9 @@ ipcRenderer.on('removeManualSignatures', function (event) {
 })
 
 // ipc listener to add provided data to the SRU obj
-ipcRenderer.on('addSRUdata', function (event, xml) {
+ipcRenderer.on('addSRUdata', function (event, xml, barcode) {
   let data = new ShelfmarksFromSRUData()
-  let shelfmark = data.getShelfmark(xml)
+  let shelfmark = data.getShelfmark(xml, barcode)
   if (shelfmark.error !== '') {
     swal.fire('Achtung', shelfmark.error, 'error')
       .then(() => {})

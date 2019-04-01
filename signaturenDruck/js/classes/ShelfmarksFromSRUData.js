@@ -28,21 +28,22 @@ class ShelfmarksFromSRUData {
   ----- End Constructor -----
    */
 
-  getShelfmark (xml) {
+  getShelfmark (xml, barcode) {
     let sig = new Shelfmark()
     let mode = new Modes()
     let formats = new Formats()
     let formatArray = formats.formats
+    let occ = getOccurrence(xml, barcode)
 
     sig.error = getError(xml)
     if (sig.error === '') {
       sig.id = 99 // gets overwritten at a later stage
       sig.ppn = getPPN(xml)
-      sig.date = getDate(xml)
-      sig.txtOneLine = getTxt(xml)
-      sig.exNr = getExNr(xml)
-      sig.location = getLocation(xml)
-      sig.loanIndication = getLoanIndication(xml)
+      sig.date = getDate(xml, occ)
+      sig.txtOneLine = getTxt(xml, occ)
+      sig.exNr = getExNr(xml, occ)
+      sig.location = getLocation(xml, occ)
+      sig.loanIndication = getLoanIndication(xml, occ)
       let allSubModeData = mode.modes[config.get('mode.defaultMode')].subModes
       _.forEach(allSubModeData, function (value) {
         let data = {
@@ -80,6 +81,11 @@ class ShelfmarksFromSRUData {
   }
 }
 
+function getOccurrence (object, barcode) {
+  let data = _.find(object['zs:searchRetrieveResponse']['zs:records']['zs:record']['zs:recordData']['record']['datafield'], function (o) { return o.subfield['$t'] === barcode })
+  return data.occurrence
+}
+
 function getPPN (object) {
   let data = _.find(object['zs:searchRetrieveResponse']['zs:records']['zs:record']['zs:recordData']['record']['datafield'], { 'tag': '003@' })
   if (data !== undefined) {
@@ -89,8 +95,8 @@ function getPPN (object) {
   }
 }
 
-function getDate (object) {
-  let parent = _.find(object['zs:searchRetrieveResponse']['zs:records']['zs:record']['zs:recordData']['record']['datafield'], { 'tag': '201B' })
+function getDate (object, occ) {
+  let parent = _.find(object['zs:searchRetrieveResponse']['zs:records']['zs:record']['zs:recordData']['record']['datafield'], { 'tag': '201B', 'occurrence': occ })
   let data = _.find(parent['subfield'], { 'code': '0' })
   if (data !== undefined) {
     return data['$t']
@@ -99,8 +105,8 @@ function getDate (object) {
   }
 }
 
-function getTxt (object) {
-  let parent = _.find(object['zs:searchRetrieveResponse']['zs:records']['zs:record']['zs:recordData']['record']['datafield'], { 'tag': '209A' })
+function getTxt (object, occ) {
+  let parent = _.find(object['zs:searchRetrieveResponse']['zs:records']['zs:record']['zs:recordData']['record']['datafield'], { 'tag': '209A', 'occurrence': occ })
   let data = _.find(parent['subfield'], { 'code': 'a' })
   if (data !== undefined) {
     return data['$t']
@@ -109,8 +115,8 @@ function getTxt (object) {
   }
 }
 
-function getExNr (object) {
-  let data = _.find(object['zs:searchRetrieveResponse']['zs:records']['zs:record']['zs:recordData']['record']['datafield'], { 'tag': '209A' })
+function getExNr (object, occ) {
+  let data = _.find(object['zs:searchRetrieveResponse']['zs:records']['zs:record']['zs:recordData']['record']['datafield'], { 'tag': '209A', 'occurrence': occ })
   if (data !== undefined) {
     return data['occurrence']
   } else {
@@ -118,8 +124,8 @@ function getExNr (object) {
   }
 }
 
-function getLocation (object) {
-  let parent = _.find(object['zs:searchRetrieveResponse']['zs:records']['zs:record']['zs:recordData']['record']['datafield'], { 'tag': '209A' })
+function getLocation (object, occ) {
+  let parent = _.find(object['zs:searchRetrieveResponse']['zs:records']['zs:record']['zs:recordData']['record']['datafield'], { 'tag': '209A', 'occurrence': occ })
   let data = _.find(parent['subfield'], { 'code': 'f' })
   if (data !== undefined) {
     return data['$t']
@@ -128,8 +134,8 @@ function getLocation (object) {
   }
 }
 
-function getLoanIndication (object) {
-  let parent = _.find(object['zs:searchRetrieveResponse']['zs:records']['zs:record']['zs:recordData']['record']['datafield'], { 'tag': '209A' })
+function getLoanIndication (object, occ) {
+  let parent = _.find(object['zs:searchRetrieveResponse']['zs:records']['zs:record']['zs:recordData']['record']['datafield'], { 'tag': '209A', 'occurrence': occ })
   let data = _.find(parent['subfield'], { 'code': 'd' })
   if (data !== undefined) {
     return data['$t']

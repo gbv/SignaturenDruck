@@ -269,6 +269,10 @@ Der Adobe Acrobat Reader DC wird für den Druck benötigt. Ist dieser nicht das 
 
 # Changelog
 
+## v1.1.1-b
+
+- SRU liefert jetzt die Daten des eingegebenen Barcodes (nicht des ersten Exemplars)
+
 ## v1.1.1-a
 
 - fehler beim erzeugen eines neuen Modus/Untermodus behoben
