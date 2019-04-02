@@ -272,6 +272,7 @@ Der Adobe Acrobat Reader DC wird für den Druck benötigt. Ist dieser nicht das 
 ## v1.1.1-c
 
 - Bei der Eingabe von manuellen Signaturen bleibt die Eingabe der vorherigen Signatur erhalten
+- Problem mit SRU-Abfragen gelöst (issue #51)
 
 ## v1.1.1-b
 

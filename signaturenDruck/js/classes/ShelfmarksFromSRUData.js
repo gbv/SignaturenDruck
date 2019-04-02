@@ -82,8 +82,33 @@ class ShelfmarksFromSRUData {
 }
 
 function getOccurrence (object, barcode) {
-  let data = _.find(object['zs:searchRetrieveResponse']['zs:records']['zs:record']['zs:recordData']['record']['datafield'], function (o) { return o.subfield['$t'] === barcode })
-  return data.occurrence
+  // get all 209G entries
+  let all = _.filter(object['zs:searchRetrieveResponse']['zs:records']['zs:record']['zs:recordData']['record']['datafield'], { 'tag': '209G' })
+  // search all 209G for a matching barcode
+  let found = _.find(all, function (o) {
+    // if there are multiple subfield entries
+    if (o.subfield.length > 1) {
+      // return the subield entry with the matching barcode
+      return _.forEach(o.subfield, function (data) {
+        if (data['$t'] === barcode) {
+          return o
+        }
+      })
+    } else { // if there is just one subfield entry
+      if (o.subfield['$t'] === barcode) {
+        return o
+      }
+    }
+  })
+  // if the barcode did not match, we take the occurrence of the first 209A entry
+  if (found === undefined) {
+    let test = _.find(object['zs:searchRetrieveResponse']['zs:records']['zs:record']['zs:recordData']['record']['datafield'], { 'tag': '209A' })
+    // if we found something
+    if (test !== undefined) {
+      found = test
+    }
+  }
+  return found.occurrence
 }
 
 function getPPN (object) {
