@@ -322,7 +322,7 @@ function createCSS (obj) {
     even with @print margin 0mm
     thats why we substract 2
     */
-    marginLeftValue = marginLeftValue - 2
+    marginLeftValue = marginLeftValue - 1
 
     let marginTopAdjustmentValue = document.getElementById('marginTop').value
     if (marginTopAdjustmentValue === '') {

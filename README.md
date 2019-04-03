@@ -269,6 +269,10 @@ Der Adobe Acrobat Reader DC wird für den Druck benötigt. Ist dieser nicht das 
 
 # Changelog
 
+## v1.1.1-d
+
+- Horizontale Zentrierung der Label auf dem Papier korrigiert
+
 ## v1.1.1-c
 
 - Bei der Eingabe von manuellen Signaturen bleibt die Eingabe der vorherigen Signatur erhalten
