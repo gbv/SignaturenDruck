@@ -272,6 +272,7 @@ Der Adobe Acrobat Reader DC wird für den Druck benötigt. Ist dieser nicht das 
 ## v1.1.1-d
 
 - Horizontale Zentrierung der Label auf dem Papier korrigiert
+- Option für Sofortdruck umgesetzt (issue #15, nur wenn Daten via SRU geladen werden)
 
 ## v1.1.1-c
 
