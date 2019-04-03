@@ -47,7 +47,6 @@ const configNew = {
     QueryPart2: '&maximumRecords=1&recordSchema=picaxml'
   },
   print: {
-    printImmediately: false,
     printCoverLabel: true
   },
   mode: {
@@ -317,7 +316,14 @@ function printData (formatInformation, printInformation) {
           })
         } else {
           ps.addCommand('Start-Process -file "' + defaultProgramPath + '\\' + fileName + '"')
-          ps.invoke().then(output => { mainWindow.webContents.send('printMsg', true); ps.dispose() }).catch(err => {
+          ps.invoke().then(output => {
+            if (config.get('modal.showModal')) {
+              mainWindow.webContents.send('printMsg', true)
+            } else {
+              mainWindow.webContents.send('printMsg', false)
+            }
+            ps.dispose()
+          }).catch(err => {
             dialog.showErrorBox('Es ist ein Fehler aufgetreten.', err)
             mainWindow.webContents.send('printMsg', false)
             ps.dispose()

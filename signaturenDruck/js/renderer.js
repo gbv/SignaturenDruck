@@ -98,6 +98,11 @@ ipcRenderer.on('addSRUdata', function (event, xml, barcode) {
     objSRU.all[index] = shelfmark
     objSRU.all[index].id = index + 1
     table.readSRUData(objSRU.all)
+    if (document.getElementById('chkbx_printImmediatly').checked) {
+      let node = document.getElementById('print_' + (index + 1))
+      node.click()
+      printButton()
+    }
     table.clearManualSignaturesTable()
     if (table.manualSignature !== undefined && table.manualSignature !== null && table.manualSignature.length !== 0) {
       table.addManualSignaturesToTable(table.manualSignature)
@@ -153,7 +158,6 @@ function closeButton () {
 // gathers the data to print and invokes printing via ipc
 function printButton () {
   const print = new P(sigJSONFile, table.formats, table.manualSignature)
-  // console.warn(print.dataAll)
   ipcRenderer.send('print', print.dataAll)
 }
 
