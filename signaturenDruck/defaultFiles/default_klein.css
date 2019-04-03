@@ -1,51 +1,54 @@
-#previewBox.default_klein {
+#previewBox.format_default_klein {
 width: 74mm;
 height: 23mm;
 }
-.default_klein {
+.format_default_klein {
 text-align: initial;
 white-space: nowrap;
 overflow: hidden;
 }
-.default_klein {
+.format_default_klein {
 align-items: center;
 }
-#toPrint.default_klein> .innerBox {
+#toPrint.format_default_klein> .innerBox {
 height: 23mm;
 width: 74mm;
 display: flex;
 justify-content: center;
 flex-direction: column;
 }
-.default_klein > .innerBox > p {
+.format_default_klein > .innerBox > p {
 margin: 0px 0px 0px 0px;
 }
-.default_klein > .innerBox > .line_1 {
+.format_default_klein > .innerBox > .line_1 {
 font-family: "Arial Narrow";
 font-size: 15pt;
 font-weight: bold;
 font-style: normal;
-margin-left: 40%;
+margin-left: 47%;
 }
-.default_klein > .innerBox > .line_2 {
+.format_default_klein > .innerBox > .line_2 {
 font-family: "Arial Narrow";
 font-size: 15pt;
 font-weight: bold;
 font-style: normal;
-margin-left: 40%;
+margin-left: 47%;
 }
-.default_klein > .innerBox > .line_3 {
+.format_default_klein > .innerBox > .line_3 {
 font-family: "Arial Narrow";
 font-size: 15pt;
 font-weight: bold;
 font-style: normal;
-margin-left: 40%;
+margin-left: 47%;
 }
 @media print {
-#toPrint.default_klein > .innerBox {
-margin: 2.25mm 0mm 0mm 0.75mm;
+#toPrint.format_default_klein > .innerBox {
+margin: 2.25mm 0mm 0mm 1.75mm;
 }
-#toPrint.default_klein > .innerBox > .line_1 {
+body {
+margin: 0px;
+}
+#toPrint.format_default_klein > .innerBox > .line_1 {
 margin-top: -1mm;
 }
 }

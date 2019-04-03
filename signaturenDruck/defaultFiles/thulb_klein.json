@@ -13,7 +13,11 @@
   "lines": "3",
   "example": {
     "shelfmark": "2018 B 1024 :1",
-    "parts": ["2018 B", "1024 :", "1"]
+    "parts": [
+      "2018 B",
+      "1024 :",
+      "1"
+    ]
   },
   "centerHor": false,
   "centerVer": true,
@@ -25,7 +29,7 @@
       "fontSize": "15",
       "bold": true,
       "italic": false,
-      "indent": "45"
+      "indent": "47"
     },
     {
       "id": 2,
@@ -33,7 +37,7 @@
       "fontSize": "15",
       "bold": true,
       "italic": false,
-      "indent": "45"
+      "indent": "47"
     },
     {
       "id": 3,
@@ -41,8 +45,8 @@
       "fontSize": "15",
       "bold": true,
       "italic": false,
-      "indent": "45"
+      "indent": "47"
     }
   ],
-  "marginTop": -2
+  "marginTop": "-2"
 }

@@ -25,46 +25,49 @@ font-family: "Arial Narrow";
 font-size: 16pt;
 font-weight: bold;
 font-style: normal;
-margin-left: 45%;
+margin-left: 47%;
 }
 .format_thulb_gross > .innerBox > .line_2 {
 font-family: "Arial Narrow";
 font-size: 16pt;
 font-weight: bold;
 font-style: normal;
-margin-left: 45%;
+margin-left: 47%;
 }
 .format_thulb_gross > .innerBox > .line_3 {
 font-family: "Arial Narrow";
 font-size: 16pt;
 font-weight: bold;
 font-style: normal;
-margin-left: 45%;
+margin-left: 47%;
 }
 .format_thulb_gross > .innerBox > .line_4 {
 font-family: "Arial Narrow";
 font-size: 16pt;
 font-weight: normal;
 font-style: normal;
-margin-left: 45%;
+margin-left: 47%;
 }
 .format_thulb_gross > .innerBox > .line_5 {
 font-family: "Arial Narrow";
 font-size: 16pt;
 font-weight: normal;
 font-style: normal;
-margin-left: 45%;
+margin-left: 47%;
 }
 .format_thulb_gross > .innerBox > .line_6 {
 font-family: "Arial Narrow";
 font-size: 16pt;
 font-weight: bold;
 font-style: normal;
-margin-left: 45%;
+margin-left: 47%;
 }
 @media print {
 #toPrint.format_thulb_gross > .innerBox {
-margin: 2.96mm 0mm 0mm 7.984999999999999mm;
+margin: 2.96mm 0mm 0mm 8.985mm;
+}
+body {
+margin: 0px;
 }
 #toPrint.format_thulb_gross > .innerBox > .line_1 {
 margin-top: -3mm;
