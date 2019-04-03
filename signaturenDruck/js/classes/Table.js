@@ -1,6 +1,6 @@
 const _ = require('lodash')
 const fs = require('fs')
-const { remote } = require('electron')
+const { ipcRenderer, remote } = require('electron')
 const config = remote.getGlobal('config')
 const formats = require('./Formats')
 const modes = require('./Modes')
@@ -152,6 +152,10 @@ class Table {
     if (defaultSubMode !== '') {
       txtCell.onclick = () => this.preview.changePreview(id, this.file.file, this._formats, this.manualSignature)
     }
+    if (!id.toString().includes('m_')) {
+      txtCell.ondblclick = () => this.pushToManual(id)
+    }
+    txtCell.id = 'shelfmark_' + id
     txtCell.innerHTML = txt
     txtCell.className = 'txtCell'
   }
@@ -293,6 +297,24 @@ class Table {
     } else {
       document.getElementById('templateSelect_' + id).value = 'thulb_klein_1'
     }
+  }
+
+  pushToManual (id) {
+    let shelfmark = _.find(JSON.parse(jsonfile.readFile(this.file.file)), { 'id': Number(id) })
+    let manual = {}
+    manual.defaultSubMode = 0
+    manual.format = document.getElementById('templateSelect_' + id).value
+    manual.id = this.manualSignature.length
+    manual.modes = [
+      {
+        format: manual.format,
+        lines: _.find(shelfmark.modes, { 'format': manual.format }).lines
+      }
+    ]
+    manual.txtLength = manual.modes[0].lines.length
+    manual.txtOneLine = shelfmark.txtOneLine
+    this.manualSignature.push(manual)
+    ipcRenderer.send('openManualSignaturesWindow', this.manualSignature, true)
   }
 
   /*

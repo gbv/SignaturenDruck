@@ -20,7 +20,7 @@ window.onload = function () {
   disableBtnPrevious()
 }
 
-ipcRenderer.on('objMan', function (event, objMan) {
+ipcRenderer.on('objMan', function (event, objMan, edit) {
   if (objMan !== null) {
     if (objMan.length > 0) {
       object.manual = objMan
@@ -29,6 +29,9 @@ ipcRenderer.on('objMan', function (event, objMan) {
       setCounters()
       enableBtnPrevious()
     }
+  }
+  if (edit) {
+    deleteData()
   }
   setCounters()
 })
