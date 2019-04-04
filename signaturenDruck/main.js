@@ -307,7 +307,16 @@ function printData (formatInformation, printInformation) {
               mainWindow.webContents.send('printMsg', false)
             }
             setTimeout(function () {
-              fs.unlinkSync(defaultProgramPath + '\\' + fileName)
+              ps.dispose()
+              try {
+                fs.unlinkSync(defaultProgramPath + '\\' + fileName)
+              } catch (error) {
+                if (error.code === 'EBUSY') {
+                  mainWindow.webContents.send('couldNotDelete', defaultProgramPath)
+                } else {
+                  throw error
+                }
+              }
             }, 10000)
           }).catch(err => {
             dialog.showErrorBox('Es ist ein Fehler aufgetreten.', err)

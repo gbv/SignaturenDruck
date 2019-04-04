@@ -66,6 +66,10 @@ ipcRenderer.on('printMsg', function (event, successfull) {
   }
 })
 
+ipcRenderer.on('couldNotDelete', function (event, path) {
+  swal.fire('Achtung', 'PDFs konnten nicht automatisch gelöscht werden!<br/>Die PDFs liegen unter:<br/><strong>' + path + '</strong>', 'info')
+})
+
 // function to send objMan to the manual window
 function openManualSignaturesWindow () {
   (table.manualSignature.length === 0) ? table.manualSignature = [] : null
