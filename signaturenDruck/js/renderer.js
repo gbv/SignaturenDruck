@@ -69,9 +69,9 @@ ipcRenderer.on('couldNotDelete', function (event, path) {
 })
 
 // function to send objMan to the manual window
-function openManualSignaturesWindow () {
+function openManualSignaturesWindow (edit = false) {
   (table.manualSignature.length === 0) ? table.manualSignature = [] : null
-  ipcRenderer.send('openManualSignaturesWindow', table.manualSignature)
+  ipcRenderer.send('openManualSignaturesWindow', table.manualSignature, edit)
 }
 
 // ipc listener to add new manual data to the table
