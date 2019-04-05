@@ -85,13 +85,19 @@ app.on('activate', function () {
 
 // starts the printing process
 ipcMain.on('print', (event, dataAll) => {
-  let i = 0
+  let i = 1
+  let nrOfFormats = dataAll.length
+
   _.each(dataAll, (data) => {
+    let last = false
     // console.warn(data.formatInformation)
     // console.warn(data.printInformation)
+    if (nrOfFormats === i) {
+      last = true
+    }
     setTimeout(function () {
-      printData(data.formatInformation, data.printInformation)
-    }, i * 4000)
+      printData(data.formatInformation, data.printInformation, last)
+    }, (i * 1000))
     i++
   })
 })
@@ -278,7 +284,7 @@ function createConfig () {
   config.set(configNew)
 }
 
-function printData (formatInformation, printInformation) {
+function printData (formatInformation, printInformation, last = false) {
   let winPrint = null
   winPrint = new BrowserWindow({ width: 899, height: 900, show: false })
   winPrint.loadURL(url.format({
@@ -291,7 +297,7 @@ function printData (formatInformation, printInformation) {
     // TODO - why ist height and width vise versa?
     winPrint.webContents.printToPDF({ marginsType: 1, landscape: true, pageSize: { height: formatInformation.paper.width, width: formatInformation.paper.height } }, (error, data) => {
       if (error) throw error
-      let fileName = formatInformation.name + '_' + new Date().getTime() + '.pdf'
+      let fileName = formatInformation.name + new Date().getTime() + '.pdf'
       fs.writeFile(defaultProgramPath + '\\' + fileName, data, (error) => {
         if (error) throw error
         let ps = new Shell({
@@ -299,30 +305,38 @@ function printData (formatInformation, printInformation) {
           noProfile: true
         })
         if (!config.store.devMode) {
-          ps.addCommand('Start-Process -file "' + defaultProgramPath + '\\' + fileName + '" -Verb PrintTo "' + formatInformation.printer + '" -PassThru | %{sleep 4;$_} | kill')
+          if (last) {
+            ps.addCommand('Start-Process -file "' + defaultProgramPath + '\\' + fileName + '" -Verb PrintTo "' + formatInformation.printer + '" -PassThru | %{sleep 5;$_} | kill')
+          } else {
+            ps.addCommand('Start-Process -file "' + defaultProgramPath + '\\' + fileName + '" -Verb PrintTo "' + formatInformation.printer + '"')
+          }
           ps.invoke().then(output => {
-            if (config.get('modal.showModal')) {
-              mainWindow.webContents.send('printMsg', true)
-            } else {
-              mainWindow.webContents.send('printMsg', false)
-            }
+            ps.dispose()
+            mainWindow.webContents.send('printMsg', last)
             setTimeout(function () {
-              fs.unlinkSync(defaultProgramPath + '\\' + fileName)
+              try {
+                fs.unlinkSync(defaultProgramPath + '\\' + fileName)
+              } catch (error) {
+                if (error.code === 'EBUSY') {
+                  mainWindow.webContents.send('couldNotDelete', defaultProgramPath)
+                } else {
+                  throw error
+                }
+              }
             }, 10000)
           }).catch(err => {
             dialog.showErrorBox('Es ist ein Fehler aufgetreten.', err)
-            mainWindow.webContents.send('printMsg', false)
             ps.dispose()
           })
         } else {
-          ps.addCommand('Start-Process -file "' + defaultProgramPath + '\\' + fileName + '"')
+          if (last) {
+            ps.addCommand('Start-Process -file "' + defaultProgramPath + '\\' + fileName + '" -PassThru | %{sleep 5;$_} | kill')
+          } else {
+            ps.addCommand('Start-Process -file "' + defaultProgramPath + '\\' + fileName + '"')
+          }
           ps.invoke().then(output => {
-            if (config.get('modal.showModal')) {
-              mainWindow.webContents.send('printMsg', true)
-            } else {
-              mainWindow.webContents.send('printMsg', false)
-            }
             ps.dispose()
+            mainWindow.webContents.send('printMsg', last)
           }).catch(err => {
             dialog.showErrorBox('Es ist ein Fehler aufgetreten.', err)
             mainWindow.webContents.send('printMsg', false)

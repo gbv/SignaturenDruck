@@ -12,6 +12,7 @@ const config = remote.getGlobal('config')
 const sigJSONFile = remote.getGlobal('sigJSONFile')
 
 const swal = require('sweetalert2')
+const _ = require('lodash')
 
 const T = require('./classes/Table')
 const P = require('./classes/Print')
@@ -59,11 +60,12 @@ window.onload = function () {
 // listens on printMsg, invokes the modal
 ipcRenderer.on('printMsg', function (event, successfull) {
   if (successfull && displayModalOnSuccess) {
-    document.getElementById('myModal').style.display = 'block'
-  } else {
-    document.getElementById('myModal').style.display = 'none'
-    displayModalOnSuccess = false
+    swal.fire('Erfolg!', 'Es wurden alle Signaturen gedruckt.', 'success')
   }
+})
+
+ipcRenderer.on('couldNotDelete', function (event, path) {
+  swal.fire('Achtung', 'PDFs konnten nicht automatisch gelöscht werden!<br/>Die PDFs liegen unter:<br/><strong>' + path + '</strong>', 'info')
 })
 
 // function to send objMan to the manual window
@@ -158,7 +160,20 @@ function closeButton () {
 // gathers the data to print and invokes printing via ipc
 function printButton () {
   const print = new P(sigJSONFile, table.formats, table.manualSignature)
-  ipcRenderer.send('print', print.dataAll)
+  let elems = document.querySelectorAll('[name=toPrint]')
+  let somethingToPrint = false
+  _.forEach(elems, function (elem) {
+    if (elem.checked) {
+      somethingToPrint = true
+    }
+  })
+
+  if (somethingToPrint) {
+    swal.fire('Bitte warten', 'Die Signaturen werden gedruckt.', 'info')
+    ipcRenderer.send('print', print.dataAll)
+  } else {
+    swal.fire('Nichts zu drucken', 'Es wurde keine Signatur ausgewählt!', 'info')
+  }
 }
 
 // function to invert the print-selection

@@ -273,7 +273,9 @@ Der Adobe Acrobat Reader DC wird für den Druck benötigt. Ist dieser nicht das 
 
 - Horizontale Zentrierung der Label auf dem Papier korrigiert
 - Option für Sofortdruck umgesetzt (issue #15, nur wenn Daten via SRU geladen werden)
+- Hinweis für den Fall hinzugefügt, dass die erzeugten PDFs nicht automatisch gelöscht werden konnten (Reader war bereits geöffnet)
 - Ausgelesene Signaturen (SRU/Datei) sind nun mittels Doppelklick auf den Signaturentext editierbar
+
 
 ## v1.1.1-c
 
