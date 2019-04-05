@@ -275,6 +275,10 @@ Der Adobe Acrobat Reader DC wird für den Druck benötigt. Ist dieser nicht das 
 - Option für Sofortdruck umgesetzt (issue #15, nur wenn Daten via SRU geladen werden)
 - Hinweis für den Fall hinzugefügt, dass die erzeugten PDFs nicht automatisch gelöscht werden konnten (Reader war bereits geöffnet)
 - Ausgelesene Signaturen (SRU/Datei) sind nun mittels Doppelklick auf den Signaturentext editierbar
+- weitere interne Optimierungen
+
+### Hinweis
+ Die Problematik mit Feld 209A/7100 $B hat keinerlei Auswirkung auf die Funktionsweise des Programms
 
 
 ## v1.1.1-c

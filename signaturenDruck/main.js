@@ -313,9 +313,9 @@ ipcMain.on('readyToPrint', function (event, formatInformation, printImmediately,
       })
       if (!config.store.devMode) {
         if (last) {
-          ps.addCommand('Start-Process -file "' + defaultProgramPath + '\\' + fileName + '" -Verb PrintTo "' + formatInformation.printer + '" -PassThru | %{sleep 11;$_} | kill')
+          ps.addCommand('Start-Process -file "' + defaultProgramPath + '\\' + fileName + '"-WindowStyle Minimized -Verb PrintTo "' + formatInformation.printer + '" -PassThru | %{start-sleep 11;$_} | kill')
         } else {
-          ps.addCommand('Start-Process -file "' + defaultProgramPath + '\\' + fileName + '" -Verb PrintTo "' + formatInformation.printer + '" -PassThru | %{sleep 11;$_} | kill')
+          ps.addCommand('Start-Process -file "' + defaultProgramPath + '\\' + fileName + '"-WindowStyle Minimized -Verb PrintTo "' + formatInformation.printer + '" -PassThru | %{start-sleep 11;$_} | kill')
         }
         ps.invoke().then(output => {
           ps.dispose()
@@ -343,16 +343,12 @@ ipcMain.on('readyToPrint', function (event, formatInformation, printImmediately,
         })
       } else {
         if (last) {
-          ps.addCommand('Start-Process -file "' + defaultProgramPath + '\\' + fileName + '" -PassThru | %{sleep 11;$_} | kill')
+          ps.addCommand('Start-Process -file "' + defaultProgramPath + '\\' + fileName + '"-WindowStyle Minimized -PassThru | %{start-sleep 11;$_} | kill')
         } else {
-          ps.addCommand('Start-Process -file "' + defaultProgramPath + '\\' + fileName + '" -PassThru | %{sleep 11;$_} | kill')
+          ps.addCommand('Start-Process -file "' + defaultProgramPath + '\\' + fileName + '"-WindowStyle Minimized -PassThru | %{start-sleep 11;$_} | kill')
         }
         ps.invoke().then(output => {
           ps.dispose()
-          if (config.store.devMode) {
-            winPrint.close()
-            winPrint = null
-          }
           if (!printImmediately) {
             mainWindow.webContents.send('printMsg', last)
           }
