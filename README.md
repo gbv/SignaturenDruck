@@ -1,5 +1,7 @@
 # SignaturenDruck
 
+[Changelog](#changelog)
+
 This is a Electron application to print shelfmarks read from a `.dnl`-file. It displays shelfmarks from the file in a table like structure. You can then select and print the shelfmarks you like.
 
 The printing process creates `.pdf`-files (each per selectet format) and proceeds to print them via powershell and Adobe Acrobat Reader DC.  
