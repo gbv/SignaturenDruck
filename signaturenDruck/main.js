@@ -84,7 +84,7 @@ app.on('activate', function () {
 })
 
 // starts the printing process
-ipcMain.on('print', (event, dataAll) => {
+ipcMain.on('print', (event, dataAll, printImmediately = false) => {
   let i = 1
   let nrOfFormats = dataAll.length
 
@@ -96,7 +96,7 @@ ipcMain.on('print', (event, dataAll) => {
       last = true
     }
     setTimeout(function () {
-      printData(data.formatInformation, data.printInformation, last)
+      printData(data.formatInformation, data.printInformation, printImmediately, last)
     }, (i * 1000))
     i++
   })
@@ -284,7 +284,7 @@ function createConfig () {
   config.set(configNew)
 }
 
-function printData (formatInformation, printInformation, last = false) {
+function printData (formatInformation, printInformation, printImmediately, last = false) {
   let winPrint = null
   winPrint = new BrowserWindow({ width: 899, height: 900, show: false })
   winPrint.loadURL(url.format({
@@ -293,64 +293,77 @@ function printData (formatInformation, printInformation, last = false) {
     slashes: true
   }))
   winPrint.once('ready-to-show', () => {
-    winPrint.webContents.send('toPrint', formatInformation, printInformation)
-    // TODO - why ist height and width vise versa?
-    winPrint.webContents.printToPDF({ marginsType: 1, landscape: true, pageSize: { height: formatInformation.paper.width, width: formatInformation.paper.height } }, (error, data) => {
-      if (error) throw error
-      let fileName = formatInformation.name + new Date().getTime() + '.pdf'
-      fs.writeFile(defaultProgramPath + '\\' + fileName, data, (error) => {
-        if (error) throw error
-        let ps = new Shell({
-          executionPolicy: 'Bypass',
-          noProfile: true
-        })
-        if (!config.store.devMode) {
-          if (last) {
-            ps.addCommand('Start-Process -file "' + defaultProgramPath + '\\' + fileName + '" -Verb PrintTo "' + formatInformation.printer + '" -PassThru | %{sleep 5;$_} | kill')
-          } else {
-            ps.addCommand('Start-Process -file "' + defaultProgramPath + '\\' + fileName + '" -Verb PrintTo "' + formatInformation.printer + '"')
-          }
-          ps.invoke().then(output => {
-            ps.dispose()
-            mainWindow.webContents.send('printMsg', last)
-            setTimeout(function () {
-              try {
-                fs.unlinkSync(defaultProgramPath + '\\' + fileName)
-              } catch (error) {
-                if (error.code === 'EBUSY') {
-                  mainWindow.webContents.send('couldNotDelete', defaultProgramPath)
-                } else {
-                  throw error
-                }
-              }
-            }, 10000)
-          }).catch(err => {
-            dialog.showErrorBox('Es ist ein Fehler aufgetreten.', err)
-            ps.dispose()
-          })
-        } else {
-          if (last) {
-            ps.addCommand('Start-Process -file "' + defaultProgramPath + '\\' + fileName + '" -PassThru | %{sleep 5;$_} | kill')
-          } else {
-            ps.addCommand('Start-Process -file "' + defaultProgramPath + '\\' + fileName + '"')
-          }
-          ps.invoke().then(output => {
-            ps.dispose()
-            mainWindow.webContents.send('printMsg', last)
-          }).catch(err => {
-            dialog.showErrorBox('Es ist ein Fehler aufgetreten.', err)
-            mainWindow.webContents.send('printMsg', false)
-            ps.dispose()
-          })
-        }
-      })
-    })
+    winPrint.webContents.send('toPrint', formatInformation, printInformation, printImmediately, last)
     if (config.store.devMode) {
       winPrint.show()
     }
-    winPrint = null
   })
 }
+
+ipcMain.on('readyToPrint', function (event, formatInformation, printImmediately, last) {
+  let winPrint = BrowserWindow.fromWebContents(event.sender)
+  winPrint.webContents.printToPDF({ marginsType: 1, landscape: true, pageSize: { height: formatInformation.paper.width, width: formatInformation.paper.height } }, (error, data) => {
+    if (error) throw error
+    let fileName = formatInformation.name + new Date().getTime() + '.pdf'
+    fs.writeFile(defaultProgramPath + '\\' + fileName, data, (error) => {
+      if (error) throw error
+      let ps = new Shell({
+        executionPolicy: 'Bypass',
+        noProfile: true
+      })
+      if (!config.store.devMode) {
+        if (last) {
+          ps.addCommand('Start-Process -file "' + defaultProgramPath + '\\' + fileName + '" -Verb PrintTo "' + formatInformation.printer + '" -PassThru | %{sleep 11;$_} | kill')
+        } else {
+          ps.addCommand('Start-Process -file "' + defaultProgramPath + '\\' + fileName + '" -Verb PrintTo "' + formatInformation.printer + '" -PassThru | %{sleep 11;$_} | kill')
+        }
+        ps.invoke().then(output => {
+          ps.dispose()
+          winPrint.close()
+          winPrint = null
+          if (!printImmediately) {
+            mainWindow.webContents.send('printMsg', last)
+          }
+          setTimeout(function () {
+            try {
+              fs.unlinkSync(defaultProgramPath + '\\' + fileName)
+            } catch (error) {
+              if (error.code === 'EBUSY') {
+                mainWindow.webContents.send('couldNotDelete', defaultProgramPath)
+              } else {
+                throw error
+              }
+              winPrint.close()
+              winPrint = null
+            }
+          }, 10000)
+        }).catch(err => {
+          dialog.showErrorBox('Es ist ein Fehler aufgetreten.', err)
+          ps.dispose()
+        })
+      } else {
+        if (last) {
+          ps.addCommand('Start-Process -file "' + defaultProgramPath + '\\' + fileName + '" -PassThru | %{sleep 11;$_} | kill')
+        } else {
+          ps.addCommand('Start-Process -file "' + defaultProgramPath + '\\' + fileName + '" -PassThru | %{sleep 11;$_} | kill')
+        }
+        ps.invoke().then(output => {
+          ps.dispose()
+          if (config.store.devMode) {
+            winPrint.close()
+            winPrint = null
+          }
+          if (!printImmediately) {
+            mainWindow.webContents.send('printMsg', last)
+          }
+        }).catch(err => {
+          dialog.showErrorBox('Es ist ein Fehler aufgetreten.', err)
+          ps.dispose()
+        })
+      }
+    })
+  })
+})
 
 // creates the manualSignaturesWindow
 function createManualSignaturesWindow (objMan, edit) {

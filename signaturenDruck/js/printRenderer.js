@@ -23,11 +23,11 @@ window.onload = function () {
   formats.addStyleFiles()
 }
 
-ipcRenderer.on('toPrint', function (event, formatInformation, printInformation) {
-  createPage(formatInformation, printInformation)
+ipcRenderer.on('toPrint', function (event, formatInformation, printInformation, printImmediately, last) {
+  createPage(formatInformation, printInformation, printImmediately, last)
 })
 
-function createPage (formatInformation, printInformation) {
+function createPage (formatInformation, printInformation, printImmediately, last) {
   document.getElementById('toPrint').className = 'format_' + formatInformation.name
   if (config.get('print.printCoverLabel')) {
     fillCoverLabel()
@@ -49,6 +49,7 @@ function createPage (formatInformation, printInformation) {
       document.getElementById('toPrint').appendChild(div)
     }
   })
+  ipcRenderer.send('readyToPrint', formatInformation, printImmediately, last)
 }
 
 function removeCoverLabel () {

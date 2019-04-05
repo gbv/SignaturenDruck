@@ -100,10 +100,10 @@ ipcRenderer.on('addSRUdata', function (event, xml, barcode) {
     objSRU.all[index] = shelfmark
     objSRU.all[index].id = index + 1
     table.readSRUData(objSRU.all)
-    if (document.getElementById('chkbx_printImmediatly').checked) {
+    if (document.getElementById('chkbx_printImmediately').checked) {
       let node = document.getElementById('print_' + (index + 1))
       node.click()
-      printButton()
+      printButton(event, true)
     }
     table.clearManualSignaturesTable()
     if (table.manualSignature !== undefined && table.manualSignature !== null && table.manualSignature.length !== 0) {
@@ -158,8 +158,21 @@ function closeButton () {
 }
 
 // gathers the data to print and invokes printing via ipc
-function printButton () {
-  const print = new P(sigJSONFile, table.formats, table.manualSignature)
+function printButton (event, printImmediately = false) {
+  if (printImmediately) {
+    ipcRenderer.send('print', getPrintData(), printImmediately)
+  } else {
+    if (isSomethingToPrint()) {
+      swal.fire('Bitte warten', 'Die Signaturen werden gedruckt.', 'info')
+      ipcRenderer.send('print', getPrintData())
+    } else {
+      swal.fire('Nichts zu drucken', 'Es wurde keine Signatur ausgewählt!', 'info')
+    }
+  }
+}
+
+// returns true if there is something to print
+function isSomethingToPrint () {
   let elems = document.querySelectorAll('[name=toPrint]')
   let somethingToPrint = false
   _.forEach(elems, function (elem) {
@@ -167,13 +180,12 @@ function printButton () {
       somethingToPrint = true
     }
   })
+  return somethingToPrint
+}
 
-  if (somethingToPrint) {
-    swal.fire('Bitte warten', 'Die Signaturen werden gedruckt.', 'info')
-    ipcRenderer.send('print', print.dataAll)
-  } else {
-    swal.fire('Nichts zu drucken', 'Es wurde keine Signatur ausgewählt!', 'info')
-  }
+// returns printData
+function getPrintData () {
+  return new P(sigJSONFile, table.formats, table.manualSignature).dataAll
 }
 
 // function to invert the print-selection
