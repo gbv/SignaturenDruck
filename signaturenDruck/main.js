@@ -50,7 +50,7 @@ const configNew = {
     printCoverLabel: true
   },
   mode: {
-    defaultMode: 'thulbMode'
+    defaultMode: 'defaultMode'
   },
   devMode: false
 }

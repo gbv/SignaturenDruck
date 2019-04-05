@@ -29,7 +29,7 @@
       "fontSize": "15",
       "bold": true,
       "italic": false,
-      "indent": "47"
+      "indent": "45"
     },
     {
       "id": 2,
@@ -37,7 +37,7 @@
       "fontSize": "15",
       "bold": true,
       "italic": false,
-      "indent": "47"
+      "indent": "45"
     },
     {
       "id": 3,
@@ -45,7 +45,7 @@
       "fontSize": "15",
       "bold": true,
       "italic": false,
-      "indent": "47"
+      "indent": "45"
     }
   ],
   "marginTop": "-1"
