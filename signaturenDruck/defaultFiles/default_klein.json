@@ -13,7 +13,11 @@
   "lines": "3",
   "example": {
     "shelfmark": "2018 B 1024 :1",
-    "parts": ["2018 B", "1024 :", "1"]
+    "parts": [
+      "2018 B",
+      "1024 :",
+      "1"
+    ]
   },
   "centerHor": false,
   "centerVer": true,
@@ -44,5 +48,5 @@
       "indent": "45"
     }
   ],
-  "marginTop": -1
+  "marginTop": "-1"
 }

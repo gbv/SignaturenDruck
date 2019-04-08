@@ -13,7 +13,9 @@
   "lines": "1",
   "example": {
     "shelfmark": "2018 SA 1454",
-    "parts": ["2018 SA 1454"]
+    "parts": [
+      "2018 SA 1454"
+    ]
   },
   "centerHor": true,
   "centerVer": true,
@@ -28,5 +30,5 @@
       "indent": "0"
     }
   ],
-  "marginTop": -1
+  "marginTop": "-1"
 }

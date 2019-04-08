@@ -47,11 +47,10 @@ const configNew = {
     QueryPart2: '&maximumRecords=1&recordSchema=picaxml'
   },
   print: {
-    printImmediately: false,
     printCoverLabel: true
   },
   mode: {
-    defaultMode: 'thulbMode'
+    defaultMode: 'defaultMode'
   },
   devMode: false
 }
@@ -85,14 +84,20 @@ app.on('activate', function () {
 })
 
 // starts the printing process
-ipcMain.on('print', (event, dataAll) => {
-  let i = 0
+ipcMain.on('print', (event, dataAll, printImmediately = false) => {
+  let i = 1
+  let nrOfFormats = dataAll.length
+
   _.each(dataAll, (data) => {
+    let last = false
     // console.warn(data.formatInformation)
     // console.warn(data.printInformation)
+    if (nrOfFormats === i) {
+      last = true
+    }
     setTimeout(function () {
-      printData(data.formatInformation, data.printInformation)
-    }, i * 4000)
+      printData(data.formatInformation, data.printInformation, printImmediately, last)
+    }, (i * 1000))
     i++
   })
 })
@@ -117,8 +122,8 @@ ipcMain.on('close', function (event) {
 })
 
 // listens on openManualSignaturesWindow, invokes the opening process
-ipcMain.on('openManualSignaturesWindow', function (event, data) {
-  createManualSignaturesWindow(data)
+ipcMain.on('openManualSignaturesWindow', function (event, data, edit = false) {
+  createManualSignaturesWindow(data, edit)
 })
 
 // listens on closeManual, closes the manualSignaturesWindow and invokes the removeManual process
@@ -139,7 +144,7 @@ ipcMain.on('saveManualSignatures', function (event, data) {
 ipcMain.on('loadFromSRU', function (event, barcode) {
   if (barcode !== '') {
     sruData.loadData(barcode).then(function (data) {
-      mainWindow.webContents.send('addSRUdata', data)
+      mainWindow.webContents.send('addSRUdata', data, barcode)
     })
   }
 })
@@ -279,7 +284,7 @@ function createConfig () {
   config.set(configNew)
 }
 
-function printData (formatInformation, printInformation) {
+function printData (formatInformation, printInformation, printImmediately, last = false) {
   let winPrint = null
   winPrint = new BrowserWindow({ width: 899, height: 900, show: false })
   winPrint.loadURL(url.format({
@@ -288,52 +293,76 @@ function printData (formatInformation, printInformation) {
     slashes: true
   }))
   winPrint.once('ready-to-show', () => {
-    winPrint.webContents.send('toPrint', formatInformation, printInformation)
-    // TODO - why ist height and width vise versa?
-    winPrint.webContents.printToPDF({ marginsType: 1, landscape: true, pageSize: { height: formatInformation.paper.width, width: formatInformation.paper.height } }, (error, data) => {
-      if (error) throw error
-      let fileName = formatInformation.name + '_' + new Date().getTime() + '.pdf'
-      fs.writeFile(defaultProgramPath + '\\' + fileName, data, (error) => {
-        if (error) throw error
-        let ps = new Shell({
-          executionPolicy: 'Bypass',
-          noProfile: true
-        })
-        if (!config.store.devMode) {
-          ps.addCommand('Start-Process -file "' + defaultProgramPath + '\\' + fileName + '" -Verb PrintTo "' + formatInformation.printer + '" -PassThru | %{sleep 4;$_} | kill')
-          ps.invoke().then(output => {
-            if (config.get('modal.showModal')) {
-              mainWindow.webContents.send('printMsg', true)
-            } else {
-              mainWindow.webContents.send('printMsg', false)
-            }
-            setTimeout(function () {
-              fs.unlinkSync(defaultProgramPath + '\\' + fileName)
-            }, 10000)
-          }).catch(err => {
-            dialog.showErrorBox('Es ist ein Fehler aufgetreten.', err)
-            mainWindow.webContents.send('printMsg', false)
-            ps.dispose()
-          })
-        } else {
-          ps.addCommand('Start-Process -file "' + defaultProgramPath + '\\' + fileName + '"')
-          ps.invoke().then(output => { mainWindow.webContents.send('printMsg', true); ps.dispose() }).catch(err => {
-            dialog.showErrorBox('Es ist ein Fehler aufgetreten.', err)
-            mainWindow.webContents.send('printMsg', false)
-            ps.dispose()
-          })
-        }
-      })
-    })
+    winPrint.webContents.send('toPrint', formatInformation, printInformation, printImmediately, last)
     if (config.store.devMode) {
       winPrint.show()
     }
-    winPrint = null
   })
 }
 
+ipcMain.on('readyToPrint', function (event, formatInformation, printImmediately, last) {
+  let winPrint = BrowserWindow.fromWebContents(event.sender)
+  winPrint.webContents.printToPDF({ marginsType: 1, landscape: true, pageSize: { height: formatInformation.paper.width, width: formatInformation.paper.height } }, (error, data) => {
+    if (error) throw error
+    let fileName = formatInformation.name + new Date().getTime() + '.pdf'
+    fs.writeFile(defaultProgramPath + '\\' + fileName, data, (error) => {
+      if (error) throw error
+      let ps = new Shell({
+        executionPolicy: 'Bypass',
+        noProfile: true
+      })
+      if (!config.store.devMode) {
+        if (last) {
+          ps.addCommand('Start-Process -file "' + defaultProgramPath + '\\' + fileName + '"-WindowStyle Minimized -Verb PrintTo "' + formatInformation.printer + '" -PassThru | %{start-sleep 11;$_} | kill')
+        } else {
+          ps.addCommand('Start-Process -file "' + defaultProgramPath + '\\' + fileName + '"-WindowStyle Minimized -Verb PrintTo "' + formatInformation.printer + '" -PassThru | %{start-sleep 11;$_} | kill')
+        }
+        ps.invoke().then(output => {
+          ps.dispose()
+          winPrint.close()
+          winPrint = null
+          if (!printImmediately) {
+            mainWindow.webContents.send('printMsg', last)
+          }
+          setTimeout(function () {
+            try {
+              fs.unlinkSync(defaultProgramPath + '\\' + fileName)
+            } catch (error) {
+              if (error.code === 'EBUSY') {
+                mainWindow.webContents.send('couldNotDelete', defaultProgramPath)
+              } else {
+                throw error
+              }
+              winPrint.close()
+              winPrint = null
+            }
+          }, 10000)
+        }).catch(err => {
+          dialog.showErrorBox('Es ist ein Fehler aufgetreten.', err)
+          ps.dispose()
+        })
+      } else {
+        if (last) {
+          ps.addCommand('Start-Process -file "' + defaultProgramPath + '\\' + fileName + '"-WindowStyle Minimized -PassThru | %{start-sleep 11;$_} | kill')
+        } else {
+          ps.addCommand('Start-Process -file "' + defaultProgramPath + '\\' + fileName + '"-WindowStyle Minimized -PassThru | %{start-sleep 11;$_} | kill')
+        }
+        ps.invoke().then(output => {
+          ps.dispose()
+          if (!printImmediately) {
+            mainWindow.webContents.send('printMsg', last)
+          }
+        }).catch(err => {
+          dialog.showErrorBox('Es ist ein Fehler aufgetreten.', err)
+          ps.dispose()
+        })
+      }
+    })
+  })
+})
+
 // creates the manualSignaturesWindow
-function createManualSignaturesWindow (objMan) {
+function createManualSignaturesWindow (objMan, edit) {
   manualSignaturesWindow = new BrowserWindow({ width: 650, height: 420, show: false })
   manualSignaturesWindow.loadURL(url.format({
     pathname: path.join(__dirname, 'html/manual.html'),
@@ -342,7 +371,7 @@ function createManualSignaturesWindow (objMan) {
   }))
   manualSignaturesWindow.once('ready-to-show', () => {
     manualSignaturesWindow.show()
-    manualSignaturesWindow.webContents.send('objMan', objMan)
+    manualSignaturesWindow.webContents.send('objMan', objMan, edit)
   })
 }
 

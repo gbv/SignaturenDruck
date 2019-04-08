@@ -12,6 +12,7 @@ const config = remote.getGlobal('config')
 const sigJSONFile = remote.getGlobal('sigJSONFile')
 
 const swal = require('sweetalert2')
+const _ = require('lodash')
 
 const T = require('./classes/Table')
 const P = require('./classes/Print')
@@ -59,17 +60,18 @@ window.onload = function () {
 // listens on printMsg, invokes the modal
 ipcRenderer.on('printMsg', function (event, successfull) {
   if (successfull && displayModalOnSuccess) {
-    document.getElementById('myModal').style.display = 'block'
-  } else {
-    document.getElementById('myModal').style.display = 'none'
-    displayModalOnSuccess = false
+    swal.fire('Erfolg!', 'Es wurden alle Signaturen gedruckt.', 'success')
   }
 })
 
+ipcRenderer.on('couldNotDelete', function (event, path) {
+  swal.fire('Achtung', 'PDFs konnten nicht automatisch gelöscht werden!<br/>Die PDFs liegen unter:<br/><strong>' + path + '</strong>', 'info')
+})
+
 // function to send objMan to the manual window
-function openManualSignaturesWindow () {
+function openManualSignaturesWindow (edit = false) {
   (table.manualSignature.length === 0) ? table.manualSignature = [] : null
-  ipcRenderer.send('openManualSignaturesWindow', table.manualSignature)
+  ipcRenderer.send('openManualSignaturesWindow', table.manualSignature, edit)
 }
 
 // ipc listener to add new manual data to the table
@@ -83,14 +85,13 @@ ipcRenderer.on('addManualSignatures', function (event, data) {
 
 // ipc listener to remove the manual data
 ipcRenderer.on('removeManualSignatures', function (event) {
-  table.manualSignature = []
-  table.clearManualSignaturesTable()
+  clearManualShelfmarks()
 })
 
 // ipc listener to add provided data to the SRU obj
-ipcRenderer.on('addSRUdata', function (event, xml) {
+ipcRenderer.on('addSRUdata', function (event, xml, barcode) {
   let data = new ShelfmarksFromSRUData()
-  let shelfmark = data.getShelfmark(xml)
+  let shelfmark = data.getShelfmark(xml, barcode)
   if (shelfmark.error !== '') {
     swal.fire('Achtung', shelfmark.error, 'error')
       .then(() => {})
@@ -99,6 +100,15 @@ ipcRenderer.on('addSRUdata', function (event, xml) {
     objSRU.all[index] = shelfmark
     objSRU.all[index].id = index + 1
     table.readSRUData(objSRU.all)
+    if (document.getElementById('chkbx_printImmediately').checked) {
+      let node = document.getElementById('print_' + (index + 1))
+      node.click()
+      printButton(event, true)
+    }
+    table.clearManualSignaturesTable()
+    if (table.manualSignature !== undefined && table.manualSignature !== null && table.manualSignature.length !== 0) {
+      table.addManualSignaturesToTable(table.manualSignature)
+    }
   }
 })
 
@@ -107,9 +117,15 @@ function refreshDownloadFile () {
   table.refreshDownloadFile()
 }
 
+function clearManualShelfmarks () {
+  table.manualSignature = []
+  table.clearManualSignaturesTable()
+}
+
 // clear written local signature - json file
 function clearDownloadFileTable () {
   objSRU.all = []
+  clearManualShelfmarks()
   table.clearDownloadFile()
 }
 
@@ -142,10 +158,34 @@ function closeButton () {
 }
 
 // gathers the data to print and invokes printing via ipc
-function printButton () {
-  const print = new P(sigJSONFile, table.formats, table.manualSignature)
-  // console.warn(print.dataAll)
-  ipcRenderer.send('print', print.dataAll)
+function printButton (event, printImmediately = false) {
+  if (printImmediately) {
+    ipcRenderer.send('print', getPrintData(), printImmediately)
+  } else {
+    if (isSomethingToPrint()) {
+      swal.fire('Bitte warten', 'Die Signaturen werden gedruckt.', 'info')
+      ipcRenderer.send('print', getPrintData())
+    } else {
+      swal.fire('Nichts zu drucken', 'Es wurde keine Signatur ausgewählt!', 'info')
+    }
+  }
+}
+
+// returns true if there is something to print
+function isSomethingToPrint () {
+  let elems = document.querySelectorAll('[name=toPrint]')
+  let somethingToPrint = false
+  _.forEach(elems, function (elem) {
+    if (elem.checked) {
+      somethingToPrint = true
+    }
+  })
+  return somethingToPrint
+}
+
+// returns printData
+function getPrintData () {
+  return new P(sigJSONFile, table.formats, table.manualSignature).dataAll
 }
 
 // function to invert the print-selection

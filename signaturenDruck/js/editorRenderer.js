@@ -322,13 +322,14 @@ function createCSS (obj) {
     even with @print margin 0mm
     thats why we substract 2
     */
-    marginLeftValue = marginLeftValue - 2
+    marginLeftValue = marginLeftValue - 1
 
     let marginTopAdjustmentValue = document.getElementById('marginTop').value
     if (marginTopAdjustmentValue === '') {
       marginTopAdjustmentValue = 0
     }
     str += '@media print {\n#toPrint.format_' + obj.name + ' > .innerBox {\nmargin: ' + marginTopValue + 'mm 0mm 0mm ' + marginLeftValue + 'mm;\n}\n'
+    str += 'body {\nmargin: 0px;\n}\n'
     str += '#toPrint.format_' + obj.name + ' > .innerBox > .line_1 {\nmargin-top: ' + marginTopAdjustmentValue + 'mm;\n}\n'
     str += '}'
     return str

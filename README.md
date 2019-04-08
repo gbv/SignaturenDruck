@@ -1,5 +1,7 @@
 # SignaturenDruck
 
+[Changelog](#changelog)
+
 This is a Electron application to print shelfmarks read from a `.dnl`-file. It displays shelfmarks from the file in a table like structure. You can then select and print the shelfmarks you like.
 
 The printing process creates `.pdf`-files (each per selectet format) and proceeds to print them via powershell and Adobe Acrobat Reader DC.  
@@ -268,6 +270,31 @@ Mit <kbd>strg</kbd> + <kbd>alt</kbd> + <kbd>C</kbd> öffen Sie die "Modus erstel
 Der Adobe Acrobat Reader DC wird für den Druck benötigt. Ist dieser nicht das Standard PDF-Programm so schlägt der Druck fehl.
 
 # Changelog
+
+## v1.1.1-d
+
+- Horizontale Zentrierung der Label auf dem Papier korrigiert
+- Option für Sofortdruck umgesetzt (issue #15, nur wenn Daten via SRU geladen werden)
+- Hinweis für den Fall hinzugefügt, dass die erzeugten PDFs nicht automatisch gelöscht werden konnten (Reader war bereits geöffnet)
+- Ausgelesene Signaturen (SRU/Datei) sind nun mittels Doppelklick auf den Signaturentext editierbar
+- weitere interne Optimierungen
+
+### Hinweis
+ Die Problematik mit Feld 209A/7100 $B hat keinerlei Auswirkung auf die Funktionsweise des Programms
+
+
+## v1.1.1-c
+
+- Bei der Eingabe von manuellen Signaturen bleibt die Eingabe der vorherigen Signatur erhalten
+- Problem mit SRU-Abfragen gelöst (issue #51)
+
+## v1.1.1-b
+
+- SRU liefert jetzt die Daten des eingegebenen Barcodes (nicht des ersten Exemplars)
+- Manuelle Signaturen werden nun bei einem Klick auf 'Liste löschen' ebenfalls gelöscht
+- Manuelle Signaturen bleiben sichtbar nach dem hinzufügen einer Signatur via SRU
+- Pdf-erzeugung optimiert
+- Problem mit einzeiligen Signaturen behoben
 
 ## v1.1.1-a
 
