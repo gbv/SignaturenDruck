@@ -209,7 +209,8 @@ function createWindow () {
   } else {
     mainWindow = new BrowserWindow({ width: 850, height: 600, backgroundColor: '#f0f0f0' })
   }
-
+  // set the mainwindow title (name + version from package.json)
+  mainWindow.setTitle('Signaturendruck v' + app.getVersion())
   // and load the index.html of the app.
   mainWindow.loadURL(url.format({
     pathname: path.join(__dirname, '/html/index.html'),

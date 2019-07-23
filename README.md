@@ -271,6 +271,10 @@ Der Adobe Acrobat Reader DC wird für den Druck benötigt. Ist dieser nicht das 
 
 # Changelog
 
+## v1.1.1-e-dev
+
+- Version wird nun im Titel des Hauptfensters mit angezeigt (issue #59)
+
 ## v1.1.1-d
 
 - Horizontale Zentrierung der Label auf dem Papier korrigiert
