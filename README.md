@@ -274,6 +274,7 @@ Der Adobe Acrobat Reader DC wird für den Druck benötigt. Ist dieser nicht das 
 ## v1.1.1-e-dev
 
 - Version wird nun im Titel des Hauptfensters mit angezeigt (issue #59)
+- im Ordner Formate & FormateCSS werden Dateien mit falschem Dateiformat ignoriert (issue #17)
 
 ## v1.1.1-d
 
