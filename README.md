@@ -275,6 +275,8 @@ Der Adobe Acrobat Reader DC wird für den Druck benötigt. Ist dieser nicht das 
 
 - Version wird nun im Titel des Hauptfensters mit angezeigt (issue #59)
 - im Ordner Formate & FormateCSS werden Dateien mit falschem Dateiformat ignoriert (issue #17)
+- Eine fehlerhafte Konfigurationsdatei wird nun nichtmehr kommentarlos ersetzt. (issue #36)  
+    Sie wird als 'config_invalid.json' abgespeichert und es wird eine valide Standardkonfig angelegt.
 
 ## v1.1.1-d
 
