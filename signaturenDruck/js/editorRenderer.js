@@ -46,6 +46,7 @@ ipcRenderer.on('newModeFormat', function (event, data) {
     subModeData = data
     document.getElementById('input_fileName').value = data.name
     document.getElementById('input_example').value = data.example.shelfmark
+    loadFormatByName(subModeData.prevName)
     while (document.getElementById('tableLinesBody').childNodes.length < data.lines) {
       addLine()
     }
@@ -62,6 +63,17 @@ ipcRenderer.on('newModeFormat', function (event, data) {
     }
   }
 })
+
+function loadFormatByName (name) {
+  if (name !== '') {
+    _.forEach(document.getElementById('selectFormat').options, function (value) {
+      if (value.value === name) {
+        document.getElementById('selectFormat').selectedIndex = value.index
+        loadDataFromFormat(value.value)
+      }
+    })
+  }
+}
 
 function setFontsList () {
   let fontsList = []
