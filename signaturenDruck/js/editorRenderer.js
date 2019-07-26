@@ -24,6 +24,7 @@ let fonts = []
 let formats = []
 let selectOptions = []
 let parts = []
+let subModeData
 
 window.onload = function () {
   setFontsList()
@@ -42,16 +43,17 @@ ipcRenderer.on('newModeFormat', function (event, data) {
     document.getElementById('input_fileName').value = ''
     document.getElementById('input_example').value = config.get('example.shelfmark')
   } else {
-    document.getElementById('input_fileName').value = data.format
-    document.getElementById('input_example').value = data.exampleShelfmark
-    while (document.getElementById('tableLinesBody').childNodes.length < data.nrOfLines) {
+    subModeData = data
+    document.getElementById('input_fileName').value = data.name
+    document.getElementById('input_example').value = data.example.shelfmark
+    while (document.getElementById('tableLinesBody').childNodes.length < data.lines) {
       addLine()
     }
     let i = 0
-    while (i < data.nrOfLines) {
+    while (i < data.lines) {
       if (data.lines[i] !== '') {
-        document.getElementById('line_' + (i + 1)).innerHTML = data.lines[i]
-        parts.push(data.lines[i])
+        document.getElementById('line_' + (i + 1)).innerHTML = data.example.parts[i]
+        parts.push(data.example.parts[i])
       } else {
         document.getElementById('line_' + (i + 1)).innerHTML = '<br/>'
         parts.push('<br/>')
@@ -118,8 +120,27 @@ function setFormatsSelect () {
 
 function loadDataFromFormat (formatName) {
   let format = formats[formatName]
-  currentFormat = format
-  document.getElementById('input_fileName').value = format.name
+  let i = document.getElementById('input_labelLines').value
+  if (!subModeData) {
+    document.getElementById('input_fileName').value = format.name
+    document.getElementById('input_labelLines').value = Number(format.lines)
+    currentFormat = format
+    document.getElementById('input_example').value = currentFormat.example.shelfmark
+  } else {
+    document.getElementById('input_fileName').value = subModeData.name
+    document.getElementById('input_labelLines').value = subModeData.lines
+    document.getElementById('input_example').value = subModeData.example.shelfmark
+    format.lines = subModeData.lines
+    currentFormat = formats[subModeData.name]
+/*    if (!currentFormat) {
+      currentFormat = formats[subModeData.prevName]
+    } */
+    if (!currentFormat || currentFormat === '') {
+      currentFormat = subModeData
+    }
+    currentFormat.example = subModeData.example
+    console.log(format, subModeData, currentFormat)
+  }
   document.getElementById('selectPrinter').value = format.printer
   document.getElementById('input_paperHeight').value = Number(format.paper.height)
   document.getElementById('input_paperWidth').value = Number(format.paper.width)
@@ -127,8 +148,6 @@ function loadDataFromFormat (formatName) {
   changeLabelHeight()
   document.getElementById('input_labelWidth').value = Number(format.label.width.split('mm')[0])
   changeLabelWidth()
-  document.getElementById('input_example').value = currentFormat.example.shelfmark
-  let i = document.getElementById('input_labelLines').value
   while (i < format.lines) {
     addLine()
     i++
@@ -149,7 +168,6 @@ function loadDataFromFormat (formatName) {
     }
     i++
   }
-  document.getElementById('input_labelLines').value = Number(format.lines)
   document.getElementById('lineSpace').value = Number(format.lineSpace)
   changeLineSpace()
   let centerHor = document.getElementById('centerHor')
@@ -177,14 +195,18 @@ function loadDataFromFormat (formatName) {
   document.getElementById('marginTop').value = format.marginTop
   for (let i = 1; i <= format.lines; i++) {
     let k = i - 1
-    document.getElementById('fontLine_' + i).value = format.linesData[k].font
+    if (format.linesData[k]) {
+      document.getElementById('fontLine_' + i).value = format.linesData[k].font
+    }
     let evt = { 'target': { 'id': '' } }
     evt.target.id = '_' + i
     changeLineFont(evt)
-    document.getElementById('fontSizeLine_' + i).value = format.linesData[k].fontSize
+    if (format.linesData[k]) {
+      document.getElementById('fontSizeLine_' + i).value = format.linesData[k].fontSize
+    }
     changeLineFontSize(evt)
     let chkbx = document.getElementById('bold_' + i)
-    if (format.linesData[k].bold) {
+    if (format.linesData[k] && format.linesData[k].bold) {
       if (!chkbx.checked) {
         chkbx.click()
       }
@@ -194,7 +216,7 @@ function loadDataFromFormat (formatName) {
       }
     }
     chkbx = document.getElementById('italic_' + i)
-    if (format.linesData[k].italic) {
+    if (format.linesData[k] && format.linesData[k].italic) {
       if (!chkbx.checked) {
         chkbx.click()
       }
@@ -203,7 +225,9 @@ function loadDataFromFormat (formatName) {
         chkbx.click()
       }
     }
-    document.getElementById('indent_' + i).value = format.linesData[k].indent
+    if (format.linesData[k]) {
+      document.getElementById('indent_' + i).value = format.linesData[k].indent
+    }
     changeLineIndent(evt)
   }
 }
@@ -219,6 +243,9 @@ function changeLabelWidth (event) {
 function saveConfig () {
   if (document.getElementById('input_fileName').value !== '') {
     if (document.getElementById('selectPrinter').value !== '') {
+      if (subModeData && subModeData.prevName !== '') {
+        removePrevNameFiles()
+      }
       if (!fs.existsSync(defaultProgramPath + '\\Formate\\' + document.getElementById('input_fileName').value + '.json')) {
         writeToFiles()
         alert('Das Format wurde hinzugefügt.')
@@ -250,6 +277,19 @@ function saveConfig () {
   }
 }
 
+function removePrevNameFiles () {
+  removeFile(defaultProgramPath + '\\Formate\\' + subModeData.prevName + '.json')
+  removeFile(defaultProgramPath + '\\FormateCSS\\' + subModeData.prevName + '.css')
+
+  function removeFile (path) {
+    fs.unlink(path, function (err) {
+      if (err) {
+        throw err
+      }
+    })
+  }
+}
+
 function setObjct () {
   let newConfig = {
     'name': document.getElementById('input_fileName').value,
@@ -274,11 +314,6 @@ function setObjct () {
     'linesData': '',
     'marginTop': document.getElementById('marginTop').value
   }
-
-  if (currentFormat.splitByRegEx && document.getElementById('chkbx_regEx').checked) {
-    newConfig.splitByRegEx = currentFormat.splitByRegEx
-  }
-
   let linesData = []
   let i = 0
   while (i < newConfig.lines) {

@@ -296,37 +296,20 @@ function refresh () {
   createPreview()
 }
 
-function saveAndContinue () {
-  if (document.getElementById('input_modeName').value !== '' && document.getElementById('input_subModeName').value !== '') {
-    refresh()
-    let modeDataNew = {
-      modeName: '',
-      subModes: []
-    }
-    // set modeName
-    modeDataNew.modeName = getModeNameNew().replace(/[^a-zA-Z0-9]/g, '_').replace(/_{2,}/g, '_')
-    // if modeNameOld != ''
-    if (modesData[getModeNameOld()] !== undefined) {
-      let subModesData = modesData[getModeNameOld()].subModes
-      _.forEach(subModesData, function (value) {
-        // if subMode gets updated
-        if (value.format === getSubModeNameOld()) {
-          value.format = getSubModeNameNew().replace(/[^a-zA-Z0-9]/g, '_').replace(/_{2,}/g, '_')
-          value.useRegEx = !document.getElementById('input_regEx').disabled
-          value.regEx = document.getElementById('input_regEx').value
-          value.delimiter = document.getElementById('input_delimiter').value
-          value.exampleShelfmark = document.getElementById('input_example').value
-          value.result = getResult()
-          modeDataNew.subModes.push(value)
-        } else {
-          // subModeData is untouched
-          modeDataNew.subModes.push(value)
-        }
-      })
-      // if subMode is new
-      if (getSubModeNameOld() === '') {
-        let value = {}
-        value.id = subModesData.length
+function saveMode () {
+  refresh()
+  let modeDataNew = {
+    modeName: '',
+    subModes: []
+  }
+  // set modeName
+  modeDataNew.modeName = getModeNameNew().replace(/[^a-zA-Z0-9]/g, '_').replace(/_{2,}/g, '_')
+  // if modeNameOld != ''
+  if (modesData[getModeNameOld()] !== undefined) {
+    let subModesData = modesData[getModeNameOld()].subModes
+    _.forEach(subModesData, function (value) {
+      // if subMode gets updated
+      if (value.format === getSubModeNameOld()) {
         value.format = getSubModeNameNew().replace(/[^a-zA-Z0-9]/g, '_').replace(/_{2,}/g, '_')
         value.useRegEx = !document.getElementById('input_regEx').disabled
         value.regEx = document.getElementById('input_regEx').value
@@ -334,11 +317,15 @@ function saveAndContinue () {
         value.exampleShelfmark = document.getElementById('input_example').value
         value.result = getResult()
         modeDataNew.subModes.push(value)
+      } else {
+        // subModeData is untouched
+        modeDataNew.subModes.push(value)
       }
-    } else {
-      // if mode is new
+    })
+    // if subMode is new
+    if (getSubModeNameOld() === '') {
       let value = {}
-      value.id = 0
+      value.id = subModesData.length
       value.format = getSubModeNameNew().replace(/[^a-zA-Z0-9]/g, '_').replace(/_{2,}/g, '_')
       value.useRegEx = !document.getElementById('input_regEx').disabled
       value.regEx = document.getElementById('input_regEx').value
@@ -347,21 +334,88 @@ function saveAndContinue () {
       value.result = getResult()
       modeDataNew.subModes.push(value)
     }
-    if (getModeNameOld() !== '') {
-      deleteModeFile(getModeNameOld())
+  } else {
+    // if mode is new
+    let value = {}
+    value.id = 0
+    value.format = getSubModeNameNew().replace(/[^a-zA-Z0-9]/g, '_').replace(/_{2,}/g, '_')
+    value.useRegEx = !document.getElementById('input_regEx').disabled
+    value.regEx = document.getElementById('input_regEx').value
+    value.delimiter = document.getElementById('input_delimiter').value
+    value.exampleShelfmark = document.getElementById('input_example').value
+    value.result = getResult()
+    modeDataNew.subModes.push(value)
+  }
+  if (getModeNameOld() !== '') {
+    deleteModeFile(getModeNameOld())
+  }
+  writeModeFile(modeDataNew)
+}
+
+function saveAndExit () {
+  if (document.getElementById('input_modeName').value !== '' && document.getElementById('input_subModeName').value !== '') {
+    if (getSubModeNameNew() === getSubModeNameOld()) {
+      saveMode()
+      close()
+    } else {
+      // better disable the button if condition is not met
+      alert('Für den neuen Untermodus muss noch ein Format festgelegt werden.')
     }
-    writeModeFile(modeDataNew)
-    let data = {}
-    data.format = getSubModeNameNew().replace(/[^a-zA-Z0-9]/g, '_').replace(/_{2,}/g, '_')
-    data.nrOfLines = getLineCount()
-    data.exampleShelfmark = document.getElementById('input_example').value
-    data.lines = resultData
-    ipcRenderer.send('createNewModeFormat', data)
-    close()
+  } else {
+    alert('Es muss ein Modusname/Untername vergeben sein.')
+  }
+}
+
+function saveAndContinue () {
+  if (document.getElementById('input_modeName').value !== '' && document.getElementById('input_subModeName').value !== '') {
+    if (modeAlreadyExists(getModeNameNew())) {
+      alert('Es liegbt bereits ein Modus mit diesem Namen vor.')
+    } else {
+      if (getSubModeNameNew() === getSubModeNameOld() || !subModeAlreadyExists(getSubModeNameNew())) {
+        saveMode()
+        let data = {}
+        data.name = getSubModeNameNew().replace(/[^a-zA-Z0-9]/g, '_').replace(/_{2,}/g, '_')
+        data.lines = getLineCount()
+        data.example = {}
+        data.example.shelfmark = document.getElementById('input_example').value
+        data.example.parts = resultData
+        data.prevName = getSubModeNameOld()
+
+        ipcRenderer.send('createNewModeFormat', data)
+        close()
+      } else {
+        alert('Es liegt bereits ein Untermodus mit diesem Namen vor.')
+      }
+    }
   } else {
     // speichern nicht moeglich, modusname/untermodusname leer
     alert('Es muss ein Modusname/Untername vergeben sein.')
   }
+}
+
+function modeAlreadyExists (modeName) {
+  let found = false
+  if (getModeNameOld() !== modeName) {
+    _.forEach(modeNames, function (value) {
+      if (value === modeName) {
+        found = true
+      }
+    })
+  }
+  return found
+}
+
+function subModeAlreadyExists (subModeName) {
+  let found = false
+  if (getModeNameOld() !== '') {
+    let subModes = modesData[getModeNameOld()].subModes
+    _.forEach(subModes, function (value) {
+      if (value.format === subModeName) {
+        found = true
+      }
+    })
+  }
+  return found
 }
 
 function deleteModeFile (modeName) {
@@ -412,3 +466,4 @@ document.getElementById('btn_addLine').addEventListener('click', addLine)
 document.getElementById('btn_removeLine').addEventListener('click', removeLine)
 document.getElementById('btn_refresh').addEventListener('click', refresh)
 document.getElementById('btn_save').addEventListener('click', saveAndContinue)
+document.getElementById('btn_saveAndExit').addEventListener('click', saveAndExit)
