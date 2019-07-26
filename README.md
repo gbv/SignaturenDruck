@@ -274,11 +274,13 @@ Der Adobe Acrobat Reader DC wird für den Druck benötigt. Ist dieser nicht das 
 ## v1.1.1-e-dev
 
 - Version wird nun im Titel des Hauptfensters mit angezeigt (issue #59)
-- im Ordner Formate & FormateCSS werden Dateien mit falschem Dateiformat ignoriert (issue #17)
+- Im Ordner Formate & FormateCSS werden Dateien mit falschem Dateiformat ignoriert (issue #17)
 - Eine fehlerhafte Konfigurationsdatei wird nun nichtmehr kommentarlos ersetzt. (issue #36)  
     Sie wird als 'config_invalid.json' abgespeichert und es wird eine valide Standardkonfig angelegt.
+- Es wurden einige Verbesserungen beim erstellen/bearbeiten von Modi/Untermodi umgesetzt (issue #56, #50)
 - Optimierungen:
   - main.js: Funktion 'checkConfig' überarbeitet
+  - npm update ausgeführt
 
 ## v1.1.1-d
 
