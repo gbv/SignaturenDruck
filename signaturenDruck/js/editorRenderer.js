@@ -33,19 +33,19 @@ window.onload = function () {
   setFormatsSelect()
   changeLineSpace()
   addTableLine()
-  document.getElementById('line_1').style.fontFamily = document.getElementById('fontLine_1').value
+  document.getElementById('line_1').style.fontFamily = getValueOfElemId('fontLine_1')
 }
 
 ipcRenderer.on('newModeFormat', function (event, data) {
   if (data === '') {
     lineCounter = 1
-    document.getElementById('input_labelLines').value = 1
-    document.getElementById('input_fileName').value = ''
-    document.getElementById('input_example').value = config.get('example.shelfmark')
+    setValueOfElemId('input_labelLines', 1)
+    setValueOfElemId('input_fileName', '')
+    setValueOfElemId('input_example', config.get('example.shelfmark'))
   } else {
     subModeData = data
-    document.getElementById('input_fileName').value = data.name
-    document.getElementById('input_example').value = data.example.shelfmark
+    setValueOfElemId('input_fileName', data.name)
+    setValueOfElemId('input_example', data.example.shelfmark)
     loadFormatByName(subModeData.prevName)
     while (document.getElementById('tableLinesBody').childNodes.length < data.lines) {
       addLine()
@@ -91,14 +91,11 @@ function setPrinterSelect () {
   let list = getPrinterNameList()
   let select = document.getElementById('selectPrinter')
   let option = document.createElement('option')
-  option.value = ''
-  option.innerHTML = '--auswählen--'
-  option.selected = true
+  setOption(option, '--auswählen--', '', true)
   select.appendChild(option)
   list.forEach(element => {
     option = document.createElement('option')
-    option.value = element
-    option.innerHTML = element
+    setOption(option, element, element)
     select.appendChild(option)
   })
 }
@@ -117,8 +114,7 @@ function setFormatsSelect () {
   let select = document.getElementById('selectFormat')
   selectOptions.forEach(element => {
     let option = document.createElement('option')
-    option.value = element
-    option.innerHTML = element
+    setOption(option, element, element)
     select.appendChild(option)
   })
   select.onchange = function () {
@@ -130,18 +126,24 @@ function setFormatsSelect () {
   }
 }
 
+function setOption (option, innerHTML, value, selected = false) {
+  option.innerHTML = innerHTML
+  option.value = value
+  option.selected = selected
+}
+
 function loadDataFromFormat (formatName) {
   let format = formats[formatName]
   let i = document.getElementById('input_labelLines').value
   if (!subModeData) {
-    document.getElementById('input_fileName').value = format.name
-    document.getElementById('input_labelLines').value = Number(format.lines)
+    setValueOfElemId('input_fileName', format.name)
+    setValueOfElemId('input_labelLines', Number(format.lines))
     currentFormat = format
-    document.getElementById('input_example').value = currentFormat.example.shelfmark
+    setValueOfElemId('input_example', currentFormat.example.shelfmark)
   } else {
-    document.getElementById('input_fileName').value = subModeData.name
-    document.getElementById('input_labelLines').value = subModeData.lines
-    document.getElementById('input_example').value = subModeData.example.shelfmark
+    setValueOfElemId('input_fileName', subModeData.name)
+    setValueOfElemId('input_labelLines', subModeData.lines)
+    setValueOfElemId('input_example', subModeData.example.shelfmark)
     format.lines = subModeData.lines
     currentFormat = formats[subModeData.name]
 /*    if (!currentFormat) {
@@ -151,14 +153,13 @@ function loadDataFromFormat (formatName) {
       currentFormat = subModeData
     }
     currentFormat.example = subModeData.example
-    console.log(format, subModeData, currentFormat)
   }
-  document.getElementById('selectPrinter').value = format.printer
-  document.getElementById('input_paperHeight').value = Number(format.paper.height)
-  document.getElementById('input_paperWidth').value = Number(format.paper.width)
-  document.getElementById('input_labelHeight').value = Number(format.label.height.split('mm')[0])
+  setValueOfElemId('selectPrinter', format.printer)
+  setValueOfElemId('input_paperHeight', Number(format.paper.height))
+  setValueOfElemId('input_paperWidth', Number(format.paper.width))
+  setValueOfElemId('input_labelHeight', Number(format.label.height.split('mm')[0]))
   changeLabelHeight()
-  document.getElementById('input_labelWidth').value = Number(format.label.width.split('mm')[0])
+  setValueOfElemId('input_labelWidth', Number(format.label.width.split('mm')[0]))
   changeLabelWidth()
   while (i < format.lines) {
     addLine()
@@ -204,17 +205,17 @@ function loadDataFromFormat (formatName) {
   }
   document.getElementById('centerHor').checked = format.centerHor
   document.getElementById('centerVer').checked = format.centerVer
-  document.getElementById('marginTop').value = format.marginTop
+  setValueOfElemId('marginTop', format.marginTop)
   for (let i = 1; i <= format.lines; i++) {
     let k = i - 1
     if (format.linesData[k]) {
-      document.getElementById('fontLine_' + i).value = format.linesData[k].font
+      setValueOfElemId('fontLine_' + i, format.linesData[k].font)
     }
     let evt = { 'target': { 'id': '' } }
     evt.target.id = '_' + i
     changeLineFont(evt)
     if (format.linesData[k]) {
-      document.getElementById('fontSizeLine_' + i).value = format.linesData[k].fontSize
+      setValueOfElemId('fontSizeLine_' + i, format.linesData[k].fontSize)
     }
     changeLineFontSize(evt)
     let chkbx = document.getElementById('bold_' + i)
@@ -238,18 +239,18 @@ function loadDataFromFormat (formatName) {
       }
     }
     if (format.linesData[k]) {
-      document.getElementById('indent_' + i).value = format.linesData[k].indent
+      setValueOfElemId('indent_' + i, format.linesData[k].indent)
     }
     changeLineIndent(evt)
   }
 }
 
 function changeLabelHeight (event) {
-  document.getElementById('previewBox').style.height = document.getElementById('input_labelHeight').value + 'mm'
+  document.getElementById('previewBox').style.height = getValueOfElemId('input_labelHeight') + 'mm'
 }
 
 function changeLabelWidth (event) {
-  document.getElementById('previewBox').style.width = document.getElementById('input_labelWidth').value + 'mm'
+  document.getElementById('previewBox').style.width = getValueOfElemId('input_labelWidth') + 'mm'
 }
 
 function saveConfig () {
@@ -258,7 +259,7 @@ function saveConfig () {
       if (subModeData && subModeData.prevName !== '') {
         removePrevNameFiles()
       }
-      if (!fs.existsSync(defaultProgramPath + '\\Formate\\' + document.getElementById('input_fileName').value + '.json')) {
+      if (!fs.existsSync(defaultProgramPath + '\\Formate\\' + getValueOfElemId('input_fileName') + '.json')) {
         writeToFiles()
         alert('Das Format wurde hinzugefügt.')
         close()
@@ -283,8 +284,8 @@ function saveConfig () {
 
   function writeToFiles () {
     let objct = setObjct()
-    fs.writeFileSync(defaultProgramPath + '\\FormateCSS\\' + document.getElementById('input_fileName').value + '.css', createCSS(objct), 'utf8')
-    fs.writeFileSync(defaultProgramPath + '\\Formate\\' + document.getElementById('input_fileName').value + '.json', JSON.stringify(objct), 'utf8')
+    fs.writeFileSync(defaultProgramPath + '\\FormateCSS\\' + getValueOfElemId('input_fileName') + '.css', createCSS(objct), 'utf8')
+    fs.writeFileSync(defaultProgramPath + '\\Formate\\' + getValueOfElemId('input_fileName') + '.json', JSON.stringify(objct), 'utf8')
     ipcRenderer.send('newConfig')
   }
 }
@@ -304,38 +305,38 @@ function removePrevNameFiles () {
 
 function setObjct () {
   let newConfig = {
-    'name': document.getElementById('input_fileName').value,
-    'printer': document.getElementById('selectPrinter').value,
+    'name': getValueOfElemId('input_fileName'),
+    'printer': getValueOfElemId('selectPrinter'),
     'label': {
-      'width': document.getElementById('input_labelWidth').value + 'mm',
-      'height': document.getElementById('input_labelHeight').value + 'mm'
+      'width': getValueOfElemId('input_labelWidth') + 'mm',
+      'height': getValueOfElemId('input_labelHeight') + 'mm'
     },
-    'pdfName': document.getElementById('input_fileName').value + '.pdf',
+    'pdfName': getValueOfElemId('input_fileName') + '.pdf',
     'paper': {
-      'width': document.getElementById('input_paperWidth').value,
-      'height': document.getElementById('input_paperHeight').value
+      'width': getValueOfElemId('input_paperWidth'),
+      'height': getValueOfElemId('input_paperHeight')
     },
-    'lines': document.getElementById('input_labelLines').value,
+    'lines': getValueOfElemId('input_labelLines'),
     'example': {
-      'shelfmark': document.getElementById('input_example').value,
+      'shelfmark': getValueOfElemId('input_example'),
       'parts': parts
     },
     'centerHor': document.getElementById('centerHor').checked,
     'centerVer': document.getElementById('centerVer').checked,
-    'lineSpace': document.getElementById('lineSpace').value,
+    'lineSpace': getValueOfElemId('lineSpace'),
     'linesData': '',
-    'marginTop': document.getElementById('marginTop').value
+    'marginTop': getValueOfElemId('marginTop')
   }
   let linesData = []
   let i = 0
   while (i < newConfig.lines) {
     let lineData = {
       'id': i + 1,
-      'font': document.getElementById('fontLine_' + (i + 1)).value,
-      'fontSize': document.getElementById('fontSizeLine_' + (i + 1)).value,
+      'font': getValueOfElemId('fontLine_' + (i + 1)),
+      'fontSize': getValueOfElemId('fontSizeLine_' + (i + 1)),
       'bold': document.getElementById('bold_' + (i + 1)).checked,
       'italic': document.getElementById('italic_' + (i + 1)).checked,
-      'indent': document.getElementById('indent_' + (i + 1)).value
+      'indent': getValueOfElemId('indent_' + (i + 1))
     }
     linesData[i] = lineData
     i++
@@ -371,7 +372,7 @@ function createCSS (obj) {
     */
     marginLeftValue = marginLeftValue - 1
 
-    let marginTopAdjustmentValue = document.getElementById('marginTop').value
+    let marginTopAdjustmentValue = getValueOfElemId('marginTop')
     if (marginTopAdjustmentValue === '') {
       marginTopAdjustmentValue = 0
     }
@@ -444,7 +445,7 @@ function addLine () {
   line.id = 'line_' + lineCounter
   line.class = ''
   document.getElementById('innerBox').appendChild(line)
-  document.getElementById('input_labelLines').value = lineCounter
+  setValueOfElemId('input_labelLines', lineCounter)
   addTableLine(lineCounter)
   changeLineSpace()
 }
@@ -456,7 +457,7 @@ function removeLine () {
     let toDelete = parent.childNodes[lineCounter + 1]
     toDelete.parentNode.removeChild(toDelete)
     lineCounter--
-    document.getElementById('input_labelLines').value = lineCounter
+    setValueOfElemId('input_labelLines', lineCounter)
   }
 }
 
@@ -464,7 +465,7 @@ function changeLineSpace () {
   let lines = document.getElementById('innerBox').children.length
   let i = 1
   while (i <= lines) {
-    document.getElementById('line_' + i).style.marginBottom = document.getElementById('line_' + i).style.marginTop = document.getElementById('lineSpace').value + 'px'
+    document.getElementById('line_' + i).style.marginBottom = document.getElementById('line_' + i).style.marginTop = getValueOfElemId('lineSpace') + 'px'
     i++
   }
 }
@@ -553,7 +554,7 @@ function addTableLineIndent (id, row) {
 
 function changeLineIndent (event) {
   let elemId = getId(event)
-  document.getElementById('line_' + elemId).style.marginLeft = document.getElementById('indent_' + elemId).value + '%'
+  document.getElementById('line_' + elemId).style.marginLeft = getValueOfElemId('indent_' + elemId) + '%'
 }
 
 function changeLineItalic (event) {
@@ -576,7 +577,7 @@ function changeLineBold (event) {
 
 function changeLineFont (event) {
   let elemId = getId(event)
-  document.getElementById('line_' + elemId).style.fontFamily = '"' + document.getElementById('fontLine_' + elemId).value + '"'
+  document.getElementById('line_' + elemId).style.fontFamily = '"' + getValueOfElemId('fontLine_' + elemId) + '"'
 }
 
 function getId (event) {
@@ -588,7 +589,7 @@ function getId (event) {
 function changeLineFontSize (event) {
   let elemId = getId(event)
 
-  document.getElementById('line_' + elemId).style.fontSize = document.getElementById('fontSizeLine_' + elemId).value + 'pt'
+  document.getElementById('line_' + elemId).style.fontSize = getValueOfElemId('fontSizeLine_' + elemId) + 'pt'
 }
 
 function centerHor () {
@@ -615,6 +616,14 @@ function getPrinterNameList () {
     i++
   })
   return nameList
+}
+
+function setValueOfElemId (elemId, value) {
+  document.getElementById(elemId).value = value
+}
+
+function getValueOfElemId (elemId) {
+  return document.getElementById(elemId).value
 }
 
 // adds event listener to the labelSize inputs
