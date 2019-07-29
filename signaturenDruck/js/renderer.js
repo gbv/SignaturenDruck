@@ -44,6 +44,9 @@ window.onload = function () {
   } else {
     document.getElementById('dnl').style.display = 'none'
     document.getElementById('sru').style.display = 'flex'
+    if (config.get('SRU.printImmediately')) {
+      document.getElementById('chkbx_printImmediately').checked = true
+    }
   }
 
   // Check the support for the File API support

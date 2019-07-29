@@ -278,6 +278,7 @@ Der Adobe Acrobat Reader DC wird für den Druck benötigt. Ist dieser nicht das 
 - Eine fehlerhafte Konfigurationsdatei wird nun nichtmehr kommentarlos ersetzt. (issue #36)  
     Sie wird als 'config_invalid.json' abgespeichert und es wird eine valide Standardkonfig angelegt.
 - Es wurden einige Verbesserungen beim erstellen/bearbeiten von Modi/Untermodi umgesetzt (issue #56, #50)
+- Es ist nun möglich den Sofortdruck via Konfigeintrag automatisch auszuwählen (issue #58)
 - Optimierungen:
   - main.js: Funktion 'checkConfig' überarbeitet
   - npm update ausgeführt
