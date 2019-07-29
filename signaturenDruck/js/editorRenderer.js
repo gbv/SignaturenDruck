@@ -285,7 +285,7 @@ function saveConfig () {
   function writeToFiles () {
     let objct = setObjct()
     fs.writeFileSync(defaultProgramPath + '\\FormateCSS\\' + getValueOfElemId('input_fileName') + '.css', createCSS(objct), 'utf8')
-    fs.writeFileSync(defaultProgramPath + '\\Formate\\' + getValueOfElemId('input_fileName') + '.json', JSON.stringify(objct), 'utf8')
+    fs.writeFileSync(defaultProgramPath + '\\Formate\\' + getValueOfElemId('input_fileName') + '.json', JSON.stringify(objct, null, 2), 'utf8')
     ipcRenderer.send('newConfig')
   }
 }

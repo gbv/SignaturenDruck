@@ -427,7 +427,7 @@ function deleteModeFile (modeName) {
 }
 
 function writeModeFile (data) {
-  fs.writeFileSync(defaultProgramPath + '\\Modi\\' + data.modeName + '.json', JSON.stringify(data), 'utf8')
+  fs.writeFileSync(defaultProgramPath + '\\Modi\\' + data.modeName + '.json', JSON.stringify(data, null, 2), 'utf8')
 }
 
 function getResult () {
