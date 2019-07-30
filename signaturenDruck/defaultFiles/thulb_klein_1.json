@@ -11,6 +11,12 @@
     "height": "27500"
   },
   "lines": "1",
+  "example": {
+    "shelfmark": "2018 SA 1454",
+    "parts": [
+      "2018 SA 1454"
+    ]
+  },
   "centerHor": true,
   "centerVer": true,
   "lineSpace": "0",
@@ -24,9 +30,5 @@
       "indent": "0"
     }
   ],
-  "lineDelimiter": ":",
-  "marginTop": "",
-  "splitByRegEx": [
-    "(.*)"
-  ]
+  "marginTop": "-1"
 }

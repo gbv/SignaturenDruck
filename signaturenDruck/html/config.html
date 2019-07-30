@@ -17,20 +17,187 @@
   <div id="configInputs">
     <div class="columns">
       <div class="column is-half">
-
+        <div class="box">
+          <h2 class="subtitle is-4">Modus</h2>
+          <div class="field is-horizontal">
+            <div class="field-label is-normal oneLabelSize" id="label_selectMode">
+              <label class="label">Modus</label>
+            </div>
+            <div class="field-body">
+              <div class="field">
+                <p class="control">
+                  <div class="select oneLabelSize fullwidth" id="selectModeDiv">
+                    <select id="selectMode" class="fullwidth">
+                      <option value=''>--neuer Modus--</option>
+                    </select>
+                  </div>
+                </p>
+              </div>
+            </div>
+          </div>
+          <div class="field is-horizontal">
+            <div class="field-label is-normal oneLabelSize" id="label_modeName">
+              <label class="label">- Name</label>
+            </div>
+            <div class="field-body">
+              <div class="field">
+                <p class="control">
+                  <input id="input_modeName" class="input fullwidth" type="text" placeholder="thulbMode"/>
+                </p>
+              </div>
+            </div>
+          </div>
+          <div class="field is-horizontal">
+            <div class="field-label is-normal oneLabelSize" id="label_selectSubMode">
+              <label class="label">Untermodus</label>
+            </div>
+            <div class="field-body">
+              <div class="field">
+                <p class="control">
+                  <div class="select oneLabelSize fullwidth" id="selectSubModeDiv">
+                    <select id="selectSubMode" class="fullwidth">
+                      <option value=''>--neuer Untermodus--</option>
+                    </select>
+                  </div>
+                </p>
+              </div>
+            </div>
+          </div>
+          <div class="field is-horizontal">
+            <div class="field-label is-normal oneLabelSize" id="label_subModeName">
+              <label class="label">- Name</label>
+            </div>
+            <div class="field-body">
+              <div class="field">
+                <p class="control">
+                  <input id="input_subModeName" class="input fullwidth" type="text" placeholder="thulb_gross"/>
+                </p>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="box">
+          <h2 class="subtitle is-4">Signaturenaufbau</h2>
+          <div class="field is-horizontal">
+            <div class="field-label is-normal oneLabelSize" id="label_example">
+              <label class="label">Beispiel</label>
+            </div>
+            <div class="field-body">
+              <div class="field">
+                <p class="control">
+                  <input id="input_example" class="input fullwidth" type="text" value="">
+                </p>
+              </div>
+            </div>
+          </div>
+          <div class="field is-horizontal">
+            <div class="field-label is-normal oneLabelSize" id="label_regEx">
+              <label class="label">RegEx</label>
+            </div>
+            <div class="field-body">
+              <div class="field">
+                <p class="control">
+                  <input id="input_regEx" class="input fullwidth" type="text" value="">
+                </p>
+              </div>
+            </div>
+          </div>
+          <div class="field is-horizontal">
+            <div class="field-label is-normal oneLabelSize" id="label_delimiter">
+              <label class="label">Delimiter</label>
+            </div>
+            <div class="field-body">
+              <div class="field">
+                <p class="control">
+                  <input id="input_delimiter" class="input has-text-centered" type="text" maxlength="1" value="" disabled>
+                </p>
+              </div>
+            </div>
+          </div>
+          <div class="field is-horizontal">
+            <div class="field-body">
+              <div class="field">
+                <p class="control">
+                  <button id="btn_test" class="button is-success">Testen</button>
+                  <label class="radio" id="label_useRegEx">
+                    <input type="radio" name="useRegEx" id="radioBtn_useRegEx" checked>
+                    RegEx
+                  </label>
+                  <label class="radio" id="label_useDelimiter">
+                    <input type="radio" name="useRegEx" id="radioBtn_useDelimiter">
+                    Delimiter
+                  </label>
+                </p>
+              </div>
+            </div>
+          </div>
+        </div>
       </div>
       <div class="column is-half">
+        <div class="box">
+          <h2 class="subtitle is-4">Hinweise</h2>
+          <div id="infoBox">
 
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="columns">
+      <div class="column is-half">
+        <div class="box">
+          <h2 class="subtitle is-4">Ergebnis</h2>
+          <div class="field is-horizontal">
+            <div class="field-label is-normal oneLabelSize" id="label_rows">
+              <label class="label">Zeilen</label>
+            </div>
+            <div class="field-body">
+              <div class="field has-addons">
+                <p class="control fullwidth">
+                  <input id="input_labelLines" class="input" value="0" readonly />
+                </p>
+                <p class="control">
+                  <a id="btn_removeLine" class="button">-</a>
+                </p>
+                <p class="control">
+                  <a id="btn_addLine" class="button">+</a>
+                </p>
+              </div>
+            </div>
+          </div>
+          <div class="field is-horizontal">
+            <div class="field-body">
+              <div class="field">
+                <p class="control">
+                  <button id="btn_refresh" class="button is-success">Aktualisieren</button>
+                </p>
+              </div>
+            </div>
+          </div>
+          <div id="linesBox">
+              
+          </div>
+        </div>
+      </div>
+      <div class="column is-half">
+        <div class="box">
+          <h2 class="subtitle is-4">Vorschau</h2>
+          <div id='preview'>
+
+          </div>
+        </div>
       </div>
     </div>
   </div>
 
   <div id="buttonBox" class="box level">
     <div class="level-left">
-      <button id="btn_save" class="button is-success">Speichern</button>
+      <button id="btn_save" class="button is-success">Speichern & Format anlegen</button>
+    </div>
+    <div class="level-center">
+      <button id="btn_saveAndExit" class="button is-success">Speichern & Beenden</button>
     </div>
     <div class="level-right">
-      <button id="btn_close" class="button is-danger">Schließen</button>
+      <button id="btn_close" class="button is-danger">Abbruch</button>
     </div>
   </div>
 

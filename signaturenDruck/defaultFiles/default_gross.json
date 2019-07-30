@@ -1,11 +1,11 @@
 {
-  "name": "thulb_gross",
+  "name": "default_gross",
   "printer": "\\\\ulbw2k812\\ulbps101",
   "label": {
     "width": "80mm",
     "height": "43mm"
   },
-  "pdfName": "thulb_gross.pdf",
+  "pdfName": "default_gross.pdf",
   "paper": {
     "width": "99970",
     "height": "48920"

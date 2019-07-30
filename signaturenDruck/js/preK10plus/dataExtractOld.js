@@ -73,6 +73,20 @@ class dataExtractOld {
     // returns the second regex group
     return str.replace(regex, '$2')
   }
+
+  // extracts the location
+  location (str) {
+    // group 2 is the location
+    let regex = /^(.[^!]*)!(.[^!]*)(.*)$/
+    return str.replace(regex, '$2').trim()
+  }
+
+  // extracts the loanIndication
+  loanIndication (str) {
+    // group 2 is the loanIndication
+    let regex = /^(.[^@]*)@(.*)$/
+    return str.replace(regex, '$2').trim()
+  }
 }
 
 module.exports = dataExtractOld

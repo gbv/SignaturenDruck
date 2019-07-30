@@ -23,11 +23,11 @@ window.onload = function () {
   formats.addStyleFiles()
 }
 
-ipcRenderer.on('toPrint', function (event, formatInformation, printInformation) {
-  createPage(formatInformation, printInformation)
+ipcRenderer.on('toPrint', function (event, formatInformation, printInformation, printImmediately, last) {
+  createPage(formatInformation, printInformation, printImmediately, last)
 })
 
-function createPage (formatInformation, printInformation) {
+function createPage (formatInformation, printInformation, printImmediately, last) {
   document.getElementById('toPrint').className = 'format_' + formatInformation.name
   if (config.get('print.printCoverLabel')) {
     fillCoverLabel()
@@ -37,25 +37,19 @@ function createPage (formatInformation, printInformation) {
   _.each(printInformation, data => {
     for (let i = 1; i <= data.count; i++) {
       let div = document.createElement('div')
-      data.removeIndent !== undefined ? div.className = 'innerBox noIndent' : div.className = 'innerBox'
+      data.data.removeIndent ? div.className = 'innerBox noIndent' : div.className = 'innerBox'
       div.id = data.id + '_' + i
-      if (formatInformation.lines > 1) {
-        let lines = data.data.txt
-        for (let j = 0; j < formatInformation.lines && j < lines.length; j++) {
-          let p = document.createElement('p')
-          p.className = 'line_' + (j + 1)
-          lines[j] === '' ? p.appendChild(document.createElement('br')) : p.innerHTML = lines[j]
-          div.appendChild(p)
-        }
-      } else {
+      let lines = _.find(data.data.modes, { 'format': formatInformation.name }).lines
+      for (let j = 0; j < formatInformation.lines && j < lines.length; j++) {
         let p = document.createElement('p')
-        p.className = 'line_1'
-        p.innerHTML = data.data.txtOneLine
+        p.className = 'line_' + (j + 1)
+        lines[j] === '' ? p.appendChild(document.createElement('br')) : p.innerHTML = lines[j]
         div.appendChild(p)
       }
       document.getElementById('toPrint').appendChild(div)
     }
   })
+  ipcRenderer.send('readyToPrint', formatInformation, printImmediately, last)
 }
 
 function removeCoverLabel () {

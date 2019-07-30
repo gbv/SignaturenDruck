@@ -4,7 +4,6 @@
   <head>
     <meta charset="UTF-8">
     <meta http-equiv="Content-Security-Policy" content="default-src 'self' 'unsafe-inline'">
-    <title>Signaturendruck</title>
     <link rel="stylesheet" type="text/css" href="./../css/bulma.css">
     <link rel="stylesheet" type="text/css" href="./../css/index.css">
     <link rel="stylesheet" type="text/css" href="./../css/preview.css">
@@ -21,10 +20,11 @@
           <span id="dnl" class="level-item">
             Signaturendatei: <span id="defaultPath"></span>
             <button id="btn_refresh" class="button"><i class="fas fa-sync"></i></button>
-            <input type="file" accept=".dnl" id="fileToRead" class="inputFile"/>
+            <input type="file" accept=".dnl, .txt" id="fileToRead" class="inputFile"/>
             <label id="btn_fileToRead" for="fileToRead" class="button">Dateiauswahl</label>
           </span>
           <span id="sru" class="level-item">
+            Sofortdruck <span style="margin: 9px 6px 6px 6px;"><input id="chkbx_printImmediately" type="checkbox"></span>
             <input id="input_barcode" class="input" type="text" placeholder="Barcode">
             <button id="btn_barcode" class="button"><i class="fas fa-plus"></i></button>
           </span>
@@ -44,7 +44,7 @@
             <th style="width: 35%">Signatur</th>
             <th style="width: 20%">Bearbeitet am</th>
             <th style="width: 15%">Exemplar</th>
-            <th style="width: 5%">Kurze Signatur</th>
+            <th style="width: 5%"><button id="columnShort" class="button">Kurze Sig.</button></th>
             <th style="width: 5%"><button id="columnPrint" class="button">Drucken</button></th>
             <th style="width: 15%">Anzahl</th>
             <th style="width: 5%">Format</th>

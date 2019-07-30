@@ -1,40 +1,40 @@
-#previewBox.format_thulb_klein {
+#previewBox.format_default_klein {
 width: 74mm;
 height: 23mm;
 }
-.format_thulb_klein {
+.format_default_klein {
 text-align: initial;
 white-space: nowrap;
 overflow: hidden;
 }
-.format_thulb_klein {
+.format_default_klein {
 align-items: center;
 }
-#toPrint.format_thulb_klein> .innerBox {
+#toPrint.format_default_klein> .innerBox {
 height: 23mm;
 width: 74mm;
 display: flex;
 justify-content: center;
 flex-direction: column;
 }
-.format_thulb_klein > .innerBox > p {
+.format_default_klein > .innerBox > p {
 margin: 0px 0px 0px 0px;
 }
-.format_thulb_klein > .innerBox > .line_1 {
+.format_default_klein > .innerBox > .line_1 {
 font-family: "Arial Narrow";
 font-size: 15pt;
 font-weight: bold;
 font-style: normal;
 margin-left: 45%;
 }
-.format_thulb_klein > .innerBox > .line_2 {
+.format_default_klein > .innerBox > .line_2 {
 font-family: "Arial Narrow";
 font-size: 15pt;
 font-weight: bold;
 font-style: normal;
 margin-left: 45%;
 }
-.format_thulb_klein > .innerBox > .line_3 {
+.format_default_klein > .innerBox > .line_3 {
 font-family: "Arial Narrow";
 font-size: 15pt;
 font-weight: bold;
@@ -42,13 +42,13 @@ font-style: normal;
 margin-left: 45%;
 }
 @media print {
-#toPrint.format_thulb_klein > .innerBox {
+#toPrint.format_default_klein > .innerBox {
 margin: 2.25mm 0mm 0mm 1.75mm;
 }
 body {
 margin: 0px;
 }
-#toPrint.format_thulb_klein > .innerBox > .line_1 {
-margin-top: -2mm;
+#toPrint.format_default_klein > .innerBox > .line_1 {
+margin-top: -1mm;
 }
 }

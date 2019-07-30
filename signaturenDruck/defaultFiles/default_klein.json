@@ -1,11 +1,11 @@
 {
-  "name": "thulb_klein",
+  "name": "default_klein",
   "printer": "\\\\ulbw2k812\\ulbps124",
   "label": {
     "width": "74mm",
     "height": "23mm"
   },
-  "pdfName": "thulb_klein.pdf",
+  "pdfName": "default_klein.pdf",
   "paper": {
     "width": "79500",
     "height": "27500"
@@ -48,5 +48,5 @@
       "indent": "45"
     }
   ],
-  "marginTop": "-2"
+  "marginTop": "-1"
 }

@@ -1,12 +1,14 @@
 // requires remote from electron to retrieve global var
 const { remote } = require('electron')
 const config = remote.getGlobal('config')
+const _ = require('lodash')
 // requires the dataExtractOld-module
 const DataExtractOld = require('./dataExtractOld.js')
 // requires the shelfmark class
 const Shelfmark = require('../shelfmark.js')
-const getLabelSize = require('../getLabelSize.js')
-const createMultipleLines = require('../createMultipleLines.js')
+const Modes = require('../classes/Modes')
+const Formats = require('../classes/Formats')
+const FormatLinesByMode = require('../classes/FormatLinesByMode')
 
 module.exports = function (allLines) {
   let obj = {
@@ -16,6 +18,9 @@ module.exports = function (allLines) {
   let extract = new DataExtractOld()
   let ppnAktuell = ''
   let plainTxt = ''
+  let mode = new Modes()
+  let formats = new Formats()
+  let formatArray = formats.formats
 
   allLines.map((line) => {
     let first4 = extract.firstFour(line)
@@ -25,34 +30,44 @@ module.exports = function (allLines) {
       sig.exNr = extract.exNr(line)
     } else if (first4 === '7100') {
       plainTxt = extract.txt(line)
-      let big = getLabelSize(plainTxt)
-      if (big === false) {
-        sig.bigLabel = false
-      }
-      let txt = plainTxt.split(config.get('newLineAfter'))
-      sig.txtLength = txt.length
-      if (config.get('mode.useMode') && config.get('mode.defaultMode') === 'thulbMode') {
-        if (txt.length === 6) {
-          sig.txt = txt
-          sig.txtOneLine = plainTxt
-        } else {
-          sig.txt = [plainTxt]
-          sig.txtOneLine = plainTxt
+      sig.location = extract.location(line)
+      sig.loanIndication = extract.loanIndication(line)
+      sig.txtOneLine = plainTxt
+      let allSubModeData = mode.modes[config.get('mode.defaultMode')].subModes
+      _.forEach(allSubModeData, function (value) {
+        let data = {
+          'format': '',
+          'lines': ''
         }
-      } else {
-        sig.txt = txt
-        sig.txtOneLine = plainTxt
-      }
+        data.format = value.format
+        if (value.useRegEx) {
+          let regex = new RegExp(value.regEx)
+          if (regex.test(plainTxt) && sig.defaultSubMode === '') {
+            sig.defaultSubMode = value.id
+          }
+          let lines = plainTxt.match(regex)
+          if (lines !== null) {
+            lines.shift()
+          }
+          data.lines = lines
+          if (data.lines !== null) {
+            data.lines = FormatLinesByMode.formatLines(sig.location, data.lines, value.result)
+          }
+        } else {
+          data.lines = plainTxt.split(value.delimiter)
+          if (sig.defaultSubMode === '') {
+            sig.defaultSubMode = value.id
+          }
+          if (data.lines !== null) {
+            data.lines = FormatLinesByMode.formatLines(sig.location, data.lines, value.result, formatArray[value.format].lines)
+          }
+        }
+        sig.subModes.push(data)
+      })
     } else if (first4 === '7901') {
       sig.date = extract.date(line)
     }
     if (sig.allSet()) {
-      if (config.get('mode.useMode') && config.get('mode.defaultMode') === 'thulbMode') {
-        if (sig.txtLength < 3) {
-          sig.txt = createMultipleLines(plainTxt)
-          sig.txtLength = sig.txt.length
-        }
-      }
       obj.all.push(sig.shelfmark)
       sig = new Shelfmark()
       sig.ppn = ppnAktuell

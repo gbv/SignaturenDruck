@@ -4,7 +4,7 @@
 <head>
     <meta charset="UTF-8">
     <meta http-equiv="Content-Security-Policy" content="default-src 'self' 'unsafe-inline'">
-    <title>Signaturendruck - EDITOR - Format erstellen/bearbeiten</title>
+    <title>Signaturendruck - EDITOR - Format anpassen</title>
     <link rel="stylesheet" type="text/css" href="./../css/bulma.css">
     <link rel="stylesheet" type="text/css" href="./../css/preview.css">
     <link rel="stylesheet" type="text/css" href="./../css/config.css">
@@ -28,7 +28,7 @@
                             <p class="control">
                             <div class="select oneLabelSize fullwidth" id="selectFormatDiv">
                                 <select id="selectFormat" class="fullwidth">
-                                    <option value=''>---neues Format---</option>
+                                    <option value=''>--auswählen--</option>
                                 </select>
                             </div>
                             </p>
@@ -42,7 +42,7 @@
                     <div class="field-body">
                         <div class="field">
                             <p class="control">
-                                <input id="input_fileName" class="input fullwidth" type="text" placeholder="z.B. thulb_gross"/>
+                                <input id="input_fileName" class="input fullwidth readonly" type="text" placeholder="z.B. thulb_gross" disabled/>
                             </p>
                         </div>
                     </div>
@@ -64,30 +64,6 @@
             </div>
             <div class="box" id="delimBox">
                 <h2 class="subtitle is-4">Signatur</h2>
-                <div class="field is-horizontal" id="useRegExBox">
-                    <div class="field-body">
-                        <div class="field">
-                            <p class="control has-text-centered">
-                                <input id="chkbx_regEx" type="checkbox" checked/>
-                            </p>
-                        </div>
-                    </div>
-                    <div class="field-label is-normal" id="label_checkboxRegEx">
-                        <label class="label">Regulären Ausdruck übernehmen</label>
-                    </div>
-                </div>
-                <div class="field is-horizontal">
-                    <div class="field-label is-normal oneLabelSize" id="label_delimiter">
-                        <label class="label">Trennzeichen</label>
-                    </div>
-                    <div class="field-body">
-                        <div class="field">
-                            <p class="control">
-                                <input id="input_delimiter" class="input has-text-centered" type="text" maxlength="1" value=":" />
-                            </p>
-                        </div>
-                    </div>
-                </div>
                 <div class="field is-horizontal">
                     <div class="field-label is-normal oneLabelSize" id="label_example">
                         <label class="label">Beispiel</label>
@@ -95,7 +71,7 @@
                     <div class="field-body">
                         <div class="field">
                             <p class="control">
-                                <input id="input_example" class="input fullwidth" type="text" value="PÄD:TG:1420:Dan::2017" />
+                                <input id="input_example" class="input fullwidth" type="text" value="PÄD:TG:1420:Dan::2017" disabled/>
                             </p>
                         </div>
                     </div>
@@ -185,15 +161,9 @@
                         <label class="label">Zeilen</label>
                     </div>
                     <div class="field-body">
-                        <div class="field has-addons">
+                        <div class="field">
                             <p class="control fullwidth">
-                                <input id="input_labelLines" class="input fullwidth" value="1" readonly />
-                            </p>
-                            <p class="control">
-                                <a id="btn_removeLine" class="button">-</a>
-                            </p>
-                            <p class="control">
-                                <a id="btn_addLine" class="button">+</a>
+                                <input id="input_labelLines" class="input fullwidth readonly" value="1" readonly />
                             </p>
                         </div>
                     </div>

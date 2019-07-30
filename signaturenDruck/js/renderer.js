@@ -2,31 +2,28 @@
 // be executed in the renderer process for that window.
 // All of the Node.js APIs are available in this process.
 
-// requires lodash
-const _ = require('lodash')
-
 // requires the fs-module
 const fs = require('fs')
 
 // required for ipc calls to the main process
-const { ipcMain, ipcRenderer, remote } = require('electron')
+const { ipcRenderer, remote } = require('electron')
 
 const config = remote.getGlobal('config')
 const sigJSONFile = remote.getGlobal('sigJSONFile')
 
 const swal = require('sweetalert2')
+const _ = require('lodash')
 
-const getLabelSize = require('./getLabelSize.js')
-
-const t = require('./classes/Table')
-const p = require('./classes/Print')
+const T = require('./classes/Table')
+const P = require('./classes/Print')
+const ShelfmarksFromSRUData = require('./classes/ShelfmarksFromSRUData')
 
 let objSRU = {
   all: []
 }
 
 let displayModalOnSuccess = true
-let table = new t(sigJSONFile)
+let table = new T(sigJSONFile)
 
 // function on window load
 window.onload = function () {
@@ -47,6 +44,9 @@ window.onload = function () {
   } else {
     document.getElementById('dnl').style.display = 'none'
     document.getElementById('sru').style.display = 'flex'
+    if (config.get('SRU.printImmediately')) {
+      document.getElementById('chkbx_printImmediately').checked = true
+    }
   }
 
   // Check the support for the File API support
@@ -63,17 +63,18 @@ window.onload = function () {
 // listens on printMsg, invokes the modal
 ipcRenderer.on('printMsg', function (event, successfull) {
   if (successfull && displayModalOnSuccess) {
-    document.getElementById('myModal').style.display = 'block'
-  } else {
-    document.getElementById('myModal').style.display = 'none'
-    displayModalOnSuccess = false
+    swal.fire('Erfolg!', 'Es wurden alle Signaturen gedruckt.', 'success')
   }
 })
 
+ipcRenderer.on('couldNotDelete', function (event, path) {
+  swal.fire('Achtung', 'PDFs konnten nicht automatisch gelöscht werden!<br/>Die PDFs liegen unter:<br/><strong>' + path + '</strong>', 'info')
+})
+
 // function to send objMan to the manual window
-function openManualSignaturesWindow () {
+function openManualSignaturesWindow (edit = false) {
   (table.manualSignature.length === 0) ? table.manualSignature = [] : null
-  ipcRenderer.send('openManualSignaturesWindow', table.manualSignature)
+  ipcRenderer.send('openManualSignaturesWindow', table.manualSignature, edit)
 }
 
 // ipc listener to add new manual data to the table
@@ -87,21 +88,30 @@ ipcRenderer.on('addManualSignatures', function (event, data) {
 
 // ipc listener to remove the manual data
 ipcRenderer.on('removeManualSignatures', function (event) {
-  table.manualSignature = []
-  table.clearManualSignaturesTable()
+  clearManualShelfmarks()
 })
 
 // ipc listener to add provided data to the SRU obj
-ipcRenderer.on('addSRUdata', function (event, data) {
-  if (data.error !== '') {
-    swal.fire('Achtung', data.error, 'error')
+ipcRenderer.on('addSRUdata', function (event, xml, barcode) {
+  let data = new ShelfmarksFromSRUData()
+  let shelfmark = data.getShelfmark(xml, barcode)
+  if (shelfmark.error !== '') {
+    swal.fire('Achtung', shelfmark.error, 'error')
       .then(() => {})
   } else {
     let index = objSRU.all.length
-    objSRU.all[index] = data
+    objSRU.all[index] = shelfmark
     objSRU.all[index].id = index + 1
-    objSRU.all[index].bigLabel = getLabelSize(data.txtOneLine)
     table.readSRUData(objSRU.all)
+    if (document.getElementById('chkbx_printImmediately').checked) {
+      let node = document.getElementById('print_' + (index + 1))
+      node.click()
+      printButton(event, true)
+    }
+    table.clearManualSignaturesTable()
+    if (table.manualSignature !== undefined && table.manualSignature !== null && table.manualSignature.length !== 0) {
+      table.addManualSignaturesToTable(table.manualSignature)
+    }
   }
 })
 
@@ -110,9 +120,15 @@ function refreshDownloadFile () {
   table.refreshDownloadFile()
 }
 
+function clearManualShelfmarks () {
+  table.manualSignature = []
+  table.clearManualSignaturesTable()
+}
+
 // clear written local signature - json file
 function clearDownloadFileTable () {
   objSRU.all = []
+  clearManualShelfmarks()
   table.clearDownloadFile()
 }
 
@@ -122,7 +138,7 @@ function deleteFile () {
   if (document.getElementById('fileToRead').files[0]) {
     deleteFromPath(document.getElementById('fileToRead').files[0].path)
   } else {
-    deleteFromPath(config.store.defaultPath)
+    deleteFromPath(config.get('defaultDownloadPath'))
   }
 }
 
@@ -145,10 +161,34 @@ function closeButton () {
 }
 
 // gathers the data to print and invokes printing via ipc
-function printButton () {
-  const print = new p(sigJSONFile, table.formats, table.manualSignature)
-  // console.warn(print.dataAll)
-  ipcRenderer.send('print', print.dataAll)
+function printButton (event, printImmediately = false) {
+  if (printImmediately) {
+    ipcRenderer.send('print', getPrintData(), printImmediately)
+  } else {
+    if (isSomethingToPrint()) {
+      swal.fire('Bitte warten', 'Die Signaturen werden gedruckt.', 'info')
+      ipcRenderer.send('print', getPrintData())
+    } else {
+      swal.fire('Nichts zu drucken', 'Es wurde keine Signatur ausgewählt!', 'info')
+    }
+  }
+}
+
+// returns true if there is something to print
+function isSomethingToPrint () {
+  let elems = document.querySelectorAll('[name=toPrint]')
+  let somethingToPrint = false
+  _.forEach(elems, function (elem) {
+    if (elem.checked) {
+      somethingToPrint = true
+    }
+  })
+  return somethingToPrint
+}
+
+// returns printData
+function getPrintData () {
+  return new P(sigJSONFile, table.formats, table.manualSignature).dataAll
 }
 
 // function to invert the print-selection
@@ -156,6 +196,14 @@ function invertPrintingSelection () {
   let elems = document.querySelectorAll('[name=toPrint]')
   for (let i = 0; i < elems.length; i++) {
     elems[i].checked = !elems[i].checked
+  }
+}
+
+// function to invert the short-selection
+function invertShortSelection () {
+  let elems = document.querySelectorAll('[name=shortShelfmark]')
+  for (let i = 0; i < elems.length; i++) {
+    elems[i].click()
   }
 }
 
@@ -211,6 +259,8 @@ document.getElementById('btn_print').addEventListener('click', printButton)
 document.getElementById('btn_close').addEventListener('click', closeButton)
 // adds event listener to the refresh button
 document.getElementById('btn_refresh').addEventListener('click', refreshDownloadFile)
+// adds event listener to the short column
+document.getElementById('columnShort').addEventListener('click', invertShortSelection)
 // adds event listener to the print column
 document.getElementById('columnPrint').addEventListener('click', invertPrintingSelection)
 // adds event listener to the datepicker
