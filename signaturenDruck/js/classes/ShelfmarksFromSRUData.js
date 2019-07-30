@@ -5,6 +5,7 @@ const Modes = require('./Modes.js')
 const config = remote.getGlobal('config')
 const Formats = require('../classes/Formats')
 const FormatLinesByMode = require('../classes/FormatLinesByMode')
+const LocationCheck = require('../classes/LocationCheck')
 
 class ShelfmarksFromSRUData {
   /*
@@ -51,26 +52,30 @@ class ShelfmarksFromSRUData {
           'lines': ''
         }
         data.format = value.format
-        if (value.useRegEx) {
-          let regex = new RegExp(value.regEx)
-          if (regex.test(sig.txtOneLine) && sig.defaultSubMode === '') {
-            sig.defaultSubMode = value.id
-          }
-          let lines = sig.txtOneLine.match(regex)
-          if (lines !== null) {
-            lines.shift()
-          }
-          data.lines = lines
-          if (data.lines !== null) {
-            data.lines = FormatLinesByMode.formatLines(sig.location, data.lines, value.result)
-          }
+        if (config.get('filterByLoc') && !LocationCheck.locDoesMatch(value.locRegEx, sig.location)) {
+          data.lines = null
         } else {
-          data.lines = sig.txtOneLine.split(value.delimiter)
-          if (sig.defaultSubMode === '') {
-            sig.defaultSubMode = value.id
-          }
-          if (data.lines !== null) {
-            data.lines = FormatLinesByMode.formatLines(sig.location, data.lines, value.result, formatArray[value.format].lines)
+          if (value.useRegEx) {
+            let regex = new RegExp(value.regEx)
+            if (regex.test(sig.txtOneLine) && sig.defaultSubMode === '') {
+              sig.defaultSubMode = value.id
+            }
+            let lines = sig.txtOneLine.match(regex)
+            if (lines !== null) {
+              lines.shift()
+            }
+            data.lines = lines
+            if (data.lines !== null) {
+              data.lines = FormatLinesByMode.formatLines(sig.location, data.lines, value.result)
+            }
+          } else {
+            data.lines = sig.txtOneLine.split(value.delimiter)
+            if (sig.defaultSubMode === '') {
+              sig.defaultSubMode = value.id
+            }
+            if (data.lines !== null) {
+              data.lines = FormatLinesByMode.formatLines(sig.location, data.lines, value.result, formatArray[value.format].lines)
+            }
           }
         }
         sig.subModes.push(data)

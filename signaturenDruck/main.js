@@ -31,6 +31,7 @@ const configNew = {
   sortByPPN: false,
   useK10plus: true,
   showMenu: false,
+  filterByLoc: true,
   example: {
     shelfmark: 'PÄD:TG:1420:Dan::2017',
     location: 'MAG',

@@ -17,6 +17,7 @@ const { ipcRenderer, remote } = require('electron')
 
 const config = remote.getGlobal('config')
 const defaultProgramPath = remote.getGlobal('defaultProgramPath')
+const LocationCheck = require('./classes/LocationCheck')
 
 let modeNames = []
 let modesData = []
@@ -26,31 +27,59 @@ let resultData = []
 window.onload = function () {
   getModes()
   setModeSelect()
+  displayLocFilter()
   loadExampleData()
+}
+
+function displayLocFilter () {
+  if (config.get('filterByLoc')) {
+    document.getElementById('locLine').style.display = 'flex'
+    document.getElementById('locRegExLine').style.display = 'flex'
+  } else {
+    document.getElementById('locLine').style.display = 'none'
+    document.getElementById('locRegExLine').style.display = 'none'
+  }
 }
 
 function close () {
   ipcRenderer.send('closeConfigWindow')
 }
 
+function locDoesMatch () {
+  let regex = new RegExp(document.getElementById('input_locRegEx').value)
+  if (document.getElementById('input_loc').value.match(regex)) {
+    return true
+  } else {
+    return false
+  }
+}
+
 function createPreview () {
   clearPreview()
-  let lines = document.getElementById('linesBox').childNodes
-  let data = []
-  lines.forEach(function (line) {
-    data.push(line.value)
-  })
-  resultData = data = FormatLinesByMode.formatLines(config.get('example.location'), linesData, data, linesData.length)
-  _.forEach(data, function (value) {
-    let d = document.createElement('div')
-    let p = document.createElement('p')
-    if (value === '') {
-      value = '<br/>'
+  if (config.get('filterByLoc') && !LocationCheck.locDoesMatch(document.getElementById('input_locRegEx').value, document.getElementById('input_loc').value)) {
+    alert('Der RegEx Standort erfasst nicht den festgelegten Standort!')
+  } else {
+    let lines = document.getElementById('linesBox').childNodes
+    let data = []
+    lines.forEach(function (line) {
+      data.push(line.value)
+    })
+    if (config.get('filterByLoc')) {
+      resultData = data = FormatLinesByMode.formatLines(document.getElementById('input_loc').value, linesData, data, linesData.length)
+    } else {
+      resultData = data = FormatLinesByMode.formatLines(config.get('example.location'), linesData, data, linesData.length)
     }
-    p.innerHTML = value
-    d.appendChild(p)
-    document.getElementById('preview').appendChild(d)
-  })
+    _.forEach(data, function (value) {
+      let d = document.createElement('div')
+      let p = document.createElement('p')
+      if (value === '') {
+        value = '<br/>'
+      }
+      p.innerHTML = value
+      d.appendChild(p)
+      document.getElementById('preview').appendChild(d)
+    })
+  }
 }
 
 // loads and fills fields with exampleData form the config
@@ -58,6 +87,10 @@ function loadExampleData () {
   document.getElementById('input_example').value = document.getElementById('input_example').placeholder = config.get('example.shelfmark')
   document.getElementById('input_regEx').value = document.getElementById('input_regEx').placeholder = config.get('example.regex')
   document.getElementById('input_delimiter').value = document.getElementById('input_delimiter').placeholder = config.get('example.delimiter')
+  if (config.get('filterByLoc')) {
+    document.getElementById('input_loc').value = document.getElementById('input_loc').placeholder = config.get('example.location')
+    document.getElementById('input_locRegEx').value = document.getElementById('input_locRegEx').placeholder = '^' + config.get('example.location') + '$'
+  }
 }
 
 function loadSubModeData () {
@@ -68,6 +101,15 @@ function loadSubModeData () {
     enableRegex()
   } else {
     enableDelimiter()
+  }
+  if (config.get('filterByLoc')) {
+    if (subModeData.exampleLoc) {
+      document.getElementById('input_loc').value = subModeData.exampleLoc
+      document.getElementById('input_locRegEx').value = subModeData.locRegEx
+    } else {
+      document.getElementById('input_loc').value = config.get('example.location')
+      document.getElementById('input_locRegEx').value = '^' + config.get('example.location') + '$'
+    }
   }
   document.getElementById('input_example').value = subModeData.exampleShelfmark
   document.getElementById('input_regEx').value = subModeData.regEx
@@ -96,7 +138,11 @@ function displayPlaceholderInfo (lines = '') {
       createPlaceholderLine('$' + i + ' - "' + value + '"')
       i++
     })
-    createPlaceholderLine('$LOC - "' + config.get('example.location') + '"')
+    if (config.get('filterByLoc')) {
+      createPlaceholderLine('$LOC - "' + document.getElementById('input_loc').value + '"')
+    } else {
+      createPlaceholderLine('$LOC - "' + config.get('example.location') + '"')
+    }
     createPlaceholderLine('$DATE - "' + moment().format('DD.MM.YYYY') + '"')
   }
 }
@@ -302,6 +348,13 @@ function setValues (obj) {
   obj.delimiter = document.getElementById('input_delimiter').value
   obj.exampleShelfmark = document.getElementById('input_example').value
   obj.result = getResult()
+  if (config.get('filterByLoc')) {
+    obj.exampleLoc = document.getElementById('input_loc').value
+    obj.locRegEx = document.getElementById('input_locRegEx').value
+  } else {
+    obj.exampleLoc = config.get('example.location')
+    obj.locRegEx = ''
+  }
 }
 
 function saveMode () {
@@ -348,8 +401,12 @@ function saveMode () {
 function saveAndExit () {
   if (document.getElementById('input_modeName').value !== '' && document.getElementById('input_subModeName').value !== '') {
     if (getSubModeNameNew() === getSubModeNameOld()) {
-      saveMode()
-      close()
+      if (config.get('filterByLoc') && !LocationCheck.locDoesMatch(document.getElementById('input_locRegEx').value, document.getElementById('input_loc').value)) {
+        alert('Der RegEx Standort erfasst nicht den festgelegten Standort!')
+      } else {
+        saveMode()
+        close()
+      }
     } else {
       // better disable the button if condition is not met
       alert('Für den neuen Untermodus muss noch ein Format festgelegt werden.')
@@ -365,10 +422,14 @@ function saveAndContinue () {
       alert('Es liegbt bereits ein Modus mit diesem Namen vor.')
     } else {
       if (getSubModeNameNew() === getSubModeNameOld() || !subModeAlreadyExists(getSubModeNameNew())) {
-        saveMode()
+        if (config.get('filterByLoc') && !LocationCheck.locDoesMatch(document.getElementById('input_locRegEx').value, document.getElementById('input_loc').value)) {
+          alert('Der RegEx Standort erfasst nicht den festgelegten Standort!')
+        } else {
+          saveMode()
 
-        ipcRenderer.send('createNewModeFormat', getCurrentData())
-        close()
+          ipcRenderer.send('createNewModeFormat', getCurrentData())
+          close()
+        }
       } else {
         alert('Es liegt bereits ein Untermodus mit diesem Namen vor.')
       }
@@ -386,6 +447,11 @@ function getCurrentData () {
   data.example = {}
   data.example.shelfmark = document.getElementById('input_example').value
   data.example.parts = resultData
+  if (config.get('filterByLoc')) {
+    data.example.loc = document.getElementById('input_loc').value
+  } else {
+    data.example.loc = config.get('filterByLoc')
+  }
   data.prevName = getSubModeNameOld()
 
   return data
