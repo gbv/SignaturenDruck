@@ -30,6 +30,7 @@ const configNew = {
   defaultDownloadPath: 'C:/Export/download.dnl',
   sortByPPN: false,
   useK10plus: true,
+  showMenu: false,
   example: {
     shelfmark: 'PÄD:TG:1420:Dan::2017',
     location: 'MAG',
@@ -70,7 +71,7 @@ const template = [
     label: 'Bearbeiten',
     submenu: [
       {
-        label: 'Konfiguration',
+        label: 'Format',
         accelerator: 'Control+Shift+C',
         click () {
           createConfigWindow()
@@ -88,7 +89,6 @@ const template = [
 ]
 
 const menu = Menu.buildFromTemplate(template)
-Menu.setApplicationMenu(menu)
 
 // name of signature storage json
 const sigJSONFile = 'signaturen.json'
@@ -243,6 +243,9 @@ function createWindow () {
     mainWindow = new BrowserWindow({ width: 850, height: 570, backgroundColor: '#f0f0f0' })
   } else {
     mainWindow = new BrowserWindow({ width: 850, height: 600, backgroundColor: '#f0f0f0' })
+  }
+  if (config.store.showMenu) {
+    Menu.setApplicationMenu(menu)
   }
   // set the mainwindow title (name + version from package.json)
   mainWindow.setTitle('Signaturendruck v' + app.getVersion())

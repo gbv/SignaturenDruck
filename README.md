@@ -280,6 +280,7 @@ Der Adobe Acrobat Reader DC wird für den Druck benötigt. Ist dieser nicht das 
 - Es wurden einige Verbesserungen beim erstellen/bearbeiten von Modi/Untermodi umgesetzt (issue #56, #50)
 - Es ist nun möglich den Sofortdruck via Konfigeintrag automatisch auszuwählen (issue #58)
 - .json Konfigurationsdateien werden nun formatiert angelegt (issue #37)
+- Ein Menü mit den Optionen 'Schließen', 'Format', 'Modus wurde hinzugefügt. Der entsprechende Konfigeintrag ist 'showMenu', Standardwert ist 'false' (issue #32)
 - Optimierungen:
   - main.js: Funktion 'checkConfig' überarbeitet
   - npm update ausgeführt
