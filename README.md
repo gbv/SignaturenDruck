@@ -282,6 +282,7 @@ Der Adobe Acrobat Reader DC wird für den Druck benötigt. Ist dieser nicht das 
 - .json Konfigurationsdateien werden nun formatiert angelegt (issue #37)
 - Ein Menü mit den Optionen 'Schließen', 'Format', 'Modus wurde hinzugefügt. Der entsprechende Konfigeintrag ist 'showMenu', Standardwert ist 'false' (issue #32)
 - Der Konfigeintrag 'filterByLoc' ermöglicht das festlegen von Formaten für gewisse Standorte. Standardwert ist 'false' (issue #60)
+- Das SRU-Fenster wurde die Auswahl zwischen PPN/EPN ergänzt. Dafür ist der Konfigeintrag 'SRU.QueryPart1EPN' nötig, der Standardwert ist '?version=1.1&operation=searchRetrieve&query=pica.epn=' (issue #41)
 - Optimierungen:
   - main.js: Funktion 'checkConfig' überarbeitet
   - npm update ausgeführt

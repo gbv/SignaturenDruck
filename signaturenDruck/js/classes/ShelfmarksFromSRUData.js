@@ -29,17 +29,21 @@ class ShelfmarksFromSRUData {
   ----- End Constructor -----
    */
 
-  getShelfmark (xml, barcode) {
+  getShelfmark (xml, key, dataMode) {
     let sig = new Shelfmark()
     let mode = new Modes()
     let formats = new Formats()
     let formatArray = formats.formats
-    let occ = getOccurrence(xml, barcode)
+    sig.error = getError(xml, key, dataMode)
 
-    sig.error = getError(xml)
     if (sig.error === '') {
+      let occ = getOccurrence(xml, key)
       sig.id = 99 // gets overwritten at a later stage
-      sig.ppn = getPPN(xml)
+      if (dataMode === 'PPN') {
+        sig.ppn = getPPN(xml)
+      } else {
+        sig.ppn = getEPN(xml)
+      }
       sig.date = getDate(xml, occ)
       sig.txtOneLine = getTxt(xml, occ)
       sig.exNr = getExNr(xml, occ)
@@ -125,6 +129,15 @@ function getPPN (object) {
   }
 }
 
+function getEPN (object) {
+  let data = _.find(object['zs:searchRetrieveResponse']['zs:records']['zs:record']['zs:recordData']['record']['datafield'], { 'tag': '203@' })
+  if (data !== undefined) {
+    return data['subfield']['$t']
+  } else {
+    return ''
+  }
+}
+
 function getDate (object, occ) {
   let parent = _.find(object['zs:searchRetrieveResponse']['zs:records']['zs:record']['zs:recordData']['record']['datafield'], { 'tag': '201B', 'occurrence': occ })
   let data = _.find(parent['subfield'], { 'code': '0' })
@@ -174,12 +187,12 @@ function getLoanIndication (object, occ) {
   }
 }
 
-function getError (object) {
+function getError (object, key, mode) {
   try {
-    if (object['zs:searchRetrieveResponse']['zs:numberOfRecords'] > 0) {
+    if (object && object['zs:searchRetrieveResponse'] && object['zs:searchRetrieveResponse']['zs:numberOfRecords'] > 0) {
       return ''
     } else {
-      return 'Barcode wurde nicht gefunden'
+      return mode + ': <b>' + key + '</b> wurde nicht gefunden.'
     }
   } catch (e) {
     return e.message
