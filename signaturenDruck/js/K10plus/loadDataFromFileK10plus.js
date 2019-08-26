@@ -7,11 +7,10 @@ const DataExtractK10plus = require('./dataExtractK10plus.js')
 // requires the shelfmark class
 const Shelfmark = require('../shelfmark.js')
 const Modes = require('../classes/Modes')
-const Formats = require('../classes/Formats')
 const FormatLinesByMode = require('../classes/FormatLinesByMode')
 const LocationCheck = require('../classes/LocationCheck')
 
-module.exports = function (allLines) {
+module.exports = function (allLines, formats) {
   let obj = {
     all: []
   }
@@ -20,8 +19,7 @@ module.exports = function (allLines) {
   let ppnAktuell = ''
   let plainTxt = ''
   let mode = new Modes()
-  let formats = new Formats()
-  let formatArray = formats.formats
+  let formatArray = formats
 
   allLines.map((line) => {
     let first4 = extract.firstFour(line)

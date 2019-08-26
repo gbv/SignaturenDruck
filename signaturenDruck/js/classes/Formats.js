@@ -46,12 +46,24 @@ class Formats {
 
   loadFormats () {
     let files = fs.readdirSync(defaultProgramPath + '\\Formate')
+    let failedFormats = ''
     for (let file of files) {
       if (file.endsWith('.json')) {
         let fileName = file.split('.json')[0]
-        this._selectOptions.push(fileName)
-        this._formats[fileName] = JSON.parse(fs.readFileSync(defaultProgramPath + '\\Formate\\' + file, 'utf8'))
+        try {
+          this._formats[fileName] = JSON.parse(fs.readFileSync(defaultProgramPath + '\\Formate\\' + file, 'utf8'))
+          this._selectOptions.push(fileName)
+        } catch (e) {
+          if (failedFormats === '') {
+            failedFormats += fileName
+          } else {
+            failedFormats += ', ' + fileName
+          }
+        }
       }
+    }
+    if (failedFormats !== '') {
+      alert('Folgende Formate sind fehlerhaft und stehen nicht zur Verfügung:\n\n  ' + failedFormats)
     }
   }
 }
