@@ -271,6 +271,14 @@ Der Adobe Acrobat Reader DC wird für den Druck benötigt. Ist dieser nicht das 
 
 # Changelog
 
+## v1.1.1-f-dev
+
+- Verbesserte Fehlerbehandlung von Konfigurationsdateien (issue #17, #36)
+- Menü Label korrigiert (issue #32)
+- SRU-Dropdown 'PPN' durch 'Barcode' ersetzt (issue #41)
+- Fehlerhafte Datumsanzeige bei mehreren Exemplaren behoben (issue #65)
+- Konfigeintrag 'hideDeleteBtn' eingeführt, ermöglicht das ausblenden der 'Lösche Download Datei' Option. Standadwert ist 'false' (issue #66)
+
 ## v1.1.1-e-dev
 
 - Version wird nun im Titel des Hauptfensters mit angezeigt (issue #59)
