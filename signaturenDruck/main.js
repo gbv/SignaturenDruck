@@ -30,6 +30,7 @@ const configNew = {
   defaultDownloadPath: 'C:/Export/download.dnl',
   sortByPPN: false,
   useK10plus: true,
+  hideDeleteBtn: false,
   showMenu: false,
   filterByLoc: true,
   example: {

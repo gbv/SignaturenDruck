@@ -30,6 +30,10 @@ window.onload = function () {
   if (config.get('devMode')) {
     document.getElementById('devMode').style.display = 'block'
   }
+  if (config.get('hideDeleteBtn')) {
+    document.getElementById('btn_deleteFile_linebreak').style.display = 'none'
+    document.getElementById('btn_deleteFile').style.display = 'none'
+  }
 
   document.getElementById('modalTxt').innerHTML = config.get('modal.modalTxt')
   let fileSelected = document.getElementById('fileToRead')
