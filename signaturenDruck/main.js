@@ -73,14 +73,14 @@ const template = [
     label: 'Bearbeiten',
     submenu: [
       {
-        label: 'Format',
+        label: 'Modus',
         accelerator: 'Control+Shift+C',
         click () {
           createConfigWindow()
         }
       },
       {
-        label: 'Modus',
+        label: 'Format',
         accelerator: 'Control+Shift+E',
         click () {
           createEditorWindow()
