@@ -69,11 +69,11 @@ module.exports = function (allLines, formats) {
       })
     } else if (first4 === '7903') {
       sig.date = extract.date(line)
-    }
-    if (sig.allSet()) {
-      obj.all.push(sig.shelfmark)
-      sig = new Shelfmark()
-      sig.ppn = ppnAktuell
+      if (sig.allSet()) {
+        obj.all.push(sig.shelfmark)
+        sig = new Shelfmark()
+        sig.ppn = ppnAktuell
+      }
     }
   })
   return obj
