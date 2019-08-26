@@ -283,7 +283,7 @@ function checkConfig () {
   if (fs.existsSync(defaultProgramPath + '\\config.json')) {
     if (!config.has('defaultDownloadPath')) {
       fs.renameSync(defaultProgramPath + '\\config.json', defaultProgramPath + '\\config_invalid.json')
-      dialog.showErrorBox('Die Konfigurationsdatei:\n    ' + defaultProgramPath + '\\config.json\nwar fehlerhaft und wurde in config_invalid.json umbenannt.\n\nDas Program hat eine valide Standardversion erstellt.', '')
+      dialog.showErrorBox('Die Konfigurationsdatei:\n    ' + defaultProgramPath + '\\config.json\nwar fehlerhaft und wurde in config_invalid.json umbenannt.\n\nDas Programm hat zum Start eine valide Standardversion erstellt.', '')
       createConfig()
     }
   } else {
