@@ -271,6 +271,10 @@ Der Adobe Acrobat Reader DC wird für den Druck benötigt. Ist dieser nicht das 
 
 # Changelog
 
+## v1.1.1-g-dev
+
+- Die Standortwerte aus 'config.json' werden beim editieren von Untermodi nurnoch als Platzhalter eingetragen, wenn die Werte nicht direkt gesetzt wurden (issue #67)
+
 ## v1.1.1-f-dev
 
 - Verbesserte Fehlerbehandlung von Konfigurationsdateien (issue #17, #36)
@@ -304,8 +308,8 @@ Der Adobe Acrobat Reader DC wird für den Druck benötigt. Ist dieser nicht das 
 - weitere interne Optimierungen
 
 ### Hinweis
- Die Problematik mit Feld 209A/7100 $B hat keinerlei Auswirkung auf die Funktionsweise des Programms
 
+ Die Problematik mit Feld 209A/7100 $B hat keinerlei Auswirkung auf die Funktionsweise des Programms
 
 ## v1.1.1-c
 
