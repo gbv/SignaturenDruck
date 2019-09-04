@@ -79,8 +79,8 @@ function loadExampleData () {
   document.getElementById('input_regEx').value = document.getElementById('input_regEx').placeholder = config.get('example.regex')
   document.getElementById('input_delimiter').value = document.getElementById('input_delimiter').placeholder = config.get('example.delimiter')
   if (config.get('filterByLoc')) {
-    document.getElementById('input_loc').value = document.getElementById('input_loc').placeholder = config.get('example.location')
-    document.getElementById('input_locRegEx').value = document.getElementById('input_locRegEx').placeholder = '^' + config.get('example.location') + '$'
+    document.getElementById('input_loc').placeholder = config.get('example.location')
+    document.getElementById('input_locRegEx').placeholder = '^' + config.get('example.location') + '$'
   }
 }
 
