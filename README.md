@@ -273,28 +273,28 @@ Der Adobe Acrobat Reader DC wird für den Druck benötigt. Ist dieser nicht das 
 
 ## v1.1.1-g-dev
 
-- Die Standortwerte aus 'config.json' werden beim editieren von Untermodi nurnoch als Platzhalter eingetragen, wenn die Werte nicht direkt gesetzt wurden (issue #67)
+- Die Standortwerte aus 'config.json' werden beim editieren von Untermodi nurnoch als Platzhalter eingetragen, wenn die Werte nicht direkt gesetzt wurden (issue [#67](https://github.com/gbv/SignaturenDruck/issues/67))
 
 ## v1.1.1-f-dev
 
-- Verbesserte Fehlerbehandlung von Konfigurationsdateien (issue #17, #36)
-- Menü Label korrigiert (issue #32)
-- SRU-Dropdown 'PPN' durch 'Barcode' ersetzt (issue #41)
-- Fehlerhafte Datumsanzeige bei mehreren Exemplaren behoben (issue #65)
-- Konfigeintrag 'hideDeleteBtn' eingeführt, ermöglicht das ausblenden der 'Lösche Download Datei' Option. Standadwert ist 'false' (issue #66)
+- Verbesserte Fehlerbehandlung von Konfigurationsdateien (issue [#17](https://github.com/gbv/SignaturenDruck/issues/17), [#36](https://github.com/gbv/SignaturenDruck/issues/36))
+- Menü Label korrigiert (issue [#32](https://github.com/gbv/SignaturenDruck/issues/32))
+- SRU-Dropdown 'PPN' durch 'Barcode' ersetzt (issue [#41](https://github.com/gbv/SignaturenDruck/issues/41))
+- Fehlerhafte Datumsanzeige bei mehreren Exemplaren behoben (issue [#65](https://github.com/gbv/SignaturenDruck/issues/65))
+- Konfigeintrag 'hideDeleteBtn' eingeführt, ermöglicht das ausblenden der 'Lösche Download Datei' Option. Standadwert ist 'false' (issue [#66](https://github.com/gbv/SignaturenDruck/issues/66))
 
 ## v1.1.1-e-dev
 
-- Version wird nun im Titel des Hauptfensters mit angezeigt (issue #59)
-- Im Ordner Formate & FormateCSS werden Dateien mit falschem Dateiformat ignoriert (issue #17)
-- Eine fehlerhafte Konfigurationsdatei wird nun nichtmehr kommentarlos ersetzt. (issue #36)  
+- Version wird nun im Titel des Hauptfensters mit angezeigt (issue [#59](https://github.com/gbv/SignaturenDruck/issues/59))
+- Im Ordner Formate & FormateCSS werden Dateien mit falschem Dateiformat ignoriert (issue [#17](https://github.com/gbv/SignaturenDruck/issues/17))
+- Eine fehlerhafte Konfigurationsdatei wird nun nichtmehr kommentarlos ersetzt. (issue [#36](https://github.com/gbv/SignaturenDruck/issues/36))  
     Sie wird als 'config_invalid.json' abgespeichert und es wird eine valide Standardkonfig angelegt.
-- Es wurden einige Verbesserungen beim erstellen/bearbeiten von Modi/Untermodi umgesetzt (issue #56, #50)
-- Es ist nun möglich den Sofortdruck via Konfigeintrag automatisch auszuwählen (issue #58)
-- .json Konfigurationsdateien werden nun formatiert angelegt (issue #37)
-- Ein Menü mit den Optionen 'Schließen', 'Format', 'Modus wurde hinzugefügt. Der entsprechende Konfigeintrag ist 'showMenu', Standardwert ist 'false' (issue #32)
-- Der Konfigeintrag 'filterByLoc' ermöglicht das festlegen von Formaten für gewisse Standorte. Standardwert ist 'false' (issue #60)
-- Das SRU-Fenster wurde die Auswahl zwischen PPN/EPN ergänzt. Dafür ist der Konfigeintrag 'SRU.QueryPart1EPN' nötig, der Standardwert ist '?version=1.1&operation=searchRetrieve&query=pica.epn=' (issue #41)
+- Es wurden einige Verbesserungen beim erstellen/bearbeiten von Modi/Untermodi umgesetzt (issue [#56](https://github.com/gbv/SignaturenDruck/issues/56), [#50](https://github.com/gbv/SignaturenDruck/issues/50))
+- Es ist nun möglich den Sofortdruck via Konfigeintrag automatisch auszuwählen (issue [#58](https://github.com/gbv/SignaturenDruck/issues/58))
+- .json Konfigurationsdateien werden nun formatiert angelegt (issue [#37](https://github.com/gbv/SignaturenDruck/issues/37))
+- Ein Menü mit den Optionen 'Schließen', 'Format', 'Modus wurde hinzugefügt. Der entsprechende Konfigeintrag ist 'showMenu', Standardwert ist 'false' (issue [#32](https://github.com/gbv/SignaturenDruck/issues/32))
+- Der Konfigeintrag 'filterByLoc' ermöglicht das festlegen von Formaten für gewisse Standorte. Standardwert ist 'false' (issue [#60](https://github.com/gbv/SignaturenDruck/issues/60))
+- Das SRU-Fenster wurde die Auswahl zwischen PPN/EPN ergänzt. Dafür ist der Konfigeintrag 'SRU.QueryPart1EPN' nötig, der Standardwert ist '?version=1.1&operation=searchRetrieve&query=pica.epn=' (issue [#41](https://github.com/gbv/SignaturenDruck/issues/41))
 - Optimierungen:
   - main.js: Funktion 'checkConfig' überarbeitet
   - npm update ausgeführt
@@ -302,7 +302,7 @@ Der Adobe Acrobat Reader DC wird für den Druck benötigt. Ist dieser nicht das 
 ## v1.1.1-d
 
 - Horizontale Zentrierung der Label auf dem Papier korrigiert
-- Option für Sofortdruck umgesetzt (issue #15, nur wenn Daten via SRU geladen werden)
+- Option für Sofortdruck umgesetzt (issue [#15](https://github.com/gbv/SignaturenDruck/issues/15), nur wenn Daten via SRU geladen werden)
 - Hinweis für den Fall hinzugefügt, dass die erzeugten PDFs nicht automatisch gelöscht werden konnten (Reader war bereits geöffnet)
 - Ausgelesene Signaturen (SRU/Datei) sind nun mittels Doppelklick auf den Signaturentext editierbar
 - weitere interne Optimierungen
@@ -314,7 +314,7 @@ Der Adobe Acrobat Reader DC wird für den Druck benötigt. Ist dieser nicht das 
 ## v1.1.1-c
 
 - Bei der Eingabe von manuellen Signaturen bleibt die Eingabe der vorherigen Signatur erhalten
-- Problem mit SRU-Abfragen gelöst (issue #51)
+- Problem mit SRU-Abfragen gelöst (issue [#51](https://github.com/gbv/SignaturenDruck/issues/51))
 
 ## v1.1.1-b
 
