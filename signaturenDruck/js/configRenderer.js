@@ -45,15 +45,6 @@ function close () {
   ipcRenderer.send('closeConfigWindow')
 }
 
-function locDoesMatch () {
-  let regex = new RegExp(document.getElementById('input_locRegEx').value)
-  if (document.getElementById('input_loc').value.match(regex)) {
-    return true
-  } else {
-    return false
-  }
-}
-
 function createPreview () {
   clearPreview()
   if (config.get('filterByLoc') && !LocationCheck.locDoesMatch(document.getElementById('input_locRegEx').value, document.getElementById('input_loc').value)) {
@@ -103,12 +94,15 @@ function loadSubModeData () {
     enableDelimiter()
   }
   if (config.get('filterByLoc')) {
-    if (subModeData.exampleLoc) {
+    if (subModeData.exampleLoc !== undefined) {
       document.getElementById('input_loc').value = subModeData.exampleLoc
+    } else {
+      document.getElementById('input_loc').placeholder = config.get('example.location')
+    }
+    if (subModeData.locRegEx !== undefined) {
       document.getElementById('input_locRegEx').value = subModeData.locRegEx
     } else {
-      document.getElementById('input_loc').value = config.get('example.location')
-      document.getElementById('input_locRegEx').value = '^' + config.get('example.location') + '$'
+      document.getElementById('input_locRegEx').placeholder = '^' + config.get('example.location') + '$'
     }
   }
   document.getElementById('input_example').value = subModeData.exampleShelfmark
