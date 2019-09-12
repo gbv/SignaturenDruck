@@ -1,6 +1,6 @@
 {
   "name": "default_klein",
-  "printer": "\\\\ulbw2k812\\ulbps124",
+  "printer": "\\\\printsrv\\ulbps124",
   "label": {
     "width": "74mm",
     "height": "23mm"

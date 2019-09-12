@@ -1,4 +1,4 @@
-const { BrowserWindow, app, ipcMain, dialog } = require('electron')
+const { BrowserWindow, app, ipcMain, dialog, Menu } = require('electron')
 const path = require('path')
 const url = require('url')
 const fs = require('fs')
@@ -30,6 +30,9 @@ const configNew = {
   defaultDownloadPath: 'C:/Export/download.dnl',
   sortByPPN: false,
   useK10plus: true,
+  hideDeleteBtn: false,
+  showMenu: false,
+  filterByLoc: false,
   example: {
     shelfmark: 'PÄD:TG:1420:Dan::2017',
     location: 'MAG',
@@ -42,8 +45,10 @@ const configNew = {
   },
   SRU: {
     useSRU: false,
+    printImmediately: false,
     SRUAddress: 'http://sru.k10plus.de/opac-de-27',
     QueryPart1: '?version=1.1&operation=searchRetrieve&query=pica.bar=',
+    QueryPart1EPN: '?version=1.1&operation=searchRetrieve&query=pica.epn=',
     QueryPart2: '&maximumRecords=1&recordSchema=picaxml'
   },
   print: {
@@ -54,6 +59,39 @@ const configNew = {
   },
   devMode: false
 }
+
+const template = [
+  {
+    label: 'Datei',
+    submenu: [
+      {
+        label: 'Schließen',
+        role: 'close'
+      }
+    ]
+  },
+  {
+    label: 'Bearbeiten',
+    submenu: [
+      {
+        label: 'Modus',
+        accelerator: 'Control+Shift+C',
+        click () {
+          createConfigWindow()
+        }
+      },
+      {
+        label: 'Format',
+        accelerator: 'Control+Shift+E',
+        click () {
+          createEditorWindow()
+        }
+      }
+    ]
+  }
+]
+
+const menu = Menu.buildFromTemplate(template)
 
 // name of signature storage json
 const sigJSONFile = 'signaturen.json'
@@ -141,10 +179,10 @@ ipcMain.on('saveManualSignatures', function (event, data) {
 })
 
 // listens on loadFromSRU, invokes the loadAndAddFromSRU function with the provided barcode
-ipcMain.on('loadFromSRU', function (event, barcode) {
-  if (barcode !== '') {
-    sruData.loadData(barcode).then(function (data) {
-      mainWindow.webContents.send('addSRUdata', data, barcode)
+ipcMain.on('loadFromSRU', function (event, key, mode) {
+  if (key !== '') {
+    sruData.loadData(key, mode).then(function (data) {
+      mainWindow.webContents.send('addSRUdata', data, key, mode)
     })
   }
 })
@@ -209,7 +247,11 @@ function createWindow () {
   } else {
     mainWindow = new BrowserWindow({ width: 850, height: 600, backgroundColor: '#f0f0f0' })
   }
-
+  if (config.store.showMenu) {
+    Menu.setApplicationMenu(menu)
+  }
+  // set the mainwindow title (name + version from package.json)
+  mainWindow.setTitle('Signaturendruck v' + app.getVersion())
   // and load the index.html of the app.
   mainWindow.loadURL(url.format({
     pathname: path.join(__dirname, '/html/index.html'),
@@ -237,36 +279,36 @@ function deleteJSON () {
   }
 }
 
-// TODO redefine that function - that's to complex
 // checks if config file exists, else creates one
 function checkConfig () {
   if (fs.existsSync(defaultProgramPath + '\\config.json')) {
     if (!config.has('defaultDownloadPath')) {
+      fs.renameSync(defaultProgramPath + '\\config.json', defaultProgramPath + '\\config_invalid.json')
+      dialog.showErrorBox('Die Konfigurationsdatei:\n    ' + defaultProgramPath + '\\config.json\nwar fehlerhaft und wurde in config_invalid.json umbenannt.\n\nDas Programm hat zum Start eine valide Standardversion erstellt.', '')
       createConfig()
     }
   } else {
     createConfig()
   }
   if (config.get('mode.defaultMode') === 'thulbMode') {
-    checkAndCreate(defaultProgramPath + '\\Modi\\', 'thulbMode', '.json')
-    let thulbConfigs = ['thulb_gross', 'thulb_klein', 'thulb_klein_1']
-    thulbConfigs.forEach(fileName => {
-      checkAndCreate(defaultProgramPath + '\\Formate\\', fileName, '.json')
-      checkAndCreate(defaultProgramPath + '\\FormateCSS\\', fileName, '.css')
-    })
+    createModeFiles('thulbMode', ['thulb_gross', 'thulb_klein', 'thulb_klein_1'])
   } else if (config.get('mode.defaultMode') === 'defaultMode') {
-    checkAndCreate(defaultProgramPath + '\\Modi\\', 'defaultMode', '.json')
-    let defaultConfigs = ['default_klein', 'default_gross']
-    defaultConfigs.forEach(fileName => {
-      checkAndCreate(defaultProgramPath + '\\Formate\\', fileName, '.json')
-      checkAndCreate(defaultProgramPath + '\\FormateCSS\\', fileName, '.css')
-    })
+    createModeFiles('defaultMode', ['default_klein', 'default_gross'])
   }
-  function checkAndCreate (pathName, fileName, ending) {
-    if (!fs.existsSync(pathName + fileName + ending)) {
-      let file = fs.readFileSync(path.join(__dirname, 'defaultFiles/' + fileName + ending), 'utf8')
-      fs.writeFileSync(pathName + fileName + ending, file, 'utf8')
-    }
+}
+
+function createModeFiles (modeName, subModeNames) {
+  checkAndCreate(defaultProgramPath + '\\Modi\\', modeName, '.json')
+  subModeNames.forEach(fileName => {
+    checkAndCreate(defaultProgramPath + '\\Formate\\', fileName, '.json')
+    checkAndCreate(defaultProgramPath + '\\FormateCSS\\', fileName, '.css')
+  })
+}
+
+function checkAndCreate (pathName, fileName, ending) {
+  if (!fs.existsSync(pathName + fileName + ending)) {
+    let file = fs.readFileSync(path.join(__dirname, 'defaultFiles/' + fileName + ending), 'utf8')
+    fs.writeFileSync(pathName + fileName + ending, file, 'utf8')
   }
 }
 

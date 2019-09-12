@@ -78,6 +78,30 @@
         </div>
         <div class="box">
           <h2 class="subtitle is-4">Signaturenaufbau</h2>
+          <div class="field is-horizontal" id="locLine">
+            <div class="field-label is-normal oneLabelSize" id="label_loc">
+              <label class="label">Standort</label>
+            </div>
+            <div class="field-body">
+              <div class="field">
+                <p class="control">
+                  <input id="input_loc" class="input fullwidth" type="text" value="">
+                </p>
+              </div>
+            </div>
+          </div>
+          <div class="field is-horizontal" id="locRegExLine">
+            <div class="field-label is-normal oneLabelSize" id="label_locRegEx">
+              <label class="label">RegEx Standort</label>
+            </div>
+            <div class="field-body">
+              <div class="field">
+                <p class="control">
+                  <input id="input_locRegEx" class="input fullwidth" type="text" value="">
+                </p>
+              </div>
+            </div>
+          </div>
           <div class="field is-horizontal">
             <div class="field-label is-normal oneLabelSize" id="label_example">
               <label class="label">Beispiel</label>
@@ -191,7 +215,10 @@
 
   <div id="buttonBox" class="box level">
     <div class="level-left">
-      <button id="btn_save" class="button is-success">Weiter</button>
+      <button id="btn_save" class="button is-success">Speichern & Format anlegen</button>
+    </div>
+    <div class="level-center">
+      <button id="btn_saveAndExit" class="button is-success">Speichern & Beenden</button>
     </div>
     <div class="level-right">
       <button id="btn_close" class="button is-danger">Abbruch</button>

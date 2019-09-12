@@ -7,10 +7,10 @@ const DataExtractOld = require('./dataExtractOld.js')
 // requires the shelfmark class
 const Shelfmark = require('../shelfmark.js')
 const Modes = require('../classes/Modes')
-const Formats = require('../classes/Formats')
 const FormatLinesByMode = require('../classes/FormatLinesByMode')
+const LocationCheck = require('../classes/LocationCheck')
 
-module.exports = function (allLines) {
+module.exports = function (allLines, formats) {
   let obj = {
     all: []
   }
@@ -19,8 +19,7 @@ module.exports = function (allLines) {
   let ppnAktuell = ''
   let plainTxt = ''
   let mode = new Modes()
-  let formats = new Formats()
-  let formatArray = formats.formats
+  let formatArray = formats
 
   allLines.map((line) => {
     let first4 = extract.firstFour(line)
@@ -40,37 +39,41 @@ module.exports = function (allLines) {
           'lines': ''
         }
         data.format = value.format
-        if (value.useRegEx) {
-          let regex = new RegExp(value.regEx)
-          if (regex.test(plainTxt) && sig.defaultSubMode === '') {
-            sig.defaultSubMode = value.id
-          }
-          let lines = plainTxt.match(regex)
-          if (lines !== null) {
-            lines.shift()
-          }
-          data.lines = lines
-          if (data.lines !== null) {
-            data.lines = FormatLinesByMode.formatLines(sig.location, data.lines, value.result)
-          }
+        if (config.get('filterByLoc') && !LocationCheck.locDoesMatch(value.locRegEx, sig.location)) {
+          data.lines = null
         } else {
-          data.lines = plainTxt.split(value.delimiter)
-          if (sig.defaultSubMode === '') {
-            sig.defaultSubMode = value.id
-          }
-          if (data.lines !== null) {
-            data.lines = FormatLinesByMode.formatLines(sig.location, data.lines, value.result, formatArray[value.format].lines)
+          if (value.useRegEx) {
+            let regex = new RegExp(value.regEx)
+            if (regex.test(plainTxt) && sig.defaultSubMode === '') {
+              sig.defaultSubMode = value.id
+            }
+            let lines = plainTxt.match(regex)
+            if (lines !== null) {
+              lines.shift()
+            }
+            data.lines = lines
+            if (data.lines !== null) {
+              data.lines = FormatLinesByMode.formatLines(sig.location, data.lines, value.result)
+            }
+          } else {
+            data.lines = plainTxt.split(value.delimiter)
+            if (sig.defaultSubMode === '') {
+              sig.defaultSubMode = value.id
+            }
+            if (data.lines !== null) {
+              data.lines = FormatLinesByMode.formatLines(sig.location, data.lines, value.result, formatArray[value.format].lines)
+            }
           }
         }
         sig.subModes.push(data)
       })
     } else if (first4 === '7901') {
       sig.date = extract.date(line)
-    }
-    if (sig.allSet()) {
-      obj.all.push(sig.shelfmark)
-      sig = new Shelfmark()
-      sig.ppn = ppnAktuell
+      if (sig.allSet()) {
+        obj.all.push(sig.shelfmark)
+        sig = new Shelfmark()
+        sig.ppn = ppnAktuell
+      }
     }
   })
   return obj

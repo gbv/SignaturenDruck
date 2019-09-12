@@ -26,8 +26,15 @@ class DataFromSRU {
   ----- End Constructor -----
    */
 
-  loadData (barcode) {
-    let url = config.get('SRU.SRUAddress') + config.get('SRU.QueryPart1') + barcode + config.get('SRU.QueryPart2')
+  loadData (key, mode) {
+    let url
+    let queryPart1
+    if (mode === 'PPN') {
+      queryPart1 = config.get('SRU.QueryPart1')
+    } else {
+      queryPart1 = config.get('SRU.QueryPart1EPN')
+    }
+    url = config.get('SRU.SRUAddress') + queryPart1 + key + config.get('SRU.QueryPart2')
     let request = net.request(url)
     let allData = ''
     let data = ''

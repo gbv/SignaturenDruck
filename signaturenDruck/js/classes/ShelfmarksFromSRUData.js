@@ -5,6 +5,7 @@ const Modes = require('./Modes.js')
 const config = remote.getGlobal('config')
 const Formats = require('../classes/Formats')
 const FormatLinesByMode = require('../classes/FormatLinesByMode')
+const LocationCheck = require('../classes/LocationCheck')
 
 class ShelfmarksFromSRUData {
   /*
@@ -28,17 +29,21 @@ class ShelfmarksFromSRUData {
   ----- End Constructor -----
    */
 
-  getShelfmark (xml, barcode) {
+  getShelfmark (xml, key, dataMode) {
     let sig = new Shelfmark()
     let mode = new Modes()
     let formats = new Formats()
     let formatArray = formats.formats
-    let occ = getOccurrence(xml, barcode)
+    sig.error = getError(xml, key, dataMode)
 
-    sig.error = getError(xml)
     if (sig.error === '') {
+      let occ = getOccurrence(xml, key)
       sig.id = 99 // gets overwritten at a later stage
-      sig.ppn = getPPN(xml)
+      if (dataMode === 'PPN') {
+        sig.ppn = getPPN(xml)
+      } else {
+        sig.ppn = getEPN(xml)
+      }
       sig.date = getDate(xml, occ)
       sig.txtOneLine = getTxt(xml, occ)
       sig.exNr = getExNr(xml, occ)
@@ -51,26 +56,30 @@ class ShelfmarksFromSRUData {
           'lines': ''
         }
         data.format = value.format
-        if (value.useRegEx) {
-          let regex = new RegExp(value.regEx)
-          if (regex.test(sig.txtOneLine) && sig.defaultSubMode === '') {
-            sig.defaultSubMode = value.id
-          }
-          let lines = sig.txtOneLine.match(regex)
-          if (lines !== null) {
-            lines.shift()
-          }
-          data.lines = lines
-          if (data.lines !== null) {
-            data.lines = FormatLinesByMode.formatLines(sig.location, data.lines, value.result)
-          }
+        if (config.get('filterByLoc') && !LocationCheck.locDoesMatch(value.locRegEx, sig.location)) {
+          data.lines = null
         } else {
-          data.lines = sig.txtOneLine.split(value.delimiter)
-          if (sig.defaultSubMode === '') {
-            sig.defaultSubMode = value.id
-          }
-          if (data.lines !== null) {
-            data.lines = FormatLinesByMode.formatLines(sig.location, data.lines, value.result, formatArray[value.format].lines)
+          if (value.useRegEx) {
+            let regex = new RegExp(value.regEx)
+            if (regex.test(sig.txtOneLine) && sig.defaultSubMode === '') {
+              sig.defaultSubMode = value.id
+            }
+            let lines = sig.txtOneLine.match(regex)
+            if (lines !== null) {
+              lines.shift()
+            }
+            data.lines = lines
+            if (data.lines !== null) {
+              data.lines = FormatLinesByMode.formatLines(sig.location, data.lines, value.result)
+            }
+          } else {
+            data.lines = sig.txtOneLine.split(value.delimiter)
+            if (sig.defaultSubMode === '') {
+              sig.defaultSubMode = value.id
+            }
+            if (data.lines !== null) {
+              data.lines = FormatLinesByMode.formatLines(sig.location, data.lines, value.result, formatArray[value.format].lines)
+            }
           }
         }
         sig.subModes.push(data)
@@ -113,6 +122,15 @@ function getOccurrence (object, barcode) {
 
 function getPPN (object) {
   let data = _.find(object['zs:searchRetrieveResponse']['zs:records']['zs:record']['zs:recordData']['record']['datafield'], { 'tag': '003@' })
+  if (data !== undefined) {
+    return data['subfield']['$t']
+  } else {
+    return ''
+  }
+}
+
+function getEPN (object) {
+  let data = _.find(object['zs:searchRetrieveResponse']['zs:records']['zs:record']['zs:recordData']['record']['datafield'], { 'tag': '203@' })
   if (data !== undefined) {
     return data['subfield']['$t']
   } else {
@@ -169,12 +187,12 @@ function getLoanIndication (object, occ) {
   }
 }
 
-function getError (object) {
+function getError (object, key, mode) {
   try {
-    if (object['zs:searchRetrieveResponse']['zs:numberOfRecords'] > 0) {
+    if (object && object['zs:searchRetrieveResponse'] && object['zs:searchRetrieveResponse']['zs:numberOfRecords'] > 0) {
       return ''
     } else {
-      return 'Barcode wurde nicht gefunden'
+      return mode + ': <b>' + key + '</b> wurde nicht gefunden.'
     }
   } catch (e) {
     return e.message

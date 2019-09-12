@@ -43,9 +43,9 @@ class JsonFile {
     fs.writeFileSync(file, '', 'utf8')
   }
 
-  writeToJsonFile (source, sru = false) {
+  writeToJsonFile (source, formats, sru = false) {
     if (sru) fs.writeFileSync(this.file, JSON.stringify(source), 'utf8')
-    else fs.writeFileSync(this.file, JSON.stringify(setIds(getUnique(loadDataFromFile(source.split(/\r\n|\n/))))), 'utf8')
+    else fs.writeFileSync(this.file, JSON.stringify(setIds(getUnique(loadDataFromFile(source.split(/\r\n|\n/), formats)))), 'utf8')
   }
 }
 

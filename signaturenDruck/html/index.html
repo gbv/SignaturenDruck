@@ -4,7 +4,6 @@
   <head>
     <meta charset="UTF-8">
     <meta http-equiv="Content-Security-Policy" content="default-src 'self' 'unsafe-inline'">
-    <title>Signaturendruck</title>
     <link rel="stylesheet" type="text/css" href="./../css/bulma.css">
     <link rel="stylesheet" type="text/css" href="./../css/index.css">
     <link rel="stylesheet" type="text/css" href="./../css/preview.css">
@@ -26,6 +25,12 @@
           </span>
           <span id="sru" class="level-item">
             Sofortdruck <span style="margin: 9px 6px 6px 6px;"><input id="chkbx_printImmediately" type="checkbox"></span>
+            <span class="select">
+              <select id="select_dataMode">
+                <option value='PPN'>Barcode</option>
+                <option value='EPN'>EPN</option>
+              </select>
+            </span>
             <input id="input_barcode" class="input" type="text" placeholder="Barcode">
             <button id="btn_barcode" class="button"><i class="fas fa-plus"></i></button>
           </span>
@@ -62,7 +67,7 @@
         <button id="btn_createManualSignatures" class="button">Manuelles Anlegen</button>
         <br>
         <button id="btn_deleteFile" class="button">Lösche Download Datei</button>
-        <br>
+        <br id="btn_deleteFile_linebreak">
         <button id="btn_deleteList" class="button">Liste löschen</button>
         <br>
         <button id="btn_print" class="button">Drucken</button>

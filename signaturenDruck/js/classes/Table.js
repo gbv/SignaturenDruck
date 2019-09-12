@@ -327,11 +327,11 @@ class Table {
   readSRUData (object) {
     if (!fs.existsSync(this.file.file)) {
       jsonfile.createJsonFile(this.file.file)
-      this.file.writeToJsonFile(object, true)
+      this.file.writeToJsonFile(object, this.format._formats, true)
       this.displayMainTable()
       return true
     } else {
-      this.file.writeToJsonFile(object, true)
+      this.file.writeToJsonFile(object, this.format._formats, true)
       this.displayMainTable()
       return true
     }
@@ -341,11 +341,11 @@ class Table {
     if (fs.existsSync(path)) {
       if (!fs.existsSync(this.file.file)) {
         jsonfile.createJsonFile(this.file.file)
-        this.file.writeToJsonFile(fs.readFileSync(path, 'utf-8'))
+        this.file.writeToJsonFile(fs.readFileSync(path, 'utf-8'), this.format._formats)
         this.displayMainTable()
         return true
       } else {
-        this.file.writeToJsonFile(fs.readFileSync(path, 'utf-8'))
+        this.file.writeToJsonFile(fs.readFileSync(path, 'utf-8'), this.format._formats)
         this.displayMainTable()
         return true
       }

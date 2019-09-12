@@ -233,6 +233,9 @@ Die `config.json` unter `C:\SignaturenDruck\` bietet folgende Optionen.
 | `defaultPath` | damit kann der Pfad zur Datei verändert werden, welche beim starten des Programms automatisch ausgelesen werden soll. | `"C:/Export/download.dnl"` |  
 | `sortByPPN` | ermöglicht die ausgelesenen Daten per PPN sortiert darzustellen. | `false` |  
 | `useK10plus` | ermöglicht die Verwendung des Datenformates der WinIBW mit K10plus | `true` |  
+| `hideDeleteBtn` | ermöglicht das ausblenden des 'Lösche Download Datei'-Buttons | `false` |  
+| `showMenu` | ermöglicht das einblenden einer Menüleiste | `false` |  
+| `filterByLoc` | ermöglicht eine Unterscheidung der Formate mittels Standort | `false` |
 | `example.shelfmark` | legt eine Signatur fest, die beim anlegen eines neuen Modus/Untermodus angezeigt wird | `"PÄD:TG:1420:Dan::2017"` |  
 | `example.location` | legt einen Standort fest, der als Beispielstandort beim anlegen eines neuen Modus/Untermodus angezeigt wird | `"MAG"` |  
 | `example.regex` | legt einen regulären Ausdruck fest, der beim anlegen eines neuen Modus/Untermodus angezeigt wird | `"^(.*):(.*):(.*):(.*):(.*):(.*)$"` |  
@@ -240,10 +243,11 @@ Die `config.json` unter `C:\SignaturenDruck\` bietet folgende Optionen.
 | `modal.showModal` | legt fest ob die Nachricht der erfolgreichen Drucks angezeigt werden soll | `true` |  
 | `modal.modalTxt` | bietet die Möglichkeit den Text der Druckerfolgsmeldung anzupassen. | `"Die ausgewählten Signaturen wurden gedruckt."` |  
 | `SRU.useSRU` | ermöglicht die Daten per SRU zu laden | `false` |  
+| `SRU.printImmediately` | ermöglicht den Sofortdruck | `false` |  
 | `SRU.SRUAddress` | enthält die URL des SRU-Servers über den die Daten geladen werden, sofern `useSRU: true` | `"http://sru.k10plus.de/opac-de-27"` |  
 | `SRU.QueryPart1` | der erste Teil des SRU-Query | `"?version=1.1&operation=searchRetrieve&query=pica.bar="` |  
+| `SRU.QueryPart1EPN` | der erste Teil des SRU-EPN-Query | `"?version=1.1&operation=searchRetrieve&query=pica.bar="` |  
 | `SRU.QueryPart2` | der zweite Teil des SRU-Query | `"&maximumRecords=1&recordSchema=picaxml"` |  
-| `print.printImmediately` | ermöglicht den Sofortdruck, aktuell ohne Funktion | `false` |  
 | `print.printCoverLabel` | ermöglicht den Druck des CoverLabels (Username + Datum) | `true` |  
 | `mode.defaultMode` | legt den zu verwendenden Modus fest | `"thulbMode"` |  
 | `devMode` | dient zur Fehlersuche, zeigt die Fenster der jeweiligen Formate an, die im Formalfall nicht zu sehen sind. Die PDFs werden erstellt aber weder gelöscht noch gedruckt. | `false` |  
@@ -271,22 +275,55 @@ Der Adobe Acrobat Reader DC wird für den Druck benötigt. Ist dieser nicht das 
 
 # Changelog
 
+## v1.2.0
+
+- alle Änderungen aus den Versionen [v1.1.1-g](##v1.1.1-g-dev), [v1.1.1-f](##v1.1.1-f-dev) und [v1.1.1-e-dev](##v1.1.1-e-dev) übernommen.
+- Dokumentation angepasst
+
+## v1.1.1-g-dev
+
+- Die Standortwerte aus 'config.json' werden beim editieren von Untermodi nurnoch als Platzhalter eingetragen, wenn die Werte nicht direkt gesetzt wurden (issue [#67](https://github.com/gbv/SignaturenDruck/issues/67))
+
+## v1.1.1-f-dev
+
+- Verbesserte Fehlerbehandlung von Konfigurationsdateien (issue [#17](https://github.com/gbv/SignaturenDruck/issues/17), [#36](https://github.com/gbv/SignaturenDruck/issues/36))
+- Menü Label korrigiert (issue [#32](https://github.com/gbv/SignaturenDruck/issues/32))
+- SRU-Dropdown 'PPN' durch 'Barcode' ersetzt (issue [#41](https://github.com/gbv/SignaturenDruck/issues/41))
+- Fehlerhafte Datumsanzeige bei mehreren Exemplaren behoben (issue [#65](https://github.com/gbv/SignaturenDruck/issues/65))
+- Konfigeintrag 'hideDeleteBtn' eingeführt, ermöglicht das ausblenden der 'Lösche Download Datei' Option. Standadwert ist 'false' (issue [#66](https://github.com/gbv/SignaturenDruck/issues/66))
+
+## v1.1.1-e-dev
+
+- Version wird nun im Titel des Hauptfensters mit angezeigt (issue [#59](https://github.com/gbv/SignaturenDruck/issues/59))
+- Im Ordner Formate & FormateCSS werden Dateien mit falschem Dateiformat ignoriert (issue [#17](https://github.com/gbv/SignaturenDruck/issues/17))
+- Eine fehlerhafte Konfigurationsdatei wird nun nichtmehr kommentarlos ersetzt. (issue [#36](https://github.com/gbv/SignaturenDruck/issues/36))  
+    Sie wird als 'config_invalid.json' abgespeichert und es wird eine valide Standardkonfig angelegt.
+- Es wurden einige Verbesserungen beim erstellen/bearbeiten von Modi/Untermodi umgesetzt (issue [#56](https://github.com/gbv/SignaturenDruck/issues/56), [#50](https://github.com/gbv/SignaturenDruck/issues/50))
+- Es ist nun möglich den Sofortdruck via Konfigeintrag automatisch auszuwählen (issue [#58](https://github.com/gbv/SignaturenDruck/issues/58))
+- .json Konfigurationsdateien werden nun formatiert angelegt (issue [#37](https://github.com/gbv/SignaturenDruck/issues/37))
+- Ein Menü mit den Optionen 'Schließen', 'Format', 'Modus wurde hinzugefügt. Der entsprechende Konfigeintrag ist 'showMenu', Standardwert ist 'false' (issue [#32](https://github.com/gbv/SignaturenDruck/issues/32))
+- Der Konfigeintrag 'filterByLoc' ermöglicht das festlegen von Formaten für gewisse Standorte. Standardwert ist 'false' (issue [#60](https://github.com/gbv/SignaturenDruck/issues/60))
+- Das SRU-Fenster wurde die Auswahl zwischen PPN/EPN ergänzt. Dafür ist der Konfigeintrag 'SRU.QueryPart1EPN' nötig, der Standardwert ist '?version=1.1&operation=searchRetrieve&query=pica.epn=' (issue [#41](https://github.com/gbv/SignaturenDruck/issues/41))
+- Optimierungen:
+  - main.js: Funktion 'checkConfig' überarbeitet
+  - npm update ausgeführt
+
 ## v1.1.1-d
 
 - Horizontale Zentrierung der Label auf dem Papier korrigiert
-- Option für Sofortdruck umgesetzt (issue #15, nur wenn Daten via SRU geladen werden)
+- Option für Sofortdruck umgesetzt (issue [#15](https://github.com/gbv/SignaturenDruck/issues/15), nur wenn Daten via SRU geladen werden)
 - Hinweis für den Fall hinzugefügt, dass die erzeugten PDFs nicht automatisch gelöscht werden konnten (Reader war bereits geöffnet)
 - Ausgelesene Signaturen (SRU/Datei) sind nun mittels Doppelklick auf den Signaturentext editierbar
 - weitere interne Optimierungen
 
 ### Hinweis
- Die Problematik mit Feld 209A/7100 $B hat keinerlei Auswirkung auf die Funktionsweise des Programms
 
+ Die Problematik mit Feld 209A/7100 $B hat keinerlei Auswirkung auf die Funktionsweise des Programms
 
 ## v1.1.1-c
 
 - Bei der Eingabe von manuellen Signaturen bleibt die Eingabe der vorherigen Signatur erhalten
-- Problem mit SRU-Abfragen gelöst (issue #51)
+- Problem mit SRU-Abfragen gelöst (issue [#51](https://github.com/gbv/SignaturenDruck/issues/51))
 
 ## v1.1.1-b
 

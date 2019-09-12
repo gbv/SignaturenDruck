@@ -30,6 +30,10 @@ window.onload = function () {
   if (config.get('devMode')) {
     document.getElementById('devMode').style.display = 'block'
   }
+  if (config.get('hideDeleteBtn')) {
+    document.getElementById('btn_deleteFile_linebreak').style.display = 'none'
+    document.getElementById('btn_deleteFile').style.display = 'none'
+  }
 
   document.getElementById('modalTxt').innerHTML = config.get('modal.modalTxt')
   let fileSelected = document.getElementById('fileToRead')
@@ -39,11 +43,18 @@ window.onload = function () {
       document.getElementById('defaultPath').innerHTML = config.get('defaultDownloadPath')
     } else {
       document.getElementById('defaultPath').innerHTML = 'nicht vorhanden'
-      alert('Die Datei ' + config.get('defaultDownloadPath') + ' ist nicht vorhanden.')
+      swal.fire('Achtung', 'Die Datei <b>' + config.get('defaultDownloadPath') + '</b> ist nicht vorhanden.', 'info')
     }
   } else {
     document.getElementById('dnl').style.display = 'none'
     document.getElementById('sru').style.display = 'flex'
+    if (config.get('SRU.printImmediately')) {
+      document.getElementById('chkbx_printImmediately').checked = true
+    }
+    if (!config.get('SRU.QueryPart1EPN')) {
+      document.getElementById('select_dataMode').disabled = true
+      swal.fire('Achtung', 'In der config.json fehlt der Eintrag: <b>SRU.QueryPart1EPN</b>\n\ndaher wurde die Suche via EPN deaktiviert.', 'info')
+    }
   }
 
   // Check the support for the File API support
@@ -89,25 +100,29 @@ ipcRenderer.on('removeManualSignatures', function (event) {
 })
 
 // ipc listener to add provided data to the SRU obj
-ipcRenderer.on('addSRUdata', function (event, xml, barcode) {
+ipcRenderer.on('addSRUdata', function (event, xml, barcode, mode) {
   let data = new ShelfmarksFromSRUData()
-  let shelfmark = data.getShelfmark(xml, barcode)
+  let shelfmark = data.getShelfmark(xml, barcode, mode)
   if (shelfmark.error !== '') {
     swal.fire('Achtung', shelfmark.error, 'error')
       .then(() => {})
   } else {
-    let index = objSRU.all.length
-    objSRU.all[index] = shelfmark
-    objSRU.all[index].id = index + 1
-    table.readSRUData(objSRU.all)
-    if (document.getElementById('chkbx_printImmediately').checked) {
-      let node = document.getElementById('print_' + (index + 1))
-      node.click()
-      printButton(event, true)
-    }
-    table.clearManualSignaturesTable()
-    if (table.manualSignature !== undefined && table.manualSignature !== null && table.manualSignature.length !== 0) {
-      table.addManualSignaturesToTable(table.manualSignature)
+    if (shelfmark.PPN) {
+      let index = objSRU.all.length
+      objSRU.all[index] = shelfmark
+      objSRU.all[index].id = index + 1
+      table.readSRUData(objSRU.all)
+      if (document.getElementById('chkbx_printImmediately').checked) {
+        let node = document.getElementById('print_' + (index + 1))
+        node.click()
+        printButton(event, true)
+      }
+      table.clearManualSignaturesTable()
+      if (table.manualSignature !== undefined && table.manualSignature !== null && table.manualSignature.length !== 0) {
+        table.addManualSignaturesToTable(table.manualSignature)
+      }
+    } else {
+      swal.fire('Achtung', 'Signatur mit ' + mode + ': ' + barcode + ' wurde nicht gefunden.', 'info')
     }
   }
 })
@@ -146,7 +161,7 @@ function deleteFromPath (path) {
       if (err) {
         throw err
       } else {
-        alert('Die Datei wurde gelöscht.')
+        swal.fire('Achtung', 'Die Datei wurde gelöscht.', 'info')
       }
     })
   }
@@ -221,7 +236,7 @@ function selectByDate () {
 
 // function to submit the barcode
 function submitBarcode () {
-  ipcRenderer.send('loadFromSRU', document.getElementById('input_barcode').value)
+  ipcRenderer.send('loadFromSRU', document.getElementById('input_barcode').value, document.getElementById('select_dataMode').value)
   document.getElementById('input_barcode').value = ''
 }
 
@@ -244,6 +259,18 @@ function openEditorWindow (event) {
   }
 }
 
+function changePlaceholder () {
+  let selectValue = document.getElementById('select_dataMode').value
+  let input = document.getElementById('input_barcode')
+  if (selectValue === 'PPN') {
+    input.placeholder = 'Barcode'
+  } else {
+    input.placeholder = 'EPN'
+  }
+}
+
+// adds eventlistener to the PPN / EPN select
+document.getElementById('select_dataMode').addEventListener('change', changePlaceholder)
 // adds event listener to the create manually button
 document.getElementById('btn_createManualSignatures').addEventListener('click', openManualSignaturesWindow)
 // adds event listener to the deleteList button
