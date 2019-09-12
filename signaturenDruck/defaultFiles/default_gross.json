@@ -1,6 +1,6 @@
 {
   "name": "default_gross",
-  "printer": "\\\\ulbw2k812\\ulbps101",
+  "printer": "\\\\printsrv\\ulbps101",
   "label": {
     "width": "80mm",
     "height": "43mm"
