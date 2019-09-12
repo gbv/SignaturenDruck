@@ -32,7 +32,7 @@ const configNew = {
   useK10plus: true,
   hideDeleteBtn: false,
   showMenu: false,
-  filterByLoc: true,
+  filterByLoc: false,
   example: {
     shelfmark: 'PÄD:TG:1420:Dan::2017',
     location: 'MAG',

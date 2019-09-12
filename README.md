@@ -233,6 +233,9 @@ Die `config.json` unter `C:\SignaturenDruck\` bietet folgende Optionen.
 | `defaultPath` | damit kann der Pfad zur Datei verändert werden, welche beim starten des Programms automatisch ausgelesen werden soll. | `"C:/Export/download.dnl"` |  
 | `sortByPPN` | ermöglicht die ausgelesenen Daten per PPN sortiert darzustellen. | `false` |  
 | `useK10plus` | ermöglicht die Verwendung des Datenformates der WinIBW mit K10plus | `true` |  
+| `hideDeleteBtn` | ermöglicht das ausblenden des 'Lösche Download Datei'-Buttons | `false` |  
+| `showMenu` | ermöglicht das einblenden einer Menüleiste | `false` |  
+| `filterByLoc` | ermöglicht eine Unterscheidung der Formate mittels Standort | `false` |
 | `example.shelfmark` | legt eine Signatur fest, die beim anlegen eines neuen Modus/Untermodus angezeigt wird | `"PÄD:TG:1420:Dan::2017"` |  
 | `example.location` | legt einen Standort fest, der als Beispielstandort beim anlegen eines neuen Modus/Untermodus angezeigt wird | `"MAG"` |  
 | `example.regex` | legt einen regulären Ausdruck fest, der beim anlegen eines neuen Modus/Untermodus angezeigt wird | `"^(.*):(.*):(.*):(.*):(.*):(.*)$"` |  
@@ -240,10 +243,11 @@ Die `config.json` unter `C:\SignaturenDruck\` bietet folgende Optionen.
 | `modal.showModal` | legt fest ob die Nachricht der erfolgreichen Drucks angezeigt werden soll | `true` |  
 | `modal.modalTxt` | bietet die Möglichkeit den Text der Druckerfolgsmeldung anzupassen. | `"Die ausgewählten Signaturen wurden gedruckt."` |  
 | `SRU.useSRU` | ermöglicht die Daten per SRU zu laden | `false` |  
+| `SRU.printImmediately` | ermöglicht den Sofortdruck | `false` |  
 | `SRU.SRUAddress` | enthält die URL des SRU-Servers über den die Daten geladen werden, sofern `useSRU: true` | `"http://sru.k10plus.de/opac-de-27"` |  
 | `SRU.QueryPart1` | der erste Teil des SRU-Query | `"?version=1.1&operation=searchRetrieve&query=pica.bar="` |  
+| `SRU.QueryPart1EPN` | der erste Teil des SRU-EPN-Query | `"?version=1.1&operation=searchRetrieve&query=pica.bar="` |  
 | `SRU.QueryPart2` | der zweite Teil des SRU-Query | `"&maximumRecords=1&recordSchema=picaxml"` |  
-| `print.printImmediately` | ermöglicht den Sofortdruck, aktuell ohne Funktion | `false` |  
 | `print.printCoverLabel` | ermöglicht den Druck des CoverLabels (Username + Datum) | `true` |  
 | `mode.defaultMode` | legt den zu verwendenden Modus fest | `"thulbMode"` |  
 | `devMode` | dient zur Fehlersuche, zeigt die Fenster der jeweiligen Formate an, die im Formalfall nicht zu sehen sind. Die PDFs werden erstellt aber weder gelöscht noch gedruckt. | `false` |  
@@ -270,6 +274,11 @@ Mit <kbd>strg</kbd> + <kbd>alt</kbd> + <kbd>C</kbd> öffen Sie die "Modus erstel
 Der Adobe Acrobat Reader DC wird für den Druck benötigt. Ist dieser nicht das Standard PDF-Programm so schlägt der Druck fehl.
 
 # Changelog
+
+## v1.2.0
+
+- alle Änderungen aus den Versionen [v1.1.1-g](##v1.1.1-g-dev), [v1.1.1-f](##v1.1.1-f-dev) und [v1.1.1-e-dev](##v1.1.1-e-dev) übernommen.
+- Dokumentation angepasst
 
 ## v1.1.1-g-dev
 
