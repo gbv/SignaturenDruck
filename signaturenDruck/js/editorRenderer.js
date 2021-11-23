@@ -2,6 +2,10 @@
 // be executed in the renderer process for that window.
 // All of the Node.js APIs are available in this process.
 
+const SystemFonts = require('system-font-families').default
+
+const systemFonts = new SystemFonts()
+
 // requires the fs-module
 const fs = require('fs')
 
@@ -9,24 +13,25 @@ const fs = require('fs')
 const _ = require('lodash')
 
 // required for ipc calls to the main process
-const { ipcRenderer, remote } = require('electron')
+const { ipcRenderer } = require('electron')
 
-const fontManager = require('font-manager')
-
-const printerList = remote.getCurrentWindow().webContents.getPrinters()
-const defaultProgramPath = remote.getGlobal('defaultProgramPath')
-const config = remote.getGlobal('config')
+const Store = require('electron-store')
+const C = require('./classes/Config')
+const defaultProgramPath = new C().defaultPath
+const config = new Store({ cwd: defaultProgramPath })
 
 let lineCounter = 1
 
 let currentFormat = ''
 let fonts = []
-let formats = []
-let selectOptions = []
+const formats = []
+const selectOptions = []
 let parts = []
 let subModeData
+let printerList = []
 
 window.onload = function () {
+  printerList = config.get('print.printerList')
   setFontsList()
   setPrinterSelect()
   getFormats()
@@ -76,20 +81,24 @@ function loadFormatByName (name) {
 }
 
 function setFontsList () {
-  let fontsList = []
+  /*
   fonts = fontManager.getAvailableFontsSync()
+  */
 
+  const fontsList = systemFonts.getFontsSync()
+
+  /*
   fonts.forEach(element => {
     fontsList.push(element.family)
   })
-
+  */
   fonts = _.uniq(fontsList)
   fonts.sort()
 }
 
 function setPrinterSelect () {
-  let list = getPrinterNameList()
-  let select = document.getElementById('selectPrinter')
+  const list = printerList
+  const select = document.getElementById('selectPrinter')
   let option = document.createElement('option')
   setOption(option, '--auswählen--', '', true)
   select.appendChild(option)
@@ -102,18 +111,18 @@ function setPrinterSelect () {
 
 // TODO that's not good it's hard coded
 function getFormats () {
-  let files = fs.readdirSync(defaultProgramPath + '\\Formate')
-  for (let file of files) {
-    let fileName = file.split('.json')[0]
+  const files = fs.readdirSync(defaultProgramPath + '\\Formate')
+  for (const file of files) {
+    const fileName = file.split('.json')[0]
     selectOptions.push(fileName)
     formats[fileName] = JSON.parse(fs.readFileSync(defaultProgramPath + '\\Formate\\' + file, 'utf8'))
   }
 }
 
 function setFormatsSelect () {
-  let select = document.getElementById('selectFormat')
+  const select = document.getElementById('selectFormat')
   selectOptions.forEach(element => {
-    let option = document.createElement('option')
+    const option = document.createElement('option')
     setOption(option, element, element)
     select.appendChild(option)
   })
@@ -133,7 +142,7 @@ function setOption (option, innerHTML, value, selected = false) {
 }
 
 function loadDataFromFormat (formatName) {
-  let format = formats[formatName]
+  const format = formats[formatName]
   let i = document.getElementById('input_labelLines').value
   if (!subModeData) {
     setValueOfElemId('input_fileName', format.name)
@@ -146,9 +155,11 @@ function loadDataFromFormat (formatName) {
     setValueOfElemId('input_example', subModeData.example.shelfmark)
     format.lines = subModeData.lines
     currentFormat = formats[subModeData.name]
-/*    if (!currentFormat) {
+    /*
+    if (!currentFormat) {
       currentFormat = formats[subModeData.prevName]
-    } */
+    }
+    */
     if (!currentFormat || currentFormat === '') {
       currentFormat = subModeData
     }
@@ -183,7 +194,7 @@ function loadDataFromFormat (formatName) {
   }
   document.getElementById('lineSpace').value = Number(format.lineSpace)
   changeLineSpace()
-  let centerHor = document.getElementById('centerHor')
+  const centerHor = document.getElementById('centerHor')
   if (format.centerHor) {
     if (!centerHor.checked) {
       centerHor.click()
@@ -193,7 +204,7 @@ function loadDataFromFormat (formatName) {
       centerHor.click()
     }
   }
-  let centerVer = document.getElementById('centerVer')
+  const centerVer = document.getElementById('centerVer')
   if (format.centerVer) {
     if (!centerVer.checked) {
       centerVer.click()
@@ -207,11 +218,11 @@ function loadDataFromFormat (formatName) {
   document.getElementById('centerVer').checked = format.centerVer
   setValueOfElemId('marginTop', format.marginTop)
   for (let i = 1; i <= format.lines; i++) {
-    let k = i - 1
+    const k = i - 1
     if (format.linesData[k]) {
       setValueOfElemId('fontLine_' + i, format.linesData[k].font)
     }
-    let evt = { 'target': { 'id': '' } }
+    const evt = { target: { id: '' } }
     evt.target.id = '_' + i
     changeLineFont(evt)
     if (format.linesData[k]) {
@@ -264,7 +275,7 @@ function saveConfig () {
         alert('Das Format wurde hinzugefügt.')
         close()
       } else {
-        let override = confirm('Wollen Sie die Änderungen übernehmen?')
+        const override = confirm('Wollen Sie die Änderungen übernehmen?')
         if (override) {
           writeToFiles()
           alert('Das Format wurde angepasst.')
@@ -283,7 +294,7 @@ function saveConfig () {
   }
 
   function writeToFiles () {
-    let objct = setObjct()
+    const objct = setObjct()
     fs.writeFileSync(defaultProgramPath + '\\FormateCSS\\' + getValueOfElemId('input_fileName') + '.css', createCSS(objct), 'utf8')
     fs.writeFileSync(defaultProgramPath + '\\Formate\\' + getValueOfElemId('input_fileName') + '.json', JSON.stringify(objct, null, 2), 'utf8')
     ipcRenderer.send('newConfig')
@@ -304,39 +315,39 @@ function removePrevNameFiles () {
 }
 
 function setObjct () {
-  let newConfig = {
-    'name': getValueOfElemId('input_fileName'),
-    'printer': getValueOfElemId('selectPrinter'),
-    'label': {
-      'width': getValueOfElemId('input_labelWidth') + 'mm',
-      'height': getValueOfElemId('input_labelHeight') + 'mm'
+  const newConfig = {
+    name: getValueOfElemId('input_fileName'),
+    printer: getValueOfElemId('selectPrinter'),
+    label: {
+      width: getValueOfElemId('input_labelWidth') + 'mm',
+      height: getValueOfElemId('input_labelHeight') + 'mm'
     },
-    'pdfName': getValueOfElemId('input_fileName') + '.pdf',
-    'paper': {
-      'width': getValueOfElemId('input_paperWidth'),
-      'height': getValueOfElemId('input_paperHeight')
+    pdfName: getValueOfElemId('input_fileName') + '.pdf',
+    paper: {
+      width: getValueOfElemId('input_paperWidth'),
+      height: getValueOfElemId('input_paperHeight')
     },
-    'lines': getValueOfElemId('input_labelLines'),
-    'example': {
-      'shelfmark': getValueOfElemId('input_example'),
-      'parts': parts
+    lines: getValueOfElemId('input_labelLines'),
+    example: {
+      shelfmark: getValueOfElemId('input_example'),
+      parts: parts
     },
-    'centerHor': document.getElementById('centerHor').checked,
-    'centerVer': document.getElementById('centerVer').checked,
-    'lineSpace': getValueOfElemId('lineSpace'),
-    'linesData': '',
-    'marginTop': getValueOfElemId('marginTop')
+    centerHor: document.getElementById('centerHor').checked,
+    centerVer: document.getElementById('centerVer').checked,
+    lineSpace: getValueOfElemId('lineSpace'),
+    linesData: '',
+    marginTop: getValueOfElemId('marginTop')
   }
-  let linesData = []
+  const linesData = []
   let i = 0
   while (i < newConfig.lines) {
-    let lineData = {
-      'id': i + 1,
-      'font': getValueOfElemId('fontLine_' + (i + 1)),
-      'fontSize': getValueOfElemId('fontSizeLine_' + (i + 1)),
-      'bold': document.getElementById('bold_' + (i + 1)).checked,
-      'italic': document.getElementById('italic_' + (i + 1)).checked,
-      'indent': getValueOfElemId('indent_' + (i + 1))
+    const lineData = {
+      id: i + 1,
+      font: getValueOfElemId('fontLine_' + (i + 1)),
+      fontSize: getValueOfElemId('fontSizeLine_' + (i + 1)),
+      bold: document.getElementById('bold_' + (i + 1)).checked,
+      italic: document.getElementById('italic_' + (i + 1)).checked,
+      indent: getValueOfElemId('indent_' + (i + 1))
     }
     linesData[i] = lineData
     i++
@@ -387,7 +398,7 @@ function createCSS (obj) {
     }
   }
   function linesStyle (str) {
-    for (let line of obj.linesData) {
+    for (const line of obj.linesData) {
       str += '.format_' + obj.name + ' > .innerBox > .line_' + line.id + ' {\n'
       str += 'font-family: "' + line.font + '";\n'
       str += 'font-size: ' + line.fontSize + 'pt;\n'
@@ -440,7 +451,7 @@ function close () {
 }
 
 function addLine () {
-  let line = document.createElement('p')
+  const line = document.createElement('p')
   lineCounter++
   line.id = 'line_' + lineCounter
   line.class = ''
@@ -453,8 +464,8 @@ function addLine () {
 function removeLine () {
   if (lineCounter > 1) {
     removeTableLine(lineCounter)
-    let parent = document.getElementById('innerBox')
-    let toDelete = parent.childNodes[lineCounter + 1]
+    const parent = document.getElementById('innerBox')
+    const toDelete = parent.childNodes[lineCounter + 1]
     toDelete.parentNode.removeChild(toDelete)
     lineCounter--
     setValueOfElemId('input_labelLines', lineCounter)
@@ -462,7 +473,7 @@ function removeLine () {
 }
 
 function changeLineSpace () {
-  let lines = document.getElementById('innerBox').children.length
+  const lines = document.getElementById('innerBox').children.length
   let i = 1
   while (i <= lines) {
     document.getElementById('line_' + i).style.marginBottom = document.getElementById('line_' + i).style.marginTop = getValueOfElemId('lineSpace') + 'px'
@@ -476,10 +487,10 @@ function addTableLine (id) {
   } else {
     id = id - 1
   }
-  let table = document.getElementById('tableLinesBody')
-  let row = table.insertRow(id)
+  const table = document.getElementById('tableLinesBody')
+  const row = table.insertRow(id)
   row.className = 'rowLine_' + (id + 1)
-  let cell = row.insertCell(0)
+  const cell = row.insertCell(0)
   cell.innerHTML = id + 1
   addTableLineFontSelect(id, row)
   addTableLineFontSize(id, row)
@@ -493,13 +504,13 @@ function removeTableLine (id) {
 }
 
 function addTableLineFontSelect (id, row) {
-  let cell = row.insertCell(1)
-  let selectDiv = document.createElement('div')
+  const cell = row.insertCell(1)
+  const selectDiv = document.createElement('div')
   selectDiv.className = 'select'
-  let select = document.createElement('select')
+  const select = document.createElement('select')
   select.id = 'fontLine_' + (id + 1)
   fonts.forEach(element => {
-    let font = document.createElement('option')
+    const font = document.createElement('option')
     if (element === 'Arial Narrow') {
       font.selected = true
     }
@@ -513,8 +524,8 @@ function addTableLineFontSelect (id, row) {
 }
 
 function addTableLineFontSize (id, row) {
-  let cell = row.insertCell(2)
-  let input = document.createElement('input')
+  const cell = row.insertCell(2)
+  const input = document.createElement('input')
   input.id = 'fontSizeLine_' + (id + 1)
   input.type = 'number'
   input.value = 14
@@ -524,8 +535,8 @@ function addTableLineFontSize (id, row) {
 }
 
 function addTableLineBold (id, row) {
-  let cell = row.insertCell(3)
-  let input = document.createElement('input')
+  const cell = row.insertCell(3)
+  const input = document.createElement('input')
   input.id = 'bold_' + (id + 1)
   input.type = 'checkbox'
   input.addEventListener('click', changeLineBold)
@@ -533,8 +544,8 @@ function addTableLineBold (id, row) {
 }
 
 function addTableLineItalic (id, row) {
-  let cell = row.insertCell(4)
-  let input = document.createElement('input')
+  const cell = row.insertCell(4)
+  const input = document.createElement('input')
   input.id = 'italic_' + (id + 1)
   input.type = 'checkbox'
   input.addEventListener('click', changeLineItalic)
@@ -542,8 +553,8 @@ function addTableLineItalic (id, row) {
 }
 
 function addTableLineIndent (id, row) {
-  let cell = row.insertCell(5)
-  let input = document.createElement('input')
+  const cell = row.insertCell(5)
+  const input = document.createElement('input')
   input.id = 'indent_' + (id + 1)
   input.type = 'number'
   input.value = 0
@@ -553,12 +564,12 @@ function addTableLineIndent (id, row) {
 }
 
 function changeLineIndent (event) {
-  let elemId = getId(event)
+  const elemId = getId(event)
   document.getElementById('line_' + elemId).style.marginLeft = getValueOfElemId('indent_' + elemId) + '%'
 }
 
 function changeLineItalic (event) {
-  let elemId = getId(event)
+  const elemId = getId(event)
   if (document.getElementById('line_' + elemId).style.fontStyle === 'italic') {
     document.getElementById('line_' + elemId).style.fontStyle = 'normal'
   } else {
@@ -567,7 +578,7 @@ function changeLineItalic (event) {
 }
 
 function changeLineBold (event) {
-  let elemId = getId(event)
+  const elemId = getId(event)
   if (document.getElementById('line_' + elemId).style.fontWeight === 'bold') {
     document.getElementById('line_' + elemId).style.fontWeight = 'inherit'
   } else {
@@ -576,18 +587,18 @@ function changeLineBold (event) {
 }
 
 function changeLineFont (event) {
-  let elemId = getId(event)
+  const elemId = getId(event)
   document.getElementById('line_' + elemId).style.fontFamily = '"' + getValueOfElemId('fontLine_' + elemId) + '"'
 }
 
 function getId (event) {
-  let htmlElement = event.target.id
-  let parts = htmlElement.split('_')
+  const htmlElement = event.target.id
+  const parts = htmlElement.split('_')
   return parts[1]
 }
 
 function changeLineFontSize (event) {
-  let elemId = getId(event)
+  const elemId = getId(event)
 
   document.getElementById('line_' + elemId).style.fontSize = getValueOfElemId('fontSizeLine_' + elemId) + 'pt'
 }
@@ -609,7 +620,7 @@ function centerVer () {
 }
 
 function getPrinterNameList () {
-  let nameList = []
+  const nameList = []
   let i = 0
   _.forEach(printerList, function (key) {
     nameList[i] = key.name

@@ -1,6 +1,6 @@
 const _ = require('lodash')
 const fs = require('fs')
-const XRegExp = require('xregexp')
+// const XRegExp = require('xregexp')
 
 class Preview {
   /*
@@ -20,16 +20,16 @@ class Preview {
   changePreview (id, file, formats, manualSignatures) {
     this.removeSignaturePreview()
 
-    let format = document.getElementById('templateSelect_' + id).value
-    let formatName = document.getElementById('templateSelect_' + id).value
+    const format = document.getElementById('templateSelect_' + id).value
+    const formatName = document.getElementById('templateSelect_' + id).value
     this.myNode.className = 'format_' + format
 
     if (!String(id).includes('m_')) {
-      let found = _.find(JSON.parse(Preview.readFile(file)), { 'id': Number(id) })
+      const found = _.find(JSON.parse(Preview.readFile(file)), { id: Number(id) })
       this.searchAndShow(found, formats[formatName].lines, formatName)
       document.getElementsByClassName('innerBox')[0].className = 'innerBox'
     } else {
-      let cleanId = id.split('m_')[1]
+      const cleanId = id.split('m_')[1]
       this.checkIfNoIndent(cleanId, manualSignatures, formats[formatName].lines, formatName)
     }
   }
@@ -40,14 +40,14 @@ class Preview {
   }
 
   searchAndShow (found, formatLines, formatName) {
-    let lines = _.find(found.modes, { 'format': formatName }).lines
+    const lines = _.find(found.modes, { format: formatName }).lines
     if (found !== undefined) {
       this.showData(lines, formatLines)
     }
   }
 
   checkIfNoIndent (cleanId, manualSignatures, formatLines, formatName) {
-    let lines = _.find(manualSignatures[cleanId].modes, { 'format': formatName }).lines
+    const lines = _.find(manualSignatures[cleanId].modes, { format: formatName }).lines
     this.showData(lines, formatLines)
     if (manualSignatures[cleanId].removeIndent) {
       document.getElementsByClassName('innerBox')[0].className = 'innerBox noIndent'
@@ -96,10 +96,10 @@ function removeOld (node) {
 
 function createPreviewLines (innerBox, formatLines) {
   for (let i = 1; i <= formatLines; i++) {
-    let line = document.createElement('p')
+    const line = document.createElement('p')
     line.id = 'line_' + i
     line.className = 'line_' + i
-    let emptyLine = document.createElement('br')
+    const emptyLine = document.createElement('br')
     line.appendChild(emptyLine)
     innerBox.appendChild(line)
   }

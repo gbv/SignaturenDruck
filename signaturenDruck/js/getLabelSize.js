@@ -1,10 +1,11 @@
-// requires remote from electron to retrieve global var
-const { remote } = require('electron')
-const config = remote.getGlobal('config')
+const Store = require('electron-store')
+const C = require('./classes/Config')
+const defaultProgramPath = new C().defaultPath
+const config = new Store({ cwd: defaultProgramPath })
 
 module.exports = function labelSize (txt) {
-  let numberOfSeperators = getCountOfSeparators(txt, config.get('newLineAfter'))
-  let numberOfWhitespaces = getCountOfSeparators(txt, ' ')
+  const numberOfSeperators = getCountOfSeparators(txt, config.get('newLineAfter'))
+  const numberOfWhitespaces = getCountOfSeparators(txt, ' ')
   if ((numberOfSeperators >= 2) && (numberOfSeperators > numberOfWhitespaces)) {
     return true
   } else {

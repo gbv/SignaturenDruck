@@ -2,18 +2,15 @@
 // be executed in the renderer process for that window.
 // All of the Node.js APIs are available in this process.
 
-// requires the fs-module
-const fs = require('fs')
-
 // requires the lodash-module
 const _ = require('lodash')
 
-// requires the username-module
-const username = require('username')
-
 // required for ipc calls to the main process
-const { ipcRenderer, remote } = require('electron')
-const config = remote.getGlobal('config')
+const { ipcRenderer } = require('electron')
+const Store = require('electron-store')
+const C = require('./classes/Config')
+const defaultProgramPath = new C().defaultPath
+const config = new Store({ cwd: defaultProgramPath })
 
 const moment = require('moment')
 
@@ -34,14 +31,17 @@ function createPage (formatInformation, printInformation, printImmediately, last
   } else {
     removeCoverLabel()
   }
+  if (config.get('print.reverseOrder')) {
+    printInformation.reverse()
+  }
   _.each(printInformation, data => {
     for (let i = 1; i <= data.count; i++) {
-      let div = document.createElement('div')
+      const div = document.createElement('div')
       data.data.removeIndent ? div.className = 'innerBox noIndent' : div.className = 'innerBox'
       div.id = data.id + '_' + i
-      let lines = _.find(data.data.modes, { 'format': formatInformation.name }).lines
+      const lines = _.find(data.data.modes, { format: formatInformation.name }).lines
       for (let j = 0; j < formatInformation.lines && j < lines.length; j++) {
-        let p = document.createElement('p')
+        const p = document.createElement('p')
         p.className = 'line_' + (j + 1)
         lines[j] === '' ? p.appendChild(document.createElement('br')) : p.innerHTML = lines[j]
         div.appendChild(p)
@@ -53,7 +53,7 @@ function createPage (formatInformation, printInformation, printImmediately, last
 }
 
 function removeCoverLabel () {
-  let coverLabel = document.getElementById('coverLabel')
+  const coverLabel = document.getElementById('coverLabel')
   coverLabel.parentNode.removeChild(coverLabel)
 }
 
@@ -63,7 +63,7 @@ function fillCoverLabel () {
 }
 
 function addUsername () {
-  document.getElementById('currentUsername').innerHTML = username.sync()
+  document.getElementById('currentUsername').innerHTML = config.get('username')
 }
 
 function addDate () {

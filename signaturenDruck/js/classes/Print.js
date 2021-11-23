@@ -6,6 +6,7 @@ class Print {
   get dataAll () {
     return this._dataAll.all
   }
+
   constructor (file, formats, manuelSignature) {
     this.formats = formats
     this.manualSignature = manuelSignature
@@ -21,9 +22,9 @@ class Print {
   }
 
   getSelectedElementsToPrint () {
-    let wak = []
+    const wak = []
     _.each(this.elements, (k, v) => {
-      let dataStructure = {
+      const dataStructure = {
         id: '',
         count: '1',
         format: '',
@@ -31,7 +32,7 @@ class Print {
         data: ''
       }
       if (k.checked) {
-        let parentRow = k.parentNode.parentNode
+        const parentRow = k.parentNode.parentNode
         dataStructure.id = v
         dataStructure.count = setCount(parentRow)
         dataStructure.format = setFormat.bind(this, parentRow)()
@@ -57,9 +58,9 @@ function setFormat (parentRow) {
 }
 
 function setFormatInformation (arr) {
-  let b = []
+  const b = []
   _.each(arr, (v, k) => {
-    let structure = {
+    const structure = {
       formatInformation: '',
       printInformation: ''
     }
@@ -71,8 +72,8 @@ function setFormatInformation (arr) {
 }
 
 function setData (current, parentRow) {
-  let ppn = parentRow.id.split('-')
-  let id = current.id.split('_')
+  const ppn = parentRow.id.split('-')
+  const id = current.id.split('_')
   if (ppn[0] === 'manual') return this.manualSignature[id[2]]
   else return _.find(this.jsonFile, { id: parseInt(id[1]), PPN: ppn[0] })
 }

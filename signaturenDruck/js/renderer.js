@@ -4,12 +4,16 @@
 
 // requires the fs-module
 const fs = require('fs')
+const Store = require('electron-store')
+const C = require('./classes/Config')
+const { serialize } = require('serialijse')
+const defaultProgramPath = new C().defaultPath
+const config = new Store({ cwd: defaultProgramPath })
 
 // required for ipc calls to the main process
-const { ipcRenderer, remote } = require('electron')
+const { ipcRenderer } = require('electron')
 
-const config = remote.getGlobal('config')
-const sigJSONFile = remote.getGlobal('sigJSONFile')
+const sigJSONFile = config.get('sigJSONFile')
 
 const swal = require('sweetalert2')
 const _ = require('lodash')
@@ -18,12 +22,12 @@ const T = require('./classes/Table')
 const P = require('./classes/Print')
 const ShelfmarksFromSRUData = require('./classes/ShelfmarksFromSRUData')
 
-let objSRU = {
+const objSRU = {
   all: []
 }
 
-let displayModalOnSuccess = true
-let table = new T(sigJSONFile)
+const displayModalOnSuccess = true
+const table = new T(sigJSONFile)
 
 // function on window load
 window.onload = function () {
@@ -36,10 +40,10 @@ window.onload = function () {
   }
 
   document.getElementById('modalTxt').innerHTML = config.get('modal.modalTxt')
-  let fileSelected = document.getElementById('fileToRead')
+  const fileSelected = document.getElementById('fileToRead')
   if (config.get('SRU.useSRU') === false) {
     if (fs.existsSync(config.get('defaultDownloadPath'))) {
-      table.readDownloadFile(config.get('defaultDownloadPath'))
+      table.readDownloadFile('' + String(config.get('defaultDownloadPath')))
       document.getElementById('defaultPath').innerHTML = config.get('defaultDownloadPath')
     } else {
       document.getElementById('defaultPath').innerHTML = 'nicht vorhanden'
@@ -80,9 +84,12 @@ ipcRenderer.on('couldNotDelete', function (event, path) {
 })
 
 // function to send objMan to the manual window
-function openManualSignaturesWindow (edit = false) {
-  (table.manualSignature.length === 0) ? table.manualSignature = [] : null
-  ipcRenderer.send('openManualSignaturesWindow', table.manualSignature, edit)
+function openManualSignaturesWindow (edit = 'false') {
+  if (table.manualSignature.length === 0) {
+    table.manualSignature = []
+  }
+  const transData = serialize(table.manualSignature)
+  ipcRenderer.send('openManualSignaturesWindow', transData)
 }
 
 // ipc listener to add new manual data to the table
@@ -101,19 +108,19 @@ ipcRenderer.on('removeManualSignatures', function (event) {
 
 // ipc listener to add provided data to the SRU obj
 ipcRenderer.on('addSRUdata', function (event, xml, barcode, mode) {
-  let data = new ShelfmarksFromSRUData()
-  let shelfmark = data.getShelfmark(xml, barcode, mode)
+  const data = new ShelfmarksFromSRUData()
+  const shelfmark = data.getShelfmark(xml, barcode, mode)
   if (shelfmark.error !== '') {
     swal.fire('Achtung', shelfmark.error, 'error')
       .then(() => {})
   } else {
     if (shelfmark.PPN) {
-      let index = objSRU.all.length
+      const index = objSRU.all.length
       objSRU.all[index] = shelfmark
       objSRU.all[index].id = index + 1
       table.readSRUData(objSRU.all)
       if (document.getElementById('chkbx_printImmediately').checked) {
-        let node = document.getElementById('print_' + (index + 1))
+        const node = document.getElementById('print_' + (index + 1))
         node.click()
         printButton(event, true)
       }
@@ -184,11 +191,12 @@ function printButton (event, printImmediately = false) {
       swal.fire('Nichts zu drucken', 'Es wurde keine Signatur ausgewählt!', 'info')
     }
   }
+  // document.getElementById('input_barcode').focus()
 }
 
 // returns true if there is something to print
 function isSomethingToPrint () {
-  let elems = document.querySelectorAll('[name=toPrint]')
+  const elems = document.querySelectorAll('[name=toPrint]')
   let somethingToPrint = false
   _.forEach(elems, function (elem) {
     if (elem.checked) {
@@ -205,7 +213,7 @@ function getPrintData () {
 
 // function to invert the print-selection
 function invertPrintingSelection () {
-  let elems = document.querySelectorAll('[name=toPrint]')
+  const elems = document.querySelectorAll('[name=toPrint]')
   for (let i = 0; i < elems.length; i++) {
     elems[i].checked = !elems[i].checked
   }
@@ -213,7 +221,7 @@ function invertPrintingSelection () {
 
 // function to invert the short-selection
 function invertShortSelection () {
-  let elems = document.querySelectorAll('[name=shortShelfmark]')
+  const elems = document.querySelectorAll('[name=shortShelfmark]')
   for (let i = 0; i < elems.length; i++) {
     elems[i].click()
   }
@@ -221,14 +229,14 @@ function invertShortSelection () {
 
 // function to select shelfmarks per date
 function selectByDate () {
-  let datepicker = document.getElementById('datepicker')
-  let pickedDate = datepicker.value
+  const datepicker = document.getElementById('datepicker')
+  const pickedDate = datepicker.value
   if (pickedDate !== '') {
-    let pickedDateFormated = pickedDate.replace(/(\d{2})(\d{2})-(\d{2})-(\d{2})/, '$4-$3-$2')
-    let elems = document.querySelectorAll('[name=toPrint]')
+    const pickedDateFormated = pickedDate.replace(/(\d{2})(\d{2})-(\d{2})-(\d{2})/, '$4-$3-$2')
+    const elems = document.querySelectorAll('[name=toPrint]')
     for (let i = 0; i < elems.length; i++) {
-      let elemValue = elems[i].value
-      let date = document.getElementById('dateCell_' + elemValue).innerHTML
+      const elemValue = elems[i].value
+      const date = document.getElementById('dateCell_' + elemValue).innerHTML
       document.getElementById('print_' + elemValue).checked = date === pickedDateFormated
     }
   }
@@ -260,8 +268,8 @@ function openEditorWindow (event) {
 }
 
 function changePlaceholder () {
-  let selectValue = document.getElementById('select_dataMode').value
-  let input = document.getElementById('input_barcode')
+  const selectValue = document.getElementById('select_dataMode').value
+  const input = document.getElementById('input_barcode')
   if (selectValue === 'PPN') {
     input.placeholder = 'Barcode'
   } else {

@@ -1,15 +1,18 @@
 const _ = require('lodash')
 const fs = require('fs')
-const { ipcRenderer, remote } = require('electron')
-const config = remote.getGlobal('config')
-const formats = require('./Formats')
-const modes = require('./Modes')
-const printers = require('./Printers')
-const preview = require('./Preview')
-const manualSignature = require('./ManualSignatures')
-const jsonfile = require('./JsonFile')
-const downloadfile = require('./DownloadFile')
+const { ipcRenderer } = require('electron')
+const Formats = require('./Formats')
+const Modes = require('./Modes')
+const Printers = require('./Printers')
+const Preview = require('./Preview')
+const ManualSignature = require('./ManualSignatures')
+const Jsonfile = require('./JsonFile')
 const swal = require('sweetalert2')
+
+const Store = require('electron-store')
+const C = require('./Config')
+const defaultProgramPath = new C().defaultPath
+const config = new Store({ cwd: defaultProgramPath })
 
 class Table {
   /*
@@ -22,6 +25,7 @@ class Table {
   set manualSignature (value) {
     this._manualSignature.signatures = value
   }
+
   get formats () {
     return this._formats
   }
@@ -40,15 +44,15 @@ class Table {
     this.tableHtml = document.getElementById('shelfmarkTable')
     this.tableHtmlBody = document.getElementById('shelfmarkTableBody')
     this.tableHtmlManual = document.getElementsByClassName('manual')
-    this.format = new formats()
-    this.mode = new modes()
+    this.format = new Formats()
+    this.mode = new Modes()
     this.selectOptions = this.format.selectOptions
     this._formats = this.format.formats
     this._modes = this.mode.modes
-    this.printers = new printers(this._formats)
-    this.preview = new preview()
-    this.file = new jsonfile(file)
-    this._manualSignature = new manualSignature()
+    this.printers = new Printers(this._formats)
+    this.preview = new Preview()
+    this.file = new Jsonfile(file)
+    this._manualSignature = new ManualSignature()
   }
   /*
   ----- End Constructor -----
@@ -59,7 +63,7 @@ class Table {
    */
 
   createMainTable (obj) {
-    let body = this.tableHtml.getElementsByTagName('tbody')[0]
+    const body = this.tableHtml.getElementsByTagName('tbody')[0]
     let i = 0
     if (config.get('sortByPPN')) {
       _.forEach(obj, (key, value) => {
@@ -138,7 +142,7 @@ class Table {
   }
 
   static createCell (row, i, className, value) {
-    let cell = row.insertCell(i)
+    const cell = row.insertCell(i)
     if (i === 0) {
       cell.innerHTML = value
     } else {
@@ -148,7 +152,7 @@ class Table {
   }
 
   createTxtCell (row, cellNr, id, txt, defaultSubMode) {
-    let txtCell = row.insertCell(cellNr)
+    const txtCell = row.insertCell(cellNr)
     if (defaultSubMode !== '') {
       txtCell.onclick = () => this.preview.changePreview(id, this.file.file, this._formats, this.manualSignature)
     }
@@ -161,7 +165,7 @@ class Table {
   }
 
   createDateCell (row, cellNr, id, date = '-', defaultSubMode) {
-    let dateCell = row.insertCell(cellNr)
+    const dateCell = row.insertCell(cellNr)
     if (defaultSubMode !== '') {
       dateCell.onclick = () => this.preview.changePreview(id, this.file.file, this._formats, this.manualSignature)
     }
@@ -171,7 +175,7 @@ class Table {
   }
 
   createExnrCell (row, cellNr, id, exNr = '-', defaultSubMode) {
-    let isNrCell = row.insertCell(cellNr)
+    const isNrCell = row.insertCell(cellNr)
     if (defaultSubMode !== '') {
       isNrCell.onclick = () => this.preview.changePreview(id, this.file.file, this._formats, this.manualSignature)
     }
@@ -180,12 +184,12 @@ class Table {
   }
 
   createShortShelfmarkCell (row, cellNr, id, subMode, object) {
-    let shortShelfmarkCell = row.insertCell(cellNr)
+    const shortShelfmarkCell = row.insertCell(cellNr)
     shortShelfmarkCell.className = 'shortShelfmarkCell'
     if (config.get('mode.defaultMode') === 'thulbMode') {
       if (!String(id).includes('m_')) {
-        if (subMode !== 0 && object.modes[1].lines !== null && object.modes[2].lines !== null) {        
-          let input = document.createElement('input')
+        if (subMode !== 0 && object.modes[1].lines !== null && object.modes[2].lines !== null) {
+          const input = document.createElement('input')
           input.id = 'short_' + id
           input.type = 'checkbox'
           input.name = 'shortShelfmark'
@@ -209,10 +213,10 @@ class Table {
   }
 
   createPrintCell (row, cellNr, id, defaultSubMode) {
-    let printCell = row.insertCell(cellNr)
+    const printCell = row.insertCell(cellNr)
     printCell.className = 'printCell'
     if (defaultSubMode !== '') {
-      let input = document.createElement('input')
+      const input = document.createElement('input')
       input.id = 'print_' + id
       input.type = 'checkbox'
       input.name = 'toPrint'
@@ -223,10 +227,10 @@ class Table {
   }
 
   static createPrintCountCell (row, cellNr, id, defaultSubMode) {
-    let printCountCell = row.insertCell(cellNr)
+    const printCountCell = row.insertCell(cellNr)
     printCountCell.className = 'printCountCell'
     if (defaultSubMode !== '') {
-      let input = document.createElement('input')
+      const input = document.createElement('input')
       input.id = 'count_' + id
       input.className = 'input'
       input.type = 'number'
@@ -240,23 +244,23 @@ class Table {
 
   createLabelSizeCell (row, cellNr, id, defaultSubMode, subModes, modes) {
     if (defaultSubMode === '') {
-      let cell = row.insertCell(cellNr)
-      let div = document.createElement('div')
-      let p = document.createElement('p')
+      const cell = row.insertCell(cellNr)
+      const div = document.createElement('div')
+      const p = document.createElement('p')
       p.innerHTML = 'kein Format'
       div.appendChild(p)
       cell.appendChild(div)
     } else {
-      let cell = row.insertCell(cellNr)
-      let div = document.createElement('div')
+      const cell = row.insertCell(cellNr)
+      const div = document.createElement('div')
       div.className = 'select'
-      let select = document.createElement('select')
+      const select = document.createElement('select')
       select.id = 'templateSelect_' + id
       this.selectOptions.forEach(element => {
-        let size = document.createElement('option')
+        const size = document.createElement('option')
         size.value = element
         size.innerHTML = element
-        let data = _.find(modes, { 'format': element })
+        const data = _.find(modes, { format: element })
         if (!this.printers.printers[element] || data === undefined || (data.lines === null)) {
           size.disabled = true
         }
@@ -282,9 +286,9 @@ class Table {
       this.clearMainTable()
     }
     if (config.get('sortByPPN')) {
-      this.createMainTable(groupByPPN(JSON.parse(jsonfile.readFile(this.file.file))))
+      this.createMainTable(groupByPPN(JSON.parse(Jsonfile.readFile(this.file.file))))
     } else {
-      this.createMainTable(JSON.parse(jsonfile.readFile(this.file.file)))
+      this.createMainTable(JSON.parse(Jsonfile.readFile(this.file.file)))
     }
   }
 
@@ -300,15 +304,15 @@ class Table {
   }
 
   pushToManual (id) {
-    let shelfmark = _.find(JSON.parse(jsonfile.readFile(this.file.file)), { 'id': Number(id) })
-    let manual = {}
+    const shelfmark = _.find(JSON.parse(Jsonfile.readFile(this.file.file)), { id: Number(id) })
+    const manual = {}
     manual.defaultSubMode = 0
     manual.format = document.getElementById('templateSelect_' + id).value
     manual.id = this.manualSignature.length
     manual.modes = [
       {
         format: manual.format,
-        lines: _.find(shelfmark.modes, { 'format': manual.format }).lines
+        lines: _.find(shelfmark.modes, { format: manual.format }).lines
       }
     ]
     manual.txtLength = manual.modes[0].lines.length
@@ -326,7 +330,7 @@ class Table {
    */
   readSRUData (object) {
     if (!fs.existsSync(this.file.file)) {
-      jsonfile.createJsonFile(this.file.file)
+      Jsonfile.createJsonFile(this.file.file)
       this.file.writeToJsonFile(object, this.format._formats, true)
       this.displayMainTable()
       return true
@@ -340,7 +344,7 @@ class Table {
   readDownloadFile (path) {
     if (fs.existsSync(path)) {
       if (!fs.existsSync(this.file.file)) {
-        jsonfile.createJsonFile(this.file.file)
+        Jsonfile.createJsonFile(this.file.file)
         this.file.writeToJsonFile(fs.readFileSync(path, 'utf-8'), this.format._formats)
         this.displayMainTable()
         return true
@@ -355,7 +359,7 @@ class Table {
 
   refreshDownloadFile () {
     this.preview.removeSignaturePreview()
-    let currentFile = document.getElementById('defaultPath').innerHTML
+    const currentFile = document.getElementById('defaultPath').innerHTML
     if (!this.readDownloadFile(currentFile)) {
       if (this.readDownloadFile(config.get('defaultDownloadPath'))) {
         document.getElementById('defaultPath').innerHTML = config.get('defaultDownloadPath')
@@ -391,7 +395,7 @@ class Table {
    */
 
   addManualSignaturesToTable (obj) {
-    let body = this.tableHtml.getElementsByTagName('tbody')[0]
+    const body = this.tableHtml.getElementsByTagName('tbody')[0]
     let row = body.insertRow(0)
     row.className = 'ppnRow manual'
     Table.createPpnRow(row, 'manuell')

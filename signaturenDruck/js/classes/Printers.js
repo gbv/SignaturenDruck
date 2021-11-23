@@ -1,6 +1,9 @@
 const _ = require('lodash')
-const { remote } = require('electron')
-const printerList = remote.getCurrentWindow().webContents.getPrinters()
+const Store = require('electron-store')
+const C = require('./Config')
+const defaultProgramPath = new C().defaultPath
+const config = new Store({ cwd: defaultProgramPath })
+const printerList = config.get('print.printerList')
 class Printers {
   /*
  ----- Class getter and setter -----
@@ -26,7 +29,7 @@ class Printers {
 
   // function to get the printerList
   getPrinterNameList () {
-    let nameList = []
+    const nameList = []
     let i = 0
     _.forEach(printerList, function (key) {
       nameList[i] = key.name
@@ -36,9 +39,8 @@ class Printers {
   }
 
   checkPrinters () {
-    let printerList = this.getPrinterNameList()
-    let printerNameError = []
-    for (let format in this.formats) {
+    const printerNameError = []
+    for (const format in this.formats) {
       if (this.formats.hasOwnProperty(format)) {
         this._printers[format] = Printers.isIncluded(this.formats[format].printer, printerList)
         if (/(\s-\s?)/.test(this.formats[format].printer) || /(\s?-\s)/.test(this.formats[format].printer)) {
@@ -46,8 +48,8 @@ class Printers {
         }
       }
     }
-    let printerNotFound = []
-    for (let printer in this.printers) {
+    const printerNotFound = []
+    for (const printer in this.printers) {
       if (this.printers.hasOwnProperty(printer)) {
         if (!this.printers[printer]) {
           printerNotFound.push(printer)

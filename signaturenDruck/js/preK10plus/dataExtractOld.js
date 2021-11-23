@@ -7,7 +7,7 @@ class dataExtractOld {
   // extracts the PPN
   ppn (str) {
     // regex defines 2 groups
-    let regex = /^(\d{4}\s\s*)(.*)(\s*)$/
+    const regex = /^(\d{4}\s\s*)(.*)(\s*)$/
 
     // returns the second regex group
     return str.replace(regex, '$2')
@@ -16,7 +16,7 @@ class dataExtractOld {
   // extracts the exNr
   exNr (str) {
     // regex defines 2 groups
-    let regex = /^(\d{4})(.*)$/
+    const regex = /^(\d{4})(.*)$/
 
     // returns the  first regex group
     return str.replace(regex, '$1')
@@ -37,7 +37,7 @@ class dataExtractOld {
 
     let foundAt = str.indexOf('/')
     if (foundAt !== -1) {
-      let controlIndex = str.indexOf('!')
+      const controlIndex = str.indexOf('!')
       if ((controlIndex !== -1) && (controlIndex > foundAt)) {
         str = str.substr(foundAt + 1)
       }
@@ -68,7 +68,7 @@ class dataExtractOld {
   // extracts the date
   date (str) {
     // regex defines 3 groups
-    let regex = /^(\d{4}\s\s*)(\d{2}-\d{2}-\d{2})(.*)$/
+    const regex = /^(\d{4}\s\s*)(\d{2}-\d{2}-\d{2})(.*)$/
 
     // returns the second regex group
     return str.replace(regex, '$2')
@@ -77,14 +77,14 @@ class dataExtractOld {
   // extracts the location
   location (str) {
     // group 2 is the location
-    let regex = /^(.[^!]*)!(.[^!]*)(.*)$/
+    const regex = /^(.[^!]*)!(.[^!]*)(.*)$/
     return str.replace(regex, '$2').trim()
   }
 
   // extracts the loanIndication
   loanIndication (str) {
     // group 2 is the loanIndication
-    let regex = /^(.[^@]*)@(.*)$/
+    const regex = /^(.[^@]*)@(.*)$/
     return str.replace(regex, '$2').trim()
   }
 }

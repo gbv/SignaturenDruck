@@ -2,8 +2,8 @@
 module.exports = function (shelfmark) {
   let txt = shelfmark
   let shelfmarkArray = []
-  let indxSlash = txt.indexOf('/')
-  let indxColon = txt.indexOf(':')
+  const indxSlash = txt.indexOf('/')
+  const indxColon = txt.indexOf(':')
   let i = 0
   shelfmarkArray[0] = txt
   if (indxSlash !== -1) {
@@ -15,10 +15,10 @@ module.exports = function (shelfmark) {
       setSigTxt0and1(indxColon, txt)
     } else {
       let i = 0
-      let txt = []
-      let length = shelfmarkArray.length
+      const txt = []
+      const length = shelfmarkArray.length
       shelfmarkArray.forEach(element => {
-        let indx = element.indexOf(':')
+        const indx = element.indexOf(':')
         if (indx !== -1) {
           let j = 0
           while (j < i) {
@@ -42,9 +42,9 @@ module.exports = function (shelfmark) {
   }
   i = 0
   txt = []
-  let length = shelfmarkArray.length
+  const length = shelfmarkArray.length
   shelfmarkArray.forEach(element => {
-    let elementParts = element.split(' ')
+    const elementParts = element.split(' ')
     if (elementParts.length >= 3) {
       let j = 0
       while (j < i) {

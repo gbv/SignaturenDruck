@@ -19,7 +19,7 @@ class FormatLinesByMode {
    */
 
   static formatLines (location, lines, linesOrdered, formatLines = '') {
-    let data = []
+    const data = []
     if (formatLines !== '') {
       for (let j = 0; j < formatLines; j++) {
         data[j] = ''
@@ -27,13 +27,13 @@ class FormatLinesByMode {
     }
     let i = 0
     _.each(linesOrdered, function (value) {
-      let regex1 = new RegExp(/\$\d{1,3}/)
-      let regex2 = new RegExp(/\$LOC/)
-      let regex3 = new RegExp(/\$DATE/)
+      const regex1 = new RegExp(/\$\d{1,3}/)
+      const regex2 = new RegExp(/\$LOC/)
+      const regex3 = new RegExp(/\$DATE/)
       while (regex1.test(value)) {
-        let matches = value.match(regex1)
+        const matches = value.match(regex1)
         _.each(matches, function (match) {
-          let group = match.split('$')[1]
+          const group = match.split('$')[1]
           if (lines[group - 1] !== undefined) {
             value = value.replace(match, lines[group - 1])
           } else {
