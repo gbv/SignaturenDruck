@@ -22,9 +22,7 @@ npm install
 npm start
 ```
 
-
 The app creates the directory `C:\SignaturenDruck` and stores the config files in it.
-
 
 In the `config.json` you can change the various switches, like `defaultMode` or `defaultDownloadPath`.
 
@@ -51,6 +49,7 @@ npm run build:portable
 ```
 
 # Dokumentation
+
 ## Kurzbeschreibung
 
 Der SignaturenDruck kann Signaturen aus einer Datei auslesen, sie via SRU laden oder auch manuell erstellen.
@@ -58,13 +57,16 @@ Das Programm bietet eine Vielzahl an Einstellungsmöglichkeiten. So lassen sich 
 Zum Druck werden PDF-Dateien erstellt, die mit Hilfe des Adobe Acrobar Reader DC gedruckt werden.  
 
 ## Installation
+
 Das Programm kann einfach mit der entsprechenden `.exe` (ia32 oder x64) installiert werden.  
 Das Programm wird dann unter `C:\Users\USERNAME\AppData\Local\Programs\SignaturenDruck_neu` installiert.  
 Auf dem Desktop des Nutzers wird eine Verknüpfung zum starten des SignaturenDrucks erzeugt.  
 Nach erfolgreicher Installation startet das Programm auch direkt.
 
 ## Arbeiten mit dem Programm
+
 ### Start des Programms
+
 Es wird bei jedem Start des Programms geprüft ob die notwendigen Konfigurationsdateien und Ordner vorhanden sind, ist dies nicht der Fall so werden diese neu erstellt.  
 Hierbei handelt es sich um:  
 
@@ -121,7 +123,9 @@ Mit der Tastenkombination
 kann das Fenster zum erstellen / bearbeiten eines Modus geöffnet werden.  
 
 ![Oberflaeche zum erstellen / bearbeiten eines Modus](docu/imgs/oberflaecheModusErstellenBearbeiten.PNG)
+
 ### Modus
+
 #### Modus
 
 Im Dropdown kann entweder ein bereits bestehender Modus oder ein "--neuer Modus--" ausgewählt werden.  
@@ -133,6 +137,7 @@ Im Dropdown werden alle Untermodi des bereits gewählten Modus angezeigt. Analog
 Der Name des Untermodus legt auch den Namen des zugehörigen Formats fest.  
 
 ### Signaturenaufbau
+
 #### Beispiel
 
 In diesem Feld wird die Beispielsignatur aus der `config.json` geladen. Die Signatur kann verändert werden.  
@@ -203,7 +208,6 @@ Es werden unterschiedliche Eigenschaften des Labels erfasst.
 | `Vertikal zentrieren` | ermöglicht das vertikale zentrieren aller Zeilen |  
 | `Korrekturabstand oben` | ermöglicht eine Veränderung des Abstands beim Drucken von der jeweils ersten Zeile eines Labels zum Rand. Positive Werte vergrößern den Abstand, negative Werte verringern den Abstand. |  
 
-
 ### Tabelle
 
 In der Tabelle werden für jede Zeile einige Einstellungsmöglichkeiten angezeigt.  
@@ -217,7 +221,6 @@ In der Tabelle werden für jede Zeile einige Einstellungsmöglichkeiten angezeig
 | `Kursiv` | mit einem Klick auf die jeweilige Checkbox kann die Zeile als _kursiv_ dargestellt werden |  
 | `Einzug` | hier kann der Einzug der jeweiligen Zeile in Prozent eingetragen werden |  
 
-  
 ### Speichern / Schließen
 
 Mit einem Klick auf `Speichern` kann das Format abgespeichert bzw. können die Änderungen übernommen werden.  
@@ -230,7 +233,7 @@ Die `config.json` unter `C:\SignaturenDruck\` bietet folgende Optionen.
 
 | key | Beschreibung | Standardwert |
 | :---: | --- | ---|
-| `defaultPath` | damit kann der Pfad zur Datei verändert werden, welche beim starten des Programms automatisch ausgelesen werden soll. | `"C:/Export/download.dnl"` |  
+| `defaultDownloadPath` | damit kann der Pfad zur Datei verändert werden, welche beim starten des Programms automatisch ausgelesen werden soll. | `"C:/Export/download.dnl"` |  
 | `sortByPPN` | ermöglicht die ausgelesenen Daten per PPN sortiert darzustellen. | `false` |  
 | `useK10plus` | ermöglicht die Verwendung des Datenformates der WinIBW mit K10plus | `true` |  
 | `hideDeleteBtn` | ermöglicht das ausblenden des 'Lösche Download Datei'-Buttons | `false` |  
@@ -249,17 +252,26 @@ Die `config.json` unter `C:\SignaturenDruck\` bietet folgende Optionen.
 | `SRU.QueryPart1EPN` | der erste Teil des SRU-EPN-Query | `"?version=1.1&operation=searchRetrieve&query=pica.bar="` |  
 | `SRU.QueryPart2` | der zweite Teil des SRU-Query | `"&maximumRecords=1&recordSchema=picaxml"` |  
 | `print.printCoverLabel` | ermöglicht den Druck des CoverLabels (Username + Datum) | `true` |  
+| `print.reverseOrder` | ermöglicht die Signaturen in umgedrehter reinfolge zu drucken | `false` |  
+| `print.printerList` | wird beim ersten Start automatisch erzeugt, enthält alle verfügbaren Druckernamen, kann nicht verändert werden | - |  
+| `print.showPrintDialog` | ermöglicht ein ausblenden der Druckbestätigung | `true` |  
+| `print.orientation` | legt die ausrichtung des Drucks fest, Optionen: `landscape`,`portrait` | `landscape` |  
+| `print.scale` | legt die Skalierung des Drucks fest, Optionen: `noscale`, `shrink`, `fit` | `noscale` |  
 | `mode.defaultMode` | legt den zu verwendenden Modus fest | `"thulbMode"` |  
 | `devMode` | dient zur Fehlersuche, zeigt die Fenster der jeweiligen Formate an, die im Formalfall nicht zu sehen sind. Die PDFs werden erstellt aber weder gelöscht noch gedruckt. | `false` |  
+| `username` | der Nutzername des letzten Benutzers, wird automatisch geschrieben, kann nicht verändert werden | - |  
+| `defaultProgrammPath` | enthält den Pfad des SignaturenDrucks, wird automatisch geschrieben, kann nicht verändert werden | - |  
+| `sigJSONFile` | enthält den Namen der temporären Signaturendatei, wird automatisch geschrieben | - |  
+| `configVersion` | enthält die Versionsnummer der Konfigurationsdatei, sollte nicht manuell verändert werden | - |
 
 ## FAQ
 
 ### Modus / Untermodus
 
-#### Ich sehe das Format, kann es aber nie auswählen.
+#### Ich sehe das Format, kann es aber nie auswählen
 
 Dies kann zwei Ursachen haben.  
-1. Ursache: Das Format gehört zu einem Untermodus der nicht dem derzeitigen Modus zugeordnet ist.  
+1. Ursache: Das Format gehört zu einem Untermodus der nicht dem derzeitigen Modus zugeordnet ist.
 Lösung: Tragen Sie in der `config.json` den Modus zu dem der Untermodus gehört als `defaultMode` ein und starten das Programm neu.  
 
 2. Ursache: Die Signaturen entsprechen nicht der im Untermodus festgelegten Aufteilung.  
