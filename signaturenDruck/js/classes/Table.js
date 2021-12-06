@@ -1,6 +1,7 @@
 const _ = require('lodash')
 const fs = require('fs')
 const { ipcRenderer } = require('electron')
+const { serialize } = require('serialijse')
 const Formats = require('./Formats')
 const Modes = require('./Modes')
 const Printers = require('./Printers')
@@ -318,7 +319,7 @@ class Table {
     manual.txtLength = manual.modes[0].lines.length
     manual.txtOneLine = shelfmark.txtOneLine
     this.manualSignature.push(manual)
-    ipcRenderer.send('openManualSignaturesWindow', this.manualSignature, true)
+    ipcRenderer.send('openManualSignaturesWindow', serialize(this.manualSignature), true)
   }
 
   /*
