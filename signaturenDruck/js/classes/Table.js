@@ -159,6 +159,8 @@ class Table {
     }
     if (!id.toString().includes('m_')) {
       txtCell.ondblclick = () => this.pushToManual(id)
+    } else {
+      txtCell.ondblclick = () => this.showThisManual(id.split('_')[1])
     }
     txtCell.id = 'shelfmark_' + id
     txtCell.innerHTML = txt
@@ -320,6 +322,10 @@ class Table {
     manual.txtOneLine = shelfmark.txtOneLine
     this.manualSignature.push(manual)
     ipcRenderer.send('openManualSignaturesWindow', serialize(this.manualSignature), true)
+  }
+
+  showThisManual (id) {
+    ipcRenderer.send('openManualSignaturesWindow', serialize(this.manualSignature), false, id)
   }
 
   /*

@@ -19,9 +19,15 @@ window.onload = function () {
   disableBtnPrevious()
 }
 
-ipcRenderer.on('objMan', function (event, objMan, edit) {
+ipcRenderer.on('objMan', function (event, objMan, edit, manId) {
   objMan = deserialize(objMan)
-  if (objMan !== null) {
+  if (manId !== null && manId !== undefined) {
+    id = Number(manId)
+    object.manual = objMan
+    max = objMan.length
+    show(id)
+    setCounters()
+  } else if (objMan !== null) {
     if (objMan.length > 0) {
       object.manual = objMan
       id = objMan.length
@@ -195,9 +201,7 @@ function next () {
   if (!isEmpty) {
     saveCurrent()
     id++
-    if (id === 1) {
-      enableBtnPrevious()
-    }
+    enableBtnPrevious()
     if (object.manual[id] !== undefined) {
       loadData()
     } else {
@@ -213,6 +217,16 @@ function previous () {
     disableBtnPrevious()
   }
   id--
+  loadData()
+  setCounters()
+}
+
+function show (manId) {
+  if (manId < 1) {
+    disableBtnPrevious()
+  } else {
+    enableBtnPrevious()
+  }
   loadData()
   setCounters()
 }

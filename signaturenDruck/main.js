@@ -169,8 +169,8 @@ ipcMain.on('close', function (event) {
 })
 
 // listens on openManualSignaturesWindow, invokes the opening process
-ipcMain.on('openManualSignaturesWindow', function (event, data, edit = false) {
-  createManualSignaturesWindow(data, edit)
+ipcMain.on('openManualSignaturesWindow', function (event, data, edit = false, manId) {
+  createManualSignaturesWindow(data, edit, manId)
 })
 
 // listens on closeManual, closes the manualSignaturesWindow and invokes the removeManual process
@@ -442,7 +442,7 @@ function unlinkFile (path) {
 }
 
 // creates the manualSignaturesWindow
-function createManualSignaturesWindow (objMan, edit) {
+function createManualSignaturesWindow (objMan, edit, manId) {
   const options = windowParams(650, 420, false)
 
   manualSignaturesWindow = new BrowserWindow(options)
@@ -454,7 +454,7 @@ function createManualSignaturesWindow (objMan, edit) {
   manualSignaturesWindow.removeMenu()
   manualSignaturesWindow.once('ready-to-show', () => {
     manualSignaturesWindow.show()
-    manualSignaturesWindow.webContents.send('objMan', objMan, edit)
+    manualSignaturesWindow.webContents.send('objMan', objMan, edit, manId)
   })
 }
 
