@@ -173,11 +173,28 @@ ipcMain.on('openManualSignaturesWindow', function (event, data, edit = false, ma
   createManualSignaturesWindow(data, edit, manId)
 })
 
+// TODO REFATOR
 // listens on closeManual, closes the manualSignaturesWindow and invokes the removeManual process
 ipcMain.on('closeManualSignaturesWindow', function (event) {
   manualSignaturesWindow.close()
   manualSignaturesWindow = null
+  /*
   mainWindow.webContents.send('removeManualSignatures')
+  */
+})
+
+// new function to replace closeManualSignaturesWindow & saveManualSignatures
+ipcMain.on('closeManualWindow', function (event, data = null) {
+  manualSignaturesWindow.close()
+  manualSignaturesWindow = null
+  if (data != null) {
+    mainWindow.webContents.send('addManualSignatuers', data)
+  }
+})
+
+// listens on saveManualSignatures, closes the manualSignaturesWindow and passes the data along
+ipcMain.on('addManualData', function (event, data) {
+  mainWindow.webContents.send('addManualSignatures', data)
 })
 
 // listens on saveManualSignatures, closes the manualSignaturesWindow and passes the data along
@@ -272,7 +289,7 @@ function createWindow () {
 
   const options = windowParams()
   options.backgroundColor = '#f0f0f0'
-  options.webPreferences.preload = path.join(__dirname, 'renderer.js')
+  options.webPreferences.preload = path.join(__dirname, 'js\\renderer.js')
 
   if (config.store.devMode) {
     options.height = 600

@@ -23,15 +23,15 @@ ipcRenderer.on('objMan', function (event, objMan, edit, manId) {
   objMan = deserialize(objMan)
   if (manId !== null && manId !== undefined) {
     id = Number(manId)
-    object.manual = objMan
-    max = objMan.length
+    object.manual = objMan.filter(function(el) { return el; })
+    max = object.manual.length
     show(id)
     setCounters()
   } else if (objMan !== null) {
     if (objMan.length > 0) {
-      object.manual = objMan
-      id = objMan.length
-      max = objMan.length + 1
+      object.manual = objMan.filter(function(el) { return el; })
+      id = object.manual.length
+      max = object.manual.length + 1
       setCounters()
       enableBtnPrevious()
     }
@@ -262,9 +262,48 @@ function deleteData () {
   }
 }
 
+// TODO REFACTOR
 function deleteAndExit () {
   object.manual = null
   ipcRenderer.send('closeManualSignaturesWindow')
+}
+
+function closeWindow (option = '') {
+  if (option == 'save') {
+    save()
+    ipcRenderer.send('addManualData', object.manual)
+  } else if (option == 'discard') {
+    discard()
+  } else {
+    // open dialog to select either save or discard
+    return
+  }
+  ipcRenderer.send('closeManualWindow', object.manual)
+}
+
+// new discard function to streamline the process
+function discard () {
+  object.manual = null
+  // TODO needs more stuff to clean the mess up
+}
+
+// new save function to streamline the process
+function save () {
+  saveCurrent()
+
+  let isEmpty = true
+  if (object.manual[object.manual.length - 1] !== undefined) {
+    let i = 1
+    while (i <= object.manual[object.manual.length - 1].txtLength) {
+      if (object.manual[object.manual.length - 1].modes[0][i - 1] !== '') {
+        isEmpty = false
+      }
+      i++
+    }
+  }
+  if (isEmpty) {
+    delete object.manual[object.manual.length - 1]
+  }
 }
 
 function saveAndExit () {
@@ -341,7 +380,9 @@ function lineSplit (event) {
 document.getElementById('btn_next').addEventListener('click', next)
 document.getElementById('btn_previous').addEventListener('click', previous)
 document.getElementById('btn_delete').addEventListener('click', deleteData)
-document.getElementById('btn_deleteAndExit').addEventListener('click', deleteAndExit)
-document.getElementById('btn_saveAndExit').addEventListener('click', saveAndExit)
+// document.getElementById('btn_saveAndExit').addEventListener('click', saveAndExit)
+document.getElementById('btn_saveAndExit').addEventListener('click', () => {closeWindow('save')})
+// document.getElementById('btn_deleteAndExit').addEventListener('click', deleteAndExit)
+document.getElementById('btn_deleteAndExit').addEventListener('click', () => {closeWindow('discard')})
 document.getElementById('chkbx_removeIndent').addEventListener('change', toggleIndent)
 document.addEventListener('keydown', lineSplit)
