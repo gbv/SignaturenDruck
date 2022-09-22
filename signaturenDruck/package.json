@@ -18,13 +18,15 @@
   },
   "devDependencies": {
     "electron": "^16.0.1",
-    "electron-builder": "^22.13.1"
+    "electron-builder": "^23.3.3"
   },
   "scripts": {
     "start": "electron .",
-    "build:exe": "npx electron-builder --win --ia32",
-    "build:exe64": "npx electron-builder --win --x64",
-    "build:portable": "npx electron-builder --win portable"
+    "build:exe": "npm exec electron-builder --win --ia32",
+    "build:exe64": "npm exec electron-builder --win --x64",
+    "build:portable": "npm exec electron-builder --win portable",
+    "build:win": "npm exec electron-builder --win",
+    "build:linux": "npm exec electron-builder --linux"
   },
   "keywords": [
     "Electron",
@@ -32,5 +34,6 @@
     "library"
   ],
   "author": "Elias Dehler",
+  "email": "elias.dehler@uni-jena.de",
   "license": "CC0 1.0"
 }
