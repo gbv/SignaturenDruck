@@ -1,4 +1,4 @@
-const THULBBUILD = false
+const THULBBUILD = true
 const CONFIGVERSION = 1
 const { BrowserWindow, app, ipcMain, dialog, Menu } = require('electron')
 const path = require('path')
@@ -267,6 +267,13 @@ function windowParams (width = 850, height = 570, show = true) {
 
 // creates the mainWindow
 function createWindow () {
+  // checkDir('./tmp')
+  console.log(defaultProgramPath)
+  checkDir(defaultProgramPath)
+  checkDir(defaultProgramPath + '\\Formate')
+  checkDir(defaultProgramPath + '\\FormateCSS')
+  checkDir(defaultProgramPath + '\\Modi')
+
   checkConfig()
   /*
   Pass config STORE as global variable to all other js files
@@ -280,12 +287,6 @@ function createWindow () {
   } else if (config.get('configVersion') < CONFIGVERSION) {
     updateConfig()
   }
-
-  // checkDir('./tmp')
-  checkDir(defaultProgramPath)
-  checkDir(defaultProgramPath + '\\Formate')
-  checkDir(defaultProgramPath + '\\FormateCSS')
-  checkDir(defaultProgramPath + '\\Modi')
 
   const options = windowParams()
   options.backgroundColor = '#f0f0f0'

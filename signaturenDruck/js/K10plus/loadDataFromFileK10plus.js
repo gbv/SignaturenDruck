@@ -1,6 +1,7 @@
 const Store = require('electron-store')
 const C = require('../classes/Config')
-const defaultProgramPath = new C().defaultPath
+const THULBBUILD = true
+const defaultProgramPath = new C(THULBBUILD).defaultPath
 const config = new Store({ cwd: defaultProgramPath })
 const _ = require('lodash')
 // requires the dataExtractK10plus-module

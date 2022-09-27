@@ -1,6 +1,7 @@
 const fs = require('fs')
 const C = require('./Config')
-const defaultProgramPath = new C().defaultPath
+const THULBBUILD = true
+const defaultProgramPath = new C(THULBBUILD).defaultPath
 
 class Modes {
   /*

@@ -9,7 +9,8 @@ const _ = require('lodash')
 const { ipcRenderer } = require('electron')
 const Store = require('electron-store')
 const C = require('./classes/Config')
-const defaultProgramPath = new C().defaultPath
+const THULBBUILD = true
+const defaultProgramPath = new C(THULBBUILD).defaultPath
 const config = new Store({ cwd: defaultProgramPath })
 
 const moment = require('moment')
