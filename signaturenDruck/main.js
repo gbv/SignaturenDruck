@@ -103,7 +103,7 @@ const template = [
 const menu = Menu.buildFromTemplate(template)
 
 // name of signature storage json
-const sigJSONFile = 'signaturen.json'
+const sigJSONFile = defaultProgramPath + '\\' + 'signaturen.json'
 
 const DataFromSRU = require('./js/classes/DataFromSRU.js')
 const sruData = new DataFromSRU()
@@ -267,8 +267,6 @@ function windowParams (width = 850, height = 570, show = true) {
 
 // creates the mainWindow
 function createWindow () {
-  // checkDir('./tmp')
-  console.log(defaultProgramPath)
   checkDir(defaultProgramPath)
   checkDir(defaultProgramPath + '\\Formate')
   checkDir(defaultProgramPath + '\\FormateCSS')
@@ -371,7 +369,7 @@ function createModeFiles (modeName, subModeNames) {
 
 function checkAndCreate (pathName, fileName, ending) {
   if (!fs.existsSync(pathName + fileName + ending)) {
-    const file = fs.readFileSync(path.join(__dirname, 'defaultFiles/' + fileName + ending), 'utf8')
+    const file = fs.readFileSync(path.join(process.resourcesPath, '.\\defaultFiles\\' + fileName + ending), 'utf8')
     fs.writeFileSync(pathName + fileName + ending, file, 'utf8')
   }
 }
