@@ -12,8 +12,7 @@ const swal = require('sweetalert2')
 
 const Store = require('electron-store')
 const C = require('./Config')
-const THULBBUILD = true
-const defaultProgramPath = new C(THULBBUILD).defaultPath
+const defaultProgramPath = new C().defaultPath
 const config = new Store({ cwd: defaultProgramPath })
 
 class Table {
@@ -278,6 +277,7 @@ class Table {
       cell.appendChild(div)
     }
   }
+
 
   clearMainTable () {
     while (this.tableHtmlBody.firstChild) {

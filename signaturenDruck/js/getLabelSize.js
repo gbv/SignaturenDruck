@@ -1,7 +1,6 @@
 const Store = require('electron-store')
 const C = require('./classes/Config')
-const THULBBUILD = true
-const defaultProgramPath = new C(THULBBUILD).defaultPath
+const defaultProgramPath = new C().defaultPath
 const config = new Store({ cwd: defaultProgramPath })
 
 module.exports = function labelSize (txt) {

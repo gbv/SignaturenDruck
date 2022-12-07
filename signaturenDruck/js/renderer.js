@@ -3,12 +3,11 @@
 // All of the Node.js APIs are available in this process.
 
 // requires the fs-module
-const THULBBUILD = true
 const fs = require('fs')
 const Store = require('electron-store')
 const C = require('./classes/Config')
 const { serialize } = require('serialijse')
-const defaultProgramPath = new C(THULBBUILD).defaultPath
+const defaultProgramPath = new C().defaultPath
 const config = new Store({ cwd: defaultProgramPath })
 
 // required for ipc calls to the main process

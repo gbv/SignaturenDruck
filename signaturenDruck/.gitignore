@@ -3,3 +3,4 @@ out
 dist
 build
 signaturen.json
+electron-builder.yml

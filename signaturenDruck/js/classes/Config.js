@@ -1,5 +1,6 @@
 const username = require('username')
 
+const USERBUILD = false 
 const defaultPathC = 'C:\\SignaturenDruck'
 const defaultPathUser = 'C:\\Users\\' + username.sync() + '\\SignaturenDruck'
 
@@ -21,8 +22,8 @@ class Config {
   ----- Constructor -----
    */
 
-  constructor (thulbBuild) {
-    if (thulbBuild) {
+  constructor () {
+    if (USERBUILD) {
       this._path = defaultPathUser
     } else {
       this._path = defaultPathC

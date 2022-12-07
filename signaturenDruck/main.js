@@ -1,4 +1,3 @@
-const THULBBUILD = true
 const CONFIGVERSION = 1
 const { BrowserWindow, app, ipcMain, dialog, Menu } = require('electron')
 const path = require('path')
@@ -12,7 +11,7 @@ const Printer = require('pdf-to-printer')
 const username = require('username')
 // const defaultProgramPath = 'C:/Users/' + username.sync() + '/SignaturenDruck/'
 
-const defaultProgramPath = new C(THULBBUILD).defaultPath
+const defaultProgramPath = new C().defaultPath
 // Use a default path
 const config = new Store({ cwd: defaultProgramPath })
 

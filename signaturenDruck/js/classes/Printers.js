@@ -1,8 +1,7 @@
 const _ = require('lodash')
 const Store = require('electron-store')
 const C = require('./Config')
-const THULBBUILD = true
-const defaultProgramPath = new C(THULBBUILD).defaultPath
+const defaultProgramPath = new C().defaultPath
 const config = new Store({ cwd: defaultProgramPath })
 const printerList = config.get('print.printerList')
 class Printers {

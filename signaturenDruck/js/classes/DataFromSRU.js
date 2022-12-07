@@ -3,8 +3,7 @@ const parser = require('xml2json')
 
 const Store = require('electron-store')
 const C = require('./Config')
-const THULBBUILD = true
-const defaultProgramPath = new C(THULBBUILD).defaultPath
+const defaultProgramPath = new C().defaultPath
 const config = new Store({ cwd: defaultProgramPath })
 // const Shelfmark = require('../shelfmark.js')
 // const Modes = require('./Modes.js')
