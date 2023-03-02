@@ -298,10 +298,13 @@ function createWindow () {
   mainWindow = new BrowserWindow(options)
   mainWindow.removeMenu()
   const printerNames = []
-  _.forEach(mainWindow.webContents.getPrinters(), function (printer) {
-    printerNames.push(printer.name)
+  mainWindow.webContents.getPrintersAsync().then((response) => {
+    _.forEach(response, function (printer) {
+      printerNames.push(printer.name)
+    })
+    config.set('print.printerList', printerNames)
   })
-  config.set('print.printerList', printerNames)
+
   if (config.store.showMenu) {
     Menu.setApplicationMenu(menu)
   }
@@ -416,7 +419,7 @@ function printData (formatInformation, printInformation, printImmediately, last 
 
 ipcMain.on('readyToPrint', function (event, formatInformation, printImmediately, last) {
   const winPrint = BrowserWindow.fromWebContents(event.sender)
-  winPrint.webContents.printToPDF({ marginsType: 1, landscape: true, pageSize: { height: formatInformation.paper.width, width: formatInformation.paper.height } }).then(data => {
+  winPrint.webContents.printToPDF({ margins: {top: 0, bottom: 0, left: 0, right: 0}, landscape: true, pageSize: { height: formatInformation.paper.width / 25400, width: formatInformation.paper.height / 25400 } }).then(data => {
     const fileName = formatInformation.name + new Date().getTime() + '.pdf'
     const fullPath = defaultProgramPath + '\\' + fileName
     fs.writeFile(fullPath, data, (error) => {
