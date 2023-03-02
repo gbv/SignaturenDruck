@@ -5,6 +5,7 @@
   "main": "main.js",
   "dependencies": {
     "electron-context-menu": "^3.1.1",
+    "electron-squirrel-startup": "^1.0.0",
     "electron-store": "^8.0.1",
     "lodash": "^4.17.21",
     "moment": "^2.29.1",
@@ -17,21 +18,27 @@
     "xregexp": "^5.1.0"
   },
   "devDependencies": {
-    "electron": "^19.0.17",
-    "electron-builder": "^23.3.3"
+    "@electron-forge/cli": "^6.0.4",
+    "@electron-forge/maker-deb": "^6.0.4",
+    "@electron-forge/maker-rpm": "^6.0.4",
+    "@electron-forge/maker-squirrel": "^6.0.4",
+    "@electron-forge/maker-zip": "^6.0.4",
+    "@rabbitholesyndrome/electron-forge-maker-portable": "^0.1.1",
+    "electron": "^19.0.17"
   },
   "scripts": {
-    "start": "electron .",
-    "build:win": "npm exec electron-builder --win",
-    "build:linux": "npm exec electron-builder --linux",
-    "postinstall": "npm exec electron-builder install-app-deps"
+    "start": "electron-forge start",
+    "package": "electron-forge package",
+    "make": "electron-forge make"
   },
   "keywords": [
     "Electron",
     "shelfmark",
     "library"
   ],
-  "author": "Elias Dehler",
+  "author": "ThULB - IMS",
   "email": "elias.dehler@uni-jena.de",
-  "license": "CC0 1.0"
+  "license": "CC0 1.0",
+  "CSC_LINK": "../../codeThulbSign.pfx",
+  "CSC_KEY_PASSWORD": ""
 }

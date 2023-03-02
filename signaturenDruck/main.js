@@ -15,6 +15,8 @@ const defaultProgramPath = new C().defaultPath
 // Use a default path
 const config = new Store({ cwd: defaultProgramPath })
 
+if (require('electron-squirrel-startup')) app.quit();
+
 // needed for the old printing code
 // const Shell = require('node-powershell')
 

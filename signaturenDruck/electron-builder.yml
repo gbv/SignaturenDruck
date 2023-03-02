@@ -1,7 +1,0 @@
-
-'win': {
-  'target': 'portable'
-}
-'linux': {
-  'target': 'snap'
-}
