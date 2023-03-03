@@ -480,7 +480,7 @@ function subModeAlreadyExists (subModeName) {
 
 function deleteModeFile (modeName) {
   if (fs.existsSync(defaultProgramPath + '\\Modi\\' + modeName + '.json')) {
-    fs.unlink(defaultProgramPath + '\\Modi\\' + modeName + '.json', function (err) {
+    fs.unlinkSync(defaultProgramPath + '\\Modi\\' + modeName + '.json', function (err) {
       if (err) {
         throw err
       }
@@ -489,7 +489,11 @@ function deleteModeFile (modeName) {
 }
 
 function writeModeFile (data) {
-  fs.writeFileSync(defaultProgramPath + '\\Modi\\' + data.modeName + '.json', JSON.stringify(data, null, 2), 'utf8')
+  fs.writeFile(defaultProgramPath + '\\Modi\\' + data.modeName + '.json', JSON.stringify(data, null, 2), 'utf8', (err) => {
+    if (err) {
+      throw err
+    }
+  })
 }
 
 function getResult () {

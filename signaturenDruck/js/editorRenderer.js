@@ -111,12 +111,28 @@ function setPrinterSelect () {
 
 // TODO that's not good it's hard coded
 function getFormats () {
-  const files = fs.readdirSync(defaultProgramPath + '\\Formate')
-  for (const file of files) {
-    const fileName = file.split('.json')[0]
+  const modeData = JSON.parse(fs.readFileSync(defaultProgramPath + '\\Modi\\' + config.get('mode.defaultMode') + '.json', 'utf8'))
+//  const files = fs.readdirSync(defaultProgramPath + '\\Formate')
+//  for (const file of files) {
+  _.forEach(modeData.subModes, function (value) {
+    //const fileName = file.split('.json')[0]
+    const fileName = value.format
     selectOptions.push(fileName)
-    formats[fileName] = JSON.parse(fs.readFileSync(defaultProgramPath + '\\Formate\\' + file, 'utf8'))
-  }
+    try {
+      formats[fileName] = JSON.parse(fs.readFileSync(defaultProgramPath + '\\Formate\\' + fileName + '.json', 'utf8'))
+    } catch (error) {
+      formats[fileName] = {
+        "name": fileName,
+        "printer": "",
+        "label": {
+          "width": "",
+          "height": "",
+        },
+        "pdfName": fileName + ".json",
+        "lines": value.result.length
+        }
+    }
+  })
 }
 
 function setFormatsSelect () {

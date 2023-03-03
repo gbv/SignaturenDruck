@@ -497,7 +497,7 @@ function createConfigWindow () {
 }
 
 // creates the editorConfig
-function createEditorWindow (formatName = '', nrOfLines = '') {
+function createEditorWindow (data = '') {
   const options = windowParams(800, 950, false)
 
   editorWindow = new BrowserWindow(options)
@@ -511,7 +511,7 @@ function createEditorWindow (formatName = '', nrOfLines = '') {
   editorWindow.removeMenu()
   editorWindow.once('ready-to-show', () => {
     editorWindow.show()
-    editorWindow.webContents.send('newModeFormat', formatName, nrOfLines)
+    editorWindow.webContents.send('newModeFormat', data)
   })
 }
 
