@@ -419,7 +419,19 @@ function printData (formatInformation, printInformation, printImmediately, last 
 
 ipcMain.on('readyToPrint', function (event, formatInformation, printImmediately, last) {
   const winPrint = BrowserWindow.fromWebContents(event.sender)
-  winPrint.webContents.printToPDF({ margins: {top: 0, bottom: 0, left: 0, right: 0}, landscape: true, pageSize: { height: formatInformation.paper.width / 25400, width: formatInformation.paper.height / 25400 } }).then(data => {
+  winPrint.webContents.printToPDF({
+    margins: {
+      top: 0,
+      bottom: 0,
+      left: 0,
+      right: 0
+    },
+    landscape: true,
+    pageSize: {
+      height: formatInformation.paper.width / 25400,
+      width: formatInformation.paper.height / 25400 
+    }
+  }).then(data => {
     const fileName = formatInformation.name + new Date().getTime() + '.pdf'
     const fullPath = defaultProgramPath + '\\' + fileName
     fs.writeFile(fullPath, data, (error) => {

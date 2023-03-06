@@ -16,6 +16,15 @@ module.exports = {
       },
     },
     {
+      name: '@electron-forge/maker-wix',
+      config: {
+        certificateFile: '../../../codeThulbSign.pfx',
+        certificatePassword: '',
+        language: 1031,
+        manufacturer: 'ThULB - IMS'
+      }
+    },
+    {
       name: '@electron-forge/maker-zip',
       platforms: ['darwin'],
     },
