@@ -5,9 +5,6 @@ module.exports = {
   rebuildConfig: {},
   makers: [
     {
-      name: '@rabbitholesyndrome/electron-forge-maker-portable',
-    },
-    {
       name: '@electron-forge/maker-squirrel',
       config: {
         certificateFile: '../../../codeThulbSign.pfx',
