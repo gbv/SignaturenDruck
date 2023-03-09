@@ -1,6 +1,7 @@
 module.exports = {
   packagerConfig: {
-    extraResource: 'defaultFiles'
+    extraResource: 'defaultFiles',
+    icon: './icon.ico'
   },
   rebuildConfig: {},
   makers: [
@@ -9,7 +10,9 @@ module.exports = {
       config: {
         certificateFile: '../../../codeThulbSign.pfx',
         certificatePassword: '',
-        authors: 'ThULB - IMS'
+        authors: 'ThULB - IMS',
+        iconURL: '',
+        setupIcon: './icon.ico'
       },
     },
     {
@@ -18,7 +21,8 @@ module.exports = {
         certificateFile: '../../../codeThulbSign.pfx',
         certificatePassword: '',
         language: 1031,
-        manufacturer: 'ThULB - IMS'
+        manufacturer: 'ThULB - IMS',
+        icon: './icon.ico'
       }
     },
     {

@@ -4,12 +4,9 @@
 
 This is a Electron application to print shelfmarks read from a `.dnl`-file. It displays shelfmarks from the file in a table like structure. You can then select and print the shelfmarks you like.
 
-The printing process creates `.pdf`-files (each per selectet format) and proceeds to print them via powershell and Adobe Acrobat Reader DC.  
-The Acrobat Reader gets opened for a short time (~4 seconds) to print the files. It will close by itself, except it was already open.
+The printing process creates `.pdf`-files (each per selectet format) and proceeds to print them. 
 
-To use this application you'll need to have the [Adobe Acrobat Reader DC](https://get.adobe.com/reader/) installed and set as default pdf-viewer.
-
-To clone and run this repository you'll need [Git](https://git-scm.com) and [Node.js](https://nodejs.org/en/download/) (which comes with [npm](http://npmjs.com)), [python 2.7](https://www.python.org/downloads/release/python-2714/) and an c/c++ compiler installed on your computer. From your command line:
+To clone and run this repository you'll need [Git](https://git-scm.com) and [Node.js](https://nodejs.org/en/download/) (which comes with [npm](http://npmjs.com)), [python 2.7](https://www.python.org/downloads/release/python-2714/), an c/c++ compiler and the [WiX Toolset v3](https://github.com/wixtoolset/wix3/releases) installed on your computer. From your command line:
 
 ```bash
 # Clone this repository
@@ -22,31 +19,23 @@ npm install
 npm start
 ```
 
-The app creates the directory `C:\SignaturenDruck` and stores the config files in it.
+The app creates either the directory `C:\SignaturenDruck` or `C:\Users\USER\SignaturenDruck` and stores the config files in it.
 
 In the `config.json` you can change the various switches, like `defaultMode` or `defaultDownloadPath`.
 
-The devMode disables the actual printing. It will show the otherwise hidden label-windows. The pdf-files can be found at: `C:\SignaturenDruck`
+The devMode disables the actual printing. It will show the otherwise hidden label-windows. The pdf-files can be found at: `C:\SignaturenDruck`/`C:\Users\USER\SignaturenDruck`.
 
 **Clone and run for a quick way to see Electron in action.**
 
-To build the app for win7/10 32bit:
+To build the app for win7/10:
 
 ```bash
-npm run build:exe
+npm run make
 ```
 
-To build the app for win7/10 64bit:
-
-```bash
-npm run build:exe64
-```
-
-To build a portable windows .exe:
-
-```bash
-npm run build:portable
-```
+This will create an unpacked version, a user installer as well as an msi-installer (machine).
+You can find these files in the `out`-directory.
+(`out\make\wix` will contain the user-installer, `out\make\squirrel.windows` will contain the msi-installer)
 
 # Dokumentation
 
@@ -54,14 +43,13 @@ npm run build:portable
 
 Der SignaturenDruck kann Signaturen aus einer Datei auslesen, sie via SRU laden oder auch manuell erstellen.
 Das Programm bietet eine Vielzahl an Einstellungsmöglichkeiten. So lassen sich sowohl er Aufbau der Signaturen als auch das Layout der Etiketten aus dem Programm heraus bearbeiten oder neu anlegen.
-Zum Druck werden PDF-Dateien erstellt, die mit Hilfe des Adobe Acrobar Reader DC gedruckt werden.  
+Zum Druck werden PDF-Dateien erstellt, welche dann an die konfigurierten Drucker gesendet werden.
 
 ## Installation
 
-Das Programm kann einfach mit der entsprechenden `.exe` (ia32 oder x64) installiert werden.  
-Das Programm wird dann unter `C:\Users\USERNAME\AppData\Local\Programs\SignaturenDruck_neu` installiert.  
-Auf dem Desktop des Nutzers wird eine Verknüpfung zum starten des SignaturenDrucks erzeugt.  
-Nach erfolgreicher Installation startet das Programm auch direkt.
+Das Programm kann einfach mit der entsprechenden Installer (`.exe` oder `.msi`) installiert werden.  
+Das Programm wird dann unter `C:\Users\USER\AppData\Local\SignaturenDruck` (mittels `.exe`) oder unter `C:\Program Files (x86)\SignaturenDruck` (mittels `.msi`) installiert.  
+Auf dem Desktop des Nutzers wird eine Verknüpfung zum starten des SignaturenDrucks erzeugt.
 
 ## Arbeiten mit dem Programm
 
@@ -71,13 +59,13 @@ Es wird bei jedem Start des Programms geprüft ob die notwendigen Konfigurations
 Hierbei handelt es sich um:  
 
 - `C:\Export\`
-- `C:\SignaturenDruck\`
+- `C:\Users\USER\SignaturenDruck` oder `C:\SignaturenDruck`
   - `./config.json` - die primäre Konfigurationsdatei (nicht aus der Oberfläche heraus editierbar, nach Veränderungen muss das Programm neugestartet werden).
   - `./Formate\` - enhält die Konfigurationsdateien der eingerichteten Formate.
   - `./FormateCSS\` - enthält die CSS-Dateien der eingerichteten Formate.
   - `./Modi\` - enhält die Konfigurationsdateien der eingerichteten Modi.
 
-Sind diese Ordner/Dateien vorhanden so wird die geprüft ob die Datei die in der `config.json` unter `defaultPath` angegeben ist existiert.  
+Sind diese Ordner/Dateien vorhanden so wird die geprüft ob die Datei die in der `config.json` unter `defaultDownloadPath` angegeben ist existiert.  
 Ist dies der Fall dann werden die enthaltenen Signaturen ausgelesen und angezeigt.
 ![Erfolgreiches laden der Daten](docu/imgs/erfolgreicherStart.PNG?token=Ah-Pd0EhXe4Z_8PPoWR73aePoL9yasF8ks5b7mafwA%3D%3D)  
 Sollte die angegebene Datei nicht vorhanden sein, so wird eine entsprechende Meldung in der Oberfläche angezeigt.
@@ -95,8 +83,7 @@ In der Spalte `Anzahl` kann festegelegt werden wie oft die jeweilige Signatur ge
 
 In der Spalte `Format` kann, wie der Name schon sagt, das Format ausgewählt werden mit dem die Signatur gedruckt werden soll. Vom gewählten Format ist abhängig wie die Signatur dargestellt wird, wie groß das Etikett ist und an welchem Drucker gedruckt werden soll.  
 
-Der Druck der ausgewählten Signaturen erfolgt dann mit einem Klick auf die Schaltfläche `Drucken`. Anschließend wird eine Meldung über den erfolgreichen Druck ausgegeben.  
-Während des Drucks öffnet und schließt sich der Adobe Reader DC entsprechend der Anzahl der gewählten Formate. Sollten Sie den Adobe Reader DC bereits vor dem Druck geöffnet haben, sowird dieser nicht automatisch geschlossen.
+Der Druck der ausgewählten Signaturen erfolgt dann mit einem Klick auf die Schaltfläche `Drucken`. Anschließend wird eine Meldung über den erfolgreichen Druck ausgegeben.
 
 ### Manuelles Anlegen
 
@@ -229,7 +216,7 @@ Mit einem Klick auf `Schließen` wird das Fenster geschlossen. Wurde das Format 
 
 ## Konfig-Optionen
 
-Die `config.json` unter `C:\SignaturenDruck\` bietet folgende Optionen.  
+Die `config.json` unter `C:\Users\USER\SignaturenDruck` oder `C:\SignaturenDruck\` bietet folgende Optionen.  
 
 | key | Beschreibung | Standardwert |
 | :---: | --- | ---|
@@ -252,10 +239,10 @@ Die `config.json` unter `C:\SignaturenDruck\` bietet folgende Optionen.
 | `SRU.QueryPart1EPN` | der erste Teil des SRU-EPN-Query | `"?version=1.1&operation=searchRetrieve&query=pica.bar="` |  
 | `SRU.QueryPart2` | der zweite Teil des SRU-Query | `"&maximumRecords=1&recordSchema=picaxml"` |  
 | `print.printCoverLabel` | ermöglicht den Druck des CoverLabels (Username + Datum) | `true` |  
-| `print.reverseOrder` | ermöglicht die Signaturen in umgedrehter reinfolge zu drucken | `false` |  
+| `print.reverseOrder` | ermöglicht die Signaturen in umgedrehter Reihenfolge zu drucken | `false` |  
 | `print.printerList` | wird beim ersten Start automatisch erzeugt, enthält alle verfügbaren Druckernamen, kann nicht verändert werden | - |  
 | `print.showPrintDialog` | ermöglicht ein ausblenden der Druckbestätigung | `true` |  
-| `print.orientation` | legt die ausrichtung des Drucks fest, Optionen: `landscape`,`portrait` | `landscape` |  
+| `print.orientation` | legt die Ausrichtung des Drucks fest, Optionen: `landscape`,`portrait` | `landscape` |  
 | `print.scale` | legt die Skalierung des Drucks fest, Optionen: `noscale`, `shrink`, `fit` | `noscale` |  
 | `mode.defaultMode` | legt den zu verwendenden Modus fest | `"thulbMode"` |  
 | `devMode` | dient zur Fehlersuche, zeigt die Fenster der jeweiligen Formate an, die im Formalfall nicht zu sehen sind. Die PDFs werden erstellt aber weder gelöscht noch gedruckt. | `false` |  
@@ -281,11 +268,38 @@ Mit <kbd>strg</kbd> + <kbd>alt</kbd> + <kbd>C</kbd> öffen Sie die "Modus erstel
 
 ### Sonstige
 
-#### Warum benötige ich den Adobe Acrobat Reader DC als Standard PDF-Programm?
+#### Wird der Adobe Acrobat Reader DC weiterhin als Standard PDF-Programm benötigt?
 
-Der Adobe Acrobat Reader DC wird für den Druck benötigt. Ist dieser nicht das Standard PDF-Programm so schlägt der Druck fehl.
+Nein, der SignaturenDruck ist seit version `v1.3.12` nichtmehr vom Adobe Acrobat Reader DC abhängig.
 
 # Changelog
+
+## v1.3.12
+
+- Dokumentation angepasst
+- Adobe Acrobat Reader DC wird nicht mehr benötigt (intern wird SumatraPDF verwendet)
+- Aktualisierung auf electron `v22.3.2`
+- Portable Version entfällt (der Performance geschuldet)
+- Installer für User/Rechner
+- Unterschiedliche Versionen mit Ablage der Konfigurationsdaten unter `C:\SignaturenDruck` oder `C:\Users\USER\SignaturenDruck`
+- optimierung des Manuellen Erstellens
+- Manuelle Signaturen können via Doppelklick auf die Signatur editiert werden
+- Installer werden nun mit electron-forge erzeugt
+- Interne Optimierungen
+- die `configVersion` in `config.js` wird geprüft, ggfs. wird die `config.js` automatisch aktualisiert
+- in config.js
+  - `defaultPath` wurde in `defaultDownloadPath` umbenannt
+  - `print.reverseOrder` hinzugefügt, ermöglicht die Signaturen in umgedrehter Reihenfolge zu drucken
+  - `print.printerList` hinzugefügt, wird vom Programm erzeugt und kann nicht verändert werden
+  - `print.showPrintDialog` hinzugefügt, ermöglicht ein ausblenden der Druckbestätigung
+  - `print.orientation` hinzugefügt, legt die Ausrichtung des Drucks fest
+  - `print.scale` hinzugefügt, legt die Skalierung des Drucks fest
+  - `username` hinzugefügt, enthält den Nutzernamen des letzten Benutzers
+  - `defaultProgrammPath` hinzugefügt, enthält den Pfad des SignaturenDrucks, wird automatisch geschrieben und kann nicht verändert werden
+  - `sigJSONFile` hinzugefügt, enthält den Namen der temporären Signaturendatei, wird automatisch geschrieben, kann nicht verändert werden
+  - `configVersion` hinzugefügt, enthält die Versionsnummer der Konfigurationsdatei, sollte nicht manuell verändert werden
+- `configVersion` in `config.js` auf den Wert `1` gesetzt
+
 
 ## v1.2.0
 

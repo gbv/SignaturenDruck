@@ -1,6 +1,6 @@
 const username = require('username')
 
-const USERBUILD = false 
+const USERBUILD = true
 const defaultPathC = 'C:\\SignaturenDruck'
 const defaultPathUser = 'C:\\Users\\' + username.sync() + '\\SignaturenDruck'
 
