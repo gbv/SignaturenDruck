@@ -1,4 +1,4 @@
-const CONFIGVERSION = 1
+const CONFIGVERSION = 1.1
 const { BrowserWindow, app, ipcMain, dialog, Menu } = require('electron')
 const path = require('path')
 const url = require('url')
@@ -7,6 +7,7 @@ const _ = require('lodash')
 const Store = require('electron-store')
 const C = require('./js/classes/Config')
 const Printer = require('pdf-to-printer')
+
 // requires the username-module
 const username = require('username')
 // const defaultProgramPath = 'C:/Users/' + username.sync() + '/SignaturenDruck/'
@@ -62,7 +63,13 @@ const configNew = {
     reverseOrder: false,
     showPrintDialog: false,
     orientation: 'landscape',
-    scale: 'noscale'
+    scale: 'noscale',
+    margin: {
+      top: 3,
+      bottom: 0,
+      left: 0,
+      right: 0
+    }
   },
   mode: {
     defaultMode: 'defaultMode'
@@ -421,26 +428,59 @@ ipcMain.on('readyToPrint', function (event, formatInformation, printImmediately,
   const winPrint = BrowserWindow.fromWebContents(event.sender)
   winPrint.webContents.printToPDF({
     margins: {
-      top: 0,
-      bottom: 0,
-      left: 0,
-      right: 0
+      top: config.get('print.margin.top') * 0.03937,
+      bottom: config.get('print.margin.bottom') * 0.03937,
+      left: config.get('print.margin.left') * 0.03937,
+      right: config.get('print.margin.right') * 0.03937
     },
     landscape: true,
     pageSize: {
       height: formatInformation.paper.width / 25400,
       width: formatInformation.paper.height / 25400 
     }
-  }).then(data => {
-    const fileName = formatInformation.name + new Date().getTime() + '.pdf'
-    const fullPath = defaultProgramPath + '\\' + fileName
-    fs.writeFile(fullPath, data, (error) => {
+    }).then(data => {
+      const fileName = formatInformation.name + new Date().getTime() + '.pdf'
+      const fullPath = defaultProgramPath + '\\' + fileName
+      fs.writeFile(fullPath, data, (error) => {
       if (error) throw error
+      // tested native electron silent printing, still broken
+      /*
+      else {
+        let win = new BrowserWindow({ show: false })
+        win.loadFile(fullPath)
+        win.webContents.on('did-finish-load', () => {
+          const options = {
+            silent: true,
+            deviceName: formatInformation.printer,
+            pageSize: {
+              height: formatInformation.paper.height,
+              width: formatInformation.paper.width 
+            }
+          }
+          setTimeout(function () {
+            win.webContents.print(options, (success, failureReason) => {
+              if (!success) {
+                console.log(`Failed to print. ${failureReason}`)
+              } else {
+                console.log("printed: " + fullPath + ";--- at: " + formatInformation.printer)
+              }
+            })
+            setTimeout(function () {
+              win.close()
+              win = null
+            }, (1000))
+          }, (5000))
+        })
+      }
+    }
+      */
+    else {
       const options = {
         printer: formatInformation.printer,
         printDialog: config.get('print.showPrintDialog'),
         orientation: config.get('print.orientation'),
-        scale: config.get('print.scale')
+        scale: config.get('print.scale'),
+        monochrome: true
       }
       if (!printImmediately) {
         mainWindow.webContents.send('printMsg', last)
@@ -453,9 +493,11 @@ ipcMain.on('readyToPrint', function (event, formatInformation, printImmediately,
         options.printDialog = true
         Printer.print(fullPath, options).then(console.log)
       }
+    }
+
+    }).catch(error => {
+      console.log(error)
     })
-  }).catch(error => {
-    console.log(error)
   })
 })
 
@@ -543,6 +585,12 @@ function updateConfig () {
   }
   if (!config.has('print.scale')) {
     config.set('print.scale', 'noscale')
+  }
+  if (!config.has('print.margin')) {
+    config.set('print.margin.top', 0)
+    config.set('print.margin.bottom', 0)
+    config.set('print.margin.left', 0)
+    config.set('print.margin.right', 0)
   }
   config.set('configVersion', CONFIGVERSION)
 }
