@@ -416,11 +416,9 @@ function printData (formatInformation, printInformation, printImmediately, last 
   winPrint.removeMenu()
   winPrint.once('ready-to-show', () => {
     winPrint.webContents.send('toPrint', formatInformation, printInformation, printImmediately, last)
-    /*
     if (config.store.devMode) {
       winPrint.show()
     }
-    */
   })
 }
 
@@ -434,6 +432,7 @@ ipcMain.on('readyToPrint', function (event, formatInformation, printImmediately,
       right: config.get('print.margin.right') * 0.03937
     },
     landscape: true,
+//    printBackground: true,
     pageSize: {
       height: formatInformation.paper.width / 25400,
       width: formatInformation.paper.height / 25400 

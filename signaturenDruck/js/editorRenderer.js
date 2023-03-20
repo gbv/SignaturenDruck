@@ -389,15 +389,6 @@ function createCSS (obj) {
   function printCenterLabel (str) {
     let marginTopValue = (obj.paper.height - fromMilliToMicro(obj.label.height)) / 2000
     let marginLeftValue = (obj.paper.width - fromMilliToMicro(obj.label.width)) / 2000
-    if (marginTopValue <= 1) {
-      marginTopValue = 0
-    }
-    /*
-    with electron 3.0.4 and printToPDF(marginsType 1) there is a margin of 2mm by default
-    even with @print margin 0mm
-    thats why we substract 2
-    */
-    marginLeftValue = marginLeftValue - 1
 
     let marginTopAdjustmentValue = getValueOfElemId('marginTop')
     if (marginTopAdjustmentValue === '') {
@@ -443,7 +434,7 @@ function createCSS (obj) {
       str += '#toPrint.format_' + obj.name + '> .innerBox {\nheight: ' + obj.label.height + ';\nwidth: ' + obj.label.width + ';\ndisplay: flex;\njustify-content: center;\nflex-direction: column;\n}\n'
     } else {
       str += '.format_' + obj.name + ' {\nalign-items: initial;\n}\n'
-      str += '#toPrint.format_' + obj.name + '.innerBox {\nheight: ' + obj.label.height + ';\nwidth: ' + obj.label.width + ';\n}\n'
+      str += '#toPrint.format_' + obj.name + '> .innerBox {\nheight: ' + obj.label.height + ';\nwidth: ' + obj.label.width + ';\n}\n'
     }
     return str
   }
