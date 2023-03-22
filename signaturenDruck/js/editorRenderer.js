@@ -271,7 +271,7 @@ function loadDataFromFormat (formatName) {
     }
     changeLineIndent(evt)
   }
-  changePaddingTop()
+  changeMarginTop()
 }
 
 function changeLabelHeight (event) {
@@ -652,8 +652,8 @@ function getValueOfElemId (elemId) {
   return document.getElementById(elemId).value
 }
 
-function changePaddingTop (event) {
-  document.getElementById('line_1').style.paddingTop = getValueOfElemId('marginTop') + 'mm'
+function changeMarginTop (event) {
+  document.getElementById('line_1').style.marginTop = getValueOfElemId('marginTop') + 'mm'
 }
 
 // adds event listener to the labelSize inputs
@@ -670,4 +670,4 @@ document.getElementById('centerHor').addEventListener('click', centerHor)
 // adds event listener to the centerVer input
 document.getElementById('centerVer').addEventListener('click', centerVer)
 // adds event listener to the marginTop input
-document.getElementById('marginTop').addEventListener('input', changePaddingTop)
+document.getElementById('marginTop').addEventListener('input', changeMarginTop)
