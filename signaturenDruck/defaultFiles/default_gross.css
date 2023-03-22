@@ -10,7 +10,7 @@ overflow: hidden;
 .format_default_gross {
 align-items: center;
 }
-#toPrint.format_default_gross> .innerBox {
+#toPrint.format_default_gross > .capsule {
 height: 43mm;
 width: 80mm;
 display: flex;
@@ -18,9 +18,11 @@ justify-content: center;
 flex-direction: column;
 overflow: hidden;
 }
+.format_default_gross > .capsule > .innerBox > p,
 .format_default_gross > .innerBox > p {
 margin: 0px 0px 0px 0px;
 }
+.format_default_gross > .capsule > .innerBox > .line_1,
 .format_default_gross > .innerBox > .line_1 {
 font-family: "Arial Narrow";
 font-size: 16pt;
@@ -28,6 +30,7 @@ font-weight: bold;
 font-style: normal;
 margin-left: 47%;
 }
+.format_default_gross > .capsule > .innerBox > .line_2,
 .format_default_gross > .innerBox > .line_2 {
 font-family: "Arial Narrow";
 font-size: 16pt;
@@ -35,6 +38,7 @@ font-weight: bold;
 font-style: normal;
 margin-left: 47%;
 }
+.format_default_gross > .capsule > .innerBox > .line_3,
 .format_default_gross > .innerBox > .line_3 {
 font-family: "Arial Narrow";
 font-size: 16pt;
@@ -42,6 +46,7 @@ font-weight: bold;
 font-style: normal;
 margin-left: 47%;
 }
+.format_default_gross > .capsule > .innerBox > .line_4,
 .format_default_gross > .innerBox > .line_4 {
 font-family: "Arial Narrow";
 font-size: 16pt;
@@ -49,6 +54,7 @@ font-weight: normal;
 font-style: normal;
 margin-left: 47%;
 }
+.format_default_gross > .capsule > .innerBox > .line_5,
 .format_default_gross > .innerBox > .line_5 {
 font-family: "Arial Narrow";
 font-size: 16pt;
@@ -56,6 +62,7 @@ font-weight: normal;
 font-style: normal;
 margin-left: 47%;
 }
+.format_default_gross > .capsule > .innerBox > .line_6,
 .format_default_gross > .innerBox > .line_6 {
 font-family: "Arial Narrow";
 font-size: 16pt;
@@ -63,12 +70,15 @@ font-weight: bold;
 font-style: normal;
 margin-left: 47%;
 }
+.format_default_gross > .capsule > .innerBox > .line_1,
 .format_default_gross > .innerBox > .line_1 {
 margin-top: -3mm;
 }
 @media print {
-#toPrint.format_default_gross > .innerBox {
-margin: 2.96mm 0mm 0mm 8.985mm;
+@page {
+size: 99.97mm 48.92mm;
+margin-top: 2.96mm;
+margin-left: 9.985mm;
 }
 body {
 margin: 0px;
