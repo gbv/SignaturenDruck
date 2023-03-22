@@ -274,14 +274,17 @@ Nein, der SignaturenDruck ist seit version `v1.3.12` nichtmehr vom Adobe Acrobat
 
 # Changelog
 
-## v1.3.12
+## v1.3.15
 
 - Dokumentation angepasst
 - Adobe Acrobat Reader DC wird nicht mehr benötigt (intern wird SumatraPDF verwendet)
 - Aktualisierung auf electron `v22.3.2`
 - Portable Version entfällt (der Performance geschuldet)
-- Installer für User/Rechner
-- Unterschiedliche Versionen mit Ablage der Konfigurationsdaten unter `C:\SignaturenDruck` oder `C:\Users\USER\SignaturenDruck`
+- 4-Installer
+  - `...user-conf_system-install` ->systemweite Installation mit Konfigurationsdateien im Nutzerverzeichnis `C:\Users\USER\SignaturenDruck`
+  - `...user-conf_user-install`-> Nutzerinstallation mit Konfigurationsdateien im Nutzerverzeichnis `C:\Users\USER\SignaturenDruck`
+  - `...system-conf_system-install`-> systemweite Installation mit Konfigurationsdateien unter `C:\SignaturenDruck`
+  - `...system-conf_user-install`-> Nutzerinstallation mit Konfigurationdateien unter `C:\SignaturenDruck`
 - optimierung des Manuellen Erstellens
 - Manuelle Signaturen können via Doppelklick auf die Signatur editiert werden
 - Installer werden nun mit electron-forge erzeugt
@@ -298,7 +301,7 @@ Nein, der SignaturenDruck ist seit version `v1.3.12` nichtmehr vom Adobe Acrobat
   - `defaultProgrammPath` hinzugefügt, enthält den Pfad des SignaturenDrucks, wird automatisch geschrieben und kann nicht verändert werden
   - `sigJSONFile` hinzugefügt, enthält den Namen der temporären Signaturendatei, wird automatisch geschrieben, kann nicht verändert werden
   - `configVersion` hinzugefügt, enthält die Versionsnummer der Konfigurationsdatei, sollte nicht manuell verändert werden
-- `configVersion` in `config.js` auf den Wert `1` gesetzt
+- `configVersion` in `config.js` auf den Wert `1.1` gesetzt
 
 
 ## v1.2.0
