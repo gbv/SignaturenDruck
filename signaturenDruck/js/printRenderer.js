@@ -36,6 +36,10 @@ function createPage (formatInformation, printInformation, printImmediately, last
   }
   _.each(printInformation, data => {
     for (let i = 1; i <= data.count; i++) {
+      const capsuleDiv = document.createElement('div')
+      capsuleDiv.className = 'capsule'
+      capsuleDiv.id = 'capsule_' + data.id + '_' + i
+      document.getElementById('toPrint').appendChild(capsuleDiv)
       const div = document.createElement('div')
       data.data.removeIndent ? div.className = 'innerBox noIndent' : div.className = 'innerBox'
       div.id = data.id + '_' + i
@@ -46,7 +50,7 @@ function createPage (formatInformation, printInformation, printImmediately, last
         lines[j] === '' ? p.appendChild(document.createElement('br')) : p.innerHTML = lines[j]
         div.appendChild(p)
       }
-      document.getElementById('toPrint').appendChild(div)
+      document.getElementById('capsule_' + data.id + '_' + i).appendChild(div)
     }
   })
   ipcRenderer.send('readyToPrint', formatInformation, printImmediately, last)

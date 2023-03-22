@@ -432,11 +432,12 @@ ipcMain.on('readyToPrint', function (event, formatInformation, printImmediately,
       right: config.get('print.margin.right') * 0.03937
     },
     landscape: true,
-//    printBackground: true,
+    //printBackground: true,
+    preferCSSPageSize: true/*
     pageSize: {
       height: formatInformation.paper.width / 25400,
       width: formatInformation.paper.height / 25400 
-    }
+    }*/
     }).then(data => {
       const fileName = formatInformation.name + new Date().getTime() + '.pdf'
       const fullPath = defaultProgramPath + '\\' + fileName

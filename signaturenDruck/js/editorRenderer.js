@@ -396,8 +396,12 @@ function createCSS (obj) {
     if (marginTopAdjustmentValue === '') {
       marginTopAdjustmentValue = 0
     }
+    str += '.format_' + obj.name + ' > .capsule > .innerBox > .line_1,\n'
     str += '.format_' + obj.name + ' > .innerBox > .line_1 {\nmargin-top: ' + marginTopAdjustmentValue + 'mm;\n}\n'
-    str += '@media print {\n#toPrint.format_' + obj.name + ' > .innerBox {\npadding: ' + marginTopValue + 'mm 0mm 0mm ' + marginLeftValue + 'mm;\n}\n'
+    str += '@media print {\n@page {\n'
+    str += 'size: ' + obj.paper.width/1000 + 'mm ' + obj.paper.height/1000 + 'mm;\n'
+    str += 'margin-top: ' + marginTopValue + 'mm;\n'
+    str += 'margin-left: ' + marginLeftValue + 'mm;\n}\n'
     str += 'body {\nmargin: 0px;\n}\n'
     str += '}'
     return str
@@ -408,6 +412,7 @@ function createCSS (obj) {
   }
   function linesStyle (str) {
     for (const line of obj.linesData) {
+      str += '.format_' + obj.name + ' > .capsule > .innerBox > .line_' + line.id + ',\n'
       str += '.format_' + obj.name + ' > .innerBox > .line_' + line.id + ' {\n'
       str += 'font-family: "' + line.font + '";\n'
       str += 'font-size: ' + line.fontSize + 'pt;\n'
@@ -427,16 +432,17 @@ function createCSS (obj) {
     return str
   }
   function lineSpace (str) {
+    str += '.format_' + obj.name + ' > .capsule > .innerBox > p,\n'
     str += '.format_' + obj.name + ' > .innerBox > p {\nmargin: ' + obj.lineSpace + 'px 0px ' + obj.lineSpace + 'px 0px;\n}\n'
     return str
   }
   function centerVer (str) {
     if (obj.centerVer) {
       str += '.format_' + obj.name + ' {\nalign-items: center;\n}\n'
-      str += '#toPrint.format_' + obj.name + ' > .innerBox {\nheight: ' + obj.label.height + ';\nwidth: ' + obj.label.width + ';\ndisplay: flex;\njustify-content: center;\nflex-direction: column;\noverflow: hidden;\n}\n'
+      str += '#toPrint.format_' + obj.name + ' > .capsule {\nheight: ' + obj.label.height + ';\nwidth: ' + obj.label.width + ';\ndisplay: flex;\njustify-content: center;\nflex-direction: column;\noverflow: hidden;\n}\n'
     } else {
       str += '.format_' + obj.name + ' {\nalign-items: initial;\n}\n'
-      str += '#toPrint.format_' + obj.name + ' > .innerBox {\nheight: ' + obj.label.height + ';\nwidth: ' + obj.label.width + ';\noverflow: hidden;\n}\n'
+      str += '#toPrint.format_' + obj.name + ' > .capsule {\nheight: ' + obj.label.height + ';\nwidth: ' + obj.label.width + ';\noverflow: hidden;\n}\n'
     }
     return str
   }

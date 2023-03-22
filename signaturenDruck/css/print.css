@@ -4,6 +4,23 @@
 .innerBox > p {
   width: 100%;
 }
+/*---- DebugColors ----*/
+/*
+#toPrint {
+  background-color: antiquewhite;
+}
+.capsule {
+  background-color: lightblue;
+}
+.capsule > .innerBox {
+  background-color: lightcoral;
+}
+@media print {
+  @page {
+    background-color: lightgreen;
+  }
+}
+*/
 
 @media print {
   #toPrint > #coverLabel.innerBox {
@@ -19,7 +36,7 @@
   #coverLabel > p {
     width: 100%
   }
-  .innerBox {
+  .capsule {
     page-break-before: always;
     /* background-color: grey; */
   }
