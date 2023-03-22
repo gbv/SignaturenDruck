@@ -48,6 +48,7 @@ ipcRenderer.on('newModeFormat', function (event, data) {
     setValueOfElemId('input_fileName', '')
     setValueOfElemId('input_example', config.get('example.shelfmark'))
   } else {
+    lineCounter = 1
     subModeData = data
     setValueOfElemId('input_fileName', data.name)
     setValueOfElemId('input_example', data.example.shelfmark)
@@ -270,6 +271,7 @@ function loadDataFromFormat (formatName) {
     }
     changeLineIndent(evt)
   }
+  changePaddingTop()
 }
 
 function changeLabelHeight (event) {
@@ -394,9 +396,9 @@ function createCSS (obj) {
     if (marginTopAdjustmentValue === '') {
       marginTopAdjustmentValue = 0
     }
-    str += '@media print {\n#toPrint.format_' + obj.name + ' > .innerBox {\nmargin: ' + marginTopValue + 'mm 0mm 0mm ' + marginLeftValue + 'mm;\n}\n'
+    str += '.format_' + obj.name + ' > .innerBox > .line_1 {\nmargin-top: ' + marginTopAdjustmentValue + 'mm;\n}\n'
+    str += '@media print {\n#toPrint.format_' + obj.name + ' > .innerBox {\npadding: ' + marginTopValue + 'mm 0mm 0mm ' + marginLeftValue + 'mm;\n}\n'
     str += 'body {\nmargin: 0px;\n}\n'
-    str += '#toPrint.format_' + obj.name + ' > .innerBox > .line_1 {\nmargin-top: ' + marginTopAdjustmentValue + 'mm;\n}\n'
     str += '}'
     return str
 
@@ -431,10 +433,10 @@ function createCSS (obj) {
   function centerVer (str) {
     if (obj.centerVer) {
       str += '.format_' + obj.name + ' {\nalign-items: center;\n}\n'
-      str += '#toPrint.format_' + obj.name + '> .innerBox {\nheight: ' + obj.label.height + ';\nwidth: ' + obj.label.width + ';\ndisplay: flex;\njustify-content: center;\nflex-direction: column;\n}\n'
+      str += '#toPrint.format_' + obj.name + ' > .innerBox {\nheight: ' + obj.label.height + ';\nwidth: ' + obj.label.width + ';\ndisplay: flex;\njustify-content: center;\nflex-direction: column;\noverflow: hidden;\n}\n'
     } else {
       str += '.format_' + obj.name + ' {\nalign-items: initial;\n}\n'
-      str += '#toPrint.format_' + obj.name + '> .innerBox {\nheight: ' + obj.label.height + ';\nwidth: ' + obj.label.width + ';\n}\n'
+      str += '#toPrint.format_' + obj.name + ' > .innerBox {\nheight: ' + obj.label.height + ';\nwidth: ' + obj.label.width + ';\noverflow: hidden;\n}\n'
     }
     return str
   }
@@ -644,6 +646,10 @@ function getValueOfElemId (elemId) {
   return document.getElementById(elemId).value
 }
 
+function changePaddingTop (event) {
+  document.getElementById('line_1').style.paddingTop = getValueOfElemId('marginTop') + 'mm'
+}
+
 // adds event listener to the labelSize inputs
 document.getElementById('input_labelHeight').addEventListener('input', changeLabelHeight)
 document.getElementById('input_labelWidth').addEventListener('input', changeLabelWidth)
@@ -657,3 +663,5 @@ document.getElementById('lineSpace').addEventListener('input', changeLineSpace)
 document.getElementById('centerHor').addEventListener('click', centerHor)
 // adds event listener to the centerVer input
 document.getElementById('centerVer').addEventListener('click', centerVer)
+// adds event listener to the marginTop input
+document.getElementById('marginTop').addEventListener('input', changePaddingTop)

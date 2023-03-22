@@ -16,6 +16,7 @@ width: 74mm;
 display: flex;
 justify-content: center;
 flex-direction: column;
+overflow: hidden;
 }
 .format_thulb_klein_1 > .innerBox > p {
 margin: 0px 0px 0px 0px;
@@ -27,14 +28,14 @@ font-weight: bold;
 font-style: normal;
 margin-left: 0%;
 }
+.format_thulb_klein_1 > .innerBox > .line_1 {
+margin-top: -1mm;
+}
 @media print {
 #toPrint.format_thulb_klein_1 > .innerBox {
 margin: 2.25mm 0mm 0mm 1.75mm;
 }
 body {
 margin: 0px;
-}
-#toPrint.format_thulb_klein_1 > .innerBox > .line_1 {
-margin-top: -1mm;
 }
 }

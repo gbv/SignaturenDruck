@@ -16,6 +16,7 @@ width: 80mm;
 display: flex;
 justify-content: center;
 flex-direction: column;
+overflow: hidden;
 }
 .format_thulb_gross > .innerBox > p {
 margin: 0px 0px 0px 0px;
@@ -62,14 +63,14 @@ font-weight: bold;
 font-style: normal;
 margin-left: 47%;
 }
+t.format_thulb_gross > .innerBox > .line_1 {
+margin-top: -3mm;
+}
 @media print {
 #toPrint.format_thulb_gross > .innerBox {
 margin: 2.96mm 0mm 0mm 8.985mm;
 }
 body {
 margin: 0px;
-}
-#toPrint.format_thulb_gross > .innerBox > .line_1 {
-margin-top: -3mm;
 }
 }
