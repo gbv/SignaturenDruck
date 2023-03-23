@@ -15,17 +15,15 @@
 .capsule > .innerBox {
   background-color: lightcoral;
 }
-@media print {
-  @page {
-    background-color: lightgreen;
-  }
+body {
+  background-color: lightgreen;
 }
 */
 
 @media print {
   #toPrint > #coverLabel.innerBox {
-    margin-top: -2mm;
-    margin-bottom: -2mm;
+    margin-top: 0mm;
+    margin-bottom: 0mm;
   }
   #coverLabel {
     text-align: center;
@@ -38,7 +36,6 @@
   }
   .capsule {
     page-break-before: always;
-    /* background-color: grey; */
   }
   .noIndent > p {
     margin-left: 0px !important;

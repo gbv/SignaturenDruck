@@ -401,7 +401,17 @@ function createConfig () {
 
 function printData (formatInformation, printInformation, printImmediately, last = false) {
   let winPrint = null
-  const options = windowParams(899, 900, false)
+  const options = {
+    width: 899,
+    height: 900,
+    show: false,
+    webPreferences: {
+      contextIsolation: false,
+      nodeIntegration: true,
+      nativeWindowOpen: true,
+      additionalArguments: ['--format-name:' + formatInformation.name]
+    }
+  }
 
   winPrint = new BrowserWindow(options)
   winPrint.loadURL(url.format({
@@ -424,7 +434,7 @@ function printData (formatInformation, printInformation, printImmediately, last 
 
 ipcMain.on('readyToPrint', function (event, formatInformation, printImmediately, last) {
   const winPrint = BrowserWindow.fromWebContents(event.sender)
-  winPrint.webContents.printToPDF({
+  let options = {
     margins: {
       top: config.get('print.margin.top') * 0.03937,
       bottom: config.get('print.margin.bottom') * 0.03937,
@@ -432,13 +442,10 @@ ipcMain.on('readyToPrint', function (event, formatInformation, printImmediately,
       right: config.get('print.margin.right') * 0.03937
     },
     landscape: true,
-    //printBackground: true,
-    preferCSSPageSize: true/*
-    pageSize: {
-      height: formatInformation.paper.width / 25400,
-      width: formatInformation.paper.height / 25400 
-    }*/
-    }).then(data => {
+    printBackground: true,
+    preferCSSPageSize: true
+  }
+  winPrint.webContents.printToPDF(options).then(data => {
       const fileName = formatInformation.name + new Date().getTime() + '.pdf'
       const fullPath = defaultProgramPath + '\\' + fileName
       fs.writeFile(fullPath, data, (error) => {

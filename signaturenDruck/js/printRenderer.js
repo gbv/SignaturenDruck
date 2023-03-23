@@ -17,7 +17,9 @@ const moment = require('moment')
 const formats = require('./classes/Formats')
 
 window.onload = function () {
-  formats.addStyleFiles()
+  const match = process.argv.filter(s => s.includes('--format-name:'))
+  const formatName = match[0].split('format-name:')[1]
+  formats.addStyleFile(formatName)
 }
 
 ipcRenderer.on('toPrint', function (event, formatInformation, printInformation, printImmediately, last) {

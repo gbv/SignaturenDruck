@@ -44,6 +44,22 @@ class Formats {
     }
   }
 
+  static addStyleFile (name) {
+    const files = fs.readdirSync(defaultProgramPath + '\\FormateCSS')
+    for (const file of files) {
+      if (file.endsWith('.css')) {
+        const fileName = file.split('.css')[0]
+        if (fileName === name) {
+          const cssLink = document.createElement('link')
+          cssLink.rel = 'stylesheet'
+          cssLink.type = 'text/css'
+          cssLink.href = defaultProgramPath + '/FormateCSS/' + fileName + '.css'
+          document.head.appendChild(cssLink)
+        }
+      }
+    }
+  }
+
   loadFormats () {
     const files = fs.readdirSync(defaultProgramPath + '\\Formate')
     let failedFormats = ''
