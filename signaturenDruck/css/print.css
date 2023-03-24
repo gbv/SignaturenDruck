@@ -4,6 +4,9 @@
 .innerBox > p {
   width: 100%;
 }
+#toPrint {
+  display: contents;
+}
 /*---- DebugColors ----*/
 /*
 #toPrint {
