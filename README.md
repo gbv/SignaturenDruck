@@ -244,6 +244,7 @@ Die `config.json` unter `C:\Users\USER\SignaturenDruck` oder `C:\SignaturenDruck
 | `print.showPrintDialog` | ermöglicht ein ausblenden der Druckbestätigung | `true` |  
 | `print.orientation` | legt die Ausrichtung des Drucks fest, Optionen: `landscape`,`portrait` | `landscape` |  
 | `print.scale` | legt die Skalierung des Drucks fest, Optionen: `noscale`, `shrink`, `fit` | `noscale` |  
+| `print.margin` (`.top`; `.bottom`; `.left`; `.right`;) | legen eine entsprechende Margin beim Druck fest | `0` |  
 | `mode.defaultMode` | legt den zu verwendenden Modus fest | `"thulbMode"` |  
 | `devMode` | dient zur Fehlersuche, zeigt die Fenster der jeweiligen Formate an, die im Formalfall nicht zu sehen sind. Die PDFs werden erstellt aber weder gelöscht noch gedruckt. | `false` |  
 | `username` | der Nutzername des letzten Benutzers, wird automatisch geschrieben, kann nicht verändert werden | - |  
@@ -297,6 +298,7 @@ Nein, der SignaturenDruck ist seit version `v1.3.12` nichtmehr vom Adobe Acrobat
   - `print.showPrintDialog` hinzugefügt, ermöglicht ein ausblenden der Druckbestätigung
   - `print.orientation` hinzugefügt, legt die Ausrichtung des Drucks fest
   - `print.scale` hinzugefügt, legt die Skalierung des Drucks fest
+  - `print.margin`(`.top`; `.bottom`; `.left`; `.right`;) hinzugefüt, ermöglicht das festlegen einer Margin beim Druck
   - `username` hinzugefügt, enthält den Nutzernamen des letzten Benutzers
   - `defaultProgrammPath` hinzugefügt, enthält den Pfad des SignaturenDrucks, wird automatisch geschrieben und kann nicht verändert werden
   - `sigJSONFile` hinzugefügt, enthält den Namen der temporären Signaturendatei, wird automatisch geschrieben, kann nicht verändert werden
