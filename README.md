@@ -274,7 +274,7 @@ Nein, der SignaturenDruck ist seit version `v1.3.12` nichtmehr vom Adobe Acrobat
 
 # Changelog
 
-## v1.3.16
+## v1.3.17
 
 - Dokumentation angepasst
 - Adobe Acrobat Reader DC wird nicht mehr benötigt (intern wird SumatraPDF verwendet)
