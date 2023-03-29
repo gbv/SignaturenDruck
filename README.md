@@ -1,11 +1,11 @@
 # SignaturenDruck
-![GitHub all releases](https://img.shields.io/github/downloads/gbv/SignaturenDruck/total?label=downloads@overall)
+![GitHub all releases](https://img.shields.io/github/downloads/gbv/SignaturenDruck/total?label=downloads@overall)  
 ![GitHub release (latest SemVer including pre-releases)](https://img.shields.io/github/v/release/gbv/SignaturenDruck?label=stable)
 ![GitHub Release Date](https://img.shields.io/github/release-date/gbv/SignaturenDruck)
-![GitHub release (latest by date)](https://img.shields.io/github/downloads/gbv/SignaturenDruck/v1.2.0/total?label=downloads@v1.2.0)
+![GitHub release (latest by date)](https://img.shields.io/github/downloads/gbv/SignaturenDruck/v1.2.0/total?label=downloads@v1.2.0)  
 ![GitHub release (latest SemVer including pre-releases)](https://img.shields.io/github/v/release/gbv/SignaturenDruck?include_prereleases&label=pre-release)
 ![GitHub (Pre-)Release Date](https://img.shields.io/github/release-date-pre/gbv/SignaturenDruck)
-![GitHub release (latest by date)](https://img.shields.io/github/downloads/gbv/SignaturenDruck/v1.3.17/total?label=downloads@v1.3.17)
+![GitHub release (latest by date)](https://img.shields.io/github/downloads/gbv/SignaturenDruck/v1.3.17/total?label=downloads@v1.3.17)  
 ![GitHub closed issues](https://img.shields.io/github/issues-closed-raw/gbv/SignaturenDruck)
 ![GitHub issues](https://img.shields.io/github/issues-raw/gbv/SignaturenDruck)
 
