@@ -1,5 +1,5 @@
 function sortTable (n) {
-  let table = document.getElementById('signaturTable')
+  const table = document.getElementById('signaturTable')
   let rows, i, x, y
   let switching = true
   let shouldSwitch = false

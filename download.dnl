@@ -1,210 +1,67 @@
-SET: S0 [2] TTL: 1            PPN: 211917842                            SEITE1 .
+SET: S0 [2] TTL: 1            PPN: 1020743123                           SEITE1 .
 
-Eingabe: 2001:18-06-96 Änderung: 2001:17-10-13 22:28:39 Status: 9999:99-99-99
-0000 20,22,30-32,50,60,62,65,69,95,100,130,150,179,213,230,250,281
+Eingabe: KAUB:03-05-18 Änderung: DDSU:22-10-18 12:00:22 Status: KAUB:10-07-18
+0000 20,22,31-32,34,62,70,95,132,136,150,152,161,164,185,274,281,2005-2006,2014-2015,2018,2020,2034,2055,2061,2064-2065,2068,2106,2118-2119,2136,2149,2198,2472
 000A 0
 000K utf8
-0100 211917842
-0200 2001:18-06-96
-0210 2001:17-10-13; 22:28:39.000
-0230 9999:99-99-99
-0500 Aau
-1100 1996
-1500 ger
-1700 XA-DE ; XD-US ; XA-CH
-2000 3-527-29391-4$cbrosch.$fDM 38.00
-2065 947409564
-2097 #OCoLC#845181384$v2012-12-31
-2100 96N260386
-2105 96A370998
-2199 BBAWhk_00_015801
-2199 9783527293919/leh
-3000 Krätz, Otto
-4000 Das @Rätselkabinett des Doktor Krätz$hOtto Krätz
-4030 Weinheim [u.a.]$nVCH
-4060 XV, 195 S.
-4061 graph. Darst.
-4062 21 cm
-4099 $S1$yInhaltsverzeichnis$0pdf$ahttp://www.gbv.de/dms/bs/toc/211917842.pdf$mDE-601$nDE-84$qpdf/application$304$AGBV$B2
-4099 $ahttp://d-nb.info/947409564/04$nVerlag: GBV$v20130501$304$52$ADNB$B2
-4700 tocubbs
-5022 NAT 253
-5050 30
-5100 |s|!106360647!Chemiker ; ID: gnd/4009836-9
-5101 |s|!104400900!Historische Persönlichkeit ; ID: gnd/4025111-1
-5102 |s|!106100645!Denkspiel ; ID: gnd/4070295-9
-5108 <213;321>
-5301 !106419188!35.01$jGeschichte der Chemie
-6310 [9] VB 3100
-0247 utf8
-2080 JENA140366
-4901 02-05-17; 1179/0027
-4903 02-05-17 15:32:57.000
-6000 CHE:AH 1000
-6010 !366077856!950000$jPersonen <Thüringen>
-7001 09-11-16 : d
-0248 utf8
-4801 test
-4802 ACQr
-4802 Test Lieferantendatenimport
-7100 bestellt @ g
-7901 05-01-17; 1172/0027
-7903 05-01-17 14:43:51.000
-8595 9-11-2016 leh
-8596 leh-21139_2
-7800 1645059731
-7002 09-12-96 : z
-0248 utf8
-4802 test  update oehrlich
-7100 !J 14!CHE:AH:1000:Krä::1996 @ d
-7109 97 A 1
-7901 16-03-16; 1180/0027
-7903 16-03-16 09:16:57.000
-8100 A96/R/7377
-8200 27$008029938
-7900 09-12-96
-7800 221757406
-7003 02-09-06 : z
-0248 utf8
-4802 test oehrlich
-4880 /1ASL 201204
-7100 !Mag!96 A 2091/1 @ u
-7901 23-05-17; 1180/0027
-7903 23-05-17 13:41:52.000
-8100 A96/R/5531
-8200 027$013679201
-7800 776376691
-
-SET: S0 [2] TTL: 2            PPN: 871803844                            SEITE1 .
-
-Eingabe: 2001:04-11-16 Änderung: 8113:07-06-17 00:51:58 Status: 3311:20-04-17
-0000 22,31,39-40,123,345
-000A 0
-000K utf8
-0100 871803844
-0200 2001:04-11-16
-0210 8113:07-06-17; 00:51:58.000
-0230 3311:20-04-17
+0100 1020743123
+0110 502604735
+0200 KAUB:03-05-18
+0210 DDSU:22-10-18; 12:00:22.000
+0230 KAUB:10-07-18
 0500 Aau
 0501 Text$btxt
 0502 ohne Hilfsmittel zu benutzen$bn
 0503 Band$bnc
-1100 2017$n[2017]
-1108 $n© 2017
+1100 2018$n[2018]
+1108 $n© 2018
+1131 !104270187!Lehrbuch ; ID: gnd/4123623-3
 1500 ger
-1700 XA-DE-SN
-2000 3-374-04557-X=978-3-374-04557-0$fBroschur : EUR 68.00 (DE), EUR 70.00 (AT)
-2003 |u|=978-3-374-04781-9
-2065 1117098354
-2097 #OCoLC#962082283
-2105 16N44
-2112 DNB: 1117098354
-2201 9783374045570
-2240 DNB: 1117098354
-3010 Kohnle, Armin!500068771!Kohnle, Armin *1960-* ; ID: gnd/113304455$BHerausgeberIn$4edt
-3010 Dingel, Irene!502213264!Dingel, Irene *1956-* ; ID: gnd/111186870$BHerausgeberIn$4edt
-3110 !101670850!Evangelische Verlagsanstalt ; ID: gnd/2009855-8$BVerlag$4pbl
-3110 !215960165!Leucorea, Stiftung des Öffentlichen Rechts an der Martin-Luther-Universität Halle-Wittenberg ; ID: gnd/2158312-2$BVeranstalterIn$4orm
-3160 Frühjahrstagung zur Geschichte der Wittenberger Reformation$n5$cWittenberg$d2004.03.05-06
-3160 Frühjahrstagung zur Geschichte der Wittenberger Reformation$n11$cWittenberg$d2014.03.06-08
-4000 Johannes Mathesius (1504-1565)$dRezeption und Verbreitung der Wittenberger Reformation durch Predigt und Exegese$hherausgegeben von Armin Kohnle und Irene Dingel
-4030 Leipzig$nEvangelische Verlagsanstalt
-4060 380 Seiten
-4062 23 cm x 15.5 cm
-4099 $ahttp://deposit.d-nb.de/cgi-bin/dokserv?id=deaa9787595d44b1aff30f0ce6d0fc12&prov=M&dok_var=1&dok_ext=htm$nVerlag: MVB$qtext/html$v2016-11-04$301$52$ADNB$B2
-4099 $ahttp://d-nb.info/1117098354/04$mDE-101$qpdf/application$v20170429003401$304$ADNB$B2
-4170 Leucorea-Studien zur Geschichte der Reformation und der Lutherischen Orthodoxie (LStRLO)$lBand 30
-4180 #3000#!471045071!Leucorea-Studien zur Geschichte der Reformation und der Lutherischen Orthodoxie : (LStRLO) / Leucorea, Stiftung des Öffentlichen Rechts an der Martin-Luther-Universität Halle-Wittenberg ; ID: gnd/2158312-2. - Leipzig : Evang. Verl.-Anst., 2002- ; ZDB-ID: 21675260$lBand 30
-4201 "Die Frühjahrstagungen zur Geschichte der Wittenberger Reformation, die stets als Kooperationsveranstaltung zwischen dem Institut für Kirchengeschichte der Universität Leipzig und dem Leibniz-Institut für Europäische Geschichte in Mainz in der Leucorea zu Wittenberg stattfinden [...]. [...] Mathesius als Thema einer Frühjahrstagung [...]. Die V. Frühjahrstagung, die am 5. und 6. März 2004 stattfand, widmete sich anlässlich seines 500. Geburtstags erstmals seiner Person und Wirksamkeit. Aus verschiedenen Gründen sind die Tagungsbeiträge jedoch nie publiziert worden. Deshalb wandte sich die XI. Frühjahrstagung im Jahr 2014 (6. bis 8. März) - zu seinem 510. Geburtstag - erneut dem Joachimsthaler Reformator zu. [...] Die Ergebnisse beider Tagungen werden hier zusammen veröffentlicht." (Vorwort, Seite 6-7)
-4243 Erscheint auch als$nOnline-Ausgabe$CISB$69783374047819
-5010 [23sdnb] 230$ADE-101
-5051 230$ADE-101
-5056 1
-5090 BP 2600$ABSZ
-5090 BP 2300$ABSZ
-5550 !133876284!Mathesius, Johannes *1504-1565* ; ID: gnd/118731696
-7001 01-06-17 : z
-0248 utf8
-4880 /1 THR 201707
-7100 !J 49!THR:FG:3394:Mat::2017 @ d
-7901 17-07-17; 5675/0027
-7903 17-07-17 14:03:37.000
-8100 U555247
-8200 27$030381703
-7800 1684458579
-
-SET: S1 [2] TTL: 1            PPN: 211917842                            SEITE1 .
-
-Eingabe: 2001:18-06-96 Änderung: 2001:17-10-13 22:28:39 Status: 9999:99-99-99
-0000 20,22,30-32,50,60,62,65,69,95,100,130,150,179,213,230,250,281
-000A 0
-000K utf8
-0100 211917842
-0200 2001:18-06-96
-0210 2001:17-10-13; 22:28:39.000
-0230 9999:99-99-99
-0500 Aau
-1100 1996
-1500 ger
-1700 XA-DE ; XD-US ; XA-CH
-2000 3-527-29391-4$cbrosch.$fDM 38.00
-2065 947409564
-2097 #OCoLC#845181384$v2012-12-31
-2100 96N260386
-2105 96A370998
-2199 BBAWhk_00_015801
-2199 9783527293919/leh
-3000 Krätz, Otto
-4000 Das @Rätselkabinett des Doktor Krätz$hOtto Krätz
-4030 Weinheim [u.a.]$nVCH
-4060 XV, 195 S.
-4061 graph. Darst.
-4062 21 cm
-4099 $S1$yInhaltsverzeichnis$0pdf$ahttp://www.gbv.de/dms/bs/toc/211917842.pdf$mDE-601$nDE-84$qpdf/application$304$AGBV$B2
-4099 $ahttp://d-nb.info/947409564/04$nVerlag: GBV$v20130501$304$52$ADNB$B2
-4700 tocubbs
-5022 NAT 253
-5050 30
-5100 |s|!106360647!Chemiker ; ID: gnd/4009836-9
-5101 |s|!104400900!Historische Persönlichkeit ; ID: gnd/4025111-1
-5102 |s|!106100645!Denkspiel ; ID: gnd/4070295-9
-5108 <213;321>
-5301 !106419188!35.01$jGeschichte der Chemie
-6310 [9] VB 3100
+1505 $erda
+1700 XA-DE-BY
+2000 978-3-446-45160-5$f : Broschur : EUR 24,00 (DE)
+2003 |o|978-3-446-45631-0$f (E-Book)
+2097 #OCoLC#1035874073
+2098 #OCoLC#1039151935
+2098 #OCoLC#1035874073
+2199 9783446451605/mib
+2240 GBV: 1020743123
+3000 !1029464936!Scholz, Reinhard ; ID: gnd/116553049X$BVerfasserIn$4aut
+4000 Grundlagen der Elektrotechnik$deine Einführung in die Gleich- und Wechselstromtechnik$hReinhard Scholz
+4030 München$nFachbuchverlag Leipzig im Carl Hanser Verlag
+4060 249 Seiten
+4061 Illustrationen, Diagramme
+4201 "Mit 157 Bildern und 18 Tabellen" - Titelseite
+4201 Literaturverzeichnis: Seite 239-241
+4243 Erscheint auch als$nOnline-Ausgabe!1027513468!Grundlagen der Elektrotechnik / Scholz, Reinhard *1943-* ; ID: gnd/1051541069. - München : Fachbuchverlag Leipzig im Carl Hanser Verlag, [2018]
+4700 5090 DDFHTW ; 5090: DDSU/sred (SWB)
+4960 http://d-nb.info/115868858x/04$nDE-101$qapplication/pdf$304$52$B2
+4960 http://d-nb.info/115868858X/04$mB:DE-101$qapplication/pdf$3Inhaltsverzeichnis$504
+5010 [23sdnb]621.3$ADE-101
+5010 [23sdnb]621.3$ADE-101
+5060 [BIC]Elektrotechnik
+5090 ZN 3000$ABSZ
+5100 !106340409!Elektrotechnik ; ID: gnd/4014390-9
+5101 !106340816!Elektrisches Netzwerk ; ID: gnd/4014214-0
+5102 !242810330!Grundschaltung ; ID: gnd/4497217-9
+5103 !106099329!Elektrisches Bauelement ; ID: gnd/4070746-5
+5104 !10612143X!Wechselstrom ; ID: gnd/4064931-3
+5105 !106314904!Gleichstrom ; ID: gnd/4021242-7
+5109 $ADE-101
+5301 !106410970!53.00$jElektrotechnik: Allgemeines
+5400 [DDC23ger]621.3-G--621.3
+5550 !106340409!Elektrotechnik ; ID: gnd/4014390-9
+9605 01$b20$tmib-2018-11-0165604_19
 0247 utf8
-2080 JENA140366
-4901 02-05-17; 1179/0027
-4903 02-05-17 15:32:57.000
-6000 CHE:AH 1000
-6010 !366077856!950000$jPersonen <Thüringen>
-7001 09-11-16 : d
+4903 16-10-18 14:17:45.000
+6000 ING:MA:7000
+E001 05-09-18 : z
 0248 utf8
-4801 test
-4802 ACQr
-4802 Test Lieferantendatenimport
-7100 bestellt @ g
-7901 05-01-17; 1172/0027
-7903 05-01-17 14:43:51.000
-8595 9-11-2016 leh
-8596 leh-21139_2
-7800 1645059731
-7002 09-12-96 : z
-0248 utf8
-7100 !J 14!CHE:AH:1000:Krä::1996 @ d
-7109 97 A 1
-7901 21-07-17; 1180/0027
-7903 21-07-17 10:14:37.000
-8100 A96/R/7377
-8200 27$008029938
-7900 09-12-96
-7800 221757406
-7003 02-09-06 : z
-0248 utf8
-4880 /1ASL 201204
-7100 !Mag!96 A 2091/1 @ u
-7901 21-07-17; 1180/0027
-7903 21-07-17 10:14:37.000
-8100 A96/R/5531
-8200 027$013679201
-7800 776376691
+4880 $a ING 2018010
+7100 $fJ 144$aING:MA:7000:Scho::2018$dd
+7903 19-10-18 13:01:51.000
+7904 16-02-19$bk10plus_exemp$a1999
+8100 U581894
+8200 27$030582571
+7800 1802398465
 

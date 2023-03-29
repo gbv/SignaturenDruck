@@ -1,18 +1,25 @@
+const CONFIGVERSION = 1.1
 const { BrowserWindow, app, ipcMain, dialog, Menu } = require('electron')
 const path = require('path')
 const url = require('url')
 const fs = require('fs')
 const _ = require('lodash')
 const Store = require('electron-store')
+const C = require('./js/classes/Config')
+const Printer = require('pdf-to-printer')
+
 // requires the username-module
-// const username = require('username')
+const username = require('username')
 // const defaultProgramPath = 'C:/Users/' + username.sync() + '/SignaturenDruck/'
 
-const defaultProgramPath = 'C:\\SignaturenDruck'
+const defaultProgramPath = new C().defaultPath
 // Use a default path
 const config = new Store({ cwd: defaultProgramPath })
 
-const Shell = require('node-powershell')
+if (require('electron-squirrel-startup')) app.quit();
+
+// needed for the old printing code
+// const Shell = require('node-powershell')
 
 require('electron-context-menu')({
   prepend: (params, BrowserWindow) => [{
@@ -52,7 +59,17 @@ const configNew = {
     QueryPart2: '&maximumRecords=1&recordSchema=picaxml'
   },
   print: {
-    printCoverLabel: true
+    printCoverLabel: true,
+    reverseOrder: false,
+    showPrintDialog: false,
+    orientation: 'landscape',
+    scale: 'noscale',
+    margin: {
+      top: 0,
+      bottom: 0,
+      left: 0,
+      right: 0
+    }
   },
   mode: {
     defaultMode: 'defaultMode'
@@ -94,10 +111,10 @@ const template = [
 const menu = Menu.buildFromTemplate(template)
 
 // name of signature storage json
-const sigJSONFile = 'signaturen.json'
+const sigJSONFile = defaultProgramPath + '\\' + 'signaturen.json'
 
 const DataFromSRU = require('./js/classes/DataFromSRU.js')
-let sruData = new DataFromSRU()
+const sruData = new DataFromSRU()
 
 // Keep a global reference of the window object, if you don't, the window will
 // be closed automatically when the JavaScript object is garbage collected.
@@ -124,7 +141,7 @@ app.on('activate', function () {
 // starts the printing process
 ipcMain.on('print', (event, dataAll, printImmediately = false) => {
   let i = 1
-  let nrOfFormats = dataAll.length
+  const nrOfFormats = dataAll.length
 
   _.each(dataAll, (data) => {
     let last = false
@@ -160,15 +177,32 @@ ipcMain.on('close', function (event) {
 })
 
 // listens on openManualSignaturesWindow, invokes the opening process
-ipcMain.on('openManualSignaturesWindow', function (event, data, edit = false) {
-  createManualSignaturesWindow(data, edit)
+ipcMain.on('openManualSignaturesWindow', function (event, data, edit = false, manId) {
+  createManualSignaturesWindow(data, edit, manId)
 })
 
+// TODO REFATOR
 // listens on closeManual, closes the manualSignaturesWindow and invokes the removeManual process
 ipcMain.on('closeManualSignaturesWindow', function (event) {
   manualSignaturesWindow.close()
   manualSignaturesWindow = null
+  /*
   mainWindow.webContents.send('removeManualSignatures')
+  */
+})
+
+// new function to replace closeManualSignaturesWindow & saveManualSignatures
+ipcMain.on('closeManualWindow', function (event, data = null) {
+  manualSignaturesWindow.close()
+  manualSignaturesWindow = null
+  if (data != null) {
+    mainWindow.webContents.send('addManualSignatuers', data)
+  }
+})
+
+// listens on saveManualSignatures, closes the manualSignaturesWindow and passes the data along
+ipcMain.on('addManualData', function (event, data) {
+  mainWindow.webContents.send('addManualSignatures', data)
 })
 
 // listens on saveManualSignatures, closes the manualSignaturesWindow and passes the data along
@@ -226,27 +260,58 @@ function closeEditorWindow () {
   editorWindow = null
 }
 
+function windowParams (width = 850, height = 570, show = true) {
+  return {
+    width: width,
+    height: height,
+    show: show,
+    webPreferences: {
+      contextIsolation: false,
+      nodeIntegration: true,
+      nativeWindowOpen: true
+    }
+  }
+}
+
 // creates the mainWindow
 function createWindow () {
-  /*
-  Pass config STORE as global variable to all other js files
-   */
-  global.config = config
-  global.defaultProgramPath = defaultProgramPath
-  global.sigJSONFile = sigJSONFile
-
-  // checkDir('./tmp')
   checkDir(defaultProgramPath)
   checkDir(defaultProgramPath + '\\Formate')
   checkDir(defaultProgramPath + '\\FormateCSS')
   checkDir(defaultProgramPath + '\\Modi')
+
   checkConfig()
-  // Create the browser window.
-  if (!config.store.devMode) {
-    mainWindow = new BrowserWindow({ width: 850, height: 570, backgroundColor: '#f0f0f0' })
-  } else {
-    mainWindow = new BrowserWindow({ width: 850, height: 600, backgroundColor: '#f0f0f0' })
+  /*
+  Pass config STORE as global variable to all other js files
+   */
+  config.set('username', username.sync())
+  config.set('defaultProgramPath', defaultProgramPath)
+
+  // check if config is up-to-date
+  if (!config.has('configVersion')) {
+    updateConfig()
+  } else if (config.get('configVersion') < CONFIGVERSION) {
+    updateConfig()
   }
+
+  const options = windowParams()
+  options.backgroundColor = '#f0f0f0'
+  options.webPreferences.preload = path.join(__dirname, 'js\\renderer.js')
+
+  if (config.store.devMode) {
+    options.height = 600
+  }
+
+  mainWindow = new BrowserWindow(options)
+  mainWindow.removeMenu()
+  const printerNames = []
+  mainWindow.webContents.getPrintersAsync().then((response) => {
+    _.forEach(response, function (printer) {
+      printerNames.push(printer.name)
+    })
+    config.set('print.printerList', printerNames)
+  })
+
   if (config.store.showMenu) {
     Menu.setApplicationMenu(menu)
   }
@@ -256,7 +321,11 @@ function createWindow () {
   mainWindow.loadURL(url.format({
     pathname: path.join(__dirname, '/html/index.html'),
     protocol: 'file:',
-    slashes: true
+    slashes: true,
+    webPreferences: {
+      contextIsolation: false,
+      nodeIntegration: true
+    }
   }))
   // Emitted when the window is closed.
   mainWindow.on('closed', function () {
@@ -266,6 +335,10 @@ function createWindow () {
     editorWindow = null
     deleteJSON()
   })
+  if (config.store.devMode) {
+    // open dev-tools
+    mainWindow.webContents.openDevTools()
+  }
 }
 
 // deletes the signature storage json
@@ -307,7 +380,7 @@ function createModeFiles (modeName, subModeNames) {
 
 function checkAndCreate (pathName, fileName, ending) {
   if (!fs.existsSync(pathName + fileName + ending)) {
-    let file = fs.readFileSync(path.join(__dirname, 'defaultFiles/' + fileName + ending), 'utf8')
+    const file = fs.readFileSync(path.join(process.resourcesPath, '.\\defaultFiles\\' + fileName + ending), 'utf8')
     fs.writeFileSync(pathName + fileName + ending, file, 'utf8')
   }
 }
@@ -328,12 +401,29 @@ function createConfig () {
 
 function printData (formatInformation, printInformation, printImmediately, last = false) {
   let winPrint = null
-  winPrint = new BrowserWindow({ width: 899, height: 900, show: false })
+  const options = {
+    width: 899,
+    height: 900,
+    show: false,
+    webPreferences: {
+      contextIsolation: false,
+      nodeIntegration: true,
+      nativeWindowOpen: true,
+      additionalArguments: ['--format-name:' + formatInformation.name]
+    }
+  }
+
+  winPrint = new BrowserWindow(options)
   winPrint.loadURL(url.format({
     pathname: path.join(__dirname, 'html/print.html'),
     protocol: 'file:',
-    slashes: true
+    slashes: true,
+    webPreferences: {
+      contextIsolation: false,
+      nodeIntegration: true
+    }
   }))
+  winPrint.removeMenu()
   winPrint.once('ready-to-show', () => {
     winPrint.webContents.send('toPrint', formatInformation, printInformation, printImmediately, last)
     if (config.store.devMode) {
@@ -343,105 +433,173 @@ function printData (formatInformation, printInformation, printImmediately, last 
 }
 
 ipcMain.on('readyToPrint', function (event, formatInformation, printImmediately, last) {
-  let winPrint = BrowserWindow.fromWebContents(event.sender)
-  winPrint.webContents.printToPDF({ marginsType: 1, landscape: true, pageSize: { height: formatInformation.paper.width, width: formatInformation.paper.height } }, (error, data) => {
-    if (error) throw error
-    let fileName = formatInformation.name + new Date().getTime() + '.pdf'
-    fs.writeFile(defaultProgramPath + '\\' + fileName, data, (error) => {
+  const winPrint = BrowserWindow.fromWebContents(event.sender)
+  let options = {
+    margins: {
+      top: config.get('print.margin.top') * 0.03937,
+      bottom: config.get('print.margin.bottom') * 0.03937,
+      left: config.get('print.margin.left') * 0.03937,
+      right: config.get('print.margin.right') * 0.03937
+    },
+    landscape: true,
+    printBackground: true,
+    preferCSSPageSize: true
+  }
+  winPrint.webContents.printToPDF(options).then(data => {
+      const fileName = formatInformation.name + new Date().getTime() + '.pdf'
+      const fullPath = defaultProgramPath + '\\' + fileName
+      fs.writeFile(fullPath, data, (error) => {
       if (error) throw error
-      let ps = new Shell({
-        executionPolicy: 'Bypass',
-        noProfile: true
-      })
-      if (!config.store.devMode) {
-        if (last) {
-          ps.addCommand('Start-Process -file "' + defaultProgramPath + '\\' + fileName + '"-WindowStyle Minimized -Verb PrintTo "' + formatInformation.printer + '" -PassThru | %{start-sleep 11;$_} | kill')
-        } else {
-          ps.addCommand('Start-Process -file "' + defaultProgramPath + '\\' + fileName + '"-WindowStyle Minimized -Verb PrintTo "' + formatInformation.printer + '" -PassThru | %{start-sleep 11;$_} | kill')
-        }
-        ps.invoke().then(output => {
-          ps.dispose()
-          winPrint.close()
-          winPrint = null
-          if (!printImmediately) {
-            mainWindow.webContents.send('printMsg', last)
+      // tested native electron silent printing, still broken
+      /*
+      else {
+        let win = new BrowserWindow({ show: false })
+        win.loadFile(fullPath)
+        win.webContents.on('did-finish-load', () => {
+          const options = {
+            silent: true,
+            deviceName: formatInformation.printer,
+            pageSize: {
+              height: formatInformation.paper.height,
+              width: formatInformation.paper.width 
+            }
           }
           setTimeout(function () {
-            try {
-              fs.unlinkSync(defaultProgramPath + '\\' + fileName)
-            } catch (error) {
-              if (error.code === 'EBUSY') {
-                mainWindow.webContents.send('couldNotDelete', defaultProgramPath)
+            win.webContents.print(options, (success, failureReason) => {
+              if (!success) {
+                console.log(`Failed to print. ${failureReason}`)
               } else {
-                throw error
+                console.log("printed: " + fullPath + ";--- at: " + formatInformation.printer)
               }
-              winPrint.close()
-              winPrint = null
-            }
-          }, 10000)
-        }).catch(err => {
-          dialog.showErrorBox('Es ist ein Fehler aufgetreten.', err)
-          ps.dispose()
-        })
-      } else {
-        if (last) {
-          ps.addCommand('Start-Process -file "' + defaultProgramPath + '\\' + fileName + '"-WindowStyle Minimized -PassThru | %{start-sleep 11;$_} | kill')
-        } else {
-          ps.addCommand('Start-Process -file "' + defaultProgramPath + '\\' + fileName + '"-WindowStyle Minimized -PassThru | %{start-sleep 11;$_} | kill')
-        }
-        ps.invoke().then(output => {
-          ps.dispose()
-          if (!printImmediately) {
-            mainWindow.webContents.send('printMsg', last)
-          }
-        }).catch(err => {
-          dialog.showErrorBox('Es ist ein Fehler aufgetreten.', err)
-          ps.dispose()
+            })
+            setTimeout(function () {
+              win.close()
+              win = null
+            }, (1000))
+          }, (5000))
         })
       }
+    }
+      */
+    else {
+      const options = {
+        printer: formatInformation.printer,
+        printDialog: config.get('print.showPrintDialog'),
+        orientation: config.get('print.orientation'),
+        scale: config.get('print.scale'),
+        monochrome: true
+      }
+      if (!printImmediately) {
+        mainWindow.webContents.send('printMsg', last)
+      }
+      if (!config.store.devMode) {
+        Printer.print(fullPath, options).then(
+          unlinkFile(fullPath)
+        )
+      } else {
+        options.printDialog = true
+        Printer.print(fullPath, options).then(console.log)
+      }
+    }
+
+    }).catch(error => {
+      console.log(error)
     })
   })
 })
 
+function unlinkFile (path) {
+  setTimeout(function () {
+    try {
+      fs.unlinkSync(path)
+    } catch (error) {
+      if (error.code === 'EBUSY') {
+        mainWindow.webContents.send('couldNotDelete', defaultProgramPath)
+      } else {
+        throw error
+      }
+    }
+  }, 10000)
+}
+
 // creates the manualSignaturesWindow
-function createManualSignaturesWindow (objMan, edit) {
-  manualSignaturesWindow = new BrowserWindow({ width: 650, height: 420, show: false })
+function createManualSignaturesWindow (objMan, edit, manId) {
+  const options = windowParams(650, 420, false)
+
+  manualSignaturesWindow = new BrowserWindow(options)
   manualSignaturesWindow.loadURL(url.format({
     pathname: path.join(__dirname, 'html/manual.html'),
     protocol: 'file',
     slashes: true
   }))
+  manualSignaturesWindow.removeMenu()
   manualSignaturesWindow.once('ready-to-show', () => {
     manualSignaturesWindow.show()
-    manualSignaturesWindow.webContents.send('objMan', objMan, edit)
+    manualSignaturesWindow.webContents.send('objMan', objMan, edit, manId)
   })
 }
 
 // creates the configWindow
 function createConfigWindow () {
-  configWindow = new BrowserWindow({ width: 800, height: 950, show: false })
+  const options = windowParams(800, 950, false)
+
+  configWindow = new BrowserWindow(options)
   configWindow.loadURL(url.format({
     pathname: path.join(__dirname, 'html/config.html'),
     protocol: 'file',
-    slashes: true
+    slashes: true,
+    contextIsolation: false,
+    nodeIntegration: true
   }))
+  configWindow.removeMenu()
   configWindow.once('ready-to-show', () => {
     configWindow.show()
   })
 }
 
 // creates the editorConfig
-function createEditorWindow (formatName = '', nrOfLines = '') {
-  editorWindow = new BrowserWindow({ width: 800, height: 950, show: false })
+function createEditorWindow (data = '') {
+  const options = windowParams(800, 950, false)
+
+  editorWindow = new BrowserWindow(options)
   editorWindow.loadURL(url.format({
     pathname: path.join(__dirname, 'html/editor.html'),
     protocol: 'file',
-    slashes: true
+    slashes: true,
+    contextIsolation: false,
+    nodeIntegration: true
   }))
+  editorWindow.removeMenu()
   editorWindow.once('ready-to-show', () => {
     editorWindow.show()
-    editorWindow.webContents.send('newModeFormat', formatName, nrOfLines)
+    editorWindow.webContents.send('newModeFormat', data)
   })
+}
+
+// update config
+function updateConfig () {
+  if (!config.has('sigJSONFile')) {
+    config.set('sigJSONFile', sigJSONFile)
+  }
+  if (!config.has('print.reverseOrder')) {
+    config.set('print.reverseOrder', false)
+  }
+  if (!config.has('print.showPrintDialog')) {
+    config.set('print.showPrintDialog', false)
+  }
+  if (!config.has('print.orientation')) {
+    config.set('print.orientation', 'landscape')
+  }
+  if (!config.has('print.scale')) {
+    config.set('print.scale', 'noscale')
+  }
+  if (!config.has('print.margin')) {
+    config.set('print.margin.top', 0)
+    config.set('print.margin.bottom', 0)
+    config.set('print.margin.left', 0)
+    config.set('print.margin.right', 0)
+  }
+  config.set('configVersion', CONFIGVERSION)
 }
 
 // In this file you can include the rest of your app's specific main process

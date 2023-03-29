@@ -1,7 +1,9 @@
 const fs = require('fs')
 const _ = require('lodash')
-const { remote } = require('electron')
-const config = remote.getGlobal('config')
+const Store = require('electron-store')
+const C = require('./Config')
+const defaultProgramPath = new C().defaultPath
+const config = new Store({ cwd: defaultProgramPath })
 let loadDataFromFile
 
 if (config.get('useK10plus')) {

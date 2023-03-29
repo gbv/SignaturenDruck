@@ -7,7 +7,7 @@ class dataExtractK10plus {
   // extracts the PPN
   ppn (str) {
     // regex defines 2 groups
-    let regex = /^(\d{4}\s\s*)(.*)(\s*)$/
+    const regex = /^(\d{4}\s\s*)(.*)(\s*)$/
 
     // returns the second regex group
     return str.replace(regex, '$2')
@@ -24,7 +24,7 @@ class dataExtractK10plus {
     // group $1 - everything till $a ($a included)
     // group $2 - everything till $ ($excluded), that's what we are after, the shelfmarktxt
     // group $3 - everything else
-    let regex = /^(\d{4}\s.*\$a)(.[^$]*)(.*)$/
+    const regex = /^(\d{4}\s.*\$a)(.[^$]*)(.*)$/
     str = str.replace(regex, '$2')
     // removes leading and following whitespaces
     str = str.trim()
@@ -35,7 +35,7 @@ class dataExtractK10plus {
   // extracts the date
   date (str) {
     // regex defines 3 groups
-    let regex = /^(\d{4}\s\s*)(\d{2}-\d{2}-\d{2})(.*)$/
+    const regex = /^(\d{4}\s\s*)(\d{2}-\d{2}-\d{2})(.*)$/
 
     // returns the second regex group
     return str.replace(regex, '$2')
@@ -44,14 +44,14 @@ class dataExtractK10plus {
   // extracts the location
   location (str) {
     // group 2 is the location
-    let regex = /^(.*\$f)(.[^$]*)(.*)$/
+    const regex = /^(.*\$f)(.[^$]*)(.*)$/
     return str.replace(regex, '$2').trim()
   }
 
   // extracts the loanIndication
   loanIndication (str) {
     // group 2 is the loanIndication
-    let regex = /^(.*\$d)(.[^$]*)(.*)$/
+    const regex = /^(.*\$d)(.[^$]*)(.*)$/
     return str.replace(regex, '$2').trim()
   }
 }

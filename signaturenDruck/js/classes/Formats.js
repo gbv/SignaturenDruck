@@ -1,6 +1,6 @@
 const fs = require('fs')
-const { remote } = require('electron')
-const defaultProgramPath = remote.getGlobal('defaultProgramPath')
+const C = require('./Config')
+const defaultProgramPath = new C().defaultPath
 
 class Formats {
   /*
@@ -31,11 +31,11 @@ class Formats {
    */
 
   static addStyleFiles () {
-    let files = fs.readdirSync(defaultProgramPath + '\\FormateCSS')
-    for (let file of files) {
+    const files = fs.readdirSync(defaultProgramPath + '\\FormateCSS')
+    for (const file of files) {
       if (file.endsWith('.css')) {
-        let fileName = file.split('.css')[0]
-        let cssLink = document.createElement('link')
+        const fileName = file.split('.css')[0]
+        const cssLink = document.createElement('link')
         cssLink.rel = 'stylesheet'
         cssLink.type = 'text/css'
         cssLink.href = defaultProgramPath + '/FormateCSS/' + fileName + '.css'
@@ -44,12 +44,28 @@ class Formats {
     }
   }
 
+  static addStyleFile (name) {
+    const files = fs.readdirSync(defaultProgramPath + '\\FormateCSS')
+    for (const file of files) {
+      if (file.endsWith('.css')) {
+        const fileName = file.split('.css')[0]
+        if (fileName === name) {
+          const cssLink = document.createElement('link')
+          cssLink.rel = 'stylesheet'
+          cssLink.type = 'text/css'
+          cssLink.href = defaultProgramPath + '/FormateCSS/' + fileName + '.css'
+          document.head.appendChild(cssLink)
+        }
+      }
+    }
+  }
+
   loadFormats () {
-    let files = fs.readdirSync(defaultProgramPath + '\\Formate')
+    const files = fs.readdirSync(defaultProgramPath + '\\Formate')
     let failedFormats = ''
-    for (let file of files) {
+    for (const file of files) {
       if (file.endsWith('.json')) {
-        let fileName = file.split('.json')[0]
+        const fileName = file.split('.json')[0]
         try {
           this._formats[fileName] = JSON.parse(fs.readFileSync(defaultProgramPath + '\\Formate\\' + file, 'utf8'))
           this._selectOptions.push(fileName)

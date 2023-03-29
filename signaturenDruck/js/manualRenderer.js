@@ -1,12 +1,11 @@
 // required for ipc calls to the main process
-const { ipcRenderer, remote } = require('electron')
+const { ipcRenderer } = require('electron')
+const { deserialize } = require('serialijse')
 
-const config = remote.getGlobal('config')
+const Formats = require('./classes/Formats')
+const formats = new Formats()
 
-const f = require('./classes/Formats')
-let formats = new f()
-
-let object = {
+const object = {
   manual: []
 }
 
@@ -20,12 +19,19 @@ window.onload = function () {
   disableBtnPrevious()
 }
 
-ipcRenderer.on('objMan', function (event, objMan, edit) {
-  if (objMan !== null) {
+ipcRenderer.on('objMan', function (event, objMan, edit, manId) {
+  objMan = deserialize(objMan)
+  if (manId !== null && manId !== undefined) {
+    id = Number(manId)
+    object.manual = objMan.filter(function(el) { return el; })
+    max = object.manual.length
+    show(id)
+    setCounters()
+  } else if (objMan !== null) {
     if (objMan.length > 0) {
-      object.manual = objMan
-      id = objMan.length
-      max = objMan.length + 1
+      object.manual = objMan.filter(function(el) { return el; })
+      id = object.manual.length
+      max = object.manual.length + 1
       setCounters()
       enableBtnPrevious()
     }
@@ -37,9 +43,9 @@ ipcRenderer.on('objMan', function (event, objMan, edit) {
 })
 
 function pushFormatsToSelect () {
-  let select = document.getElementById('formatSelect')
+  const select = document.getElementById('formatSelect')
   formats.selectOptions.forEach(format => {
-    let option = document.createElement('option')
+    const option = document.createElement('option')
     option.value = format
     option.innerHTML = format
     select.appendChild(option)
@@ -57,22 +63,22 @@ function createByFormat (numberOfLines) {
 
   function addEventListener (numberOfLines) {
     for (let i = 1; i <= numberOfLines; i++) {
-      let input = document.getElementById('inputLine_' + i)
-      let line = document.getElementById('line_' + i)
+      const input = document.getElementById('inputLine_' + i)
+      const line = document.getElementById('line_' + i)
       input.addEventListener('keyup', function (event) {
         line.innerHTML = input.value
       })
     }
   }
   function applyFormatStyle () {
-    let format = getFormatSelected()
+    const format = getFormatSelected()
     document.getElementById('previewBox').className = 'format_' + format.name
   }
   function createPreviewLines (numberOfLines) {
-    let innerPreviewBox = document.getElementById('innerPreviewBox')
+    const innerPreviewBox = document.getElementById('innerPreviewBox')
     let i = 1
     while (i <= numberOfLines) {
-      let line = document.createElement('p')
+      const line = document.createElement('p')
       line.id = 'line_' + i
       line.className = 'line_' + i
       innerPreviewBox.appendChild(line)
@@ -80,10 +86,10 @@ function createByFormat (numberOfLines) {
     }
   }
   function createInputLines (numberOfLines) {
-    let box = document.getElementById('editorBox')
+    const box = document.getElementById('editorBox')
     let i = 1
     while (i <= numberOfLines) {
-      let input = document.createElement('input')
+      const input = document.createElement('input')
       input.id = 'inputLine_' + i
       input.className = 'input'
       input.placeholder = 'Zeile ' + i
@@ -106,7 +112,7 @@ function removeInputLines () {
 }
 
 function removeChildsOf (parent) {
-  let myNode = document.getElementById(parent)
+  const myNode = document.getElementById(parent)
   while (myNode.firstChild) {
     myNode.removeChild(myNode.firstChild)
   }
@@ -142,7 +148,7 @@ function loadData () {
   createByFormat(getFormatSelected().lines)
   let i = 1
   while (i <= object.manual[id].txtLength) {
-    let txt = object.manual[id].modes[0].lines[i - 1]
+    const txt = object.manual[id].modes[0].lines[i - 1]
     document.getElementById('inputLine_' + i).value = txt
     document.getElementById('line_' + i).innerHTML = txt
     i++
@@ -152,11 +158,11 @@ function loadData () {
 }
 
 function saveCurrent () {
-  let lineTxts = []
+  const lineTxts = []
   let i = 1
   let oneLineTxt = ''
   let removeIndent = false
-  let format = getFormatSelected()
+  const format = getFormatSelected()
   if (document.getElementById('chkbx_removeIndent').checked) {
     removeIndent = true
   }
@@ -166,17 +172,17 @@ function saveCurrent () {
     i++
   }
   object.manual[id] = {
-    'id': id,
-    'format': format.name,
-    'defaultSubMode': 0,
-    'txtLength': parseInt(format.lines),
-    'modes': [],
-    'txtOneLine': oneLineTxt,
-    'removeIndent': removeIndent
+    id: id,
+    format: format.name,
+    defaultSubMode: 0,
+    txtLength: parseInt(format.lines),
+    modes: [],
+    txtOneLine: oneLineTxt,
+    removeIndent: removeIndent
   }
-  let data = {
-    'format': '',
-    'lines': ''
+  const data = {
+    format: '',
+    lines: ''
   }
   data.format = format.name
   data.lines = lineTxts
@@ -195,9 +201,7 @@ function next () {
   if (!isEmpty) {
     saveCurrent()
     id++
-    if (id === 1) {
-      enableBtnPrevious()
-    }
+    enableBtnPrevious()
     if (object.manual[id] !== undefined) {
       loadData()
     } else {
@@ -213,6 +217,16 @@ function previous () {
     disableBtnPrevious()
   }
   id--
+  loadData()
+  setCounters()
+}
+
+function show (manId) {
+  if (manId < 1) {
+    disableBtnPrevious()
+  } else {
+    enableBtnPrevious()
+  }
   loadData()
   setCounters()
 }
@@ -248,9 +262,48 @@ function deleteData () {
   }
 }
 
+// TODO REFACTOR
 function deleteAndExit () {
   object.manual = null
   ipcRenderer.send('closeManualSignaturesWindow')
+}
+
+function closeWindow (option = '') {
+  if (option == 'save') {
+    save()
+    ipcRenderer.send('addManualData', object.manual)
+  } else if (option == 'discard') {
+    discard()
+  } else {
+    // open dialog to select either save or discard
+    return
+  }
+  ipcRenderer.send('closeManualWindow', object.manual)
+}
+
+// new discard function to streamline the process
+function discard () {
+  object.manual = null
+  // TODO needs more stuff to clean the mess up
+}
+
+// new save function to streamline the process
+function save () {
+  saveCurrent()
+
+  let isEmpty = true
+  if (object.manual[object.manual.length - 1] !== undefined) {
+    let i = 1
+    while (i <= object.manual[object.manual.length - 1].txtLength) {
+      if (object.manual[object.manual.length - 1].modes[0][i - 1] !== '') {
+        isEmpty = false
+      }
+      i++
+    }
+  }
+  if (isEmpty) {
+    delete object.manual[object.manual.length - 1]
+  }
 }
 
 function saveAndExit () {
@@ -273,7 +326,7 @@ function saveAndExit () {
 }
 
 function toggleIndent () {
-  let chkbx = document.getElementById('chkbx_removeIndent')
+  const chkbx = document.getElementById('chkbx_removeIndent')
   if (chkbx.checked) {
     document.getElementById('innerPreviewBox').className = 'innerBox noIndent'
   } else {
@@ -281,9 +334,55 @@ function toggleIndent () {
   }
 }
 
+// returns the inital curPos of the cursor
+function fixLineBreak (eventKey) {
+  const line = document.activeElement
+  const curPos = line.selectionStart
+  const part1 = line.value.substr(0, curPos)
+  const part2 = line.value.substr(curPos)
+  const curLineNr = line.id.split('_')[1]
+  const nextLineNr = Number(curLineNr) + 1
+  const prevLineNr = Number(curLineNr) - 1
+  if (eventKey === 'Enter') { // move everything after curPos to the start of the next Line
+    if (document.getElementById('inputLine_' + nextLineNr)) {
+      line.value = part1
+      document.getElementById('inputLine_' + nextLineNr).value = part2 + document.getElementById('inputLine_' + nextLineNr).value
+    }
+  } else if (eventKey === 'Backspace') { // move everything before curPos to the end the previous line
+    if (curLineNr > 1) {
+      line.value = part2
+      document.getElementById('inputLine_' + prevLineNr).value = document.getElementById('inputLine_' + prevLineNr).value + part1
+    }
+  } else { // add a nbsp at curPos
+    line.value = part1 + '&nbsp;' + part2
+  }
+  return curPos
+}
+
+function refresh (numberOfLines) {
+  for (let i = 1; i <= numberOfLines; i++) {
+    const input = document.getElementById('inputLine_' + i)
+    const line = document.getElementById('line_' + i)
+    line.innerHTML = input.value
+  }
+}
+
+function lineSplit (event) {
+  if (event.altKey) {
+    if (event.key === 'Backspace' || event.key === 'Enter' || event.key === 'l') {
+      const curPos = fixLineBreak(event.key) // fix the lineBreak, get the initial curPos
+      refresh(getFormatSelected().lines) // refresh the lines & preview
+      document.activeElement.selectionStart = document.activeElement.selectionEnd = curPos // keep the cursor at the previous position if possible
+    }
+  }
+}
+
 document.getElementById('btn_next').addEventListener('click', next)
 document.getElementById('btn_previous').addEventListener('click', previous)
 document.getElementById('btn_delete').addEventListener('click', deleteData)
-document.getElementById('btn_deleteAndExit').addEventListener('click', deleteAndExit)
-document.getElementById('btn_saveAndExit').addEventListener('click', saveAndExit)
+// document.getElementById('btn_saveAndExit').addEventListener('click', saveAndExit)
+document.getElementById('btn_saveAndExit').addEventListener('click', () => {closeWindow('save')})
+// document.getElementById('btn_deleteAndExit').addEventListener('click', deleteAndExit)
+document.getElementById('btn_deleteAndExit').addEventListener('click', () => {closeWindow('discard')})
 document.getElementById('chkbx_removeIndent').addEventListener('change', toggleIndent)
+document.addEventListener('keydown', lineSplit)

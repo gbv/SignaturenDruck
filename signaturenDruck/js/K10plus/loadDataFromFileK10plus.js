@@ -1,6 +1,7 @@
-// requires remote from electron to retrieve global var
-const { remote } = require('electron')
-const config = remote.getGlobal('config')
+const Store = require('electron-store')
+const C = require('../classes/Config')
+const defaultProgramPath = new C().defaultPath
+const config = new Store({ cwd: defaultProgramPath })
 const _ = require('lodash')
 // requires the dataExtractK10plus-module
 const DataExtractK10plus = require('./dataExtractK10plus.js')
@@ -11,18 +12,18 @@ const FormatLinesByMode = require('../classes/FormatLinesByMode')
 const LocationCheck = require('../classes/LocationCheck')
 
 module.exports = function (allLines, formats) {
-  let obj = {
+  const obj = {
     all: []
   }
   let sig = new Shelfmark()
-  let extract = new DataExtractK10plus()
+  const extract = new DataExtractK10plus()
   let ppnAktuell = ''
   let plainTxt = ''
-  let mode = new Modes()
-  let formatArray = formats
+  const mode = new Modes()
+  const formatArray = formats
 
-  allLines.map((line) => {
-    let first4 = extract.firstFour(line)
+  _.forEach(allLines, function (line) {
+    const first4 = extract.firstFour(line)
     if (first4 === '0100') {
       sig.ppn = ppnAktuell = extract.ppn(line)
     } else if (first4.substring(0, 1) === 'E' && first4.substring(1, 4) >= 1 && first4.substring(1, 4) <= 999) {
@@ -32,22 +33,22 @@ module.exports = function (allLines, formats) {
       sig.location = extract.location(line)
       sig.loanIndication = extract.loanIndication(line)
       sig.txtOneLine = plainTxt
-      let allSubModeData = mode.modes[config.get('mode.defaultMode')].subModes
+      const allSubModeData = mode.modes[config.get('mode.defaultMode')].subModes
       _.forEach(allSubModeData, function (value) {
-        let data = {
-          'format': '',
-          'lines': ''
+        const data = {
+          format: '',
+          lines: ''
         }
         data.format = value.format
         if (config.get('filterByLoc') && !LocationCheck.locDoesMatch(value.locRegEx, sig.location)) {
           data.lines = null
         } else {
           if (value.useRegEx) {
-            let regex = new RegExp(value.regEx)
+            const regex = new RegExp(value.regEx)
             if (regex.test(plainTxt) && sig.defaultSubMode === '') {
               sig.defaultSubMode = value.id
             }
-            let lines = plainTxt.match(regex)
+            const lines = plainTxt.match(regex)
             if (lines !== null) {
               lines.shift()
             }

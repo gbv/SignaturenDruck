@@ -1,6 +1,6 @@
 const fs = require('fs')
-const { remote } = require('electron')
-const defaultProgramPath = remote.getGlobal('defaultProgramPath')
+const C = require('./Config')
+const defaultProgramPath = new C().defaultPath
 
 class Modes {
   /*
@@ -30,9 +30,9 @@ class Modes {
    */
 
   loadModes () {
-    let files = fs.readdirSync(defaultProgramPath + '\\Modi')
-    for (let file of files) {
-      let fileName = file.split('.json')[0]
+    const files = fs.readdirSync(defaultProgramPath + '\\Modi')
+    for (const file of files) {
+      const fileName = file.split('.json')[0]
       this._selectOptions.push(fileName)
       this._modes[fileName] = JSON.parse(fs.readFileSync(defaultProgramPath + '\\Modi\\' + file, 'utf8'))
     }

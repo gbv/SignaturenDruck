@@ -15,6 +15,7 @@ class DownloadFile {
   /*
   ----- Constructor -----
    */
+
   constructor () {
     this._file = []
   }

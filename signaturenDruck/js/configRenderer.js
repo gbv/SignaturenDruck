@@ -13,14 +13,16 @@ const moment = require('moment')
 const FormatLinesByMode = require('./classes/FormatLinesByMode')
 
 // required for ipc calls to the main process
-const { ipcRenderer, remote } = require('electron')
+const { ipcRenderer } = require('electron')
 
-const config = remote.getGlobal('config')
-const defaultProgramPath = remote.getGlobal('defaultProgramPath')
+const Store = require('electron-store')
+const C = require('./classes/Config')
+const defaultProgramPath = new C().defaultPath
+const config = new Store({ cwd: defaultProgramPath })
 const LocationCheck = require('./classes/LocationCheck')
 
-let modeNames = []
-let modesData = []
+const modeNames = []
+const modesData = []
 let linesData = []
 let resultData = []
 
@@ -50,7 +52,7 @@ function createPreview () {
   if (config.get('filterByLoc') && !LocationCheck.locDoesMatch(document.getElementById('input_locRegEx').value, document.getElementById('input_loc').value)) {
     alert('Der RegEx Standort erfasst nicht den festgelegten Standort!')
   } else {
-    let lines = document.getElementById('linesBox').childNodes
+    const lines = document.getElementById('linesBox').childNodes
     let data = []
     lines.forEach(function (line) {
       data.push(line.value)
@@ -61,8 +63,8 @@ function createPreview () {
       resultData = data = FormatLinesByMode.formatLines(config.get('example.location'), linesData, data, linesData.length)
     }
     _.forEach(data, function (value) {
-      let d = document.createElement('div')
-      let p = document.createElement('p')
+      const d = document.createElement('div')
+      const p = document.createElement('p')
       if (value === '') {
         value = '<br/>'
       }
@@ -85,9 +87,9 @@ function loadExampleData () {
 }
 
 function loadSubModeData () {
-  let mode = document.getElementById('selectMode').value
-  let subMode = document.getElementById('selectSubMode').value
-  let subModeData = _.find(modesData[mode].subModes, { 'format': subMode })
+  const mode = document.getElementById('selectMode').value
+  const subMode = document.getElementById('selectSubMode').value
+  const subModeData = _.find(modesData[mode].subModes, { format: subMode })
   if (subModeData.useRegEx) {
     enableRegex()
   } else {
@@ -123,7 +125,7 @@ function loadSubModeData () {
 }
 
 function displayPlaceholderInfo (lines = '') {
-  let infoBox = document.getElementById('infoBox')
+  const infoBox = document.getElementById('infoBox')
   infoBox.innerHTML = ''
 
   if (lines !== '') {
@@ -142,7 +144,7 @@ function displayPlaceholderInfo (lines = '') {
 }
 
 function createPlaceholderLine (text) {
-  let p = document.createElement('p')
+  const p = document.createElement('p')
   p.innerHTML = text
   document.getElementById('infoBox').appendChild(p)
 }
@@ -150,7 +152,7 @@ function createPlaceholderLine (text) {
 // fills selectSubMode with options
 function setSubModeSelect (modeName) {
   clearAll()
-  let select = document.getElementById('selectSubMode')
+  const select = document.getElementById('selectSubMode')
   let option = document.createElement('option')
   select.innerHTML = ''
   setOption(option, '--neuer Untermodus--', '', true)
@@ -173,7 +175,7 @@ function setSubModeSelect (modeName) {
 // fills selectMode with options
 function setModeSelect () {
   clearAll()
-  let select = document.getElementById('selectMode')
+  const select = document.getElementById('selectMode')
   let option = document.createElement('option')
   select.innerHTML = ''
   setOption(option, '--neuer Modus--', '', true)
@@ -198,9 +200,9 @@ function setOption (option, innerHTML, value, selected = false) {
 
 // gets modeNames && modesData
 function getModes () {
-  let files = fs.readdirSync(defaultProgramPath + '\\Modi')
-  for (let file of files) {
-    let fileName = file.split('.json')[0]
+  const files = fs.readdirSync(defaultProgramPath + '\\Modi')
+  for (const file of files) {
+    const fileName = file.split('.json')[0]
     modeNames.push(fileName)
     modesData[fileName] = JSON.parse(fs.readFileSync(defaultProgramPath + '\\Modi\\' + file, 'utf8'))
   }
@@ -217,7 +219,7 @@ function createLines (nrOfLines, array = '') {
   deleteInputLines()
   let i = 1
   while (i <= nrOfLines) {
-    let line = document.createElement('input')
+    const line = document.createElement('input')
     setLine(line, 'input_line_' + i, 'input fullwidth', 'text')
     if (array === '') {
       line.value = '$' + i
@@ -246,7 +248,7 @@ function deleteInputLines () {
 
 // creates shelfmark array
 function formatShelfmark (data = '') {
-  let shelfmark = document.getElementById('input_example').value
+  const shelfmark = document.getElementById('input_example').value
   document.getElementById('linesBox').innerHTML = ''
   let lines
   if (document.getElementById('radioBtn_useRegEx').checked) {
@@ -264,8 +266,8 @@ function formatShelfmark (data = '') {
 
 // creates shelfmark array with regex
 function formatWithRegEx (shelfmark) {
-  let regex = new RegExp(document.getElementById('input_regEx').value)
-  let lines = shelfmark.match(regex)
+  const regex = new RegExp(document.getElementById('input_regEx').value)
+  const lines = shelfmark.match(regex)
   if (lines !== null) {
     lines.shift()
   }
@@ -274,7 +276,7 @@ function formatWithRegEx (shelfmark) {
 
 // creates shelfmark array with delimiter
 function formatWithDelimiter (shelfmark) {
-  let lines = shelfmark.split(document.getElementById('input_delimiter').value)
+  const lines = shelfmark.split(document.getElementById('input_delimiter').value)
   return lines
 }
 
@@ -293,7 +295,7 @@ function getLineCount () {
 }
 
 function addLine () {
-  let line = document.createElement('input')
+  const line = document.createElement('input')
   let lineCount = getLineCount()
   lineCount++
   setLine(line, 'input_line_' + lineCount, 'input fullwidth', 'text')
@@ -304,8 +306,8 @@ function addLine () {
 function removeLine () {
   let lineCount = getLineCount()
   if (lineCount > 1) {
-    let parent = document.getElementById('linesBox')
-    let toDelete = parent.childNodes[lineCount - 1]
+    const parent = document.getElementById('linesBox')
+    const toDelete = parent.childNodes[lineCount - 1]
     toDelete.parentNode.removeChild(toDelete)
     lineCount--
     setLineCount(lineCount)
@@ -353,7 +355,7 @@ function setValues (obj) {
 
 function saveMode () {
   refresh()
-  let modeDataNew = {
+  const modeDataNew = {
     modeName: '',
     subModes: []
   }
@@ -361,7 +363,7 @@ function saveMode () {
   modeDataNew.modeName = getModeNameNew().replace(/[^a-zA-Z0-9]/g, '_').replace(/_{2,}/g, '_')
   // if modeNameOld != ''
   if (modesData[getModeNameOld()] !== undefined) {
-    let subModesData = modesData[getModeNameOld()].subModes
+    const subModesData = modesData[getModeNameOld()].subModes
     _.forEach(subModesData, function (value) {
       // if subMode gets updated
       if (value.format === getSubModeNameOld()) {
@@ -374,14 +376,14 @@ function saveMode () {
     })
     // if subMode is new
     if (getSubModeNameOld() === '') {
-      let value = {}
+      const value = {}
       value.id = subModesData.length
       setValues(value)
       modeDataNew.subModes.push(value)
     }
   } else {
     // if mode is new
-    let value = {}
+    const value = {}
     value.id = 0
     setValues(value)
     modeDataNew.subModes.push(value)
@@ -435,7 +437,7 @@ function saveAndContinue () {
 }
 
 function getCurrentData () {
-  let data = {}
+  const data = {}
   data.name = getSubModeNameNew().replace(/[^a-zA-Z0-9]/g, '_').replace(/_{2,}/g, '_')
   data.lines = getLineCount()
   data.example = {}
@@ -466,7 +468,7 @@ function modeAlreadyExists (modeName) {
 function subModeAlreadyExists (subModeName) {
   let found = false
   if (getModeNameOld() !== '') {
-    let subModes = modesData[getModeNameOld()].subModes
+    const subModes = modesData[getModeNameOld()].subModes
     _.forEach(subModes, function (value) {
       if (value.format === subModeName) {
         found = true
@@ -478,7 +480,7 @@ function subModeAlreadyExists (subModeName) {
 
 function deleteModeFile (modeName) {
   if (fs.existsSync(defaultProgramPath + '\\Modi\\' + modeName + '.json')) {
-    fs.unlink(defaultProgramPath + '\\Modi\\' + modeName + '.json', function (err) {
+    fs.unlinkSync(defaultProgramPath + '\\Modi\\' + modeName + '.json', function (err) {
       if (err) {
         throw err
       }
@@ -487,12 +489,16 @@ function deleteModeFile (modeName) {
 }
 
 function writeModeFile (data) {
-  fs.writeFileSync(defaultProgramPath + '\\Modi\\' + data.modeName + '.json', JSON.stringify(data, null, 2), 'utf8')
+  fs.writeFile(defaultProgramPath + '\\Modi\\' + data.modeName + '.json', JSON.stringify(data, null, 2), 'utf8', (err) => {
+    if (err) {
+      throw err
+    }
+  })
 }
 
 function getResult () {
-  let result = []
-  let lines = document.getElementById('linesBox').childNodes
+  const result = []
+  const lines = document.getElementById('linesBox').childNodes
   lines.forEach(function (line) {
     result.push(line.value)
   })

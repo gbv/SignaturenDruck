@@ -10,16 +10,19 @@ overflow: hidden;
 .format_thulb_klein_1 {
 align-items: center;
 }
-#toPrint.format_thulb_klein_1> .innerBox {
+#toPrint.format_thulb_klein_1 > .capsule {
 height: 23mm;
 width: 74mm;
 display: flex;
 justify-content: center;
 flex-direction: column;
+overflow: hidden;
 }
+.format_thulb_klein_1 > .capsule > .innerBox > p,
 .format_thulb_klein_1 > .innerBox > p {
 margin: 0px 0px 0px 0px;
 }
+.format_thulb_klein_1 > .capsule > .innerBox > .line_1,
 .format_thulb_klein_1 > .innerBox > .line_1 {
 font-family: "Arial Narrow";
 font-size: 15pt;
@@ -27,14 +30,17 @@ font-weight: bold;
 font-style: normal;
 margin-left: 0%;
 }
+.format_thulb_klein_1 > .capsule > .innerBox > .line_1,
+.format_thulb_klein_1 > .innerBox > .line_1 {
+margin-top: -1mm;
+}
 @media print {
-#toPrint.format_thulb_klein_1 > .innerBox {
-margin: 2.25mm 0mm 0mm 1.75mm;
+@page {
+size: 79.5mm 27.5mm;
+margin-top: 2.25mm;
+margin-left: 2.75mm;
 }
 body {
 margin: 0px;
-}
-#toPrint.format_thulb_klein_1 > .innerBox > .line_1 {
-margin-top: -1mm;
 }
 }

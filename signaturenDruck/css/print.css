@@ -1,7 +1,32 @@
+.innerBox {
+  width: 100%;
+}
+.innerBox > p {
+  width: 100%;
+}
+#toPrint {
+  display: contents;
+}
+/*---- DebugColors ----*/
+/*
+#toPrint {
+  background-color: antiquewhite;
+}
+.capsule {
+  background-color: lightblue;
+}
+.capsule > .innerBox {
+  background-color: lightcoral;
+}
+body {
+  background-color: lightgreen;
+}
+*/
+
 @media print {
   #toPrint > #coverLabel.innerBox {
-    margin-top: -2mm;
-    margin-bottom: -2mm;
+    margin-top: 0mm;
+    margin-bottom: 0mm;
   }
   #coverLabel {
     text-align: center;
@@ -12,9 +37,8 @@
   #coverLabel > p {
     width: 100%
   }
-  .innerBox {
+  .capsule {
     page-break-before: always;
-    /* background-color: grey; */
   }
   .noIndent > p {
     margin-left: 0px !important;

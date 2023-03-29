@@ -6,3 +6,4 @@ signaturenDruck/tmp*
 notes
 signaturenDruck/v2_node_modules*
 signaturenDruck/v5_node_modules*
+signaturenDruck/electron-builder.yml

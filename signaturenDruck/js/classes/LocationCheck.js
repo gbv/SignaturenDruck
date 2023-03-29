@@ -1,6 +1,6 @@
 module.exports = {
   locDoesMatch: function (regEx, loc) {
-    let regex = new RegExp(regEx)
+    const regex = new RegExp(regEx)
     if (loc.match(regex)) {
       return true
     } else {
