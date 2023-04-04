@@ -194,7 +194,8 @@ Es müssen die Maße des verwendeten Papiers angegeben werden, damit das erstell
 
 ### Label (Etikett)
 
-Es werden unterschiedliche Eigenschaften des Labels erfasst.
+Es werden unterschiedliche Eigenschaften des Labels erfasst.  
+***HINWEIS - die Höhe sowie Breite des Labels sollte um mindestens 1mm kleiner sein als die entsprechenden Papierwerte***
 
 | Eigenschaft | Beschreibung |  
 | :----------: | ------------ |  
