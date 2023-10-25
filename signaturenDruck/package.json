@@ -1,6 +1,6 @@
 {
   "name": "SignaturenDruck",
-  "version": "1.3.17",
+  "version": "1.3.18",
   "description": "SignaturenDruck der ThULB",
   "main": "main.js",
   "dependencies": {
@@ -24,7 +24,7 @@
     "@electron-forge/maker-squirrel": "^6.0.4",
     "@electron-forge/maker-wix": "^6.0.4",
     "@electron-forge/maker-zip": "^6.0.4",
-    "electron": "^22"
+    "electron": "^26"
   },
   "scripts": {
     "start": "electron-forge start",
