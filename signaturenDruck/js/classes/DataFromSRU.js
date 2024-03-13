@@ -1,5 +1,5 @@
 const { net } = require('electron')
-const parser = require('xml2json')
+const { XMLParser } = require("fast-xml-parser")
 
 const Store = require('electron-store')
 const C = require('./Config')
@@ -32,32 +32,40 @@ class DataFromSRU {
    */
 
   loadData (key, mode) {
-    let queryPart1
-    if (mode === 'PPN') {
-      queryPart1 = config.get('SRU.QueryPart1')
-    } else {
-      queryPart1 = config.get('SRU.QueryPart1EPN')
-    }
-    const url = config.get('SRU.SRUAddress') + queryPart1 + key + config.get('SRU.QueryPart2')
-    const request = net.request(url)
-    let allData = ''
-    let data = ''
-    return new Promise(function (resolve, reject) {
-      request.on('response', (response) => {
-        response.on('data', (chunk) => {
-          allData += chunk
+    try {
+      let queryPart1
+      if (mode === 'PPN') {
+        queryPart1 = config.get('SRU.QueryPart1')
+      } else {
+        queryPart1 = config.get('SRU.QueryPart1EPN')
+      }
+      const url = config.get('SRU.SRUAddress') + queryPart1 + key + config.get('SRU.QueryPart2')
+      const request = net.request(url)
+      const options = {
+        ignoreAttributes: false,
+        attributeNamePrefix : ""
+      }
+      const parser = new XMLParser(options)
+      let allData = ''
+      let data = ''
+      return new Promise(function (resolve, reject) {
+        request.on('response', (response) => {
+          response.on('data', (chunk) => {
+            allData += chunk
+          })
+          response.on('error', (error) => {
+            console.log('error', error)
+            reject(error)
+          })
+          response.on('end', () => {
+            resolve(parser.parse(allData))
+          })
         })
-        response.on('end', () => {
-          const options = {
-            object: true
-          }
-          data = parser.toJson(allData, options)
-
-          resolve(data)
-        })
+        request.end()
       })
-      request.end()
-    })
+    } catch (error) {
+      throw(error)
+    }
   }
 }
 

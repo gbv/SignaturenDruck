@@ -53,7 +53,7 @@ const configNew = {
   SRU: {
     useSRU: false,
     printImmediately: false,
-    SRUAddress: 'http://sru.k10plus.de/opac-de-27',
+    SRUAddress: 'https://sru.k10plus.de/opac-de-27',
     QueryPart1: '?version=1.1&operation=searchRetrieve&query=pica.bar=',
     QueryPart1EPN: '?version=1.1&operation=searchRetrieve&query=pica.epn=',
     QueryPart2: '&maximumRecords=1&recordSchema=picaxml'
@@ -215,9 +215,15 @@ ipcMain.on('saveManualSignatures', function (event, data) {
 // listens on loadFromSRU, invokes the loadAndAddFromSRU function with the provided barcode
 ipcMain.on('loadFromSRU', function (event, key, mode) {
   if (key !== '') {
-    sruData.loadData(key, mode).then(function (data) {
-      mainWindow.webContents.send('addSRUdata', data, key, mode)
-    })
+    try {
+      sruData.loadData(key, mode).then(function (data) {
+        mainWindow.webContents.send('addSRUdata', data, key, mode)
+      })
+    } catch (err) {
+      console.log('error occured')
+      console.log(err)
+    }
+    
   }
 })
 

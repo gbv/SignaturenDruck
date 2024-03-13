@@ -101,12 +101,12 @@ function getOccurrence (object, barcode) {
     if (o.subfield.length > 1) {
       // return the subield entry with the matching barcode
       return _.forEach(o.subfield, function (data) {
-        if (data.$t === barcode) {
+        if (data['#text'] === barcode) {
           return o
         }
       })
     } else { // if there is just one subfield entry
-      if (o.subfield.$t === barcode) {
+      if (o.subfield['#text'] === barcode) {
         return o
       }
     }
@@ -125,7 +125,7 @@ function getOccurrence (object, barcode) {
 function getPPN (object) {
   const data = _.find(object['zs:searchRetrieveResponse']['zs:records']['zs:record']['zs:recordData'].record.datafield, { tag: '003@' })
   if (data !== undefined) {
-    return data.subfield.$t
+    return data.subfield['#text']
   } else {
     return ''
   }
@@ -134,7 +134,7 @@ function getPPN (object) {
 function getEPN (object) {
   const data = _.find(object['zs:searchRetrieveResponse']['zs:records']['zs:record']['zs:recordData'].record.datafield, { tag: '203@' })
   if (data !== undefined) {
-    return data.subfield.$t
+    return data.subfield['#text']
   } else {
     return ''
   }
@@ -144,7 +144,7 @@ function getDate (object, occ) {
   const parent = _.find(object['zs:searchRetrieveResponse']['zs:records']['zs:record']['zs:recordData'].record.datafield, { tag: '201B', occurrence: occ })
   const data = _.find(parent.subfield, { code: '0' })
   if (data !== undefined) {
-    return data.$t
+    return data['#text']
   } else {
     return ''
   }
@@ -154,7 +154,7 @@ function getTxt (object, occ) {
   const parent = _.find(object['zs:searchRetrieveResponse']['zs:records']['zs:record']['zs:recordData'].record.datafield, { tag: '209A', occurrence: occ })
   const data = _.find(parent.subfield, { code: 'a' })
   if (data !== undefined) {
-    return data.$t
+    return data['#text']
   } else {
     return ''
   }
@@ -173,7 +173,7 @@ function getLocation (object, occ) {
   const parent = _.find(object['zs:searchRetrieveResponse']['zs:records']['zs:record']['zs:recordData'].record.datafield, { tag: '209A', occurrence: occ })
   const data = _.find(parent.subfield, { code: 'f' })
   if (data !== undefined) {
-    return data.$t
+    return data['#text']
   } else {
     return ''
   }
@@ -183,7 +183,7 @@ function getLoanIndication (object, occ) {
   const parent = _.find(object['zs:searchRetrieveResponse']['zs:records']['zs:record']['zs:recordData'].record.datafield, { tag: '209A', occurrence: occ })
   const data = _.find(parent.subfield, { code: 'd' })
   if (data !== undefined) {
-    return data.$t
+    return data['#text']
   } else {
     return ''
   }
