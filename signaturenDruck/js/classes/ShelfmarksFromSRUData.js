@@ -125,7 +125,7 @@ function getOccurrence (object, barcode) {
 function getPPN (object) {
   const data = _.find(object['zs:searchRetrieveResponse']['zs:records']['zs:record']['zs:recordData'].record.datafield, { tag: '003@' })
   if (data !== undefined) {
-    return data.subfield['#text']
+    return String(data.subfield['#text'])
   } else {
     return ''
   }
@@ -134,7 +134,7 @@ function getPPN (object) {
 function getEPN (object) {
   const data = _.find(object['zs:searchRetrieveResponse']['zs:records']['zs:record']['zs:recordData'].record.datafield, { tag: '203@' })
   if (data !== undefined) {
-    return data.subfield['#text']
+    return String(data.subfield['#text'])
   } else {
     return ''
   }

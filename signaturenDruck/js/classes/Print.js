@@ -7,9 +7,9 @@ class Print {
     return this._dataAll.all
   }
 
-  constructor (file, formats, manuelSignature) {
+  constructor (file, formats, manualSignature) {
     this.formats = formats
-    this.manualSignature = manuelSignature
+    this.manualSignature = manualSignature
     this.jsonFile = ''
     if (fs.existsSync(file)) {
       this.jsonFile = JSON.parse(jsonfile.readFile(file))

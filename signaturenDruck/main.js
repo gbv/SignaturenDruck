@@ -302,7 +302,7 @@ function createWindow () {
 
   const options = windowParams()
   options.backgroundColor = '#f0f0f0'
-  options.webPreferences.preload = path.join(__dirname, 'js\\renderer.js')
+  //options.webPreferences.preload = path.join(__dirname, 'js\\renderer.js')
 
   if (config.store.devMode) {
     options.height = 600
@@ -455,7 +455,7 @@ ipcMain.on('readyToPrint', function (event, formatInformation, printImmediately,
       const fileName = formatInformation.name + new Date().getTime() + '.pdf'
       const fullPath = defaultProgramPath + '\\' + fileName
       fs.writeFile(fullPath, data, (error) => {
-      if (error) throw error
+      if (error) {throw error}
       // tested native electron silent printing, still broken
       /*
       else {
