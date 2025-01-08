@@ -2,7 +2,7 @@
 ![GitHub all releases](https://img.shields.io/github/downloads/gbv/SignaturenDruck/total?label=downloads@overall)  
 ![GitHub release (latest SemVer including pre-releases)](https://img.shields.io/github/v/release/gbv/SignaturenDruck?label=stable)
 ![GitHub Release Date](https://img.shields.io/github/release-date/gbv/SignaturenDruck)
-![GitHub release (latest by date)](https://img.shields.io/github/downloads/gbv/SignaturenDruck/v1.3.19/total?label=downloads@v1.3.19)  
+![GitHub release (latest by date)](https://img.shields.io/github/downloads/gbv/SignaturenDruck/v1.3.20/total?label=downloads@v1.3.20)  
 <!---
 ![GitHub release (latest SemVer including pre-releases)](https://img.shields.io/github/v/release/gbv/SignaturenDruck?include_prereleases&label=pre-release)
 ![GitHub (Pre-)Release Date](https://img.shields.io/github/release-date-pre/gbv/SignaturenDruck)
@@ -286,6 +286,14 @@ Mit <kbd>strg</kbd> + <kbd>alt</kbd> + <kbd>C</kbd> öffen Sie die "Modus erstel
 Nein, der SignaturenDruck ist seit version `v1.3.12` nichtmehr vom Adobe Acrobat Reader DC abhängig.
 
 # Changelog
+
+## v1.3.20
+
+- führende Nullen werden im Barcode beachtet (Issue [#111](https://github.com/gbv/SignaturenDruck/issues/111))
+
+## v1.3.18
+
+- Electron aktualisiert auf `v26`
 
 ## v1.3.17
 

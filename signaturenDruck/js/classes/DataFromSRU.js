@@ -43,7 +43,10 @@ class DataFromSRU {
       const request = net.request(url)
       const options = {
         ignoreAttributes: false,
-        attributeNamePrefix : ""
+        attributeNamePrefix : "",
+        numberParseOptions: {
+          leadingZeros: false
+        }
       }
       const parser = new XMLParser(options)
       let allData = ''
