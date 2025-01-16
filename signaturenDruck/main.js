@@ -41,10 +41,10 @@ const configNew = {
   showMenu: false,
   filterByLoc: false,
   example: {
-    shelfmark: 'PÄD:TG:1420:Dan::2017',
-    location: 'MAG',
-    regex: '^(.*):(.*):(.*):(.*):(.*):(.*)$',
-    delimiter: ':'
+    shelfmark: '200 AP 14350 S377',
+    location: 'UB',
+    regex: '(.*)\\s(.*)\\s(.*)\\s(.*)\\s(.*)\\s(.*)',
+    delimiter: ' '
   },
   modal: {
     showModal: true,
@@ -322,7 +322,7 @@ function createWindow () {
     Menu.setApplicationMenu(menu)
   }
   // set the mainwindow title (name + version from package.json)
-  mainWindow.setTitle('Signaturendruck v' + app.getVersion())
+  mainWindow.setTitle('Signaturendruck v' + app.getVersion() + ' Mz 0.1')
   // and load the index.html of the app.
   mainWindow.loadURL(url.format({
     pathname: path.join(__dirname, '/html/index.html'),

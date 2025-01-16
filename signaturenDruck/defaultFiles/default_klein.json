@@ -1,52 +1,91 @@
 {
   "name": "default_klein",
-  "printer": "\\\\printsrv\\ulbps124",
+  "printer": "Microsoft Print to PDF",
   "label": {
-    "width": "74mm",
-    "height": "23mm"
+    "width": "25mm",
+    "height": "50mm"
   },
   "pdfName": "default_klein.pdf",
   "paper": {
-    "width": "79500",
-    "height": "27500"
+    "width": "25400",
+    "height": "50800"
   },
-  "lines": "3",
+  "lines": "7",
   "example": {
-    "shelfmark": "2018 B 1024 :1",
+    "shelfmark": "200 AP 14350 S681 A111(14) -33+3",
     "parts": [
-      "2018 B",
-      "1024 :",
-      "1"
+      "200",
+      " ",
+      "AP",
+      "14350",
+      "S681",
+      "A111(14)",
+      "-33+3",
+      "",
+      "",
+      ""
     ]
   },
-  "centerHor": false,
-  "centerVer": true,
+  "centerHor": true,
+  "centerVer": false,
   "lineSpace": "0",
   "linesData": [
     {
       "id": 1,
       "font": "Arial Narrow",
-      "fontSize": "15",
-      "bold": true,
+      "fontSize": "16",
+      "bold": false,
       "italic": false,
-      "indent": "45"
+      "indent": "0"
     },
     {
       "id": 2,
       "font": "Arial Narrow",
-      "fontSize": "15",
-      "bold": true,
+      "fontSize": "16",
+      "bold": false,
       "italic": false,
-      "indent": "45"
+      "indent": "0"
     },
     {
       "id": 3,
       "font": "Arial Narrow",
-      "fontSize": "15",
+      "fontSize": "16",
       "bold": true,
       "italic": false,
-      "indent": "45"
+      "indent": "0"
+    },
+    {
+      "id": 4,
+      "font": "Arial Narrow",
+      "fontSize": "16",
+      "bold": true,
+      "italic": false,
+      "indent": "0"
+    },
+    {
+      "id": 5,
+      "font": "Arial Narrow",
+      "fontSize": "16",
+      "bold": true,
+      "italic": false,
+      "indent": "0"
+    },
+    {
+      "id": 6,
+      "font": "Arial Narrow",
+      "fontSize": "16",
+      "bold": true,
+      "italic": false,
+      "indent": "0"
+    },
+    {
+      "id": 7,
+      "font": "Arial Narrow",
+      "fontSize": "16",
+      "bold": false,
+      "italic": false,
+      "indent": "0"
     }
   ],
-  "marginTop": "-1"
+  "marginTop": "0"
 }

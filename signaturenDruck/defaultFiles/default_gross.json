@@ -1,79 +1,91 @@
 {
   "name": "default_gross",
-  "printer": "\\\\printsrv\\ulbps101",
+  "printer": "Microsoft Print to PDF",
   "label": {
-    "width": "80mm",
-    "height": "43mm"
+    "width": "25mm",
+    "height": "50mm"
   },
   "pdfName": "default_gross.pdf",
   "paper": {
-    "width": "99970",
-    "height": "48920"
+    "width": "25400",
+    "height": "50800"
   },
-  "lines": "6",
+  "lines": "7",
   "example": {
-    "shelfmark": "PÄD:TG:1420:Dan::2017",
+    "shelfmark": "200 AP 14350 S377",
     "parts": [
-      "PÄD",
-      "TG",
-      "1420",
-      "Dan",
-      "<br/>",
-      "2017"
+      "200",
+      " ",
+      "AP",
+      "14350",
+      "S377",
+      "",
+      "",
+      "",
+      "",
+      ""
     ]
   },
-  "centerHor": false,
-  "centerVer": true,
+  "centerHor": true,
+  "centerVer": false,
   "lineSpace": "0",
   "linesData": [
     {
       "id": 1,
-      "font": "Arial Narrow",
+      "font": "Arial",
       "fontSize": "16",
-      "bold": true,
+      "bold": false,
       "italic": false,
-      "indent": "47"
+      "indent": "0"
     },
     {
       "id": 2,
-      "font": "Arial Narrow",
+      "font": "Arial",
       "fontSize": "16",
-      "bold": true,
+      "bold": false,
       "italic": false,
-      "indent": "47"
+      "indent": "0"
     },
     {
       "id": 3,
-      "font": "Arial Narrow",
+      "font": "Arial",
       "fontSize": "16",
       "bold": true,
       "italic": false,
-      "indent": "47"
+      "indent": "0"
     },
     {
       "id": 4,
-      "font": "Arial Narrow",
-      "fontSize": "16",
-      "bold": false,
-      "italic": false,
-      "indent": "47"
-    },
-    {
-      "id": 5,
-      "font": "Arial Narrow",
-      "fontSize": "16",
-      "bold": false,
-      "italic": false,
-      "indent": "47"
-    },
-    {
-      "id": 6,
-      "font": "Arial Narrow",
+      "font": "Arial",
       "fontSize": "16",
       "bold": true,
       "italic": false,
-      "indent": "47"
+      "indent": "0"
+    },
+    {
+      "id": 5,
+      "font": "Arial",
+      "fontSize": "16",
+      "bold": false,
+      "italic": false,
+      "indent": "0"
+    },
+    {
+      "id": 6,
+      "font": "Arial",
+      "fontSize": "16",
+      "bold": false,
+      "italic": false,
+      "indent": "0"
+    },
+    {
+      "id": 7,
+      "font": "Arial",
+      "fontSize": "16",
+      "bold": false,
+      "italic": false,
+      "indent": "0"
     }
   ],
-  "marginTop": "-3"
+  "marginTop": "0"
 }
