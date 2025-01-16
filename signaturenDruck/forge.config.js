@@ -8,7 +8,7 @@ module.exports = {
     {
       name: '@electron-forge/maker-squirrel',
       config: {
-        certificateFile: '../../../codeThulbSign.pfx',
+        certificateFile: '',
         certificatePassword: '',
         authors: 'ThULB - IMS',
         iconURL: '',
@@ -18,7 +18,7 @@ module.exports = {
     {
       name: '@electron-forge/maker-wix',
       config: {
-        certificateFile: '../../../codeThulbSign.pfx',
+        certificateFile: '',
         certificatePassword: '',
         language: 1031,
         manufacturer: 'ThULB - IMS',
