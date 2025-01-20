@@ -1,5 +1,4 @@
 const { net } = require('electron')
-const { XMLParser } = require("fast-xml-parser")
 
 const Store = require('electron-store')
 const C = require('./Config')
@@ -41,14 +40,6 @@ class DataFromSRU {
       }
       const url = config.get('SRU.SRUAddress') + queryPart1 + key + config.get('SRU.QueryPart2')
       const request = net.request(url)
-      const options = {
-        ignoreAttributes: false,
-        attributeNamePrefix : "",
-        numberParseOptions: {
-          leadingZeros: false
-        }
-      }
-      const parser = new XMLParser(options)
       let allData = ''
       let data = ''
       return new Promise(function (resolve, reject) {
@@ -61,7 +52,7 @@ class DataFromSRU {
             reject(error)
           })
           response.on('end', () => {
-            resolve(parser.parse(allData))
+            resolve(allData)
           })
         })
         request.end()

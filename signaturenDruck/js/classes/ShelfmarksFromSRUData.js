@@ -1,4 +1,6 @@
 const _ = require('lodash')
+const xpath = require('xpath')
+const dom = require('@xmldom/xmldom').DOMParser
 const Shelfmark = require('../shelfmark.js')
 const Modes = require('./Modes.js')
 const Store = require('electron-store')
@@ -36,21 +38,48 @@ class ShelfmarksFromSRUData {
     const mode = new Modes()
     const formats = new Formats()
     const formatArray = formats.formats
-    sig.error = getError(xml, key, dataMode)
+    
+    const srudom = new dom()
+    
+    try {
+        var sru = srudom.parseFromString(xml, 'text/xml')
+        var selectzs = xpath.useNamespaces({"zs": "http://www.loc.gov/zing/srw/"})
+        if (selectzs("number(/zs:searchRetrieveResponse/zs:numberOfRecords)", sru) === 1) {
+            sig.error = ''
+        } else {
+            sig.error = key + ' wurde nicht gefunden. (Modus ' + dataMode + ')' // more than one hit should never happen
+        }
+     } catch (e) {
+        sig.error = e.message
+     }
 
     if (sig.error === '') {
-      const occ = getOccurrence(xml, key)
+
       sig.id = 99 // gets overwritten at a later stage
-      if (dataMode === 'PPN') {
-        sig.ppn = getPPN(xml)
-      } else {
-        sig.ppn = getEPN(xml)
+
+      switch (selectzs("string(//zs:record/zs:recordSchema)", sru)) {
+       case 'picaxml':
+       case 'info:srw/schema/5/picaXML-v1.0':
+          var selectpica = xpath.useNamespaces({"zs": "http://www.loc.gov/zing/srw/", "pica": "info:srw/schema/5/picaXML-v1.0"})
+          if (dataMode === 'PPN') {
+            sig.ppn = selectpica("string(//pica:datafield[@tag='003@']/pica:subfield[@code='0'])", sru)
+            var occ = selectpica("string(//pica:datafield[(@tag='209G') and (pica:subfield[@code='a']='"+key+"')]/@occurrence)", sru)
+          } else {
+            sig.ppn = key
+            var occ = selectpica("string(//pica:datafield[(@tag='203@') and (pica:subfield[@code='0']='"+key+"')]/@occurrence)", sru)
+          }
+          sig.date = selectpica("string(//pica:datafield[(@tag='201B') and (@occurrence='"+occ+"')]/pica:subfield[@code='0'])", sru)
+          sig.txtOneLine = selectpica("string(//pica:datafield[(@tag='209A') and (@occurrence='"+occ+"')]/pica:subfield[@code='a'])", sru)
+          sig.exNr = occ
+          sig.location = selectpica("string(//pica:datafield[(@tag='200A') and (@occurrence='"+occ+"')]/pica:subfield[@code='f'])", sru)
+          sig.loanIndication = selectpica("string(//pica:datafield[(@tag='200A') and (@occurrence='"+occ+"')]/pica:subfield[@code='d'])", sru)
+          break
+          
+        default:
+          sig.error = 'SRU: Unbekanntes Datenschema'
+          
       }
-      sig.date = getDate(xml, occ)
-      sig.txtOneLine = getTxt(xml, occ)
-      sig.exNr = getExNr(xml, occ)
-      sig.location = getLocation(xml, occ)
-      sig.loanIndication = getLoanIndication(xml, occ)
+      
       const allSubModeData = mode.modes[config.get('mode.defaultMode')].subModes
       _.forEach(allSubModeData, function (value) {
         const data = {
@@ -89,115 +118,6 @@ class ShelfmarksFromSRUData {
     }
 
     return sig.shelfmark
-  }
-}
-
-function getOccurrence (object, barcode) {
-  // get all 209G entries
-  const all = _.filter(object['zs:searchRetrieveResponse']['zs:records']['zs:record']['zs:recordData'].record.datafield, { tag: '209G' })
-  // search all 209G for a matching barcode
-  let found = _.find(all, function (o) {
-    // if there are multiple subfield entries
-    if (o.subfield.length > 1) {
-      // return the subield entry with the matching barcode
-      return _.forEach(o.subfield, function (data) {
-        if (data['#text'] === barcode) {
-          return o
-        }
-      })
-    } else { // if there is just one subfield entry
-      if (o.subfield['#text'] === barcode) {
-        return o
-      }
-    }
-  })
-  // if the barcode did not match, we take the occurrence of the first 209A entry
-  if (found === undefined) {
-    const test = _.find(object['zs:searchRetrieveResponse']['zs:records']['zs:record']['zs:recordData'].record.datafield, { tag: '209A' })
-    // if we found something
-    if (test !== undefined) {
-      found = test
-    }
-  }
-  return found.occurrence
-}
-
-function getPPN (object) {
-  const data = _.find(object['zs:searchRetrieveResponse']['zs:records']['zs:record']['zs:recordData'].record.datafield, { tag: '003@' })
-  if (data !== undefined) {
-    return String(data.subfield['#text'])
-  } else {
-    return ''
-  }
-}
-
-function getEPN (object) {
-  const data = _.find(object['zs:searchRetrieveResponse']['zs:records']['zs:record']['zs:recordData'].record.datafield, { tag: '203@' })
-  if (data !== undefined) {
-    return String(data.subfield['#text'])
-  } else {
-    return ''
-  }
-}
-
-function getDate (object, occ) {
-  const parent = _.find(object['zs:searchRetrieveResponse']['zs:records']['zs:record']['zs:recordData'].record.datafield, { tag: '201B', occurrence: occ })
-  const data = _.find(parent.subfield, { code: '0' })
-  if (data !== undefined) {
-    return data['#text']
-  } else {
-    return ''
-  }
-}
-
-function getTxt (object, occ) {
-  const parent = _.find(object['zs:searchRetrieveResponse']['zs:records']['zs:record']['zs:recordData'].record.datafield, { tag: '209A', occurrence: occ })
-  const data = _.find(parent.subfield, { code: 'a' })
-  if (data !== undefined) {
-    return data['#text']
-  } else {
-    return ''
-  }
-}
-
-function getExNr (object, occ) {
-  const data = _.find(object['zs:searchRetrieveResponse']['zs:records']['zs:record']['zs:recordData'].record.datafield, { tag: '209A', occurrence: occ })
-  if (data !== undefined) {
-    return data.occurrence
-  } else {
-    return ''
-  }
-}
-
-function getLocation (object, occ) {
-  const parent = _.find(object['zs:searchRetrieveResponse']['zs:records']['zs:record']['zs:recordData'].record.datafield, { tag: '209A', occurrence: occ })
-  const data = _.find(parent.subfield, { code: 'f' })
-  if (data !== undefined) {
-    return data['#text']
-  } else {
-    return ''
-  }
-}
-
-function getLoanIndication (object, occ) {
-  const parent = _.find(object['zs:searchRetrieveResponse']['zs:records']['zs:record']['zs:recordData'].record.datafield, { tag: '209A', occurrence: occ })
-  const data = _.find(parent.subfield, { code: 'd' })
-  if (data !== undefined) {
-    return data['#text']
-  } else {
-    return ''
-  }
-}
-
-function getError (object, key, mode) {
-  try {
-    if (object && object['zs:searchRetrieveResponse'] && object['zs:searchRetrieveResponse']['zs:numberOfRecords'] > 0) {
-      return ''
-    } else {
-      return mode + ': <b>' + key + '</b> wurde nicht gefunden.'
-    }
-  } catch (e) {
-    return e.message
   }
 }
 
