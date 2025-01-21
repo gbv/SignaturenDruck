@@ -1,21 +1,18 @@
 #previewBox.format_default_klein {
-width: 74mm;
-height: 23mm;
+width: 25mm;
+height: 50mm;
 }
 .format_default_klein {
-text-align: initial;
+text-align: center;
 white-space: nowrap;
 overflow: hidden;
 }
 .format_default_klein {
-align-items: center;
+align-items: initial;
 }
 #toPrint.format_default_klein > .capsule {
-height: 23mm;
-width: 74mm;
-display: flex;
-justify-content: center;
-flex-direction: column;
+height: 50mm;
+width: 25mm;
 overflow: hidden;
 }
 .format_default_klein > .capsule > .innerBox > p,
@@ -25,36 +22,68 @@ margin: 0px 0px 0px 0px;
 .format_default_klein > .capsule > .innerBox > .line_1,
 .format_default_klein > .innerBox > .line_1 {
 font-family: "Arial Narrow";
-font-size: 15pt;
-font-weight: bold;
+font-size: 16pt;
+font-weight: normal;
 font-style: normal;
-margin-left: 45%;
+margin-left: 0%;
 }
 .format_default_klein > .capsule > .innerBox > .line_2,
 .format_default_klein > .innerBox > .line_2 {
 font-family: "Arial Narrow";
-font-size: 15pt;
-font-weight: bold;
+font-size: 16pt;
+font-weight: normal;
 font-style: normal;
-margin-left: 45%;
+margin-left: 0%;
 }
 .format_default_klein > .capsule > .innerBox > .line_3,
 .format_default_klein > .innerBox > .line_3 {
 font-family: "Arial Narrow";
-font-size: 15pt;
-font-weight: bold;
+font-size: 16pt;
+font-weight: normal;
 font-style: normal;
-margin-left: 45%;
+margin-left: 0%;
+}
+.format_default_klein > .capsule > .innerBox > .line_4,
+.format_default_klein > .innerBox > .line_4 {
+font-family: "Arial Narrow";
+font-size: 16pt;
+font-weight: normal;
+font-style: normal;
+margin-left: 0%;
+}
+.format_default_klein > .capsule > .innerBox > .line_5,
+.format_default_klein > .innerBox > .line_5 {
+font-family: "Arial Narrow";
+font-size: 16pt;
+font-weight: normal;
+font-style: normal;
+margin-left: 0%;
+}
+.format_default_klein > .capsule > .innerBox > .line_6,
+.format_default_klein > .innerBox > .line_6 {
+font-family: "Arial Narrow";
+font-size: 16pt;
+font-weight: normal;
+font-style: normal;
+margin-left: 0%;
+}
+.format_default_klein > .capsule > .innerBox > .line_7,
+.format_default_klein > .innerBox > .line_7 {
+font-family: "Arial Narrow";
+font-size: 16pt;
+font-weight: normal;
+font-style: normal;
+margin-left: 0%;
 }
 .format_default_klein > .capsule > .innerBox > .line_1,
 .format_default_klein > .innerBox > .line_1 {
-margin-top: -1mm;
+margin-top: 0mm;
 }
 @media print {
 @page {
-size: 79.5mm 27.5mm;
-margin-top: 2.25mm;
-margin-left: 2.75mm;
+size: 25mm 50mm;
+margin-top: 0mm;
+margin-left: 0mm;
 }
 body {
 margin: 0px;
