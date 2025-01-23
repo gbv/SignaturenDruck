@@ -289,7 +289,7 @@ Nein, der SignaturenDruck ist seit version `v1.3.12` nichtmehr vom Adobe Acrobat
 
 ## v1.3.21
 
-- FOLIO-SRU wird unterstützt (#113) **Vielen Dank an @knepper & UB Mainz!**
+- FOLIO-SRU wird unterstützt (Pullrequest [#113](https://github.com/gbv/SignaturenDruck/issues/113)) **Vielen Dank an @knepper & UB Mainz!**
 
 ## v1.3.20
 
