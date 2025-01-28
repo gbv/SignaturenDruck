@@ -2,7 +2,7 @@
 ![GitHub all releases](https://img.shields.io/github/downloads/gbv/SignaturenDruck/total?label=downloads@overall)  
 ![GitHub release (latest SemVer including pre-releases)](https://img.shields.io/github/v/release/gbv/SignaturenDruck?label=stable)
 ![GitHub Release Date](https://img.shields.io/github/release-date/gbv/SignaturenDruck)
-![GitHub release (latest by date)](https://img.shields.io/github/downloads/gbv/SignaturenDruck/v1.3.20/total?label=downloads@v1.3.20)  
+![GitHub release (latest by date)](https://img.shields.io/github/downloads/gbv/SignaturenDruck/v1.3.21/total?label=downloads@v1.3.21)  
 <!---
 ![GitHub release (latest SemVer including pre-releases)](https://img.shields.io/github/v/release/gbv/SignaturenDruck?include_prereleases&label=pre-release)
 ![GitHub (Pre-)Release Date](https://img.shields.io/github/release-date-pre/gbv/SignaturenDruck)
@@ -286,6 +286,10 @@ Mit <kbd>strg</kbd> + <kbd>alt</kbd> + <kbd>C</kbd> öffen Sie die "Modus erstel
 Nein, der SignaturenDruck ist seit version `v1.3.12` nichtmehr vom Adobe Acrobat Reader DC abhängig.
 
 # Changelog
+
+## v1.3.21
+
+- FOLIO-SRU wird unterstützt ([#113](https://github.com/gbv/SignaturenDruck/issues/113)) **Vielen Dank an @knepper & UB Mainz!**
 
 ## v1.3.20
 
