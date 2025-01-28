@@ -71,8 +71,8 @@ class ShelfmarksFromSRUData {
           sig.date = selectpica("string(//pica:datafield[(@tag='201B') and (@occurrence='"+occ+"')]/pica:subfield[@code='0'])", sru)
           sig.txtOneLine = selectpica("string(//pica:datafield[(@tag='209A') and (@occurrence='"+occ+"')]/pica:subfield[@code='a'])", sru)
           sig.exNr = occ
-          sig.location = selectpica("string(//pica:datafield[(@tag='200A') and (@occurrence='"+occ+"')]/pica:subfield[@code='f'])", sru)
-          sig.loanIndication = selectpica("string(//pica:datafield[(@tag='200A') and (@occurrence='"+occ+"')]/pica:subfield[@code='d'])", sru)
+          sig.location = selectpica("string(//pica:datafield[(@tag='209A') and (@occurrence='"+occ+"')]/pica:subfield[@code='f'])", sru)
+          sig.loanIndication = selectpica("string(//pica:datafield[(@tag='209A') and (@occurrence='"+occ+"')]/pica:subfield[@code='d'])", sru)
           break
  
        case 'raw':  // FOLIO "Quesnelia"
