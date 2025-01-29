@@ -71,19 +71,19 @@ class ShelfmarksFromSRUData {
           sig.date = selectpica("string(//pica:datafield[(@tag='201B') and (@occurrence='"+occ+"')]/pica:subfield[@code='0'])", sru)
           sig.txtOneLine = selectpica("string(//pica:datafield[(@tag='209A') and (@occurrence='"+occ+"')]/pica:subfield[@code='a'])", sru)
           sig.exNr = occ
-          sig.location = selectpica("string(//pica:datafield[(@tag='200A') and (@occurrence='"+occ+"')]/pica:subfield[@code='f'])", sru)
-          sig.loanIndication = selectpica("string(//pica:datafield[(@tag='200A') and (@occurrence='"+occ+"')]/pica:subfield[@code='d'])", sru)
+          sig.location = selectpica("string(//pica:datafield[(@tag='209A') and (@occurrence='"+occ+"')]/pica:subfield[@code='f'])", sru)
+          sig.loanIndication = selectpica("string(//pica:datafield[(@tag='209A') and (@occurrence='"+occ+"')]/pica:subfield[@code='d'])", sru)
           break
  
        case 'raw':  // FOLIO "Quesnelia"
           if (dataMode === 'PPN') {
-            sig.ppn = xpath.select("string(//bareHoldingsItems[barcode='"+key+"']/hrid)", sru)
+            sig.ppn = xpath.select("translate(string(//bareHoldingsItems[barcode='"+key+"']/hrid),'-','_')", sru)
             sig.date = xpath.select("string(//bareHoldingsItems[barcode='"+key+"']/../notes[holdingsNoteType/name='Letzte Änderung CBS']/note)", sru)
             sig.txtOneLine = [
-                   xpath.select("string(//bareHoldingsItems[barcode='"+key+"']/effectiveCallNumberComponents/prefix)", sru),
-                   xpath.select("string(//bareHoldingsItems[barcode='"+key+"']/effectiveCallNumberComponents/callNumber)", sru),
-                   xpath.select("string(//bareHoldingsItems[barcode='"+key+"']/effectiveCallNumberComponents/suffix)", sru)
-                   ].join(" ")
+                 xpath.select("string(//bareHoldingsItems[barcode='"+key+"']/effectiveCallNumberComponents/prefix)", sru),
+                 xpath.select("string(//bareHoldingsItems[barcode='"+key+"']/effectiveCallNumberComponents/callNumber)", sru),
+                 xpath.select("string(//bareHoldingsItems[barcode='"+key+"']/effectiveCallNumberComponents/suffix)", sru)
+                 ].join(" ")
             sig.location = xpath.select("string(//bareHoldingsItems[barcode='"+key+"']/../permanentLocation/name)", sru)
             sig.exNr = sig.location
             sig.loanIndication = xpath.select("string(//bareHoldingsItems[barcode='"+key+"']/status/name)", sru)
