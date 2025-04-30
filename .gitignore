@@ -2,8 +2,7 @@ signaturenDruck/node_modules
 signaturenDruck/signaturen.json
 signaturenDruck/dist*
 signaturenDruck/tmp*
+.github
 .vscode
 notes
-signaturenDruck/v2_node_modules*
-signaturenDruck/v5_node_modules*
 signaturenDruck/electron-builder.yml

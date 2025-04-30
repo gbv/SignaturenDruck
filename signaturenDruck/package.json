@@ -4,11 +4,10 @@
   "description": "SignaturenDruck der ThULB",
   "main": "main.js",
   "dependencies": {
+    "@xmldom/xmldom": "^0.9.6",
     "electron-context-menu": "^3.1.1",
     "electron-squirrel-startup": "^1.0.0",
     "electron-store": "^8.0.1",
-    "xpath": "^0.0.34",
-    "@xmldom/xmldom": "^0.9.6",
     "lodash": "^4.17.21",
     "moment": "^2.29.1",
     "pdf-to-printer": "^5.0.0",
@@ -16,6 +15,7 @@
     "sweetalert2": "^11.1.9",
     "system-font-families": "^0.4.1",
     "username": "^5.1.0",
+    "xpath": "^0.0.34",
     "xregexp": "^5.1.0"
   },
   "devDependencies": {
