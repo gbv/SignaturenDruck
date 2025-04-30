@@ -77,19 +77,28 @@ class ShelfmarksFromSRUData {
  
        case 'raw':  // FOLIO "Quesnelia"
           if (dataMode === 'PPN') {
-            sig.ppn = xpath.select("translate(string(//bareHoldingsItems[barcode='"+key+"']/hrid),'-','_')", sru)
-            sig.date = xpath.select("string(//bareHoldingsItems[barcode='"+key+"']/../notes[holdingsNoteType/name='Letzte Änderung CBS']/note)", sru)
-            sig.txtOneLine = [
-                 xpath.select("string(//bareHoldingsItems[barcode='"+key+"']/effectiveCallNumberComponents/prefix)", sru),
-                 xpath.select("string(//bareHoldingsItems[barcode='"+key+"']/effectiveCallNumberComponents/callNumber)", sru),
-                 xpath.select("string(//bareHoldingsItems[barcode='"+key+"']/effectiveCallNumberComponents/suffix)", sru)
-                 ].join(" ")
-            sig.location = xpath.select("string(//bareHoldingsItems[barcode='"+key+"']/../permanentLocation/name)", sru)
-            sig.exNr = sig.location
-            sig.loanIndication = xpath.select("string(//bareHoldingsItems[barcode='"+key+"']/status/name)", sru)
+            var hrid = xpath.select("string(//bareHoldingsItems[barcode='"+key+"']/hrid)", sru)
           } else {
-            sig.error = 'SRU: EPN-Suche für FOLIO raw nicht implementiert'
+            if (xpath.select("boolean(//bareHoldingsItems[hrid='"+key+"']/hrid)", sru)) {
+               var hrid = key // key is item hrid
+            } else {
+               var hrid = xpath.select("string(//bareHoldingsItems[substring-before(hrid,'-')='"+key+"']/hrid)", sru)
+               // key is holdings hrid/EPN - workaround working at least for GBV and Hebis (holdings hrid missing in raw format) 
+               }
           }
+          sig.ppn = xpath.select("translate(string(//bareHoldingsItems[hrid='"+hrid+"']/../permanentLocation/name),'-','_')", sru)
+          sig.date = xpath.select("string(//bareHoldingsItems[hrid='"+hrid+"']/../notes[holdingsNoteType/name='Letzte Änderung CBS']/note)", sru)
+          var copyno = xpath.select("string(//bareHoldingsItems[hrid='"+hrid+"']/copyNumber)", sru)
+          sig.txtOneLine = [
+             xpath.select("string(//bareHoldingsItems[hrid='"+hrid+"']/effectiveCallNumberComponents/prefix)", sru),
+             xpath.select("string(//bareHoldingsItems[hrid='"+hrid+"']/effectiveCallNumberComponents/callNumber)", sru),
+             xpath.select("string(//bareHoldingsItems[hrid='"+hrid+"']/effectiveCallNumberComponents/suffix)", sru),
+             xpath.select("string(//bareHoldingsItems[hrid='"+hrid+"']/chronology)", sru),
+             copyno ? '('+copyno+'.Ex.)' : ''
+             ].filter(Boolean).join(" ")
+          sig.location = xpath.select("string(//bareHoldingsItems[hrid='"+hrid+"']/../permanentLocation/name)", sru)
+          sig.exNr = hrid
+          sig.loanIndication = xpath.select("string(//bareHoldingsItems[hrid='"+hrid+"']/status/name)", sru)
           break
 
        default:
