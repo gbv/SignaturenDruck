@@ -145,6 +145,9 @@ class Table {
   static createCell (row, i, className, value) {
     const cell = row.insertCell(i)
     if (i === 0) {
+      cell.ondblclick = () => {
+        ppnCopy(value)
+      }
       cell.innerHTML = value
     } else {
       cell.innerHTML = '<hr>'
@@ -438,6 +441,17 @@ class Table {
  */
 function groupByPPN (obj) {
   return _.groupBy(obj, 'PPN')
+}
+
+function ppnCopy (txt) {
+  navigator.clipboard.writeText(txt)
+  swal.fire({
+    position: "top-end",
+    icon: "info",
+    title: txt + ' wurde in die Zwischenablage kopiert!',
+    showConfirmButton: false,
+    timer: 1500
+  })
 }
 /*
 ----- End Private Area -----

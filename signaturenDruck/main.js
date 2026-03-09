@@ -309,7 +309,7 @@ function createWindow () {
   }
 
   mainWindow = new BrowserWindow(options)
-  mainWindow.removeMenu()
+ // mainWindow.removeMenu()
   const printerNames = []
   mainWindow.webContents.getPrintersAsync().then((response) => {
     _.forEach(response, function (printer) {
@@ -343,7 +343,7 @@ function createWindow () {
   })
   if (config.store.devMode) {
     // open dev-tools
-    mainWindow.webContents.openDevTools()
+    mainWindow.webContents.openDevTools({ mode: 'detach' })
   }
 }
 
