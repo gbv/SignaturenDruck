@@ -4,7 +4,7 @@
   "description": "SignaturenDruck der ThULB",
   "main": "main.js",
   "dependencies": {
-    "@xmldom/xmldom": "^0.9.6",
+    "@xmldom/xmldom": "^0.9.9",
     "electron-context-menu": "^3.1.1",
     "electron-squirrel-startup": "^1.0.0",
     "electron-store": "^8.0.1",
